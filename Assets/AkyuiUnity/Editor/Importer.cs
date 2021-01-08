@@ -22,6 +22,7 @@ namespace AkyuiUnity.Editor
                 {
                     var fileName = Path.GetFileNameWithoutExtension(zipFile.Name);
                     var assetOutputDirectoryPath = Path.Combine(settings.AssetOutputPath, fileName);
+                    var prefabOutputDirectoryPath = Path.Combine(settings.PrefabOutputPath);
 
                     // assets
                     var assetsJson = GetJson(zipFile, Path.Combine(fileName, "assets.json"));
@@ -31,7 +32,12 @@ namespace AkyuiUnity.Editor
                     // layout
                     var layoutJson = GetJson(zipFile, Path.Combine(fileName, "layout.json"));
                     var elements = (List<object>) layoutJson["elements"];
-                    CreateGameObject(assetOutputDirectoryPath, elements.Select(x => (Dictionary<string, object>) x).ToArray());
+                    var gameObject = CreateGameObject(assetOutputDirectoryPath, elements.Select(x => (Dictionary<string, object>) x).ToArray());
+                    var savePath = Path.Combine(prefabOutputDirectoryPath, $"{fileName}.prefab");
+                    PrefabUtility.SaveAsPrefabAsset(gameObject, savePath);
+                    Object.DestroyImmediate(gameObject);
+
+                    AssetDatabase.Refresh();
                 }
                 Debug.Log($"Import Finish: {filePath}");
             }
@@ -89,7 +95,7 @@ namespace AkyuiUnity.Editor
             }
         }
 
-        private static void CreateGameObject(string assetOutputDirectoryPath, Dictionary<string, object>[] elements)
+        private static GameObject CreateGameObject(string assetOutputDirectoryPath, Dictionary<string, object>[] elements)
         {
             var idToElement = new Dictionary<int, Dictionary<string, object>>();
 
@@ -100,10 +106,10 @@ namespace AkyuiUnity.Editor
                 idToElement[id] = element;
             }
 
-            CreateGameObject(assetOutputDirectoryPath, idToElement, rootId, null);
+            return CreateGameObject(assetOutputDirectoryPath, idToElement, rootId, null);
         }
 
-        private static void CreateGameObject(string assetOutputDirectoryPath, Dictionary<int, Dictionary<string, object>> idToElement, int id, Transform parent)
+        private static GameObject CreateGameObject(string assetOutputDirectoryPath, Dictionary<int, Dictionary<string, object>> idToElement, int id, Transform parent)
         {
             var element = idToElement[id];
             var name = element["name"].JsonString();
@@ -134,6 +140,8 @@ namespace AkyuiUnity.Editor
             {
                 CreateGameObject(assetOutputDirectoryPath, idToElement, child, gameObject.transform);
             }
+
+            return gameObject;
         }
 
         private static void CreateComponent(string assetOutputDirectoryPath, GameObject gameObject, Dictionary<string, object> component)
@@ -142,8 +150,6 @@ namespace AkyuiUnity.Editor
             if (type == "image")
             {
                 var image = gameObject.AddComponent<Image>();
-                Debug.Log(Path.Combine(assetOutputDirectoryPath, component["sprite"].JsonString()));
-                Debug.Log(AssetDatabase.LoadAssetAtPath<Sprite>(Path.Combine(assetOutputDirectoryPath, component["sprite"].JsonString())));
                 image.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(Path.Combine(assetOutputDirectoryPath, component["sprite"].JsonString()));
                 image.color = component["color"].JsonColor();
             }
