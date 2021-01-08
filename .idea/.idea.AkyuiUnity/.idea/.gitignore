@@ -1,0 +1,11 @@
+# Default ignored files
+/shelf/
+/workspace.xml
+# Rider ignored files
+/contentModel.xml
+/projectSettingsUpdater.xml
+/modules.xml
+/.idea.AkyuiUnity.iml
+/aws.xml
+# Editor-based HTTP Client requests
+/httpRequests/
