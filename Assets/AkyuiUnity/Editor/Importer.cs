@@ -1,8 +1,9 @@
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using AkyuiUnity.Editor.Extensions;
 using AkyuiUnity.Editor.MiniJSON;
+using AkyuiUnity.Editor.ScriptableObject;
 using UnityEngine;
 using UnityEngine.UI;
 using ICSharpCode.SharpZipLib.Zip;
@@ -76,7 +77,7 @@ namespace AkyuiUnity.Editor
                     }
 
                     PostProcessImportAsset.ProcessingFile = savePath;
-                    using (new DisposableEvent(() => PostProcessImportAsset.ProcessingFile = ""))
+                    using (Disposable.Create(() => PostProcessImportAsset.ProcessingFile = ""))
                     {
                         AssetDatabase.ImportAsset(savePath);
                     }
@@ -85,21 +86,6 @@ namespace AkyuiUnity.Editor
                 {
                     Debug.LogWarning($"Unknown type {type}");
                 }
-            }
-        }
-
-        private class DisposableEvent : IDisposable
-        {
-            private readonly Action _action;
-
-            public DisposableEvent(Action action)
-            {
-                _action = action;
-            }
-
-            public void Dispose()
-            {
-                _action.Invoke();
             }
         }
 

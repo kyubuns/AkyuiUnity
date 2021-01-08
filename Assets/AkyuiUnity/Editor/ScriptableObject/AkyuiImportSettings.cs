@@ -1,9 +1,9 @@
 ﻿using UnityEngine;
 
-namespace AkyuiUnity.Editor
+namespace AkyuiUnity.Editor.ScriptableObject
 {
     [CreateAssetMenu(menuName = "Akyui/ImportSettings", fileName = "AkyuiImportSettings")]
-    public class AkyuiImportSettings : ScriptableObject
+    public class AkyuiImportSettings : UnityEngine.ScriptableObject
     {
         public string PrefabOutputPath => prefabOutputPath;
         [SerializeField] private string prefabOutputPath = "Assets/";

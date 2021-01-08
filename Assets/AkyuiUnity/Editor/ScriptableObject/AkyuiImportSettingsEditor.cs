@@ -3,7 +3,7 @@ using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
-namespace AkyuiUnity.Editor
+namespace AkyuiUnity.Editor.ScriptableObject
 {
     [CustomEditor(typeof(AkyuiImportSettings))]
     public class AkyuiImportSettingsEditor : UnityEditor.Editor
