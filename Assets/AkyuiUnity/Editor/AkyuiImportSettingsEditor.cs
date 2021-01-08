@@ -5,8 +5,8 @@ using UnityEngine;
 
 namespace AkyuiUnity.Editor
 {
-    [CustomEditor(typeof(AkyuiImporter))]
-    public class AkyuiImporterEditor : UnityEditor.Editor
+    [CustomEditor(typeof(AkyuiImportSettings))]
+    public class AkyuiImportSettingsEditor : UnityEditor.Editor
     {
         public override void OnInspectorGUI()
         {
@@ -28,9 +28,9 @@ namespace AkyuiUnity.Editor
                 DragAndDrop.AcceptDrag();
                 DragAndDrop.activeControlID = 0;
 
-                var importer = (AkyuiImporter) target;
-                var paths = DragAndDrop.paths.Where(x => Path.GetExtension(x) == "aky").ToArray();
-                if (paths.Length > 0) importer.Import(paths);
+                var settings = (AkyuiImportSettings) target;
+                var paths = DragAndDrop.paths.Where(x => Path.GetExtension(x) == ".aky").ToArray();
+                if (paths.Length > 0) Importer.Import(paths, settings);
                 Event.current.Use();
             }
         }
