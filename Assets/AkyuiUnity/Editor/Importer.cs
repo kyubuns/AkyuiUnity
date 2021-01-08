@@ -19,6 +19,13 @@ namespace AkyuiUnity.Editor
                 using (var zipFile = new ZipFile(filePath))
                 {
                     var fileName = Path.GetFileNameWithoutExtension(zipFile.Name);
+
+                    // assets
+                    var assetsJson = GetJson(zipFile, Path.Combine(fileName, "assets.json"));
+                    var assets = (List<object>) assetsJson["assets"];
+                    ImportAssets(zipFile, settings, assets.Select(x => (Dictionary<string, object>) x).ToArray());
+
+                    // layout
                     var layoutJson = GetJson(zipFile, Path.Combine(fileName, "layout.json"));
                     var elements = (List<object>) layoutJson["elements"];
                     CreateGameObject(elements.Select(x => (Dictionary<string, object>) x).ToArray());
@@ -37,6 +44,41 @@ namespace AkyuiUnity.Editor
                 var jsonString = reader.ReadToEnd();
                 var json = (Dictionary<string, object>) Json.Deserialize(jsonString);
                 return json;
+            }
+        }
+
+        private static void ImportAssets(ZipFile zipFile, AkyuiImportSettings settings, Dictionary<string, object>[] elements)
+        {
+            var fileName = Path.GetFileNameWithoutExtension(zipFile.Name);
+            var assetsParentPath = Path.GetDirectoryName(Application.dataPath) ?? "";
+            var outputDirectoryPath = Path.Combine(assetsParentPath, settings.AssetOutputPath, fileName);
+
+            if (!Directory.Exists(outputDirectoryPath)) Directory.CreateDirectory(outputDirectoryPath);
+
+            foreach (var element in elements)
+            {
+                var type = ToString(element["type"]);
+                if (type == "sprite")
+                {
+                    var file = ToString(element["file"]);
+
+                    var assetEntry = zipFile.FindEntry(Path.Combine(fileName, "assets", file), true);
+                    var stream = zipFile.GetInputStream(assetEntry);
+
+                    using (var memoryStream = new MemoryStream())
+                    {
+                        stream.CopyTo(memoryStream);
+                        var bytes = memoryStream.ToArray();
+                        var savePath = Path.Combine(outputDirectoryPath, file);
+                        File.WriteAllBytes(savePath, bytes);
+                    }
+
+                    Debug.Log(file);
+                }
+                else
+                {
+                    Debug.LogWarning($"Unknown type {type}");
+                }
             }
         }
 
