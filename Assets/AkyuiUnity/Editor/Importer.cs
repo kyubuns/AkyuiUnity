@@ -6,6 +6,7 @@ using AkyuiUnity.Editor.MiniJSON;
 using UnityEngine;
 using UnityEngine.UI;
 using ICSharpCode.SharpZipLib.Zip;
+using UnityEditor;
 
 namespace AkyuiUnity.Editor
 {
@@ -19,16 +20,17 @@ namespace AkyuiUnity.Editor
                 using (var zipFile = new ZipFile(filePath))
                 {
                     var fileName = Path.GetFileNameWithoutExtension(zipFile.Name);
+                    var assetOutputDirectoryPath = Path.Combine(settings.AssetOutputPath, fileName);
 
                     // assets
                     var assetsJson = GetJson(zipFile, Path.Combine(fileName, "assets.json"));
                     var assets = (List<object>) assetsJson["assets"];
-                    ImportAssets(zipFile, settings, assets.Select(x => (Dictionary<string, object>) x).ToArray());
+                    ImportAssets(zipFile, assetOutputDirectoryPath, assets.Select(x => (Dictionary<string, object>) x).ToArray());
 
                     // layout
                     var layoutJson = GetJson(zipFile, Path.Combine(fileName, "layout.json"));
                     var elements = (List<object>) layoutJson["elements"];
-                    CreateGameObject(elements.Select(x => (Dictionary<string, object>) x).ToArray());
+                    CreateGameObject(assetOutputDirectoryPath, elements.Select(x => (Dictionary<string, object>) x).ToArray());
                 }
                 Debug.Log($"Import Finish: {filePath}");
             }
@@ -47,33 +49,37 @@ namespace AkyuiUnity.Editor
             }
         }
 
-        private static void ImportAssets(ZipFile zipFile, AkyuiImportSettings settings, Dictionary<string, object>[] elements)
+        private static void ImportAssets(ZipFile zipFile, string assetOutputDirectoryPath, Dictionary<string, object>[] elements)
         {
             var fileName = Path.GetFileNameWithoutExtension(zipFile.Name);
             var assetsParentPath = Path.GetDirectoryName(Application.dataPath) ?? "";
-            var outputDirectoryPath = Path.Combine(assetsParentPath, settings.AssetOutputPath, fileName);
 
-            if (!Directory.Exists(outputDirectoryPath)) Directory.CreateDirectory(outputDirectoryPath);
+            var assetOutputDirectoryFullPath = Path.Combine(assetsParentPath, assetOutputDirectoryPath);
+            if (!Directory.Exists(assetOutputDirectoryFullPath)) Directory.CreateDirectory(assetOutputDirectoryFullPath);
 
             foreach (var element in elements)
             {
-                var type = ToString(element["type"]);
+                var type = element["type"].JsonString();
                 if (type == "sprite")
                 {
-                    var file = ToString(element["file"]);
+                    var file = element["file"].JsonString();
 
                     var assetEntry = zipFile.FindEntry(Path.Combine(fileName, "assets", file), true);
                     var stream = zipFile.GetInputStream(assetEntry);
+                    var savePath = Path.Combine(assetOutputDirectoryPath, file);
 
                     using (var memoryStream = new MemoryStream())
                     {
                         stream.CopyTo(memoryStream);
                         var bytes = memoryStream.ToArray();
-                        var savePath = Path.Combine(outputDirectoryPath, file);
-                        File.WriteAllBytes(savePath, bytes);
+                        File.WriteAllBytes(Path.Combine(assetsParentPath, savePath), bytes);
                     }
 
-                    Debug.Log(file);
+                    PostProcessImportAsset.ProcessingFile = savePath;
+                    using (new DisposableEvent(() => PostProcessImportAsset.ProcessingFile = ""))
+                    {
+                        AssetDatabase.ImportAsset(savePath);
+                    }
                 }
                 else
                 {
@@ -82,30 +88,45 @@ namespace AkyuiUnity.Editor
             }
         }
 
-        private static GameObject CreateGameObject(Dictionary<string, object>[] elements)
+        private class DisposableEvent : IDisposable
+        {
+            private readonly Action _action;
+
+            public DisposableEvent(Action action)
+            {
+                _action = action;
+            }
+
+            public void Dispose()
+            {
+                _action.Invoke();
+            }
+        }
+
+        private static void CreateGameObject(string assetOutputDirectoryPath, Dictionary<string, object>[] elements)
         {
             var idToElement = new Dictionary<int, Dictionary<string, object>>();
 
-            var rootId = ToInt(elements[0]["id"]);
+            var rootId = elements[0]["id"].JsonInt();
             foreach (var element in elements)
             {
-                var id = ToInt(element["id"]);
+                var id = element["id"].JsonInt();
                 idToElement[id] = element;
             }
 
-            return CreateGameObject(idToElement, rootId, null);
+            CreateGameObject(assetOutputDirectoryPath, idToElement, rootId, null);
         }
 
-        private static GameObject CreateGameObject(Dictionary<int, Dictionary<string, object>> idToElement, int id, Transform parent)
+        private static void CreateGameObject(string assetOutputDirectoryPath, Dictionary<int, Dictionary<string, object>> idToElement, int id, Transform parent)
         {
             var element = idToElement[id];
-            var name = ToString(element["name"]);
-            var position = ToVector2(element["position"]);
-            var size = ToVector2(element["size"]);
-            var anchorMin = ToVector2(element["anchor_min"]);
-            var anchorMax = ToVector2(element["anchor_max"]);
-            var pivot = ToVector2(element["pivot"]);
-            var children = ToIntArray(element["children"]);
+            var name = element["name"].JsonString();
+            var position = element["position"].JsonVector2();
+            var size = element["size"].JsonVector2();
+            var anchorMin = element["anchor_min"].JsonVector2();
+            var anchorMax = element["anchor_max"].JsonVector2();
+            var pivot = element["pivot"].JsonVector2();
+            var children = element["children"].JsonIntArray();
             var components = ((List<object>) element["components"]).Select(x => (Dictionary<string, object>) x).ToArray();
 
             var gameObject = new GameObject(name);
@@ -120,38 +141,40 @@ namespace AkyuiUnity.Editor
 
             foreach (var component in components)
             {
-                CreateComponent(gameObject, component);
+                CreateComponent(assetOutputDirectoryPath, gameObject, component);
             }
 
             foreach (var child in children)
             {
-                CreateGameObject(idToElement, child, gameObject.transform);
+                CreateGameObject(assetOutputDirectoryPath, idToElement, child, gameObject.transform);
             }
-
-            return gameObject;
         }
 
-        private static void CreateComponent(GameObject gameObject, Dictionary<string, object> component)
+        private static void CreateComponent(string assetOutputDirectoryPath, GameObject gameObject, Dictionary<string, object> component)
         {
-            var type = ToString(component["type"]);
+            var type = component["type"].JsonString();
             if (type == "image")
             {
                 var image = gameObject.AddComponent<Image>();
+                Debug.Log(Path.Combine(assetOutputDirectoryPath, component["sprite"].JsonString()));
+                Debug.Log(AssetDatabase.LoadAssetAtPath<Sprite>(Path.Combine(assetOutputDirectoryPath, component["sprite"].JsonString())));
+                image.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(Path.Combine(assetOutputDirectoryPath, component["sprite"].JsonString()));
+                image.color = component["color"].JsonColor();
             }
             else if (type == "text")
             {
                 var text = gameObject.AddComponent<Text>();
-                text.text = ToString(component["text"]);
-                text.fontSize = ToInt(component["size"]);
-                text.color = ToColor(component["color"]);
-                switch (ToString(component["align"]))
+                text.text = component["text"].JsonString();
+                text.fontSize = component["size"].JsonInt();
+                text.color = component["color"].JsonColor();
+                switch (component["align"].JsonString())
                 {
                     case "middle_center":
                         text.alignment = TextAnchor.MiddleCenter;
                         break;
 
                     default:
-                        Debug.LogWarning($"Unknown align {ToString(component["align"])}");
+                        Debug.LogWarning($"Unknown align {component["align"].JsonString()}");
                         break;
                 }
             }
@@ -164,53 +187,18 @@ namespace AkyuiUnity.Editor
                 Debug.LogWarning($"Unknown component {type}");
             }
         }
+    }
 
-        private static string ToString(object o)
+    public class PostProcessImportAsset : AssetPostprocessor
+    {
+        public static string ProcessingFile { get; set; }
+
+        public void OnPreprocessTexture()
         {
-            return (string) o;
-        }
+            if (ProcessingFile != assetPath) return;
 
-        private static int ToInt(object o)
-        {
-            if (o is long l) return (int) l;
-            if (o is double d) return (int) d;
-            throw new Exception($"{o} is {o.GetType()}");
-        }
-
-        private static int[] ToIntArray(object o)
-        {
-            var a = (List<object>) o;
-            return a.Select(x =>
-            {
-                if (x is long l) return (int) l;
-                if (x is double d) return (int) d;
-                throw new Exception($"{x} is {x.GetType()}");
-            }).ToArray();
-        }
-
-        private static Color ToColor(object o)
-        {
-            var a = (List<object>) o;
-            var b = a.Select(x =>
-            {
-                if (x is long l) return (byte) l;
-                if (x is double d) return (byte) d;
-                throw new Exception($"{x} is {x.GetType()}");
-            }).ToArray();
-            return new Color32(b[0], b[1], b[2], b[3]);
-        }
-
-        private static Vector2 ToVector2(object o)
-        {
-            var a = (List<object>) o;
-            var b = a.Select(x =>
-            {
-                if (x is long l) return (float) l;
-                if (x is double d) return (float) d;
-                throw new Exception($"{x} is {x.GetType()}");
-            }).ToArray();
-
-            return new Vector2(b[0], b[1]);
+            var textureImporter = (TextureImporter) assetImporter;
+            textureImporter.textureType = TextureImporterType.Sprite;
         }
     }
 }
