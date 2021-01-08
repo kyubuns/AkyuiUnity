@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: AkyuiImportSettings
   m_EditorClassIdentifier: 
   prefabOutputPath: Assets/Sample/GeneratedPrefabs/{name}
-  assetOutputPath: Assets/Sample/GeneratedAssets/{name}/
+  assetOutputDirectoryPath: Assets/Sample/GeneratedAssets/{name}/

@@ -21,7 +21,7 @@ namespace AkyuiUnity.Editor
                 using (var zipFile = new ZipFile(filePath))
                 {
                     var fileName = Path.GetFileNameWithoutExtension(zipFile.Name);
-                    var assetOutputDirectoryPath = settings.AssetOutputPath.Replace("{name}", fileName);
+                    var assetOutputDirectoryPath = settings.AssetOutputDirectoryPath.Replace("{name}", fileName);
 
                     // assets
                     var assetsJson = GetJson(zipFile, Path.Combine(fileName, "assets.json"));
