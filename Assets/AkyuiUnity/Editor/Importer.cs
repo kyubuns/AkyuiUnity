@@ -21,8 +21,7 @@ namespace AkyuiUnity.Editor
                 using (var zipFile = new ZipFile(filePath))
                 {
                     var fileName = Path.GetFileNameWithoutExtension(zipFile.Name);
-                    var assetOutputDirectoryPath = Path.Combine(settings.AssetOutputPath, fileName);
-                    var prefabOutputDirectoryPath = Path.Combine(settings.PrefabOutputPath);
+                    var assetOutputDirectoryPath = settings.AssetOutputPath.Replace("{name}", fileName);
 
                     // assets
                     var assetsJson = GetJson(zipFile, Path.Combine(fileName, "assets.json"));
@@ -33,7 +32,7 @@ namespace AkyuiUnity.Editor
                     var layoutJson = GetJson(zipFile, Path.Combine(fileName, "layout.json"));
                     var elements = (List<object>) layoutJson["elements"];
                     var gameObject = CreateGameObject(assetOutputDirectoryPath, elements.Select(x => (Dictionary<string, object>) x).ToArray());
-                    var savePath = Path.Combine(prefabOutputDirectoryPath, $"{fileName}.prefab");
+                    var savePath = settings.PrefabOutputPath.Replace("{name}", fileName) + ".prefab";
                     PrefabUtility.SaveAsPrefabAsset(gameObject, savePath);
                     Object.DestroyImmediate(gameObject);
 

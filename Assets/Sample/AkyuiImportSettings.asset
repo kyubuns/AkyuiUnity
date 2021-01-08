@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 83502d026ab754e07b0726575b176ad6, type: 3}
   m_Name: AkyuiImportSettings
   m_EditorClassIdentifier: 
-  prefabOutputPath: Assets/Sample/GeneratedPrefabs/
-  assetOutputPath: Assets/Sample/GeneratedAssets/
+  prefabOutputPath: Assets/Sample/GeneratedPrefabs/{name}
+  assetOutputPath: Assets/Sample/GeneratedAssets/{name}/

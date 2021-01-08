@@ -6,9 +6,9 @@ namespace AkyuiUnity.Editor.ScriptableObject
     public class AkyuiImportSettings : UnityEngine.ScriptableObject
     {
         public string PrefabOutputPath => prefabOutputPath;
-        [SerializeField] private string prefabOutputPath = "Assets/";
+        [SerializeField] private string prefabOutputPath = "Assets/{name}/";
 
         public string AssetOutputPath => assetOutputPath;
-        [SerializeField] private string assetOutputPath = "Assets/";
+        [SerializeField] private string assetOutputPath = "Assets/{name}";
     }
 }
