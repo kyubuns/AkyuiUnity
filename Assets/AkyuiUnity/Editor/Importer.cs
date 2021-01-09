@@ -175,6 +175,62 @@ namespace AkyuiUnity.Editor
                 var prefabGameObject = referenceMeta.root.gameObject;
                 prefabGameObject.transform.SetParent(parent);
 
+                var overrides = ((List<object>) element["overrides"]).Select(x => (Dictionary<string, object>) x).ToArray();
+                foreach (var @override in overrides)
+                {
+                    var idList = @override["id"].JsonIntArray();
+                    var target = referenceMeta.Find(idList[0]);
+                    var rectTransform = target.gameObject.GetComponent<RectTransform>();
+
+                    if (@override.ContainsKey("name"))
+                    {
+                        var name = @override["name"].JsonString();
+                        target.gameObject.name = name;
+                    }
+                    if (@override.ContainsKey("position"))
+                    {
+                        var position = @override["position"].JsonVector2();
+                        rectTransform.anchoredPosition = position;
+                    }
+                    if (@override.ContainsKey("size"))
+                    {
+                        var size = @override["size"].JsonVector2();
+                        rectTransform.sizeDelta = size;
+                    }
+                    if (@override.ContainsKey("anchor_min"))
+                    {
+                        var anchorMin = @override["anchor_min"].JsonVector2();
+                        rectTransform.anchorMin = anchorMin;
+                    }
+                    if (@override.ContainsKey("anchor_max"))
+                    {
+                        var anchorMax = @override["anchor_max"].JsonVector2();
+                        rectTransform.anchorMax = anchorMax;
+                    }
+                    if (@override.ContainsKey("pivot"))
+                    {
+                        var pivot = @override["pivot"].JsonVector2();
+                        rectTransform.pivot = pivot;
+                    }
+
+                    if (@override.ContainsKey("components"))
+                    {
+                        var components = ((List<object>) @override["components"]).Select(x => (Dictionary<string, object>) x).ToArray();
+                        foreach (var component in components)
+                        {
+                            var index = component["index"].JsonInt();
+                            var componentType = component["type"].JsonString();
+
+                            if (componentType == "text")
+                            {
+                                var targetText = (Text) target.components[index];
+                                targetText.text = component["text"].JsonString();
+                            }
+                        }
+                    }
+                }
+
+                Object.DestroyImmediate(metaGameObject);
                 return prefabGameObject;
             }
 
