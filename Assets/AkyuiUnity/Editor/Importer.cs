@@ -38,6 +38,7 @@ namespace AkyuiUnity.Editor
                     var metaGameObject = new GameObject(fileName);
                     var meta = metaGameObject.AddComponent<AkyuiMeta>();
                     gameObject.transform.SetParent(metaGameObject.transform);
+                    meta.timestamp = layoutJson["timestamp"].JsonInt();
                     meta.root = gameObject;
                     meta.idAndGameObjects = idAndGameObjects;
 

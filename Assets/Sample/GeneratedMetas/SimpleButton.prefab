@@ -44,6 +44,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e9b41a0cf8b347838cc3df031dda1163, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  timestamp: 1610182610
   root: {fileID: 887855988340200672}
   idAndGameObjects:
   - id: 02000000
