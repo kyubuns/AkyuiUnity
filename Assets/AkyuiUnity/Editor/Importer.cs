@@ -36,7 +36,7 @@ namespace AkyuiUnity.Editor
                             var prevMeta = prevMetaObject.GetComponent<AkyuiMeta>();
                             if (prevMeta.timestamp == pathGetter.Timestamp)
                             {
-                                Debug.Log($"Same timestamp. Skip.");
+                                Debug.Log($"Skip (same timestamp)");
                                 continue;
                             }
                         }
@@ -44,7 +44,7 @@ namespace AkyuiUnity.Editor
 
                     // assets
                     var assets = (List<object>) assetsJson["assets"];
-                    ImportAssets(zipFile, pathGetter, assets.Select(x => (Dictionary<string, object>) x).ToArray());
+                    ImportAssets(settings, zipFile, pathGetter, assets.Select(x => (Dictionary<string, object>) x).ToArray());
 
                     // layout
                     var elements = (List<object>) layoutJson["elements"];
@@ -83,7 +83,7 @@ namespace AkyuiUnity.Editor
             }
         }
 
-        private static void ImportAssets(ZipFile zipFile, PathGetter pathGetter, Dictionary<string, object>[] elements)
+        private static void ImportAssets(AkyuiImportSettings settings, ZipFile zipFile, PathGetter pathGetter, Dictionary<string, object>[] elements)
         {
             var fileName = Path.GetFileNameWithoutExtension(zipFile.Name);
             var assetsParentPath = Path.GetDirectoryName(Application.dataPath) ?? "";
@@ -106,7 +106,22 @@ namespace AkyuiUnity.Editor
                     {
                         stream.CopyTo(memoryStream);
                         var bytes = memoryStream.ToArray();
-                        File.WriteAllBytes(Path.Combine(assetsParentPath, savePath), bytes);
+                        var assetSaveFullPath = Path.Combine(assetsParentPath, savePath);
+
+                        if (settings.CheckAssetBinary)
+                        {
+                            if (File.Exists(assetSaveFullPath))
+                            {
+                                var prevBytes = File.ReadAllBytes(assetSaveFullPath);
+                                if (IsSame(prevBytes, bytes))
+                                {
+                                    Debug.Log($"{file} Skip (same bytes)");
+                                    continue;
+                                }
+                            }
+                        }
+
+                        File.WriteAllBytes(assetSaveFullPath, bytes);
                     }
 
                     PostProcessImportAsset.ProcessingFile = savePath;
@@ -120,6 +135,16 @@ namespace AkyuiUnity.Editor
                     Debug.LogWarning($"Unknown type {type}");
                 }
             }
+        }
+
+        private static bool IsSame(byte[] a, byte[] b)
+        {
+            if (a.Length != b.Length) return false;
+            for (var i = 0; i < a.Length; ++i)
+            {
+                if (a[i] != b[i]) return false;
+            }
+            return true;
         }
 
         private static (GameObject, IdAndGameObject[]) CreateGameObject(PathGetter pathGetter, Dictionary<string, object>[] elements, int rootId)

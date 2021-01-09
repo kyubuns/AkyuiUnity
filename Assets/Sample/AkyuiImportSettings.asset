@@ -15,3 +15,5 @@ MonoBehaviour:
   prefabOutputPath: Assets/Sample/GeneratedPrefabs/{name}
   assetOutputDirectoryPath: Assets/Sample/GeneratedAssets/{name}/
   metaOutputPath: Assets/Sample/GeneratedMetas/{name}
+  checkTimestamp: 0
+  checkAssetBinary: 1
