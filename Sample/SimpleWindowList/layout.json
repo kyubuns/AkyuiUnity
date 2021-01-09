@@ -1,0 +1,65 @@
+{
+    "meta": {
+        "version": "0.1.0",
+        "generated_by": "hand written"
+    },
+    "root": 1,
+    "elements": [
+        {
+            "id": 1,
+            "type": "object",
+            "name": "WindowList",
+            "position": [0.0, 0.0],
+            "size": [800.0, 600.0],
+            "anchor_min": [0.5, 0.5],
+            "anchor_max": [0.5, 0.5],
+            "pivot": [0.5, 0.5],
+            "components": [],
+            "children": [6, 7]
+        },
+        {
+            "id": 6,
+            "type": "prefab",
+            "reference": "SimpleWindow",
+            "overrides":
+            [
+                {
+                    "id": [1],
+                    "position": [-200.0, 0.0]
+                },
+                {
+                    "id": [4, 3],
+                    "components":[
+                        {
+                            "index": 0,
+                            "type": "text",
+                            "text": "window1"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": 7,
+            "type": "prefab",
+            "reference": "SimpleWindow",
+            "overrides":
+            [
+                {
+                    "id": [1],
+                    "position": [200.0, 0.0]
+                },
+                {
+                    "id": [4, 3],
+                    "components":[
+                        {
+                            "index": 0,
+                            "type": "text",
+                            "text": "window2"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
