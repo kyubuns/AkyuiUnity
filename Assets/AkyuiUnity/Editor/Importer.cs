@@ -50,6 +50,7 @@ namespace AkyuiUnity.Editor
                     var elements = (List<object>) layoutJson["elements"];
                     var rootId = layoutJson["root"].JsonInt();
                     var (gameObject, idAndGameObjects) = CreateGameObject(pathGetter, elements.Select(x => (Dictionary<string, object>) x).ToArray(), rootId);
+                    foreach (var trigger in settings.Triggers) trigger.OnPostprocessPrefab(gameObject);
 
                     // meta
                     var metaGameObject = new GameObject(fileName);

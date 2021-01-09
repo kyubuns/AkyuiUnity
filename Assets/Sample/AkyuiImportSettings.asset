@@ -17,3 +17,5 @@ MonoBehaviour:
   metaOutputPath: Assets/Sample/GeneratedMetas/{name}
   checkTimestamp: 0
   checkAssetBinary: 1
+  triggers:
+  - {fileID: 11400000, guid: f5df8baa27478495c998a2c13fa14b80, type: 2}
