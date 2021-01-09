@@ -3,7 +3,7 @@
         "version": "0.1.0",
         "generated_by": "hand written"
     },
-    "timestamp": 1610182610,
+    "timestamp": 1610182611,
     "root": 1,
     "elements": [
         {
@@ -16,7 +16,7 @@
             "anchor_max": [0.5, 0.5],
             "pivot": [0.5, 0.5],
             "components": [],
-            "children": [6, 7]
+            "children": [6, 7, 8]
         },
         {
             "id": 6,
@@ -63,6 +63,41 @@
                     ]
                 }
             ]
+        },
+        {
+            "id": 8,
+            "type": "object",
+            "name": "ImageList",
+            "position": [0.0, 200.0],
+            "size": [400.0, 0.0],
+            "anchor_min": [0.5, 0.5],
+            "anchor_max": [0.5, 0.5],
+            "pivot": [0.5, 0.5],
+            "components": [
+                {
+                    "type": "layoutgroup",
+                    "direction": "horizontal"
+                }
+            ],
+            "children": [9]
+        },
+        {
+            "id": 9,
+            "type": "object",
+            "name": "Dummy",
+            "position": [0.0, 0.0],
+            "size": [100.0, 100.0],
+            "anchor_min": [0.5, 0.5],
+            "anchor_max": [0.5, 0.5],
+            "pivot": [0.5, 0.5],
+            "components": [
+                {
+                    "type": "image",
+                    "sprite": "Dummy.png",
+                    "color": [255, 255, 255, 255]
+                }
+            ],
+            "children": []
         }
     ]
 }

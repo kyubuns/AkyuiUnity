@@ -214,16 +214,17 @@ namespace AkyuiUnity.Editor
             {
                 var reference = element["reference"].JsonString();
                 var referenceTimestamp = element["timestamp"].JsonInt();
-                if (referenceTimestamp != pathGetter.Timestamp)
-                {
-                    Debug.LogWarning($"Reference {reference} timestamp mismatch {referenceTimestamp} != {pathGetter.Timestamp}");
-                }
 
                 var metaGameObject = (GameObject) PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>(pathGetter.GetMetaPath(reference)));
                 PrefabUtility.UnpackPrefabInstance(metaGameObject, PrefabUnpackMode.OutermostRoot, InteractionMode.AutomatedAction);
                 var referenceMeta = metaGameObject.GetComponent<AkyuiMeta>();
                 var prefabGameObject = referenceMeta.root.gameObject;
                 prefabGameObject.transform.SetParent(parent);
+
+                if (referenceTimestamp != referenceMeta.timestamp)
+                {
+                    Debug.LogWarning($"Reference {reference} timestamp mismatch {referenceTimestamp} != {referenceMeta.timestamp}");
+                }
 
                 var overrides = ((List<object>) element["overrides"]).Select(x => (Dictionary<string, object>) x).ToArray();
                 foreach (var @override in overrides)
@@ -334,6 +335,32 @@ namespace AkyuiUnity.Editor
             {
                 var button = gameObject.AddComponent<Button>();
                 return button;
+            }
+
+            if (type == "layoutgroup")
+            {
+                var direction = component["direction"].JsonString();
+
+                LayoutGroup layoutGroup = null;
+                if (direction == "horizontal")
+                {
+                    var horizontalLayoutGroup = gameObject.AddComponent<HorizontalLayoutGroup>();
+                    horizontalLayoutGroup.childForceExpandWidth = false;
+                    horizontalLayoutGroup.childForceExpandHeight = false;
+                    layoutGroup = horizontalLayoutGroup;
+                }
+                else if (direction == "vertical")
+                {
+                    var verticalLayoutGroup = gameObject.AddComponent<VerticalLayoutGroup>();
+                    verticalLayoutGroup.childForceExpandWidth = false;
+                    verticalLayoutGroup.childForceExpandHeight = false;
+                    layoutGroup = verticalLayoutGroup;
+                }
+                else
+                {
+                    Debug.LogWarning($"Unknown direction {direction}");
+                }
+                return layoutGroup;
             }
 
             Debug.LogWarning($"Unknown component {type}");

@@ -128,6 +128,36 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 517194390}
     m_Modifications:
+    - target: {fileID: 1544496516810309319, guid: 424bdaf829563424192e20ae4493119e,
+        type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1544496516810309319, guid: 424bdaf829563424192e20ae4493119e,
+        type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1544496516810309319, guid: 424bdaf829563424192e20ae4493119e,
+        type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1544496516810309319, guid: 424bdaf829563424192e20ae4493119e,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1544496516810309319, guid: 424bdaf829563424192e20ae4493119e,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1544496516810309319, guid: 424bdaf829563424192e20ae4493119e,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3168339244422639616, guid: 424bdaf829563424192e20ae4493119e,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -641,4 +671,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 349829f5a1b5f477e8b363c7171eb6ad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  uCache: {fileID: 505976117}
+  uiCache: {fileID: 505976117}
