@@ -31,7 +31,8 @@ namespace AkyuiUnity.Editor
                     // layout
                     var layoutJson = GetJson(zipFile, Path.Combine(fileName, "layout.json"));
                     var elements = (List<object>) layoutJson["elements"];
-                    var gameObject = CreateGameObject(assetOutputDirectoryPath, elements.Select(x => (Dictionary<string, object>) x).ToArray());
+                    var rootId = layoutJson["root"].JsonInt();
+                    var gameObject = CreateGameObject(assetOutputDirectoryPath, elements.Select(x => (Dictionary<string, object>) x).ToArray(), rootId);
                     var savePath = settings.PrefabOutputPath.Replace("{name}", fileName) + ".prefab";
                     PrefabUtility.SaveAsPrefabAsset(gameObject, savePath);
                     Object.DestroyImmediate(gameObject);
@@ -94,11 +95,10 @@ namespace AkyuiUnity.Editor
             }
         }
 
-        private static GameObject CreateGameObject(string assetOutputDirectoryPath, Dictionary<string, object>[] elements)
+        private static GameObject CreateGameObject(string assetOutputDirectoryPath, Dictionary<string, object>[] elements, int rootId)
         {
             var idToElement = new Dictionary<int, Dictionary<string, object>>();
 
-            var rootId = elements[0]["id"].JsonInt();
             foreach (var element in elements)
             {
                 var id = element["id"].JsonInt();
