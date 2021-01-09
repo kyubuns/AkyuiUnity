@@ -6,6 +6,7 @@ namespace AkyuiUnity
 {
     public class AkyuiMeta : MonoBehaviour
     {
+        [SerializeField] public GameObject root;
         [SerializeField] public IdAndGameObject[] idAndGameObjects;
 
         public IdAndGameObject Find(int id)

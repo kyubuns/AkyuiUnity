@@ -21,29 +21,28 @@ namespace AkyuiUnity.Editor
                 using (var zipFile = new ZipFile(filePath))
                 {
                     var fileName = Path.GetFileNameWithoutExtension(zipFile.Name);
-                    var assetOutputDirectoryPath = settings.AssetOutputDirectoryPath.Replace("{name}", fileName);
+                    var pathGetter = new PathGetter(settings, fileName);
 
                     // assets
                     var assetsJson = GetJson(zipFile, Path.Combine(fileName, "assets.json"));
                     var assets = (List<object>) assetsJson["assets"];
-                    ImportAssets(zipFile, assetOutputDirectoryPath, assets.Select(x => (Dictionary<string, object>) x).ToArray());
+                    ImportAssets(zipFile, pathGetter, assets.Select(x => (Dictionary<string, object>) x).ToArray());
 
                     // layout
                     var layoutJson = GetJson(zipFile, Path.Combine(fileName, "layout.json"));
                     var elements = (List<object>) layoutJson["elements"];
                     var rootId = layoutJson["root"].JsonInt();
-                    var (gameObject, idAndGameObjects) = CreateGameObject(assetOutputDirectoryPath, elements.Select(x => (Dictionary<string, object>) x).ToArray(), rootId);
+                    var (gameObject, idAndGameObjects) = CreateGameObject(pathGetter, elements.Select(x => (Dictionary<string, object>) x).ToArray(), rootId);
 
                     // meta
                     var metaGameObject = new GameObject(fileName);
                     var meta = metaGameObject.AddComponent<AkyuiMeta>();
                     gameObject.transform.SetParent(metaGameObject.transform);
+                    meta.root = gameObject;
                     meta.idAndGameObjects = idAndGameObjects;
 
-                    var prefabSavePath = settings.PrefabOutputPath.Replace("{name}", fileName) + ".prefab";
-                    var metaSavePath = settings.MetaOutputPath.Replace("{name}", fileName) + ".prefab";
-                    PrefabUtility.SaveAsPrefabAssetAndConnect(gameObject, prefabSavePath, InteractionMode.AutomatedAction);
-                    PrefabUtility.SaveAsPrefabAsset(metaGameObject, metaSavePath);
+                    PrefabUtility.SaveAsPrefabAssetAndConnect(gameObject, pathGetter.PrefabSavePath, InteractionMode.AutomatedAction);
+                    PrefabUtility.SaveAsPrefabAsset(metaGameObject, pathGetter.MetaSavePath);
 
                     Object.DestroyImmediate(gameObject);
                     Object.DestroyImmediate(metaGameObject);
@@ -66,12 +65,12 @@ namespace AkyuiUnity.Editor
             }
         }
 
-        private static void ImportAssets(ZipFile zipFile, string assetOutputDirectoryPath, Dictionary<string, object>[] elements)
+        private static void ImportAssets(ZipFile zipFile, PathGetter pathGetter, Dictionary<string, object>[] elements)
         {
             var fileName = Path.GetFileNameWithoutExtension(zipFile.Name);
             var assetsParentPath = Path.GetDirectoryName(Application.dataPath) ?? "";
 
-            var assetOutputDirectoryFullPath = Path.Combine(assetsParentPath, assetOutputDirectoryPath);
+            var assetOutputDirectoryFullPath = Path.Combine(assetsParentPath, pathGetter.AssetOutputDirectoryPath);
             if (!Directory.Exists(assetOutputDirectoryFullPath)) Directory.CreateDirectory(assetOutputDirectoryFullPath);
 
             foreach (var element in elements)
@@ -83,7 +82,7 @@ namespace AkyuiUnity.Editor
 
                     var assetEntry = zipFile.FindEntry(Path.Combine(fileName, "assets", file), true);
                     var stream = zipFile.GetInputStream(assetEntry);
-                    var savePath = Path.Combine(assetOutputDirectoryPath, file);
+                    var savePath = Path.Combine(pathGetter.AssetOutputDirectoryPath, file);
 
                     using (var memoryStream = new MemoryStream())
                     {
@@ -105,7 +104,7 @@ namespace AkyuiUnity.Editor
             }
         }
 
-        private static (GameObject, IdAndGameObject[]) CreateGameObject(string assetOutputDirectoryPath, Dictionary<string, object>[] elements, int rootId)
+        private static (GameObject, IdAndGameObject[]) CreateGameObject(PathGetter pathGetter, Dictionary<string, object>[] elements, int rootId)
         {
             var idToElement = new Dictionary<int, Dictionary<string, object>>();
 
@@ -116,61 +115,81 @@ namespace AkyuiUnity.Editor
             }
 
             var meta = new List<IdAndGameObject>();
-            var gameObject = CreateGameObject(assetOutputDirectoryPath, idToElement, rootId, null, ref meta);
+            var gameObject = CreateGameObject(pathGetter, idToElement, rootId, null, ref meta);
             return (gameObject, meta.ToArray());
         }
 
-        private static GameObject CreateGameObject(string assetOutputDirectoryPath, Dictionary<int, Dictionary<string, object>> idToElement, int id, Transform parent, ref List<IdAndGameObject> meta)
+        private static GameObject CreateGameObject(PathGetter pathGetter, Dictionary<int, Dictionary<string, object>> idToElement, int id, Transform parent, ref List<IdAndGameObject> meta)
         {
             var element = idToElement[id];
-            var name = element["name"].JsonString();
-            var position = element["position"].JsonVector2();
-            var size = element["size"].JsonVector2();
-            var anchorMin = element["anchor_min"].JsonVector2();
-            var anchorMax = element["anchor_max"].JsonVector2();
-            var pivot = element["pivot"].JsonVector2();
-            var children = element["children"].JsonIntArray();
-            var components = ((List<object>) element["components"]).Select(x => (Dictionary<string, object>) x).ToArray();
+            var type = element["type"].JsonString();
 
-            var gameObject = new GameObject(name);
-            gameObject.transform.SetParent(parent);
-
-            var rectTransform = gameObject.AddComponent<RectTransform>();
-            rectTransform.anchoredPosition = position;
-            rectTransform.sizeDelta = size;
-            rectTransform.anchorMin = anchorMin;
-            rectTransform.anchorMax = anchorMax;
-            rectTransform.pivot = pivot;
-
-            var createdComponents = new List<Component>();
-            foreach (var component in components)
+            if (type == "object")
             {
-                createdComponents.Add(CreateComponent(assetOutputDirectoryPath, gameObject, component));
+                var name = element["name"].JsonString();
+                var position = element["position"].JsonVector2();
+                var size = element["size"].JsonVector2();
+                var anchorMin = element["anchor_min"].JsonVector2();
+                var anchorMax = element["anchor_max"].JsonVector2();
+                var pivot = element["pivot"].JsonVector2();
+                var children = element["children"].JsonIntArray();
+                var components = ((List<object>) element["components"]).Select(x => (Dictionary<string, object>) x).ToArray();
+
+                var gameObject = new GameObject(name);
+                gameObject.transform.SetParent(parent);
+
+                var rectTransform = gameObject.AddComponent<RectTransform>();
+                rectTransform.anchoredPosition = position;
+                rectTransform.sizeDelta = size;
+                rectTransform.anchorMin = anchorMin;
+                rectTransform.anchorMax = anchorMax;
+                rectTransform.pivot = pivot;
+
+                var createdComponents = new List<Component>();
+                foreach (var component in components)
+                {
+                    createdComponents.Add(CreateComponent(pathGetter, gameObject, component));
+                }
+
+                meta.Add(new IdAndGameObject
+                {
+                    id = id,
+                    gameObject = gameObject,
+                    components = createdComponents.ToArray(),
+                });
+
+                foreach (var child in children)
+                {
+                    CreateGameObject(pathGetter, idToElement, child, gameObject.transform, ref meta);
+                }
+
+                return gameObject;
             }
 
-            meta.Add(new IdAndGameObject
+            if (type == "prefab")
             {
-                id = id,
-                gameObject = gameObject,
-                components = createdComponents.ToArray(),
-            });
+                var reference = element["reference"].JsonString();
+                var metaGameObject = (GameObject) PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>(pathGetter.GetMetaPath(reference)));
+                PrefabUtility.UnpackPrefabInstance(metaGameObject, PrefabUnpackMode.OutermostRoot, InteractionMode.AutomatedAction);
+                var referenceMeta = metaGameObject.GetComponent<AkyuiMeta>();
+                var prefabGameObject = referenceMeta.root.gameObject;
+                prefabGameObject.transform.SetParent(parent);
 
-            foreach (var child in children)
-            {
-                CreateGameObject(assetOutputDirectoryPath, idToElement, child, gameObject.transform, ref meta);
+                return prefabGameObject;
             }
 
-            return gameObject;
+            Debug.LogWarning($"Unknown type {type}");
+            return null;
         }
 
-        private static Component CreateComponent(string assetOutputDirectoryPath, GameObject gameObject, Dictionary<string, object> component)
+        private static Component CreateComponent(PathGetter pathGetter, GameObject gameObject, Dictionary<string, object> component)
         {
             var type = component["type"].JsonString();
 
             if (type == "image")
             {
                 var image = gameObject.AddComponent<Image>();
-                image.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(Path.Combine(assetOutputDirectoryPath, component["sprite"].JsonString()));
+                image.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(Path.Combine(pathGetter.AssetOutputDirectoryPath, component["sprite"].JsonString()));
                 image.color = component["color"].JsonColor();
                 return image;
             }
@@ -216,6 +235,26 @@ namespace AkyuiUnity.Editor
 
             var textureImporter = (TextureImporter) assetImporter;
             textureImporter.textureType = TextureImporterType.Sprite;
+        }
+    }
+
+    public class PathGetter
+    {
+        public string AssetOutputDirectoryPath { get; }
+        public string PrefabSavePath { get; }
+        public string MetaSavePath { get; }
+
+        public string GetMetaPath(string fileName) => _settings.MetaOutputPath.Replace("{name}", fileName) + ".prefab";
+
+        private readonly AkyuiImportSettings _settings;
+
+        public PathGetter(AkyuiImportSettings settings, string fileName)
+        {
+            _settings = settings;
+
+            AssetOutputDirectoryPath = settings.AssetOutputDirectoryPath.Replace("{name}", fileName);
+            PrefabSavePath = settings.PrefabOutputPath.Replace("{name}", fileName) + ".prefab";
+            MetaSavePath = GetMetaPath(fileName);
         }
     }
 }
