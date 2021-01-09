@@ -1,0 +1,18 @@
+{
+    "name": "AkyuiUnity.AnKuchen",
+    "references": [
+        "GUID:7b86636ae54bf4d0a9e4e5fbb7d99c3f",
+        "GUID:f48a88687021943959a850c81ac6e5b5"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
