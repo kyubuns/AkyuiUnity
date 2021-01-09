@@ -1,0 +1,64 @@
+{
+    "guid": "13ab2d260231406399247cf35d111914",
+    "meta": {
+        "version": "0.1.0",
+        "generated_by": "hand written"
+    },
+    "root": 1,
+    "elements": [
+        {
+            "id": 1,
+            "type": "object",
+            "name": "Sample",
+            "position": [0.0, 0.0],
+            "size": [800.0, 600.0],
+            "anchor_min": [0.5, 0.5],
+            "anchor_max": [0.5, 0.5],
+            "pivot": [0.5, 0.5],
+            "components": [],
+            "children": [2]
+        },
+        {
+            "id": 2,
+            "type": "object",
+            "name": "Button",
+            "position": [100.0, 100.0],
+            "size": [200.0, 100.0],
+            "anchor_min": [0.5, 0.5],
+            "anchor_max": [0.5, 0.5],
+            "pivot": [0.5, 0.5],
+            "components": [
+                {
+                    "type": "image",
+                    "sprite": "Hoge_ButtonBase.png",
+                    "color": [255, 255, 255, 255]
+                },
+                {
+                    "type": "button"
+                }
+            ],
+            "children": [3]
+        },
+        {
+            "id": 3,
+            "type": "object",
+            "name": "Text",
+            "position": [0.0, 0.0],
+            "size": [200.0, 100.0],
+            "anchor_min": [0.5, 0.5],
+            "anchor_max": [0.5, 0.5],
+            "pivot": [0.5, 0.5],
+            "components": [
+                {
+                    "type": "text",
+                    "text": "Button",
+                    "font": "FontName",
+                    "size": 14,
+                    "color": [50, 50, 50, 255],
+                    "align": "middle_center"
+                }
+            ],
+            "children": []
+        }
+    ]
+}
