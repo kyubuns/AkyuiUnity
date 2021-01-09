@@ -13,5 +13,8 @@ namespace AkyuiUnity.Editor.ScriptableObject
 
         public string MetaOutputPath => metaOutputPath;
         [SerializeField] private string metaOutputPath = "Assets/{name}Meta";
+
+        public bool CheckTimestamp => checkTimestamp;
+        [SerializeField] private bool checkTimestamp = true;
     }
 }
