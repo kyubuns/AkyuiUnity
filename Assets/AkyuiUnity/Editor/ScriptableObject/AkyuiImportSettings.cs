@@ -10,5 +10,8 @@ namespace AkyuiUnity.Editor.ScriptableObject
 
         public string AssetOutputDirectoryPath => assetOutputDirectoryPath;
         [SerializeField] private string assetOutputDirectoryPath = "Assets/{name}/";
+
+        public string MetaOutputPath => metaOutputPath;
+        [SerializeField] private string metaOutputPath = "Assets/{name}Meta";
     }
 }

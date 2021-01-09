@@ -440,7 +440,7 @@ PrefabInstance:
     - target: {fileID: 8336457603333255608, guid: a32c17c1744594757ac9f0d8f85f0c5f,
         type: 3}
       propertyPath: m_RootOrder
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8336457603333255608, guid: a32c17c1744594757ac9f0d8f85f0c5f,
         type: 3}
@@ -511,6 +511,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: SimpleWindow
+      objectReference: {fileID: 0}
+    - target: {fileID: 8397954618925721471, guid: a32c17c1744594757ac9f0d8f85f0c5f,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a32c17c1744594757ac9f0d8f85f0c5f, type: 3}

@@ -32,13 +32,23 @@ namespace AkyuiUnity.Editor
                     var layoutJson = GetJson(zipFile, Path.Combine(fileName, "layout.json"));
                     var elements = (List<object>) layoutJson["elements"];
                     var rootId = layoutJson["root"].JsonInt();
-                    var gameObject = CreateGameObject(assetOutputDirectoryPath, elements.Select(x => (Dictionary<string, object>) x).ToArray(), rootId);
-                    var savePath = settings.PrefabOutputPath.Replace("{name}", fileName) + ".prefab";
-                    PrefabUtility.SaveAsPrefabAsset(gameObject, savePath);
-                    Object.DestroyImmediate(gameObject);
+                    var (gameObject, idAndGameObjects) = CreateGameObject(assetOutputDirectoryPath, elements.Select(x => (Dictionary<string, object>) x).ToArray(), rootId);
 
-                    AssetDatabase.Refresh();
+                    // meta
+                    var metaGameObject = new GameObject(fileName);
+                    var meta = metaGameObject.AddComponent<AkyuiMeta>();
+                    gameObject.transform.SetParent(metaGameObject.transform);
+                    meta.idAndGameObjects = idAndGameObjects;
+
+                    var prefabSavePath = settings.PrefabOutputPath.Replace("{name}", fileName) + ".prefab";
+                    var metaSavePath = settings.MetaOutputPath.Replace("{name}", fileName) + ".prefab";
+                    PrefabUtility.SaveAsPrefabAssetAndConnect(gameObject, prefabSavePath, InteractionMode.AutomatedAction);
+                    PrefabUtility.SaveAsPrefabAsset(metaGameObject, metaSavePath);
+
+                    Object.DestroyImmediate(gameObject);
+                    Object.DestroyImmediate(metaGameObject);
                 }
+                AssetDatabase.Refresh();
                 Debug.Log($"Import Finish: {filePath}");
             }
         }
@@ -95,7 +105,7 @@ namespace AkyuiUnity.Editor
             }
         }
 
-        private static GameObject CreateGameObject(string assetOutputDirectoryPath, Dictionary<string, object>[] elements, int rootId)
+        private static (GameObject, IdAndGameObject[]) CreateGameObject(string assetOutputDirectoryPath, Dictionary<string, object>[] elements, int rootId)
         {
             var idToElement = new Dictionary<int, Dictionary<string, object>>();
 
@@ -105,10 +115,12 @@ namespace AkyuiUnity.Editor
                 idToElement[id] = element;
             }
 
-            return CreateGameObject(assetOutputDirectoryPath, idToElement, rootId, null);
+            var meta = new List<IdAndGameObject>();
+            var gameObject = CreateGameObject(assetOutputDirectoryPath, idToElement, rootId, null, ref meta);
+            return (gameObject, meta.ToArray());
         }
 
-        private static GameObject CreateGameObject(string assetOutputDirectoryPath, Dictionary<int, Dictionary<string, object>> idToElement, int id, Transform parent)
+        private static GameObject CreateGameObject(string assetOutputDirectoryPath, Dictionary<int, Dictionary<string, object>> idToElement, int id, Transform parent, ref List<IdAndGameObject> meta)
         {
             var element = idToElement[id];
             var name = element["name"].JsonString();
@@ -130,29 +142,40 @@ namespace AkyuiUnity.Editor
             rectTransform.anchorMax = anchorMax;
             rectTransform.pivot = pivot;
 
+            var createdComponents = new List<Component>();
             foreach (var component in components)
             {
-                CreateComponent(assetOutputDirectoryPath, gameObject, component);
+                createdComponents.Add(CreateComponent(assetOutputDirectoryPath, gameObject, component));
             }
+
+            meta.Add(new IdAndGameObject
+            {
+                id = id,
+                gameObject = gameObject,
+                components = createdComponents.ToArray(),
+            });
 
             foreach (var child in children)
             {
-                CreateGameObject(assetOutputDirectoryPath, idToElement, child, gameObject.transform);
+                CreateGameObject(assetOutputDirectoryPath, idToElement, child, gameObject.transform, ref meta);
             }
 
             return gameObject;
         }
 
-        private static void CreateComponent(string assetOutputDirectoryPath, GameObject gameObject, Dictionary<string, object> component)
+        private static Component CreateComponent(string assetOutputDirectoryPath, GameObject gameObject, Dictionary<string, object> component)
         {
             var type = component["type"].JsonString();
+
             if (type == "image")
             {
                 var image = gameObject.AddComponent<Image>();
                 image.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(Path.Combine(assetOutputDirectoryPath, component["sprite"].JsonString()));
                 image.color = component["color"].JsonColor();
+                return image;
             }
-            else if (type == "text")
+
+            if (type == "text")
             {
                 var text = gameObject.AddComponent<Text>();
                 text.text = component["text"].JsonString();
@@ -168,15 +191,18 @@ namespace AkyuiUnity.Editor
                         Debug.LogWarning($"Unknown align {component["align"].JsonString()}");
                         break;
                 }
+
+                return text;
             }
-            else if (type == "button")
+
+            if (type == "button")
             {
-                gameObject.AddComponent<Button>();
+                var button = gameObject.AddComponent<Button>();
+                return button;
             }
-            else
-            {
-                Debug.LogWarning($"Unknown component {type}");
-            }
+
+            Debug.LogWarning($"Unknown component {type}");
+            return null;
         }
     }
 

@@ -1,5 +1,4 @@
 {
-    "guid": "06dae8da-3d6b-4f66-b619-b56bab964abc",
     "meta": {
         "version": "0.1.0",
         "generated_by": "hand written"
@@ -59,6 +58,27 @@
                 }
             ],
             "children": []
+        },
+        {
+            "id": 4,
+            "type": "prefab",
+            "reference": "SimpleButton",
+            "overrides":
+            [
+                {
+                    "id": [2],
+                    "position": [-100, -100]
+                },
+                {
+                    "id": [3],
+                    "components":[
+                        {
+                            "index": 0,
+                            "text": "hoge"
+                        }
+                    ]
+                }
+            ]
         }
     ]
 }
