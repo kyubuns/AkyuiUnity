@@ -1,23 +1,11 @@
 {
-    "guid": "06dae8da-3d6b-4f66-b619-b56bab964abc",
+    "guid": "f808fbcd-49ba-4624-ae08-56fc6b769b7e",
     "meta": {
         "version": "0.1.0",
         "generated_by": "hand written"
     },
-    "root": 1,
+    "root": 2,
     "elements": [
-        {
-            "id": 1,
-            "type": "object",
-            "name": "Sample",
-            "position": [0.0, 0.0],
-            "size": [800.0, 600.0],
-            "anchor_min": [0.5, 0.5],
-            "anchor_max": [0.5, 0.5],
-            "pivot": [0.5, 0.5],
-            "components": [],
-            "children": [2]
-        },
         {
             "id": 2,
             "type": "object",
@@ -51,7 +39,7 @@
             "components": [
                 {
                     "type": "text",
-                    "text": "Button",
+                    "text": "Prefab",
                     "font": "FontName",
                     "size": 14,
                     "color": [50, 50, 50, 255],
