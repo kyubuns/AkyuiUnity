@@ -22,6 +22,7 @@
             "id": 6,
             "type": "prefab",
             "reference": "SimpleWindow",
+            "timestamp": 1610182610,
             "overrides":
             [
                 {
@@ -44,6 +45,7 @@
             "id": 7,
             "type": "prefab",
             "reference": "SimpleWindow",
+            "timestamp": 1610182610,
             "overrides":
             [
                 {

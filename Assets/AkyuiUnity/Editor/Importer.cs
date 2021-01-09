@@ -21,15 +21,17 @@ namespace AkyuiUnity.Editor
                 using (var zipFile = new ZipFile(filePath))
                 {
                     var fileName = Path.GetFileNameWithoutExtension(zipFile.Name);
-                    var pathGetter = new PathGetter(settings, fileName);
+                    var layoutJson = GetJson(zipFile, Path.Combine(fileName, "layout.json"));
+                    var assetsJson = GetJson(zipFile, Path.Combine(fileName, "assets.json"));
+
+                    var metaTimestamp = layoutJson["timestamp"].JsonInt();
+                    var pathGetter = new PathGetter(settings, fileName, metaTimestamp);
 
                     // assets
-                    var assetsJson = GetJson(zipFile, Path.Combine(fileName, "assets.json"));
                     var assets = (List<object>) assetsJson["assets"];
                     ImportAssets(zipFile, pathGetter, assets.Select(x => (Dictionary<string, object>) x).ToArray());
 
                     // layout
-                    var layoutJson = GetJson(zipFile, Path.Combine(fileName, "layout.json"));
                     var elements = (List<object>) layoutJson["elements"];
                     var rootId = layoutJson["root"].JsonInt();
                     var (gameObject, idAndGameObjects) = CreateGameObject(pathGetter, elements.Select(x => (Dictionary<string, object>) x).ToArray(), rootId);
@@ -38,7 +40,7 @@ namespace AkyuiUnity.Editor
                     var metaGameObject = new GameObject(fileName);
                     var meta = metaGameObject.AddComponent<AkyuiMeta>();
                     gameObject.transform.SetParent(metaGameObject.transform);
-                    meta.timestamp = layoutJson["timestamp"].JsonInt();
+                    meta.timestamp = metaTimestamp;
                     meta.root = gameObject;
                     meta.idAndGameObjects = idAndGameObjects;
 
@@ -170,6 +172,12 @@ namespace AkyuiUnity.Editor
             if (type == "prefab")
             {
                 var reference = element["reference"].JsonString();
+                var referenceTimestamp = element["timestamp"].JsonInt();
+                if (referenceTimestamp != pathGetter.Timestamp)
+                {
+                    Debug.LogWarning($"Reference {reference} timestamp mismatch {referenceTimestamp} != {pathGetter.Timestamp}");
+                }
+
                 var metaGameObject = (GameObject) PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>(pathGetter.GetMetaPath(reference)));
                 PrefabUtility.UnpackPrefabInstance(metaGameObject, PrefabUnpackMode.OutermostRoot, InteractionMode.AutomatedAction);
                 var referenceMeta = metaGameObject.GetComponent<AkyuiMeta>();
@@ -310,18 +318,20 @@ namespace AkyuiUnity.Editor
         public string AssetOutputDirectoryPath { get; }
         public string PrefabSavePath { get; }
         public string MetaSavePath { get; }
+        public int Timestamp { get; }
 
         public string GetMetaPath(string fileName) => _settings.MetaOutputPath.Replace("{name}", fileName) + ".prefab";
 
         private readonly AkyuiImportSettings _settings;
 
-        public PathGetter(AkyuiImportSettings settings, string fileName)
+        public PathGetter(AkyuiImportSettings settings, string fileName, int timestamp)
         {
             _settings = settings;
 
             AssetOutputDirectoryPath = settings.AssetOutputDirectoryPath.Replace("{name}", fileName);
             PrefabSavePath = settings.PrefabOutputPath.Replace("{name}", fileName) + ".prefab";
             MetaSavePath = GetMetaPath(fileName);
+            Timestamp = timestamp;
         }
     }
 }

@@ -64,6 +64,7 @@
             "id": 4,
             "type": "prefab",
             "reference": "SimpleButton",
+            "timestamp": 1610182610,
             "overrides":
             [
                 {
@@ -86,6 +87,7 @@
             "id": 5,
             "type": "prefab",
             "reference": "SimpleButton",
+            "timestamp": 1610182610,
             "overrides":
             [
                 {
@@ -108,6 +110,7 @@
             "id": 6,
             "type": "prefab",
             "reference": "SimpleButton",
+            "timestamp": 1610182610,
             "overrides":
             [
                 {
