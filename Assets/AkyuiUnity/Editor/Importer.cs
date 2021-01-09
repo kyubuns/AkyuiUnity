@@ -153,7 +153,7 @@ namespace AkyuiUnity.Editor
 
                 meta.Add(new IdAndGameObject
                 {
-                    id = id,
+                    id = new[] { id },
                     gameObject = gameObject,
                     components = createdComponents.ToArray(),
                 });
@@ -179,7 +179,7 @@ namespace AkyuiUnity.Editor
                 foreach (var @override in overrides)
                 {
                     var idList = @override["id"].JsonIntArray();
-                    var target = referenceMeta.Find(idList[0]);
+                    var target = referenceMeta.Find(idList);
                     var rectTransform = target.gameObject.GetComponent<RectTransform>();
 
                     if (@override.ContainsKey("name"))
@@ -228,6 +228,16 @@ namespace AkyuiUnity.Editor
                             }
                         }
                     }
+                }
+
+                foreach (var idAndGameObject in referenceMeta.idAndGameObjects)
+                {
+                    meta.Add(new IdAndGameObject
+                    {
+                        id = new[] { id }.Concat(idAndGameObject.id).ToArray(),
+                        gameObject = idAndGameObject.gameObject,
+                        components = idAndGameObject.components
+                    });
                 }
 
                 Object.DestroyImmediate(metaGameObject);

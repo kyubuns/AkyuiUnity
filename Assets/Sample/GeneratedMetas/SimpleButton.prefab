@@ -46,12 +46,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   root: {fileID: 887855988340200672}
   idAndGameObjects:
-  - id: 2
+  - id: 02000000
     gameObject: {fileID: 887855988340200672}
     components:
     - {fileID: 3875280774092495330}
     - {fileID: 4965299763546619288}
-  - id: 3
+  - id: 03000000
     gameObject: {fileID: 4755594548269414876}
     components:
     - {fileID: 4011151257404712713}
