@@ -1,8 +1,9 @@
 {
     "name": "AkyuiUnity.AnKuchen",
     "references": [
-        "GUID:7b86636ae54bf4d0a9e4e5fbb7d99c3f",
-        "GUID:f48a88687021943959a850c81ac6e5b5"
+        "GUID:f48a88687021943959a850c81ac6e5b5",
+        "GUID:a439073e6c93d4a5bbdeebbe28645a3f",
+        "GUID:7b86636ae54bf4d0a9e4e5fbb7d99c3f"
     ],
     "includePlatforms": [
         "Editor"

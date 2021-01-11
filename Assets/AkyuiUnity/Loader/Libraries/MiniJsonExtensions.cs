@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-namespace AkyuiUnity.Editor.Extensions
+namespace AkyuiUnity.Loader.Internal
 {
     public static class MiniJsonExtensions
     {
@@ -16,6 +16,13 @@ namespace AkyuiUnity.Editor.Extensions
         {
             if (o is long l) return (int) l;
             if (o is double d) return (int) d;
+            throw new Exception($"{o} is {o.GetType()}");
+        }
+
+        public static float JsonFloat(this object o)
+        {
+            if (o is long l) return (float) l;
+            if (o is double d) return (float) d;
             throw new Exception($"{o} is {o.GetType()}");
         }
 
@@ -53,6 +60,23 @@ namespace AkyuiUnity.Editor.Extensions
             }).ToArray();
 
             return new Vector2(b[0], b[1]);
+        }
+
+        public static Dictionary<string, string> JsonStringDictionary(this object o)
+        {
+            var a = (Dictionary<string, object>) o;
+            return a.ToDictionary(x => x.Key, x => (string) x.Value);
+        }
+
+        public static Dictionary<string, object>[] JsonDictionaryArray(this object o)
+        {
+            var a = (List<object>) o;
+            return a.Select(x => (Dictionary<string, object>) x).ToArray();
+        }
+
+        public static Dictionary<string, object> JsonDictionary(this object o)
+        {
+            return (Dictionary<string, object>) o;
         }
     }
 }

@@ -30,7 +30,7 @@ namespace AkyuiUnity.Editor.ScriptableObject
 
                 var settings = (AkyuiImportSettings) target;
                 var paths = DragAndDrop.paths.Where(x => Path.GetExtension(x) == ".aky").ToArray();
-                if (paths.Length > 0) Importer.Import(paths, settings);
+                if (paths.Length > 0) Importer.Import(settings, paths);
                 Event.current.Use();
             }
         }

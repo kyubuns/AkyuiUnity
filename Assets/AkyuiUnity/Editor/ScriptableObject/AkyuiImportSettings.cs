@@ -17,9 +17,6 @@ namespace AkyuiUnity.Editor.ScriptableObject
         public bool CheckTimestamp => checkTimestamp;
         [SerializeField] private bool checkTimestamp = true;
 
-        public bool CheckAssetBinary => checkAssetBinary;
-        [SerializeField] private bool checkAssetBinary = true;
-
         public AkyuiImportTrigger[] Triggers => triggers;
         [SerializeField] private AkyuiImportTrigger[] triggers = default;
     }

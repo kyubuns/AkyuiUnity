@@ -41,7 +41,6 @@
                     "cid": 1,
                     "type": "text",
                     "text": "Prefab",
-                    "font": "FontName",
                     "size": 14,
                     "color": [50, 50, 50, 255],
                     "align": "middle_center"

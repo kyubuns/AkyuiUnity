@@ -8,16 +8,16 @@ namespace AkyuiUnity
     {
         [SerializeField] public int timestamp;
         [SerializeField] public GameObject root;
-        [SerializeField] public IdAndGameObject[] idAndGameObjects;
+        [SerializeField] public GameObjectWithId[] idAndGameObjects;
 
-        public IdAndGameObject Find(int[] id)
+        public GameObjectWithId Find(int[] eid)
         {
             return idAndGameObjects.First(x =>
             {
-                if (x.id.Length != id.Length) return false;
-                for (var i = 0; i < id.Length; ++i)
+                if (x.eid.Length != eid.Length) return false;
+                for (var i = 0; i < eid.Length; ++i)
                 {
-                    if (x.id[i] != id[i]) return false;
+                    if (x.eid[i] != eid[i]) return false;
                 }
                 return true;
             });
@@ -25,10 +25,17 @@ namespace AkyuiUnity
     }
 
     [Serializable]
-    public class IdAndGameObject
+    public class GameObjectWithId
     {
-        [SerializeField] public int[] id;
+        [SerializeField] public int[] eid;
         [SerializeField] public GameObject gameObject;
-        [SerializeField] public Component[] components;
+        [SerializeField] public ComponentWithId[] idAndComponents;
+    }
+
+    [Serializable]
+    public class ComponentWithId
+    {
+        [SerializeField] public int cid;
+        [SerializeField] public Component component;
     }
 }

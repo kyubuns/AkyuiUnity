@@ -1,0 +1,207 @@
+using System;
+using JetBrains.Annotations;
+using UnityEngine;
+
+namespace AkyuiUnity.Loader
+{
+    public interface ILoader : IDisposable
+    {
+        [NotNull] string FileName { get; }
+        [NotNull] LayoutInfo LayoutInfo { get; }
+        [NotNull] AssetsInfo AssetsInfo { get; }
+        [NotNull] byte[] LoadAsset(string fileName);
+    }
+
+    public class LayoutInfo
+    {
+        [NotNull] public readonly Meta Meta;
+        public readonly int Timestamp;
+        public readonly int Root;
+        [NotNull] public readonly IElement[] Elements;
+
+        public LayoutInfo([NotNull] Meta meta, int timestamp, int root, [NotNull] IElement[] elements)
+        {
+            Meta = meta;
+            Timestamp = timestamp;
+            Root = root;
+            Elements = elements;
+        }
+    }
+
+    public class AssetsInfo
+    {
+        [NotNull] public readonly IAsset[] Assets;
+
+        public AssetsInfo([NotNull] IAsset[] assets)
+        {
+            Assets = assets;
+        }
+    }
+
+    public interface IAsset
+    {
+        [NotNull] string FileName { get; }
+        int Timestamp { get; }
+    }
+
+    public class SpriteAsset : IAsset
+    {
+        public string FileName { get; }
+        public int Timestamp { get; }
+
+        public SpriteAsset([NotNull] string fileName, int timestamp)
+        {
+            FileName = fileName;
+            Timestamp = timestamp;
+        }
+    }
+
+    public class Meta
+    {
+        [NotNull] public readonly string Version;
+        [NotNull] public readonly string GeneratedBy;
+
+        public Meta([NotNull] string version, [NotNull] string generatedBy)
+        {
+            Version = version;
+            GeneratedBy = generatedBy;
+        }
+    }
+
+    public interface IElement
+    {
+        int Eid { get; }
+    }
+
+    public class ObjectElement : IElement
+    {
+        public int Eid { get; }
+        [NotNull] public readonly string Name;
+        [NotNull] public readonly Vector2 Position;
+        [NotNull] public readonly Vector2 Size;
+        [NotNull] public readonly Vector2 AnchorMin;
+        [NotNull] public readonly Vector2 AnchorMax;
+        [NotNull] public readonly IComponent[] Components;
+        [NotNull] public readonly int[] Children;
+
+        public ObjectElement(int eid, [NotNull] string name, [NotNull] Vector2 position, [NotNull] Vector2 size, [NotNull] Vector2 anchorMin, [NotNull] Vector2 anchorMax, [NotNull] IComponent[] components, [NotNull] int[] children)
+        {
+            Eid = eid;
+            Name = name;
+            Position = position;
+            Size = size;
+            AnchorMin = anchorMin;
+            AnchorMax = anchorMax;
+            Components = components;
+            Children = children;
+        }
+    }
+
+    public class PrefabElement : IElement
+    {
+        public int Eid { get; }
+        [NotNull] public readonly string Reference;
+        public readonly int Timestamp;
+        [NotNull] public readonly Override[] Overrides;
+
+        public PrefabElement(int eid, [NotNull] string reference, int timestamp, [NotNull] Override[] overrides)
+        {
+            Eid = eid;
+            Reference = reference;
+            Timestamp = timestamp;
+            Overrides = overrides;
+        }
+    }
+
+    public class Override
+    {
+        [NotNull] public int[] Eid { get; }
+        [CanBeNull] public readonly string Name;
+        [CanBeNull] public readonly Vector2? Position;
+        [CanBeNull] public readonly Vector2? Size;
+        [CanBeNull] public readonly Vector2? AnchorMin;
+        [CanBeNull] public readonly Vector2? AnchorMax;
+        [CanBeNull] public readonly IComponent[] Components;
+
+        public Override([NotNull] int[] eid, [CanBeNull] string name, [CanBeNull] Vector2? position, [CanBeNull] Vector2? size, [CanBeNull] Vector2? anchorMin, [CanBeNull] Vector2? anchorMax, [CanBeNull] IComponent[] components)
+        {
+            Eid = eid;
+            Name = name;
+            Position = position;
+            Size = size;
+            AnchorMin = anchorMin;
+            AnchorMax = anchorMax;
+            Components = components;
+        }
+    }
+
+    public interface IComponent
+    {
+        int Cid { get; }
+    }
+
+    public class ImageComponent : IComponent
+    {
+        public int Cid { get; }
+        [CanBeNull] public readonly string Sprite;
+        [CanBeNull] public readonly Color? Color;
+
+        public ImageComponent(int cid, [CanBeNull] string sprite, [CanBeNull] Color? color)
+        {
+            Cid = cid;
+            Sprite = sprite;
+            Color = color;
+        }
+    }
+
+    public class TextComponent : IComponent
+    {
+        public int Cid { get; }
+        [CanBeNull] public readonly string Text;
+        [CanBeNull] public readonly float? Size;
+        [CanBeNull] public readonly Color? Color;
+        [CanBeNull] public readonly TextAlign? Align;
+
+        public enum TextAlign
+        {
+            MiddleCenter,
+        }
+
+        public TextComponent(int cid, [CanBeNull] string text, [CanBeNull] float? size, [CanBeNull] Color? color, [CanBeNull] TextAlign? align)
+        {
+            Cid = cid;
+            Text = text;
+            Size = size;
+            Color = color;
+            Align = align;
+        }
+    }
+
+    public class ButtonComponent : IComponent
+    {
+        public int Cid { get; }
+
+        public ButtonComponent(int cid)
+        {
+            Cid = cid;
+        }
+    }
+
+    public class LayoutComponent : IComponent
+    {
+        public int Cid { get; }
+        [CanBeNull] public readonly LayoutDirection? Direction;
+
+        public enum LayoutDirection
+        {
+            TopToBottom,
+            LeftToRight,
+        }
+
+        public LayoutComponent(int cid, [CanBeNull] LayoutDirection? direction)
+        {
+            Cid = cid;
+            Direction = direction;
+        }
+    }
+}
