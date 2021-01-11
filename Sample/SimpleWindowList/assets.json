@@ -2,6 +2,7 @@
     "assets": [
         {
             "type": "sprite",
+            "timestamp": 12345,
             "file": "Dummy.png"
         }
     ]

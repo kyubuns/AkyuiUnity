@@ -7,33 +7,32 @@
     "root": 1,
     "elements": [
         {
-            "id": 1,
+            "eid": 1,
             "type": "object",
             "name": "WindowList",
             "position": [0.0, 0.0],
             "size": [800.0, 600.0],
             "anchor_min": [0.5, 0.5],
             "anchor_max": [0.5, 0.5],
-            "pivot": [0.5, 0.5],
             "components": [],
             "children": [6, 7, 8]
         },
         {
-            "id": 6,
+            "eid": 6,
             "type": "prefab",
             "reference": "SimpleWindow",
             "timestamp": 1610182610,
             "overrides":
             [
                 {
-                    "id": [1],
+                    "eid": [1],
                     "position": [-200.0, 0.0]
                 },
                 {
-                    "id": [4, 3],
+                    "eid": [4, 3],
                     "components":[
                         {
-                            "index": 0,
+                            "cid": 1,
                             "type": "text",
                             "text": "window1"
                         }
@@ -42,21 +41,21 @@
             ]
         },
         {
-            "id": 7,
+            "eid": 7,
             "type": "prefab",
             "reference": "SimpleWindow",
             "timestamp": 1610182610,
             "overrides":
             [
                 {
-                    "id": [1],
+                    "eid": [1],
                     "position": [200.0, 0.0]
                 },
                 {
-                    "id": [4, 3],
+                    "eid": [4, 3],
                     "components":[
                         {
-                            "index": 0,
+                            "cid": 1,
                             "type": "text",
                             "text": "window2"
                         }
@@ -65,33 +64,33 @@
             ]
         },
         {
-            "id": 8,
+            "eid": 8,
             "type": "object",
             "name": "ImageList",
             "position": [0.0, 200.0],
             "size": [400.0, 0.0],
             "anchor_min": [0.5, 0.5],
             "anchor_max": [0.5, 0.5],
-            "pivot": [0.5, 0.5],
             "components": [
                 {
-                    "type": "layoutgroup",
-                    "direction": "horizontal"
+                    "cid": 1,
+                    "type": "layout",
+                    "direction": "left_to_right"
                 }
             ],
             "children": [9]
         },
         {
-            "id": 9,
+            "eid": 9,
             "type": "object",
             "name": "Dummy",
             "position": [0.0, 0.0],
             "size": [100.0, 100.0],
             "anchor_min": [0.5, 0.5],
             "anchor_max": [0.5, 0.5],
-            "pivot": [0.5, 0.5],
             "components": [
                 {
+                    "cid": 1,
                     "type": "image",
                     "sprite": "Dummy.png",
                     "color": [255, 255, 255, 255]
