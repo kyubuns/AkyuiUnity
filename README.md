@@ -6,3 +6,5 @@ AkyuiUnity is a Unity implementation of [Akyui](https://github.com/kyubuns/Akyui
 
 under development
 
+UnityPackageManager `https://github.com/kyubuns/AkyuiUnity.git?path=Assets/AkyuiUnity`
+
