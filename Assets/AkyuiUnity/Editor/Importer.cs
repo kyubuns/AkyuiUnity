@@ -137,8 +137,52 @@ namespace AkyuiUnity.Editor
                 var rectTransform = gameObject.AddComponent<RectTransform>();
                 rectTransform.anchoredPosition = objectElement.Position;
                 rectTransform.sizeDelta = objectElement.Size;
-                rectTransform.anchorMin = objectElement.AnchorMin;
-                rectTransform.anchorMax = objectElement.AnchorMax;
+
+                var anchorMin = rectTransform.anchorMin;
+                var anchorMax = rectTransform.anchorMax;
+
+                switch (objectElement.AnchorX)
+                {
+                    case AnchorXType.Left:
+                        anchorMin.x = 0.0f;
+                        anchorMax.x = 0.0f;
+                        break;
+                    case AnchorXType.Center:
+                        anchorMin.x = 0.5f;
+                        anchorMax.x = 0.5f;
+                        break;
+                    case AnchorXType.Right:
+                        anchorMin.x = 1.0f;
+                        anchorMax.x = 1.0f;
+                        break;
+                    case AnchorXType.Stretch:
+                        anchorMin.x = 0.0f;
+                        anchorMax.x = 1.0f;
+                        break;
+                }
+
+                switch (objectElement.AnchorY)
+                {
+                    case AnchorYType.Top:
+                        anchorMin.y = 1.0f;
+                        anchorMax.y = 1.0f;
+                        break;
+                    case AnchorYType.Middle:
+                        anchorMin.y = 0.5f;
+                        anchorMax.y = 0.5f;
+                        break;
+                    case AnchorYType.Bottom:
+                        anchorMin.y = 0.0f;
+                        anchorMax.y = 0.0f;
+                        break;
+                    case AnchorYType.Stretch:
+                        anchorMin.y = 0.0f;
+                        anchorMax.y = 1.0f;
+                        break;
+                }
+
+                rectTransform.anchorMin = anchorMin;
+                rectTransform.anchorMax = anchorMax;
 
                 var createdComponents = new List<ComponentWithId>();
                 foreach (var component in objectElement.Components)
@@ -182,8 +226,59 @@ namespace AkyuiUnity.Editor
                     if (@override.Name != null) targetObject.gameObject.name = @override.Name;
                     if (@override.Position != null) rectTransform.anchoredPosition = @override.Position.Value;
                     if (@override.Size != null) rectTransform.sizeDelta = @override.Size.Value;
-                    if (@override.AnchorMin != null) rectTransform.anchorMin = @override.AnchorMin.Value;
-                    if (@override.AnchorMax != null) rectTransform.anchorMax = @override.AnchorMax.Value;
+
+
+                    var anchorMin = rectTransform.anchorMin;
+                    var anchorMax = rectTransform.anchorMax;
+
+                    if (@override.AnchorX != null)
+                    {
+                        switch (@override.AnchorX.Value)
+                        {
+                            case AnchorXType.Left:
+                                anchorMin.x = 0.0f;
+                                anchorMax.x = 0.0f;
+                                break;
+                            case AnchorXType.Center:
+                                anchorMin.x = 0.5f;
+                                anchorMax.x = 0.5f;
+                                break;
+                            case AnchorXType.Right:
+                                anchorMin.x = 1.0f;
+                                anchorMax.x = 1.0f;
+                                break;
+                            case AnchorXType.Stretch:
+                                anchorMin.x = 0.0f;
+                                anchorMax.x = 1.0f;
+                                break;
+                        }
+                    }
+
+                    if (@override.AnchorY != null)
+                    {
+                        switch (@override.AnchorY.Value)
+                        {
+                            case AnchorYType.Top:
+                                anchorMin.y = 1.0f;
+                                anchorMax.y = 1.0f;
+                                break;
+                            case AnchorYType.Middle:
+                                anchorMin.y = 0.5f;
+                                anchorMax.y = 0.5f;
+                                break;
+                            case AnchorYType.Bottom:
+                                anchorMin.y = 0.0f;
+                                anchorMax.y = 0.0f;
+                                break;
+                            case AnchorYType.Stretch:
+                                anchorMin.y = 0.0f;
+                                anchorMax.y = 1.0f;
+                                break;
+                        }
+                    }
+
+                    rectTransform.anchorMin = anchorMin;
+                    rectTransform.anchorMax = anchorMax;
 
                     if (@override.Components != null)
                     {

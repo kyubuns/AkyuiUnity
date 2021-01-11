@@ -77,21 +77,21 @@ namespace AkyuiUnity.Loader
     {
         public int Eid { get; }
         [NotNull] public readonly string Name;
-        [NotNull] public readonly Vector2 Position;
-        [NotNull] public readonly Vector2 Size;
-        [NotNull] public readonly Vector2 AnchorMin;
-        [NotNull] public readonly Vector2 AnchorMax;
+        public readonly Vector2 Position;
+        public readonly Vector2 Size;
+        public readonly AnchorXType AnchorX;
+        public readonly AnchorYType AnchorY;
         [NotNull] public readonly IComponent[] Components;
         [NotNull] public readonly int[] Children;
 
-        public ObjectElement(int eid, [NotNull] string name, [NotNull] Vector2 position, [NotNull] Vector2 size, [NotNull] Vector2 anchorMin, [NotNull] Vector2 anchorMax, [NotNull] IComponent[] components, [NotNull] int[] children)
+        public ObjectElement(int eid, [NotNull] string name, Vector2 position, Vector2 size, AnchorXType anchorX, AnchorYType anchorY, [NotNull] IComponent[] components, [NotNull] int[] children)
         {
             Eid = eid;
             Name = name;
             Position = position;
             Size = size;
-            AnchorMin = anchorMin;
-            AnchorMax = anchorMax;
+            AnchorX = anchorX;
+            AnchorY = anchorY;
             Components = components;
             Children = children;
         }
@@ -119,18 +119,18 @@ namespace AkyuiUnity.Loader
         [CanBeNull] public readonly string Name;
         [CanBeNull] public readonly Vector2? Position;
         [CanBeNull] public readonly Vector2? Size;
-        [CanBeNull] public readonly Vector2? AnchorMin;
-        [CanBeNull] public readonly Vector2? AnchorMax;
+        [CanBeNull] public readonly AnchorXType? AnchorX;
+        [CanBeNull] public readonly AnchorYType? AnchorY;
         [CanBeNull] public readonly IComponent[] Components;
 
-        public Override([NotNull] int[] eid, [CanBeNull] string name, [CanBeNull] Vector2? position, [CanBeNull] Vector2? size, [CanBeNull] Vector2? anchorMin, [CanBeNull] Vector2? anchorMax, [CanBeNull] IComponent[] components)
+        public Override([NotNull] int[] eid, [CanBeNull] string name, [CanBeNull] Vector2? position, [CanBeNull] Vector2? size, [CanBeNull] AnchorXType? anchorX, [CanBeNull] AnchorYType? anchorY, [CanBeNull] IComponent[] components)
         {
             Eid = eid;
             Name = name;
             Position = position;
             Size = size;
-            AnchorMin = anchorMin;
-            AnchorMax = anchorMax;
+            AnchorX = anchorX;
+            AnchorY = anchorY;
             Components = components;
         }
     }
@@ -203,5 +203,21 @@ namespace AkyuiUnity.Loader
             Cid = cid;
             Direction = direction;
         }
+    }
+
+    public enum AnchorXType
+    {
+        Left,
+        Center,
+        Right,
+        Stretch
+    }
+
+    public enum AnchorYType
+    {
+        Top,
+        Middle,
+        Bottom,
+        Stretch
     }
 }

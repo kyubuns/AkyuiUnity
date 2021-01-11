@@ -122,13 +122,16 @@ namespace AkyuiUnity.Loader
                     components.Add(ParseComponent(componentJson));
                 }
 
+                var anchorX = (AnchorXType) Enum.Parse(typeof(AnchorXType), elementJson["anchor_x"].JsonString(), true);
+                var anchorY = (AnchorYType) Enum.Parse(typeof(AnchorYType), elementJson["anchor_y"].JsonString(), true);
+
                 return new ObjectElement(
                     elementJson["eid"].JsonInt(),
                     elementJson["name"].JsonString(),
                     elementJson["position"].JsonVector2(),
                     elementJson["size"].JsonVector2(),
-                    elementJson["anchor_min"].JsonVector2(),
-                    elementJson["anchor_max"].JsonVector2(),
+                    anchorX,
+                    anchorY,
                     components.ToArray(),
                     elementJson["children"].JsonIntArray()
                 );
@@ -149,13 +152,19 @@ namespace AkyuiUnity.Loader
                         }
                     }
 
+                    AnchorXType? anchorX = null;
+                    if (overrideJson.ContainsKey("anchor_x")) anchorX = (AnchorXType) Enum.Parse(typeof(AnchorXType), overrideJson["anchor_x"].JsonString(), true);
+
+                    AnchorYType? anchorY = null;
+                    if (overrideJson.ContainsKey("anchor_y")) anchorY = (AnchorYType) Enum.Parse(typeof(AnchorYType), overrideJson["anchor_y"].JsonString(), true);
+
                     overrides.Add(new Override(
                         overrideJson["eid"].JsonIntArray(),
                         overrideJson.ContainsKey("name") ? overrideJson["name"].JsonString() : null,
                         overrideJson.ContainsKey("position") ? overrideJson["position"].JsonVector2() : (Vector2?) null,
                         overrideJson.ContainsKey("size") ? overrideJson["size"].JsonVector2() : (Vector2?) null,
-                        overrideJson.ContainsKey("anchor_min") ? overrideJson["anchor_min"].JsonVector2() : (Vector2?) null,
-                        overrideJson.ContainsKey("anchor_max") ? overrideJson["anchor_max"].JsonVector2() : (Vector2?) null,
+                        anchorX,
+                        anchorY,
                         overrideComponents?.ToArray()
                     ));
                 }
