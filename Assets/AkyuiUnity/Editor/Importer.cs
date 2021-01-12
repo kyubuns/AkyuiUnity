@@ -350,28 +350,20 @@ namespace AkyuiUnity.Editor
                 return button;
             }
 
-            if (component is LayoutComponent layoutComponent)
+            if (component is HorizontalLayoutComponent)
             {
-                var layoutGroup = target == null ? null : (LayoutGroup) target;
-                if (layoutComponent.Direction == LayoutComponent.LayoutDirection.LeftToRight)
-                {
-                    var horizontalLayoutGroup = gameObject.AddComponent<HorizontalLayoutGroup>();
-                    horizontalLayoutGroup.childForceExpandWidth = false;
-                    horizontalLayoutGroup.childForceExpandHeight = false;
-                    layoutGroup = horizontalLayoutGroup;
-                }
-                else if (layoutComponent.Direction == LayoutComponent.LayoutDirection.TopToBottom)
-                {
-                    var verticalLayoutGroup = gameObject.AddComponent<VerticalLayoutGroup>();
-                    verticalLayoutGroup.childForceExpandWidth = false;
-                    verticalLayoutGroup.childForceExpandHeight = false;
-                    layoutGroup = verticalLayoutGroup;
-                }
-                else
-                {
-                    Debug.LogWarning($"Unknown direction {layoutComponent.Direction}");
-                }
-                return layoutGroup;
+                var horizontalLayoutGroup = target == null ? gameObject.AddComponent<HorizontalLayoutGroup>() : (HorizontalLayoutGroup) target;
+                horizontalLayoutGroup.childForceExpandWidth = false;
+                horizontalLayoutGroup.childForceExpandHeight = false;
+                return horizontalLayoutGroup;
+            }
+
+            if (component is VerticalLayoutComponent)
+            {
+                var verticalLayoutGroup = target == null ? gameObject.AddComponent<VerticalLayoutGroup>() : (VerticalLayoutGroup) target;
+                verticalLayoutGroup.childForceExpandWidth = false;
+                verticalLayoutGroup.childForceExpandHeight = false;
+                return verticalLayoutGroup;
             }
 
             Debug.LogError($"Unknown component type {component}");

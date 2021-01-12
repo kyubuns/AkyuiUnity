@@ -187,21 +187,23 @@ namespace AkyuiUnity.Loader
         }
     }
 
-    public class LayoutComponent : IComponent
+    public class HorizontalLayoutComponent : IComponent
     {
         public int Cid { get; }
-        [CanBeNull] public readonly LayoutDirection? Direction;
 
-        public enum LayoutDirection
-        {
-            TopToBottom,
-            LeftToRight,
-        }
-
-        public LayoutComponent(int cid, [CanBeNull] LayoutDirection? direction)
+        public HorizontalLayoutComponent(int cid)
         {
             Cid = cid;
-            Direction = direction;
+        }
+    }
+
+    public class VerticalLayoutComponent : IComponent
+    {
+        public int Cid { get; }
+
+        public VerticalLayoutComponent(int cid)
+        {
+            Cid = cid;
         }
     }
 

@@ -217,17 +217,17 @@ namespace AkyuiUnity.Loader
                 );
             }
 
-            if (componentType == "layout")
+            if (componentType == "horizontal_layout")
             {
-                LayoutComponent.LayoutDirection? direction = null;
-                if (componentJson.ContainsKey("direction"))
-                {
-                    direction = (LayoutComponent.LayoutDirection) Enum.Parse(typeof(LayoutComponent.LayoutDirection),
-                        componentJson["direction"].JsonString().Replace("_", ""), true);
-                }
-                return new LayoutComponent(
-                    componentJson["cid"].JsonInt(),
-                    direction
+                return new HorizontalLayoutComponent(
+                    componentJson["cid"].JsonInt()
+                );
+            }
+
+            if (componentType == "vertical_layout")
+            {
+                return new VerticalLayoutComponent(
+                    componentJson["cid"].JsonInt()
                 );
             }
 
