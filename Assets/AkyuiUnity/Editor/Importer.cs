@@ -49,19 +49,14 @@ namespace AkyuiUnity.Editor
             }
 
             ImportAssets(settings, akyuiLoader, pathGetter);
-            var (gameObject, idAndGameObjects) = AkyuiGenerator.GenerateGameObject(new EditorAssetLoader(pathGetter), layoutInfo);
-            foreach (var trigger in settings.Triggers) trigger.OnPostprocessPrefab(ref gameObject, ref idAndGameObjects);
+            var (gameObject, meta) = AkyuiGenerator.GenerateGameObject(new EditorAssetLoader(pathGetter), layoutInfo);
+            foreach (var trigger in settings.Triggers) trigger.OnPostprocessPrefab(ref gameObject, ref meta.idAndGameObjects);
 
             // meta
             var metaGameObject = new GameObject(akyuiLoader.FileName);
             gameObject.transform.SetParent(metaGameObject.transform);
             var akyuiMeta = metaGameObject.AddComponent<AkyuiMeta>();
-            akyuiMeta.meta = new PrefabMeta
-            {
-                timestamp = layoutInfo.Timestamp,
-                root = gameObject,
-                idAndGameObjects = idAndGameObjects,
-            };
+            akyuiMeta.meta = meta;
 
             PrefabUtility.SaveAsPrefabAssetAndConnect(gameObject, pathGetter.PrefabSavePath, InteractionMode.AutomatedAction);
             PrefabUtility.SaveAsPrefabAsset(metaGameObject, pathGetter.MetaSavePath);
@@ -149,7 +144,7 @@ namespace AkyuiUnity.Editor
             return AssetDatabase.LoadAssetAtPath<Sprite>(Path.Combine(_pathGetter.AssetOutputDirectoryPath, name));
         }
 
-        public (GameObject, PrefabMeta) LoadPrefab(Transform parent, string referenceName)
+        public (GameObject, AkyuiPrefabMeta) LoadPrefab(Transform parent, string referenceName)
         {
             var metaGameObject = (GameObject) PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>(_pathGetter.GetMetaPath(referenceName)));
             PrefabUtility.UnpackPrefabInstance(metaGameObject, PrefabUnpackMode.OutermostRoot, InteractionMode.AutomatedAction);

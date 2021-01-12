@@ -9,11 +9,17 @@ namespace AkyuiUnity.Generator
 {
     public static class AkyuiGenerator
     {
-        public static (GameObject, GameObjectWithId[]) GenerateGameObject(IAssetLoader assetLoader, LayoutInfo layoutInfo)
+        public static (GameObject, AkyuiPrefabMeta) GenerateGameObject(IAssetLoader assetLoader, LayoutInfo layoutInfo)
         {
-            var meta = new List<GameObjectWithId>();
-            var gameObject = CreateGameObject(assetLoader, layoutInfo, layoutInfo.Root, null, ref meta);
-            return (gameObject, meta.ToArray());
+            var metaList = new List<GameObjectWithId>();
+            var gameObject = CreateGameObject(assetLoader, layoutInfo, layoutInfo.Root, null, ref metaList);
+            var meta = new AkyuiPrefabMeta
+            {
+                timestamp = layoutInfo.Timestamp,
+                root = gameObject,
+                idAndGameObjects = metaList.ToArray()
+            };
+            return (gameObject, meta);
         }
 
         private static GameObject CreateGameObject(IAssetLoader assetLoader, LayoutInfo layoutInfo, int eid, Transform parent, ref List<GameObjectWithId> meta)
