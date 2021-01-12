@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace AkyuiUnity.Loader
 {
-    public class AkyuiLoader : ILoader
+    public class AkyuiAkyuiLoader : IAkyuiLoader
     {
         public string FileName { get; }
         public LayoutInfo LayoutInfo { get; }
@@ -16,7 +16,7 @@ namespace AkyuiUnity.Loader
 
         private readonly ZipFile _zipFile;
 
-        public AkyuiLoader(string filePath)
+        public AkyuiAkyuiLoader(string filePath)
         {
             _zipFile = new ZipFile(filePath);
             FileName = Path.GetFileNameWithoutExtension(_zipFile.Name);
@@ -148,7 +148,7 @@ namespace AkyuiUnity.Loader
                         overrideComponents = new List<IComponent>();
                         foreach (var overrideComponentJson in overrideJson["components"].JsonDictionaryArray())
                         {
-                            ParseComponent(overrideComponentJson);
+                            overrideComponents.Add(ParseComponent(overrideComponentJson));
                         }
                     }
 
