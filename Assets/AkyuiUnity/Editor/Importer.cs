@@ -96,6 +96,7 @@ namespace AkyuiUnity.Editor
                     }
                 }
 
+                foreach (var trigger in settings.Triggers) trigger.OnPostprocessAsset(bytes, savePath, asset);
                 ImportAsset(asset, savePath, saveFullPath, bytes);
             }
         }
