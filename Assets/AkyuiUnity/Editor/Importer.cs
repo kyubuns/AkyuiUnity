@@ -15,7 +15,7 @@ namespace AkyuiUnity.Editor
 {
     public static class Importer
     {
-        public static void Import(AkyuiImportSettings settings, string[] filePaths)
+        public static void Import(IAkyuiImportSettings settings, string[] filePaths)
         {
             foreach (var filePath in filePaths)
             {
@@ -32,7 +32,7 @@ namespace AkyuiUnity.Editor
             AssetDatabase.Refresh();
         }
 
-        public static void Import(AkyuiImportSettings settings, ILoader loader)
+        public static void Import(IAkyuiImportSettings settings, ILoader loader)
         {
             var pathGetter = new PathGetter(settings, loader.FileName);
 
@@ -70,7 +70,7 @@ namespace AkyuiUnity.Editor
             Object.DestroyImmediate(metaGameObject);
         }
 
-        private static void ImportAssets(AkyuiImportSettings settings, ILoader loader, PathGetter pathGetter)
+        private static void ImportAssets(IAkyuiImportSettings settings, ILoader loader, PathGetter pathGetter)
         {
             var unityAssetsParentPath = Path.GetDirectoryName(Application.dataPath) ?? "";
 
@@ -401,9 +401,9 @@ namespace AkyuiUnity.Editor
             return Path.Combine(assetsParentPath, GetMetaPath(fileName));
         }
 
-        private readonly AkyuiImportSettings _settings;
+        private readonly IAkyuiImportSettings _settings;
 
-        public PathGetter(AkyuiImportSettings settings, string fileName)
+        public PathGetter(IAkyuiImportSettings settings, string fileName)
         {
             _settings = settings;
 

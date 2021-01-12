@@ -3,7 +3,7 @@
 namespace AkyuiUnity.Editor.ScriptableObject
 {
     [CreateAssetMenu(menuName = "Akyui/ImportSettings", fileName = "AkyuiImportSettings")]
-    public class AkyuiImportSettings : UnityEngine.ScriptableObject
+    public class AkyuiImportSettings : UnityEngine.ScriptableObject, IAkyuiImportSettings
     {
         public string PrefabOutputPath => prefabOutputPath;
         [SerializeField] private string prefabOutputPath = "Assets/{name}";
@@ -19,5 +19,14 @@ namespace AkyuiUnity.Editor.ScriptableObject
 
         public AkyuiImportTrigger[] Triggers => triggers;
         [SerializeField] private AkyuiImportTrigger[] triggers = default;
+    }
+
+    public interface IAkyuiImportSettings
+    {
+        string PrefabOutputPath { get; }
+        string AssetOutputDirectoryPath { get; }
+        string MetaOutputPath { get; }
+        bool CheckTimestamp { get; }
+        AkyuiImportTrigger[] Triggers { get; }
     }
 }
