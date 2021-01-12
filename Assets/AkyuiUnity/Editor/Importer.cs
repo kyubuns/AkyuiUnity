@@ -17,7 +17,7 @@ namespace AkyuiUnity.Editor
             {
                 Debug.Log($"Import Start: {filePath}");
 
-                using (IAkyuiLoader akyuiLoader = new AkyuiAkyuiLoader(filePath))
+                using (IAkyuiLoader akyuiLoader = new AkyuiLoader(filePath))
                 {
                     Import(settings, akyuiLoader);
                 }

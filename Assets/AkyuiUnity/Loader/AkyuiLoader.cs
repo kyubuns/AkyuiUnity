@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace AkyuiUnity.Loader
 {
-    public class AkyuiAkyuiLoader : IAkyuiLoader
+    public class AkyuiLoader : IAkyuiLoader
     {
         public string FileName { get; }
         public LayoutInfo LayoutInfo { get; }
@@ -16,7 +16,7 @@ namespace AkyuiUnity.Loader
 
         private readonly ZipFile _zipFile;
 
-        public AkyuiAkyuiLoader(string filePath)
+        public AkyuiLoader(string filePath)
         {
             _zipFile = new ZipFile(filePath);
             FileName = Path.GetFileNameWithoutExtension(_zipFile.Name);
