@@ -6,6 +6,22 @@ namespace AkyuiUnity
 {
     public class AkyuiMeta : MonoBehaviour
     {
+        [SerializeField] public PrefabMeta meta;
+
+        public PrefabMeta GetCopiedMeta()
+        {
+            return new PrefabMeta
+            {
+                timestamp = meta.timestamp,
+                root = meta.root,
+                idAndGameObjects = meta.idAndGameObjects
+            };
+        }
+    }
+
+    [Serializable]
+    public class PrefabMeta
+    {
         [SerializeField] public int timestamp;
         [SerializeField] public GameObject root;
         [SerializeField] public GameObjectWithId[] idAndGameObjects;

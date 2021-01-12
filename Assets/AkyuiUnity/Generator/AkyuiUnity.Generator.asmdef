@@ -1,0 +1,15 @@
+{
+    "name": "AkyuiUnity.Generator",
+    "references": [
+        "GUID:a439073e6c93d4a5bbdeebbe28645a3f"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

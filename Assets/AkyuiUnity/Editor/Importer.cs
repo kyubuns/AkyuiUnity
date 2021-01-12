@@ -1,14 +1,10 @@
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using AkyuiUnity.Editor.Extensions;
 using AkyuiUnity.Editor.ScriptableObject;
+using AkyuiUnity.Generator;
 using AkyuiUnity.Loader;
-using JetBrains.Annotations;
 using UnityEngine;
 using UnityEditor;
-using UnityEngine.UI;
 using Object = UnityEngine.Object;
 
 namespace AkyuiUnity.Editor
@@ -21,9 +17,9 @@ namespace AkyuiUnity.Editor
             {
                 Debug.Log($"Import Start: {filePath}");
 
-                using (ILoader loader = new AkyuiLoader(filePath))
+                using (IAkyuiLoader akyuiLoader = new AkyuiAkyuiLoader(filePath))
                 {
-                    Import(settings, loader);
+                    Import(settings, akyuiLoader);
                 }
 
                 Debug.Log($"Import Finish: {filePath}");
@@ -32,18 +28,18 @@ namespace AkyuiUnity.Editor
             AssetDatabase.Refresh();
         }
 
-        public static void Import(IAkyuiImportSettings settings, ILoader loader)
+        public static void Import(IAkyuiImportSettings settings, IAkyuiLoader akyuiLoader)
         {
-            var pathGetter = new PathGetter(settings, loader.FileName);
+            var pathGetter = new PathGetter(settings, akyuiLoader.FileName);
 
-            var layoutInfo = loader.LayoutInfo;
+            var layoutInfo = akyuiLoader.LayoutInfo;
             if (settings.CheckTimestamp)
             {
-                var prevMetaFullPath = pathGetter.GetMetaFullPath(loader.FileName);
+                var prevMetaFullPath = pathGetter.GetMetaFullPath(akyuiLoader.FileName);
                 if (File.Exists(prevMetaFullPath))
                 {
-                    var prevMetaObject = AssetDatabase.LoadAssetAtPath<GameObject>(pathGetter.GetMetaPath(loader.FileName));
-                    var prevMeta = prevMetaObject.GetComponent<AkyuiMeta>();
+                    var prevMetaObject = AssetDatabase.LoadAssetAtPath<GameObject>(pathGetter.GetMetaPath(akyuiLoader.FileName));
+                    var prevMeta = prevMetaObject.GetComponent<AkyuiMeta>().meta;
                     if (prevMeta.timestamp == layoutInfo.Timestamp)
                     {
                         Debug.Log($"Skip (same timestamp)");
@@ -52,17 +48,20 @@ namespace AkyuiUnity.Editor
                 }
             }
 
-            ImportAssets(settings, loader, pathGetter);
-            var (gameObject, idAndGameObjects) = CreateGameObject(loader, pathGetter);
+            ImportAssets(settings, akyuiLoader, pathGetter);
+            var (gameObject, idAndGameObjects) = AkyuiGenerator.GenerateGameObject(new EditorAssetLoader(pathGetter), layoutInfo);
             foreach (var trigger in settings.Triggers) trigger.OnPostprocessPrefab(ref gameObject, ref idAndGameObjects);
 
             // meta
-            var metaGameObject = new GameObject(loader.FileName);
-            var meta = metaGameObject.AddComponent<AkyuiMeta>();
+            var metaGameObject = new GameObject(akyuiLoader.FileName);
             gameObject.transform.SetParent(metaGameObject.transform);
-            meta.timestamp = layoutInfo.Timestamp;
-            meta.root = gameObject;
-            meta.idAndGameObjects = idAndGameObjects;
+            var akyuiMeta = metaGameObject.AddComponent<AkyuiMeta>();
+            akyuiMeta.meta = new PrefabMeta
+            {
+                timestamp = layoutInfo.Timestamp,
+                root = gameObject,
+                idAndGameObjects = idAndGameObjects,
+            };
 
             PrefabUtility.SaveAsPrefabAssetAndConnect(gameObject, pathGetter.PrefabSavePath, InteractionMode.AutomatedAction);
             PrefabUtility.SaveAsPrefabAsset(metaGameObject, pathGetter.MetaSavePath);
@@ -70,26 +69,26 @@ namespace AkyuiUnity.Editor
             Object.DestroyImmediate(metaGameObject);
         }
 
-        private static void ImportAssets(IAkyuiImportSettings settings, ILoader loader, PathGetter pathGetter)
+        private static void ImportAssets(IAkyuiImportSettings settings, IAkyuiLoader akyuiLoader, PathGetter pathGetter)
         {
             var unityAssetsParentPath = Path.GetDirectoryName(Application.dataPath) ?? "";
 
             var assetOutputDirectoryFullPath = Path.Combine(unityAssetsParentPath, pathGetter.AssetOutputDirectoryPath);
             if (!Directory.Exists(assetOutputDirectoryFullPath)) Directory.CreateDirectory(assetOutputDirectoryFullPath);
 
-            foreach (var t in loader.AssetsInfo.Assets)
+            foreach (var t in akyuiLoader.AssetsInfo.Assets)
             {
                 var asset = t;
                 var savePath = Path.Combine(pathGetter.AssetOutputDirectoryPath, asset.FileName);
                 var saveFullPath = Path.Combine(unityAssetsParentPath, savePath);
-                var bytes = loader.LoadAsset(asset.FileName);
+                var bytes = akyuiLoader.LoadAsset(asset.FileName);
 
                 if (settings.CheckTimestamp)
                 {
                     if (File.Exists(saveFullPath))
                     {
                         var import = AssetImporter.GetAtPath(savePath);
-                        if (import.userData == loader.LayoutInfo.Timestamp.ToString())
+                        if (import.userData == akyuiLoader.LayoutInfo.Timestamp.ToString())
                         {
                             Debug.Log($"Asset {asset.FileName} Skip (same timestamp)");
                             continue;
@@ -119,257 +118,6 @@ namespace AkyuiUnity.Editor
 
             Debug.LogError($"Unknown asset type {asset}");
         }
-
-        private static (GameObject, GameObjectWithId[]) CreateGameObject(ILoader loader, PathGetter pathGetter)
-        {
-            var meta = new List<GameObjectWithId>();
-            var gameObject = CreateGameObject(pathGetter, loader.LayoutInfo, loader.LayoutInfo.Root, null, ref meta);
-            return (gameObject, meta.ToArray());
-        }
-
-        private static GameObject CreateGameObject(PathGetter pathGetter, LayoutInfo layoutInfo, int eid, Transform parent, ref List<GameObjectWithId> meta)
-        {
-            var element = layoutInfo.Elements.Single(x => x.Eid == eid);
-
-            if (element is ObjectElement objectElement)
-            {
-                var gameObject = new GameObject(objectElement.Name);
-                gameObject.transform.SetParent(parent);
-
-                var rectTransform = gameObject.AddComponent<RectTransform>();
-                rectTransform.anchoredPosition = objectElement.Position;
-                rectTransform.sizeDelta = objectElement.Size;
-
-                var anchorMin = rectTransform.anchorMin;
-                var anchorMax = rectTransform.anchorMax;
-
-                switch (objectElement.AnchorX)
-                {
-                    case AnchorXType.Left:
-                        anchorMin.x = 0.0f;
-                        anchorMax.x = 0.0f;
-                        break;
-                    case AnchorXType.Center:
-                        anchorMin.x = 0.5f;
-                        anchorMax.x = 0.5f;
-                        break;
-                    case AnchorXType.Right:
-                        anchorMin.x = 1.0f;
-                        anchorMax.x = 1.0f;
-                        break;
-                    case AnchorXType.Stretch:
-                        anchorMin.x = 0.0f;
-                        anchorMax.x = 1.0f;
-                        break;
-                }
-
-                switch (objectElement.AnchorY)
-                {
-                    case AnchorYType.Top:
-                        anchorMin.y = 1.0f;
-                        anchorMax.y = 1.0f;
-                        break;
-                    case AnchorYType.Middle:
-                        anchorMin.y = 0.5f;
-                        anchorMax.y = 0.5f;
-                        break;
-                    case AnchorYType.Bottom:
-                        anchorMin.y = 0.0f;
-                        anchorMax.y = 0.0f;
-                        break;
-                    case AnchorYType.Stretch:
-                        anchorMin.y = 0.0f;
-                        anchorMax.y = 1.0f;
-                        break;
-                }
-
-                rectTransform.anchorMin = anchorMin;
-                rectTransform.anchorMax = anchorMax;
-
-                var createdComponents = new List<ComponentWithId>();
-                foreach (var component in objectElement.Components)
-                {
-                    createdComponents.Add(CreateComponent(pathGetter, gameObject, component));
-                }
-
-                meta.Add(new GameObjectWithId
-                {
-                    eid = new[] { objectElement.Eid },
-                    gameObject = gameObject,
-                    idAndComponents = createdComponents.ToArray(),
-                });
-
-                foreach (var child in objectElement.Children)
-                {
-                    CreateGameObject(pathGetter, layoutInfo, child, gameObject.transform, ref meta);
-                }
-
-                return gameObject;
-            }
-
-            if (element is PrefabElement prefabElement)
-            {
-                var metaGameObject = (GameObject) PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>(pathGetter.GetMetaPath(prefabElement.Reference)));
-                PrefabUtility.UnpackPrefabInstance(metaGameObject, PrefabUnpackMode.OutermostRoot, InteractionMode.AutomatedAction);
-                var referenceMeta = metaGameObject.GetComponent<AkyuiMeta>();
-                var prefabGameObject = referenceMeta.root.gameObject;
-                prefabGameObject.transform.SetParent(parent);
-
-                if (prefabElement.Timestamp != referenceMeta.timestamp)
-                {
-                    Debug.LogWarning($"Reference {prefabElement.Reference} timestamp mismatch {prefabElement.Timestamp} != {referenceMeta.timestamp}");
-                }
-
-                foreach (var @override in prefabElement.Overrides)
-                {
-                    var targetObject = referenceMeta.Find(@override.Eid);
-                    var rectTransform = targetObject.gameObject.GetComponent<RectTransform>();
-
-                    if (@override.Name != null) targetObject.gameObject.name = @override.Name;
-                    if (@override.Position != null) rectTransform.anchoredPosition = @override.Position.Value;
-                    if (@override.Size != null) rectTransform.sizeDelta = @override.Size.Value;
-
-
-                    var anchorMin = rectTransform.anchorMin;
-                    var anchorMax = rectTransform.anchorMax;
-
-                    if (@override.AnchorX != null)
-                    {
-                        switch (@override.AnchorX.Value)
-                        {
-                            case AnchorXType.Left:
-                                anchorMin.x = 0.0f;
-                                anchorMax.x = 0.0f;
-                                break;
-                            case AnchorXType.Center:
-                                anchorMin.x = 0.5f;
-                                anchorMax.x = 0.5f;
-                                break;
-                            case AnchorXType.Right:
-                                anchorMin.x = 1.0f;
-                                anchorMax.x = 1.0f;
-                                break;
-                            case AnchorXType.Stretch:
-                                anchorMin.x = 0.0f;
-                                anchorMax.x = 1.0f;
-                                break;
-                        }
-                    }
-
-                    if (@override.AnchorY != null)
-                    {
-                        switch (@override.AnchorY.Value)
-                        {
-                            case AnchorYType.Top:
-                                anchorMin.y = 1.0f;
-                                anchorMax.y = 1.0f;
-                                break;
-                            case AnchorYType.Middle:
-                                anchorMin.y = 0.5f;
-                                anchorMax.y = 0.5f;
-                                break;
-                            case AnchorYType.Bottom:
-                                anchorMin.y = 0.0f;
-                                anchorMax.y = 0.0f;
-                                break;
-                            case AnchorYType.Stretch:
-                                anchorMin.y = 0.0f;
-                                anchorMax.y = 1.0f;
-                                break;
-                        }
-                    }
-
-                    rectTransform.anchorMin = anchorMin;
-                    rectTransform.anchorMax = anchorMax;
-
-                    if (@override.Components != null)
-                    {
-                        foreach (var component in @override.Components)
-                        {
-                            var targetComponent = targetObject.idAndComponents.Single(x => x.cid == component.Cid);
-                            SetOrCreateComponentValue(targetComponent.component, pathGetter, targetObject.gameObject, component);
-                        }
-                    }
-                }
-
-                foreach (var idAndGameObject in referenceMeta.idAndGameObjects)
-                {
-                    meta.Add(new GameObjectWithId
-                    {
-                        eid = new[] { prefabElement.Eid }.Concat(idAndGameObject.eid).ToArray(),
-                        gameObject = idAndGameObject.gameObject,
-                        idAndComponents = idAndGameObject.idAndComponents
-                    });
-                }
-
-                Object.DestroyImmediate(metaGameObject);
-                return prefabGameObject;
-            }
-
-            Debug.LogError($"Unknown element type {element}");
-            return null;
-        }
-
-        private static ComponentWithId CreateComponent(PathGetter pathGetter, GameObject gameObject, IComponent component)
-        {
-            return new ComponentWithId { cid = component.Cid, component = SetOrCreateComponentValue(null, pathGetter, gameObject, component) };
-        }
-
-        private static Component SetOrCreateComponentValue([CanBeNull] Component target, PathGetter pathGetter, GameObject gameObject, IComponent component)
-        {
-            if (component is ImageComponent imageComponent)
-            {
-                var image = target == null ? gameObject.AddComponent<Image>() : (Image) target;
-                if (imageComponent.Sprite != null) image.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(Path.Combine(pathGetter.AssetOutputDirectoryPath, imageComponent.Sprite));
-                if (imageComponent.Color != null) image.color = imageComponent.Color.Value;
-                return image;
-            }
-
-            if (component is TextComponent textComponent)
-            {
-                var text = target == null ? gameObject.AddComponent<Text>() : (Text) target;
-                if (textComponent.Text != null) text.text = textComponent.Text;
-                if (textComponent.Size != null) text.fontSize = Mathf.RoundToInt(textComponent.Size.Value);
-                if (textComponent.Color != null) text.color = textComponent.Color.Value;
-                if (textComponent.Align != null)
-                {
-                    switch (textComponent.Align.Value)
-                    {
-                        case TextComponent.TextAlign.MiddleCenter:
-                            text.alignment = TextAnchor.MiddleCenter;
-                            break;
-                        default:
-                            throw new ArgumentOutOfRangeException();
-                    }
-                }
-                return text;
-            }
-
-            if (component is ButtonComponent)
-            {
-                var button = target == null ? gameObject.AddComponent<Button>() : (Button) target;
-                return button;
-            }
-
-            if (component is HorizontalLayoutComponent)
-            {
-                var horizontalLayoutGroup = target == null ? gameObject.AddComponent<HorizontalLayoutGroup>() : (HorizontalLayoutGroup) target;
-                horizontalLayoutGroup.childForceExpandWidth = false;
-                horizontalLayoutGroup.childForceExpandHeight = false;
-                return horizontalLayoutGroup;
-            }
-
-            if (component is VerticalLayoutComponent)
-            {
-                var verticalLayoutGroup = target == null ? gameObject.AddComponent<VerticalLayoutGroup>() : (VerticalLayoutGroup) target;
-                verticalLayoutGroup.childForceExpandWidth = false;
-                verticalLayoutGroup.childForceExpandHeight = false;
-                return verticalLayoutGroup;
-            }
-
-            Debug.LogError($"Unknown component type {component}");
-            return null;
-        }
     }
 
     public class PostProcessImportAsset : AssetPostprocessor
@@ -384,6 +132,32 @@ namespace AkyuiUnity.Editor
             var textureImporter = (TextureImporter) assetImporter;
             textureImporter.textureType = TextureImporterType.Sprite;
             textureImporter.userData = Timestamp.ToString();
+        }
+    }
+
+    public class EditorAssetLoader : IAssetLoader
+    {
+        private readonly PathGetter _pathGetter;
+
+        public EditorAssetLoader(PathGetter pathGetter)
+        {
+            _pathGetter = pathGetter;
+        }
+
+        public T LoadAsset<T>(string name) where T : Object
+        {
+            return AssetDatabase.LoadAssetAtPath<T>(Path.Combine(_pathGetter.AssetOutputDirectoryPath, name));
+        }
+
+        public (GameObject, PrefabMeta) LoadPrefab(Transform parent, string referenceName)
+        {
+            var metaGameObject = (GameObject) PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>(_pathGetter.GetMetaPath(referenceName)));
+            PrefabUtility.UnpackPrefabInstance(metaGameObject, PrefabUnpackMode.OutermostRoot, InteractionMode.AutomatedAction);
+            var referenceMeta = metaGameObject.GetComponent<AkyuiMeta>().GetCopiedMeta();
+            var prefabGameObject = referenceMeta.root.gameObject;
+            prefabGameObject.transform.SetParent(parent);
+            Object.DestroyImmediate(metaGameObject);
+            return (prefabGameObject, referenceMeta);
         }
     }
 

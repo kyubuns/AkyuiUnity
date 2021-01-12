@@ -3,6 +3,34 @@ using UnityEngine;
 
 namespace AkyuiUnity
 {
+    public class LayoutInfo
+    {
+        [NotNull] public readonly Meta Meta;
+        public readonly int Timestamp;
+        public readonly int Root;
+        [NotNull] public readonly IElement[] Elements;
+
+        public LayoutInfo([NotNull] Meta meta, int timestamp, int root, [NotNull] IElement[] elements)
+        {
+            Meta = meta;
+            Timestamp = timestamp;
+            Root = root;
+            Elements = elements;
+        }
+    }
+
+    public class Meta
+    {
+        [NotNull] public readonly string Version;
+        [NotNull] public readonly string GeneratedBy;
+
+        public Meta([NotNull] string version, [NotNull] string generatedBy)
+        {
+            Version = version;
+            GeneratedBy = generatedBy;
+        }
+    }
+
     public interface IAsset
     {
         [NotNull] string FileName { get; }
