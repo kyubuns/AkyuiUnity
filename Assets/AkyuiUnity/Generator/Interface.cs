@@ -5,7 +5,7 @@ namespace AkyuiUnity.Generator
 {
     public interface IAssetLoader
     {
-        T LoadAsset<T>(string name) where T : Object;
+        Sprite LoadSprite(string name);
         (GameObject, PrefabMeta) LoadPrefab(Transform parent, string referenceName);
     }
 }

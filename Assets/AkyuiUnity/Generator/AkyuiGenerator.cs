@@ -204,7 +204,7 @@ namespace AkyuiUnity.Generator
             if (component is ImageComponent imageComponent)
             {
                 var image = target == null ? gameObject.AddComponent<Image>() : (Image) target;
-                if (imageComponent.Sprite != null) image.sprite = assetLoader.LoadAsset<Sprite>(imageComponent.Sprite);
+                if (imageComponent.Sprite != null) image.sprite = assetLoader.LoadSprite(imageComponent.Sprite);
                 if (imageComponent.Color != null) image.color = imageComponent.Color.Value;
                 return image;
             }

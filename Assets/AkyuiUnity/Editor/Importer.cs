@@ -144,9 +144,9 @@ namespace AkyuiUnity.Editor
             _pathGetter = pathGetter;
         }
 
-        public T LoadAsset<T>(string name) where T : Object
+        public Sprite LoadSprite(string name)
         {
-            return AssetDatabase.LoadAssetAtPath<T>(Path.Combine(_pathGetter.AssetOutputDirectoryPath, name));
+            return AssetDatabase.LoadAssetAtPath<Sprite>(Path.Combine(_pathGetter.AssetOutputDirectoryPath, name));
         }
 
         public (GameObject, PrefabMeta) LoadPrefab(Transform parent, string referenceName)
