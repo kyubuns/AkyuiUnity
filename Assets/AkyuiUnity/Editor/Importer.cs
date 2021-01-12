@@ -54,7 +54,7 @@ namespace AkyuiUnity.Editor
 
             ImportAssets(settings, loader, pathGetter);
             var (gameObject, idAndGameObjects) = CreateGameObject(loader, pathGetter);
-            foreach (var trigger in settings.Triggers) trigger.OnPostprocessPrefab(gameObject, idAndGameObjects);
+            foreach (var trigger in settings.Triggers) trigger.OnPostprocessPrefab(ref gameObject, ref idAndGameObjects);
 
             // meta
             var metaGameObject = new GameObject(loader.FileName);
@@ -77,8 +77,9 @@ namespace AkyuiUnity.Editor
             var assetOutputDirectoryFullPath = Path.Combine(unityAssetsParentPath, pathGetter.AssetOutputDirectoryPath);
             if (!Directory.Exists(assetOutputDirectoryFullPath)) Directory.CreateDirectory(assetOutputDirectoryFullPath);
 
-            foreach (var asset in loader.AssetsInfo.Assets)
+            foreach (var t in loader.AssetsInfo.Assets)
             {
+                var asset = t;
                 var savePath = Path.Combine(pathGetter.AssetOutputDirectoryPath, asset.FileName);
                 var saveFullPath = Path.Combine(unityAssetsParentPath, savePath);
                 var bytes = loader.LoadAsset(asset.FileName);
@@ -96,7 +97,7 @@ namespace AkyuiUnity.Editor
                     }
                 }
 
-                foreach (var trigger in settings.Triggers) trigger.OnPostprocessAsset(bytes, savePath, asset);
+                foreach (var trigger in settings.Triggers) trigger.OnPostprocessAsset(ref bytes, ref asset);
                 ImportAsset(asset, savePath, saveFullPath, bytes);
             }
         }

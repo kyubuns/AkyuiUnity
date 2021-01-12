@@ -5,11 +5,11 @@ namespace AkyuiUnity.Editor.ScriptableObject
 {
     public abstract class AkyuiImportTrigger : UnityEngine.ScriptableObject
     {
-        public virtual void OnPostprocessAsset(byte[] bytes, string savePath, IAsset asset)
+        public virtual void OnPostprocessAsset(ref byte[] bytes, ref IAsset asset)
         {
         }
 
-        public virtual void OnPostprocessPrefab(GameObject prefab, GameObjectWithId[] meta)
+        public virtual void OnPostprocessPrefab(ref GameObject prefab, ref GameObjectWithId[] meta)
         {
         }
     }
