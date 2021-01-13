@@ -28,7 +28,6 @@ namespace AkyuiUnity.Loader
                     _fileName = Directory.GetParent(e.Name).Name;
                 }
             }
-            Debug.Log(_fileName);
 
             LayoutInfo = LoadLayoutInfo();
             AssetsInfo = LoadAssetsInfo();
@@ -37,6 +36,11 @@ namespace AkyuiUnity.Loader
         public void Dispose()
         {
             _zipFile?.Close();
+        }
+
+        public static byte[] Compress(IAkyuiLoader loader)
+        {
+            return new byte[] { };
         }
 
         public byte[] LoadAsset(string assetFileName)

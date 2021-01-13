@@ -66,6 +66,12 @@ namespace AkyuiUnity.Editor
             AssetDatabase.Refresh();
         }
 
+        public static void Save(IAkyuiLoader loader, string filePath)
+        {
+            var bytes = AkyuiLoader.Compress(loader);
+            File.WriteAllBytes(filePath, bytes);
+        }
+
         private static void Import(IAkyuiImportSettings settings, IAkyuiLoader akyuiLoader)
         {
             var pathGetter = new PathGetter(settings, akyuiLoader.LayoutInfo.Name);
