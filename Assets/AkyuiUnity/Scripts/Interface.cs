@@ -21,13 +21,15 @@ namespace AkyuiUnity
 
     public class Meta
     {
-        [NotNull] public readonly string Version;
-        [NotNull] public readonly string GeneratedBy;
+        [NotNull] public readonly string AkyuiVersion;
+        [NotNull] public readonly string App;
+        [NotNull] public readonly string AppVersion;
 
-        public Meta([NotNull] string version, [NotNull] string generatedBy)
+        public Meta([NotNull] string akyuiVersion, [NotNull] string app, [NotNull] string appVersion)
         {
-            Version = version;
-            GeneratedBy = generatedBy;
+            AkyuiVersion = akyuiVersion;
+            App = app;
+            AppVersion = appVersion;
         }
     }
 

@@ -48,8 +48,9 @@ namespace AkyuiUnity.Loader
 
             var metaJson = layoutJson["meta"].JsonStringDictionary();
             var meta = new Meta(
-                metaJson["version"].JsonString(),
-                metaJson["generated_by"].JsonString()
+                metaJson["akyui_version"].JsonString(),
+                metaJson["app"].JsonString(),
+                metaJson["app_version"].JsonString()
             );
 
             var elements = new List<IElement>();
