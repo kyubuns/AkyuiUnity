@@ -27,8 +27,8 @@ namespace AkyuiUnity.Editor
         public static void Import(IAkyuiImportSettings settings, IAkyuiLoader[] loaders)
         {
             var dependencies = new Dictionary<string, string[]>();
-            var nameToLoader = loaders.ToDictionary(x => x.FileName, x => x);
-            var unImported = loaders.Select(x => x.FileName).ToList();
+            var nameToLoader = loaders.ToDictionary(x => x.LayoutInfo.Name, x => x);
+            var unImported = loaders.Select(x => x.LayoutInfo.Name).ToList();
             foreach (var loader in loaders)
             {
                 var reference = new List<string>();
@@ -39,7 +39,7 @@ namespace AkyuiUnity.Editor
                         reference.Add(prefabElement.Reference);
                     }
                 }
-                dependencies[loader.FileName] = reference.Distinct().ToArray();
+                dependencies[loader.LayoutInfo.Name] = reference.Distinct().ToArray();
             }
 
             while (unImported.Count > 0)
@@ -68,15 +68,15 @@ namespace AkyuiUnity.Editor
 
         private static void Import(IAkyuiImportSettings settings, IAkyuiLoader akyuiLoader)
         {
-            var pathGetter = new PathGetter(settings, akyuiLoader.FileName);
+            var pathGetter = new PathGetter(settings, akyuiLoader.LayoutInfo.Name);
 
             var layoutInfo = akyuiLoader.LayoutInfo;
             if (settings.CheckTimestamp)
             {
-                var prevMetaFullPath = pathGetter.GetMetaFullPath(akyuiLoader.FileName);
+                var prevMetaFullPath = pathGetter.GetMetaFullPath(akyuiLoader.LayoutInfo.Name);
                 if (File.Exists(prevMetaFullPath))
                 {
-                    var prevMetaObject = AssetDatabase.LoadAssetAtPath<GameObject>(pathGetter.GetMetaPath(akyuiLoader.FileName));
+                    var prevMetaObject = AssetDatabase.LoadAssetAtPath<GameObject>(pathGetter.GetMetaPath(akyuiLoader.LayoutInfo.Name));
                     var prevMeta = prevMetaObject.GetComponent<AkyuiMeta>().meta;
                     if (prevMeta.timestamp == layoutInfo.Timestamp)
                     {
@@ -91,7 +91,7 @@ namespace AkyuiUnity.Editor
             foreach (var trigger in settings.Triggers) trigger.OnPostprocessPrefab(ref gameObject, ref meta.idAndGameObjects);
 
             // meta
-            var metaGameObject = new GameObject(akyuiLoader.FileName);
+            var metaGameObject = new GameObject(akyuiLoader.LayoutInfo.Name);
             gameObject.transform.SetParent(metaGameObject.transform);
             var akyuiMeta = metaGameObject.AddComponent<AkyuiMeta>();
             akyuiMeta.meta = meta;

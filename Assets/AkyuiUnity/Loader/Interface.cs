@@ -6,7 +6,6 @@ namespace AkyuiUnity.Loader
 {
     public interface IAkyuiLoader : IDisposable
     {
-        [NotNull] string FileName { get; }
         [NotNull] LayoutInfo LayoutInfo { get; }
         [NotNull] AssetsInfo AssetsInfo { get; }
         [NotNull] byte[] LoadAsset(string fileName);

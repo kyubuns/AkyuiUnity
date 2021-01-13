@@ -10,16 +10,26 @@ namespace AkyuiUnity.Loader
 {
     public class AkyuiLoader : IAkyuiLoader
     {
-        public string FileName { get; }
         public LayoutInfo LayoutInfo { get; }
         public AssetsInfo AssetsInfo { get; }
 
+        private readonly string _fileName;
         private readonly ZipFile _zipFile;
 
         public AkyuiLoader(string filePath)
         {
             _zipFile = new ZipFile(filePath);
-            FileName = Path.GetFileNameWithoutExtension(_zipFile.Name);
+
+            _fileName = "";
+            foreach (ZipEntry e in _zipFile)
+            {
+                if (Path.GetFileName(e.Name) == "layout.json")
+                {
+                    _fileName = Directory.GetParent(e.Name).Name;
+                }
+            }
+            Debug.Log(_fileName);
+
             LayoutInfo = LoadLayoutInfo();
             AssetsInfo = LoadAssetsInfo();
         }
@@ -31,7 +41,7 @@ namespace AkyuiUnity.Loader
 
         public byte[] LoadAsset(string assetFileName)
         {
-            var assetEntry = _zipFile.FindEntry(Path.Combine(FileName, "assets", assetFileName), true);
+            var assetEntry = _zipFile.FindEntry(Path.Combine(_fileName, "assets", assetFileName), true);
             var stream = _zipFile.GetInputStream(assetEntry);
 
             using (var memoryStream = new MemoryStream())
@@ -44,7 +54,7 @@ namespace AkyuiUnity.Loader
 
         private LayoutInfo LoadLayoutInfo()
         {
-            var layoutJson = GetJson(_zipFile, Path.Combine(FileName, "layout.json"));
+            var layoutJson = GetJson(_zipFile, Path.Combine(_fileName, "layout.json"));
 
             var metaJson = layoutJson["meta"].JsonStringDictionary();
             var meta = new Meta(
@@ -60,8 +70,9 @@ namespace AkyuiUnity.Loader
             }
 
             return new LayoutInfo(
-                meta,
+                layoutJson["name"].JsonString(),
                 layoutJson["timestamp"].JsonInt(),
+                meta,
                 layoutJson["root"].JsonInt(),
                 elements.ToArray()
             );
@@ -69,7 +80,7 @@ namespace AkyuiUnity.Loader
 
         private AssetsInfo LoadAssetsInfo()
         {
-            var assetsJson = GetJson(_zipFile, Path.Combine(FileName, "assets.json"));
+            var assetsJson = GetJson(_zipFile, Path.Combine(_fileName, "assets.json"));
 
             var assets = new List<IAsset>();
             foreach (var assetJson in assetsJson["assets"].JsonDictionaryArray())

@@ -5,15 +5,17 @@ namespace AkyuiUnity
 {
     public class LayoutInfo
     {
-        [NotNull] public readonly Meta Meta;
+        [NotNull] public string Name;
         public readonly int Timestamp;
+        [NotNull] public readonly Meta Meta;
         public readonly int Root;
         [NotNull] public readonly IElement[] Elements;
 
-        public LayoutInfo([NotNull] Meta meta, int timestamp, int root, [NotNull] IElement[] elements)
+        public LayoutInfo([NotNull] string name, int timestamp, [NotNull] Meta meta, int root, [NotNull] IElement[] elements)
         {
-            Meta = meta;
+            Name = name;
             Timestamp = timestamp;
+            Meta = meta;
             Root = root;
             Elements = elements;
         }
