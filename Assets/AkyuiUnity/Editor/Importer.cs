@@ -26,41 +26,11 @@ namespace AkyuiUnity.Editor
 
         public static void Import(IAkyuiImportSettings settings, IAkyuiLoader[] loaders)
         {
-            var dependencies = new Dictionary<string, string[]>();
-            var nameToLoader = loaders.ToDictionary(x => x.LayoutInfo.Name, x => x);
-            var unImported = loaders.Select(x => x.LayoutInfo.Name).ToList();
-            foreach (var loader in loaders)
+            foreach (var loader in AkyuiDependencyResolver.Resolve(loaders))
             {
-                var reference = new List<string>();
-                foreach (var e in loader.LayoutInfo.Elements)
-                {
-                    if (e is PrefabElement prefabElement)
-                    {
-                        reference.Add(prefabElement.Reference);
-                    }
-                }
-                dependencies[loader.LayoutInfo.Name] = reference.Distinct().ToArray();
-            }
-
-            while (unImported.Count > 0)
-            {
-                var import = dependencies
-                    .Where(x => unImported.Contains(x.Key))
-                    .Where(x => x.Value.Count(y => unImported.Contains(y)) == 0)
-                    .ToArray();
-
-                foreach (var i in import)
-                {
-                    Debug.Log($"Import Start: {i.Key}");
-                    unImported.Remove(i.Key);
-                    Import(settings, nameToLoader[i.Key]);
-                    Debug.Log($"Import Finish: {i.Key}");
-                }
-
-                if (!import.Any())
-                {
-                    Debug.LogError($"dependencies error");
-                }
+                Debug.Log($"Import Start: {loader.LayoutInfo.Name}");
+                Import(settings, loader);
+                Debug.Log($"Import Finish: {loader.LayoutInfo.Name}");
             }
 
             AssetDatabase.Refresh();
