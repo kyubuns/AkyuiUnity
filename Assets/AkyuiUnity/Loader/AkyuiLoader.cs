@@ -38,11 +38,6 @@ namespace AkyuiUnity.Loader
             _zipFile?.Close();
         }
 
-        public static byte[] Compress(IAkyuiLoader loader)
-        {
-            return new byte[] { };
-        }
-
         public byte[] LoadAsset(string assetFileName)
         {
             var assetEntry = _zipFile.FindEntry(Path.Combine(_fileName, "assets", assetFileName), true);
@@ -114,7 +109,7 @@ namespace AkyuiUnity.Loader
         {
             var assetType = assetJson["type"].JsonString();
 
-            if (assetType == "sprite")
+            if (assetType == SpriteAsset.TypeString)
             {
                 return new SpriteAsset(
                     assetJson["file"].JsonString(),
@@ -129,7 +124,7 @@ namespace AkyuiUnity.Loader
         {
             var elementType = elementJson["type"].JsonString();
 
-            if (elementType == "object")
+            if (elementType == ObjectElement.TypeString)
             {
                 var components = new List<IComponent>();
 
@@ -153,7 +148,7 @@ namespace AkyuiUnity.Loader
                 );
             }
 
-            if (elementType == "prefab")
+            if (elementType == PrefabElement.TypeString)
             {
                 var overrides = new List<Override>();
                 foreach (var overrideJson in elementJson["overrides"].JsonDictionaryArray())
@@ -200,7 +195,7 @@ namespace AkyuiUnity.Loader
         {
             var componentType = componentJson["type"].JsonString();
 
-            if (componentType == "image")
+            if (componentType == ImageComponent.TypeString)
             {
                 return new ImageComponent(
                     componentJson["cid"].JsonInt(),
@@ -209,7 +204,7 @@ namespace AkyuiUnity.Loader
                 );
             }
 
-            if (componentType == "text")
+            if (componentType == TextComponent.TypeString)
             {
                 TextComponent.TextAlign? align = null;
                 if (componentJson.ContainsKey("align"))
@@ -226,21 +221,21 @@ namespace AkyuiUnity.Loader
                 );
             }
 
-            if (componentType == "button")
+            if (componentType == ButtonComponent.TypeString)
             {
                 return new ButtonComponent(
                     componentJson["cid"].JsonInt()
                 );
             }
 
-            if (componentType == "horizontal_layout")
+            if (componentType == HorizontalLayoutComponent.TypeString)
             {
                 return new HorizontalLayoutComponent(
                     componentJson["cid"].JsonInt()
                 );
             }
 
-            if (componentType == "vertical_layout")
+            if (componentType == VerticalLayoutComponent.TypeString)
             {
                 return new VerticalLayoutComponent(
                     componentJson["cid"].JsonInt()

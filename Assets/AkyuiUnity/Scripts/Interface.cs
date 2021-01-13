@@ -43,6 +43,8 @@ namespace AkyuiUnity
 
     public class SpriteAsset : IAsset
     {
+        public const string TypeString = "sprite";
+
         public string FileName { get; }
         public int Timestamp { get; }
 
@@ -60,7 +62,10 @@ namespace AkyuiUnity
 
     public class ObjectElement : IElement
     {
+        public const string TypeString = "object";
+
         public int Eid { get; }
+
         [NotNull] public readonly string Name;
         public readonly Vector2 Position;
         public readonly Vector2 Size;
@@ -84,6 +89,8 @@ namespace AkyuiUnity
 
     public class PrefabElement : IElement
     {
+        public const string TypeString = "prefab";
+
         public int Eid { get; }
         [NotNull] public readonly string Reference;
         public readonly int Timestamp;
@@ -127,6 +134,8 @@ namespace AkyuiUnity
 
     public class ImageComponent : IComponent
     {
+        public const string TypeString = "image";
+
         public int Cid { get; }
         [CanBeNull] public readonly string Sprite;
         [CanBeNull] public readonly Color? Color;
@@ -141,6 +150,8 @@ namespace AkyuiUnity
 
     public class TextComponent : IComponent
     {
+        public const string TypeString = "text";
+
         public int Cid { get; }
         [CanBeNull] public readonly string Text;
         [CanBeNull] public readonly float? Size;
@@ -164,6 +175,8 @@ namespace AkyuiUnity
 
     public class ButtonComponent : IComponent
     {
+        public const string TypeString = "button";
+
         public int Cid { get; }
 
         public ButtonComponent(int cid)
@@ -174,6 +187,8 @@ namespace AkyuiUnity
 
     public class HorizontalLayoutComponent : IComponent
     {
+        public const string TypeString = "horizontal_layout";
+
         public int Cid { get; }
 
         public HorizontalLayoutComponent(int cid)
@@ -184,6 +199,8 @@ namespace AkyuiUnity
 
     public class VerticalLayoutComponent : IComponent
     {
+        public const string TypeString = "vertical_layout";
+
         public int Cid { get; }
 
         public VerticalLayoutComponent(int cid)

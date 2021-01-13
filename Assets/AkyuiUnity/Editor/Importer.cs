@@ -68,7 +68,7 @@ namespace AkyuiUnity.Editor
 
         public static void Save(IAkyuiLoader loader, string filePath)
         {
-            var bytes = AkyuiLoader.Compress(loader);
+            var bytes = AkyuiCompressor.Compress(loader);
             File.WriteAllBytes(filePath, bytes);
         }
 
