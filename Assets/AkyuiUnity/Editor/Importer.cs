@@ -1,4 +1,6 @@
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using AkyuiUnity.Editor.Extensions;
 using AkyuiUnity.Editor.ScriptableObject;
 using AkyuiUnity.Generator;
@@ -13,22 +15,58 @@ namespace AkyuiUnity.Editor
     {
         public static void Import(IAkyuiImportSettings settings, string[] filePaths)
         {
-            foreach (var filePath in filePaths)
-            {
-                Debug.Log($"Import Start: {filePath}");
+            var akyuiLoaders = filePaths
+                .Select(x => (IAkyuiLoader) new AkyuiLoader(x))
+                .ToArray();
 
-                using (IAkyuiLoader akyuiLoader = new AkyuiLoader(filePath))
+            Import(settings, akyuiLoaders);
+
+            foreach (var akyuiLoader in akyuiLoaders) akyuiLoader.Dispose();
+        }
+
+        public static void Import(IAkyuiImportSettings settings, IAkyuiLoader[] loaders)
+        {
+            var dependencies = new Dictionary<string, string[]>();
+            var nameToLoader = loaders.ToDictionary(x => x.FileName, x => x);
+            var unImported = loaders.Select(x => x.FileName).ToList();
+            foreach (var loader in loaders)
+            {
+                var reference = new List<string>();
+                foreach (var e in loader.LayoutInfo.Elements)
                 {
-                    Import(settings, akyuiLoader);
+                    if (e is PrefabElement prefabElement)
+                    {
+                        reference.Add(prefabElement.Reference);
+                    }
+                }
+                dependencies[loader.FileName] = reference.Distinct().ToArray();
+            }
+
+            while (unImported.Count > 0)
+            {
+                var import = dependencies
+                    .Where(x => unImported.Contains(x.Key))
+                    .Where(x => x.Value.Count(y => unImported.Contains(y)) == 0)
+                    .ToArray();
+
+                foreach (var i in import)
+                {
+                    Debug.Log($"Import Start: {i.Key}");
+                    unImported.Remove(i.Key);
+                    Import(settings, nameToLoader[i.Key]);
+                    Debug.Log($"Import Finish: {i.Key}");
                 }
 
-                Debug.Log($"Import Finish: {filePath}");
+                if (!import.Any())
+                {
+                    Debug.LogError($"dependencies error");
+                }
             }
 
             AssetDatabase.Refresh();
         }
 
-        public static void Import(IAkyuiImportSettings settings, IAkyuiLoader akyuiLoader)
+        private static void Import(IAkyuiImportSettings settings, IAkyuiLoader akyuiLoader)
         {
             var pathGetter = new PathGetter(settings, akyuiLoader.FileName);
 
