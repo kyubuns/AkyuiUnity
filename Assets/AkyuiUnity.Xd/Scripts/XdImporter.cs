@@ -77,19 +77,18 @@ namespace AkyuiUnity.Xd
             public List<IAsset> Assets { get; }
             public Dictionary<string, XdStyleFillPatternMetaJson> FileNameToMeta { get; }
 
-            private readonly XdResourcesJson _resources;
             private int _nextEid = 1;
 
             public XdRenderer(XdArtboard xdArtboard)
             {
-                _resources = xdArtboard.Resources;
+                var resources = xdArtboard.Resources;
 
                 Name = xdArtboard.Name;
                 Elements = new List<IElement>();
                 Assets = new List<IAsset>();
                 FileNameToMeta = new Dictionary<string, XdStyleFillPatternMetaJson>();
 
-                var xdResourcesArtboardsJson = _resources.Artboards[xdArtboard.Manifest.Path.Replace("artboard-", "")];
+                var xdResourcesArtboardsJson = resources.Artboards[xdArtboard.Manifest.Path.Replace("artboard-", "")];
                 var rootSize = new Vector2(xdResourcesArtboardsJson.Width, xdResourcesArtboardsJson.Height);
                 var children = Render(xdArtboard.Artboard.Children.SelectMany(x => x.Artboard.Children).ToArray(), rootSize);
                 var root = new ObjectElement(
@@ -100,24 +99,24 @@ namespace AkyuiUnity.Xd
                     AnchorXType.Center,
                     AnchorYType.Middle,
                     new IComponent[] { },
-                    children
+                    children.Select(x => x.Eid).ToArray()
                 );
                 Elements.Add(root);
             }
 
-            private int[] Render(XdObjectJson[] xdObjects, Vector2 rootSize)
+            private IElement[] Render(XdObjectJson[] xdObjects, Vector2 rootSize)
             {
-                var children = new List<int>();
+                var children = new List<IElement>();
                 foreach (var xdObject in xdObjects) children.AddRange(Render(xdObject, rootSize));
                 return children.ToArray();
             }
 
-            private int[] Render(XdObjectJson xdObject, Vector2 rootSize)
+            private IElement[] Render(XdObjectJson xdObject, Vector2 rootSize)
             {
                 var eid = _nextEid;
                 _nextEid++;
 
-                var children = new int[] { };
+                var children = new IElement[] { };
                 if (xdObject.Group != null)
                 {
                     children = Render(xdObject.Group.Children, rootSize);
@@ -149,14 +148,16 @@ namespace AkyuiUnity.Xd
                         AnchorXType.Center,
                         AnchorYType.Middle,
                         components.ToArray(),
-                        children
+                        children.Select(x => x.Eid).ToArray()
                     );
 
                     Elements.Add(sprite);
+                    return new IElement[] { sprite };
                 }
-                else if (xdObject.Type == "group")
+
+                if (xdObject.Type == "group")
                 {
-                    var sprite = new ObjectElement(
+                    var group = new ObjectElement(
                         eid,
                         xdObject.Name,
                         Vector2.zero,
@@ -164,16 +165,14 @@ namespace AkyuiUnity.Xd
                         AnchorXType.Center,
                         AnchorYType.Middle,
                         new IComponent[] { },
-                        children
+                        children.Select(x => x.Eid).ToArray()
                     );
 
-                    Elements.Add(sprite);
+                    Elements.Add(group);
+                    return new IElement[] { group };
                 }
-                else
-                {
-                    throw new Exception($"Unknown object type {xdObject.Type}");
-                }
-                return new[] { eid };
+
+                throw new Exception($"Unknown object type {xdObject.Type}");
             }
         }
     }
