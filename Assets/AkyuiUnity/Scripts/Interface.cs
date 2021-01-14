@@ -63,6 +63,10 @@ namespace AkyuiUnity
     public interface IElement
     {
         int Eid { get; }
+        Vector2 Position { get; }
+        Vector2 Size { get; }
+        AnchorXType AnchorX { get; }
+        AnchorYType AnchorY { get; }
     }
 
     public class ObjectElement : IElement
@@ -72,10 +76,10 @@ namespace AkyuiUnity
         public int Eid { get; }
 
         [NotNull] public readonly string Name;
-        public readonly Vector2 Position;
-        public readonly Vector2 Size;
-        public readonly AnchorXType AnchorX;
-        public readonly AnchorYType AnchorY;
+        public Vector2 Position { get; }
+        public Vector2 Size { get; }
+        public AnchorXType AnchorX { get; }
+        public AnchorYType AnchorY { get; }
         [NotNull] public readonly IComponent[] Components;
         [NotNull] public readonly int[] Children;
 
@@ -97,13 +101,22 @@ namespace AkyuiUnity
         public const string TypeString = "prefab";
 
         public int Eid { get; }
+
         [NotNull] public readonly string Reference;
+        public Vector2 Position { get; }
+        public Vector2 Size { get; }
+        public AnchorXType AnchorX { get; }
+        public AnchorYType AnchorY { get; }
         public readonly long Hash;
         [NotNull] public readonly Override[] Overrides;
 
-        public PrefabElement(int eid, [NotNull] string reference, long hash, [NotNull] Override[] overrides)
+        public PrefabElement(int eid, Vector2 position, Vector2 size, AnchorXType anchorX, AnchorYType anchorY, [NotNull] string reference, long hash, [NotNull] Override[] overrides)
         {
             Eid = eid;
+            Position = position;
+            Size = size;
+            AnchorX = anchorX;
+            AnchorY = anchorY;
             Reference = reference;
             Hash = hash;
             Overrides = overrides;

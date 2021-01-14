@@ -92,6 +92,10 @@ namespace AkyuiUnity.Loader
                     {
                         { "eid", ToSerializable(prefabElement.Eid) },
                         { "type", ToSerializable(PrefabElement.TypeString) },
+                        { "position", ToSerializable(prefabElement.Position) },
+                        { "size", ToSerializable(prefabElement.Size) },
+                        { "anchor_x", ToSerializable(prefabElement.AnchorX) },
+                        { "anchor_y", ToSerializable(prefabElement.AnchorY) },
                         { "reference", ToSerializable(prefabElement.Reference) },
                         { "hash", ToSerializable(prefabElement.Hash) },
                         { "overrides", prefabElement.Overrides.Select(ToSerializable).ToArray() }

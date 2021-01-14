@@ -151,6 +151,8 @@ namespace AkyuiUnity.Loader
             if (elementType == PrefabElement.TypeString)
             {
                 var overrides = new List<Override>();
+                var rootAnchorX = (AnchorXType) Enum.Parse(typeof(AnchorXType), elementJson["anchor_x"].JsonString(), true);
+                var rootAnchorY = (AnchorYType) Enum.Parse(typeof(AnchorYType), elementJson["anchor_y"].JsonString(), true);
                 foreach (var overrideJson in elementJson["overrides"].JsonDictionaryArray())
                 {
                     List<IComponent> overrideComponents = null;
@@ -182,6 +184,10 @@ namespace AkyuiUnity.Loader
 
                 return new PrefabElement(
                     elementJson["eid"].JsonInt(),
+                    elementJson["position"].JsonVector2(),
+                    elementJson["size"].JsonVector2(),
+                    rootAnchorX,
+                    rootAnchorY,
                     elementJson["reference"].JsonString(),
                     elementJson["hash"].JsonLong(),
                     overrides.ToArray()

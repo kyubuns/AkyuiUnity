@@ -24,21 +24,12 @@ namespace AkyuiUnity.Generator
 
         private static GameObject CreateGameObject(IAssetLoader assetLoader, LayoutInfo layoutInfo, int eid, Transform parent, ref List<GameObjectWithId> meta)
         {
-            var element = layoutInfo.Elements.Single(x => x.Eid == eid);
-
-            if (element is ObjectElement objectElement)
+            (Vector2 Min, Vector2 Max) CalcAnchor(AnchorXType x, AnchorYType y)
             {
-                var gameObject = new GameObject(objectElement.Name);
-                gameObject.transform.SetParent(parent);
+                var anchorMin = Vector2.zero;
+                var anchorMax = Vector2.zero;
 
-                var rectTransform = gameObject.AddComponent<RectTransform>();
-                rectTransform.anchoredPosition = objectElement.Position;
-                rectTransform.sizeDelta = objectElement.Size;
-
-                var anchorMin = rectTransform.anchorMin;
-                var anchorMax = rectTransform.anchorMax;
-
-                switch (objectElement.AnchorX)
+                switch (x)
                 {
                     case AnchorXType.Left:
                         anchorMin.x = 0.0f;
@@ -58,7 +49,7 @@ namespace AkyuiUnity.Generator
                         break;
                 }
 
-                switch (objectElement.AnchorY)
+                switch (y)
                 {
                     case AnchorYType.Top:
                         anchorMin.y = 1.0f;
@@ -78,6 +69,21 @@ namespace AkyuiUnity.Generator
                         break;
                 }
 
+                return (anchorMin, anchorMax);
+            }
+
+            var element = layoutInfo.Elements.Single(x => x.Eid == eid);
+
+            if (element is ObjectElement objectElement)
+            {
+                var gameObject = new GameObject(objectElement.Name);
+                gameObject.transform.SetParent(parent);
+
+                var rectTransform = gameObject.AddComponent<RectTransform>();
+                rectTransform.anchoredPosition = objectElement.Position;
+                rectTransform.sizeDelta = objectElement.Size;
+
+                var (anchorMin, anchorMax) = CalcAnchor(objectElement.AnchorX, objectElement.AnchorY);
                 rectTransform.anchorMin = anchorMin;
                 rectTransform.anchorMax = anchorMax;
 
@@ -111,6 +117,16 @@ namespace AkyuiUnity.Generator
                     Debug.LogWarning($"Reference {prefabElement.Reference} hash mismatch {prefabElement.Hash} != {referenceMeta.hash}");
                 }
 
+                {
+                    var rectTransform = prefabGameObject.GetComponent<RectTransform>();
+                    rectTransform.anchoredPosition = prefabElement.Position;
+                    rectTransform.sizeDelta = prefabElement.Size;
+
+                    var (anchorMin, anchorMax) = CalcAnchor(prefabElement.AnchorX, prefabElement.AnchorY);
+                    rectTransform.anchorMin = anchorMin;
+                    rectTransform.anchorMax = anchorMax;
+                }
+
                 foreach (var @override in prefabElement.Overrides)
                 {
                     var targetObject = referenceMeta.Find(@override.Eid);
@@ -119,7 +135,6 @@ namespace AkyuiUnity.Generator
                     if (@override.Name != null) targetObject.gameObject.name = @override.Name;
                     if (@override.Position != null) rectTransform.anchoredPosition = @override.Position.Value;
                     if (@override.Size != null) rectTransform.sizeDelta = @override.Size.Value;
-
 
                     var anchorMin = rectTransform.anchorMin;
                     var anchorMax = rectTransform.anchorMax;
