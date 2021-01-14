@@ -89,12 +89,14 @@ namespace AkyuiUnity.Xd
                 Assets = new List<IAsset>();
                 FileNameToMeta = new Dictionary<string, XdStyleFillPatternMetaJson>();
 
-                var children = Render(xdArtboard.Artboard.Children.SelectMany(x => x.Artboard.Children).ToArray());
+                var xdResourcesArtboardsJson = _resources.Artboards[xdArtboard.Manifest.Path.Replace("artboard-", "")];
+                var rootSize = new Vector2(xdResourcesArtboardsJson.Width, xdResourcesArtboardsJson.Height);
+                var children = Render(xdArtboard.Artboard.Children.SelectMany(x => x.Artboard.Children).ToArray(), rootSize);
                 var root = new ObjectElement(
                     0,
                     xdArtboard.Name,
                     Vector2.zero,
-                    new Vector2(1024, 1024),
+                    rootSize,
                     AnchorXType.Center,
                     AnchorYType.Middle,
                     new IComponent[] { },
@@ -103,14 +105,14 @@ namespace AkyuiUnity.Xd
                 Elements.Add(root);
             }
 
-            private int[] Render(XdObjectJson[] xdObjects)
+            private int[] Render(XdObjectJson[] xdObjects, Vector2 rootSize)
             {
                 var children = new List<int>();
-                foreach (var xdObject in xdObjects) children.AddRange(Render(xdObject));
+                foreach (var xdObject in xdObjects) children.AddRange(Render(xdObject, rootSize));
                 return children.ToArray();
             }
 
-            private int[] Render(XdObjectJson xdObject)
+            private int[] Render(XdObjectJson xdObject, Vector2 rootSize)
             {
                 var eid = _nextEid;
                 _nextEid++;
@@ -118,7 +120,7 @@ namespace AkyuiUnity.Xd
                 var children = new int[] { };
                 if (xdObject.Group != null)
                 {
-                    children = Render(xdObject.Group.Children);
+                    children = Render(xdObject.Group.Children, rootSize);
                 }
 
                 if (xdObject.Type == "shape")
@@ -138,14 +140,30 @@ namespace AkyuiUnity.Xd
                     }
 
                     var size = new Vector2(xdObject.Shape.Width, xdObject.Shape.Height);
+                    var position = new Vector2(xdObject.Transform.Tx - rootSize.x / 2f + size.x / 2f, -(xdObject.Transform.Ty - rootSize.y / 2f + size.y / 2f));
                     var sprite = new ObjectElement(
                         eid,
                         xdObject.Name,
-                        new Vector2(xdObject.Transform.Tx + size.x / 2f, -(xdObject.Transform.Ty + size.y / 2f)),
+                        position,
                         size,
                         AnchorXType.Center,
                         AnchorYType.Middle,
                         components.ToArray(),
+                        children
+                    );
+
+                    Elements.Add(sprite);
+                }
+                else if (xdObject.Type == "group")
+                {
+                    var sprite = new ObjectElement(
+                        eid,
+                        xdObject.Name,
+                        Vector2.zero,
+                        Vector2.zero,
+                        AnchorXType.Center,
+                        AnchorYType.Middle,
+                        new IComponent[] { },
                         children
                     );
 
