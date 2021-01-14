@@ -59,7 +59,7 @@ namespace AkyuiUnity.Loader
             var dict = new Dictionary<string, object>();
             var elements = new List<object>();
             dict["name"] = ToSerializable(source.Name);
-            dict["timestamp"] = ToSerializable(source.Timestamp);
+            dict["hash"] = ToSerializable(source.Hash);
             dict["meta"] = new Dictionary<string, object>
             {
                 { "app", ToSerializable(source.Meta.App) },
@@ -93,7 +93,7 @@ namespace AkyuiUnity.Loader
                         { "eid", ToSerializable(prefabElement.Eid) },
                         { "type", ToSerializable(PrefabElement.TypeString) },
                         { "reference", ToSerializable(prefabElement.Reference) },
-                        { "timestamp", ToSerializable(prefabElement.Timestamp) },
+                        { "hash", ToSerializable(prefabElement.Hash) },
                         { "overrides", prefabElement.Overrides.Select(ToSerializable).ToArray() }
                     });
                 }
@@ -136,7 +136,7 @@ namespace AkyuiUnity.Loader
                     assets.Add(new Dictionary<string, object>
                     {
                         { "type", SpriteAsset.TypeString },
-                        { "timestamp", ToSerializable(spriteAsset.Timestamp) },
+                        { "hash", ToSerializable(spriteAsset.Hash) },
                         { "file", ToSerializable(spriteAsset.FileName) },
                     });
                 }

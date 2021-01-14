@@ -14,8 +14,8 @@ namespace AkyuiUnity.Editor.ScriptableObject
         public string MetaOutputPath => metaOutputPath;
         [SerializeField] private string metaOutputPath = "Assets/{name}Meta";
 
-        public bool CheckTimestamp => checkTimestamp;
-        [SerializeField] private bool checkTimestamp = true;
+        public bool CheckHash => checkHash;
+        [SerializeField] private bool checkHash = true;
 
         public AkyuiImportTrigger[] Triggers => triggers;
         [SerializeField] private AkyuiImportTrigger[] triggers = default;
@@ -26,7 +26,7 @@ namespace AkyuiUnity.Editor.ScriptableObject
         string PrefabOutputPath { get; }
         string AssetOutputDirectoryPath { get; }
         string MetaOutputPath { get; }
-        bool CheckTimestamp { get; }
+        bool CheckHash { get; }
         AkyuiImportTrigger[] Triggers { get; }
     }
 }

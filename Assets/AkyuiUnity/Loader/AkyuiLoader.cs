@@ -70,7 +70,7 @@ namespace AkyuiUnity.Loader
 
             return new LayoutInfo(
                 layoutJson["name"].JsonString(),
-                layoutJson["timestamp"].JsonInt(),
+                layoutJson["hash"].JsonLong(),
                 meta,
                 layoutJson["root"].JsonInt(),
                 elements.ToArray()
@@ -113,7 +113,7 @@ namespace AkyuiUnity.Loader
             {
                 return new SpriteAsset(
                     assetJson["file"].JsonString(),
-                    assetJson["timestamp"].JsonInt()
+                    assetJson["hash"].JsonLong()
                 );
             }
 
@@ -183,7 +183,7 @@ namespace AkyuiUnity.Loader
                 return new PrefabElement(
                     elementJson["eid"].JsonInt(),
                     elementJson["reference"].JsonString(),
-                    elementJson["timestamp"].JsonInt(),
+                    elementJson["hash"].JsonLong(),
                     overrides.ToArray()
                 );
             }

@@ -6,15 +6,15 @@ namespace AkyuiUnity
     public class LayoutInfo
     {
         [NotNull] public string Name;
-        public readonly int Timestamp;
+        public readonly long Hash;
         [NotNull] public readonly Meta Meta;
         public readonly int Root;
         [NotNull] public readonly IElement[] Elements;
 
-        public LayoutInfo([NotNull] string name, int timestamp, [NotNull] Meta meta, int root, [NotNull] IElement[] elements)
+        public LayoutInfo([NotNull] string name, long hash, [NotNull] Meta meta, int root, [NotNull] IElement[] elements)
         {
             Name = name;
-            Timestamp = timestamp;
+            Hash = hash;
             Meta = meta;
             Root = root;
             Elements = elements;
@@ -38,7 +38,7 @@ namespace AkyuiUnity
     public interface IAsset
     {
         [NotNull] string FileName { get; }
-        int Timestamp { get; }
+        long Hash { get; }
     }
 
     public class SpriteAsset : IAsset
@@ -46,12 +46,12 @@ namespace AkyuiUnity
         public const string TypeString = "sprite";
 
         public string FileName { get; }
-        public int Timestamp { get; }
+        public long Hash { get; }
 
-        public SpriteAsset([NotNull] string fileName, int timestamp)
+        public SpriteAsset([NotNull] string fileName, long hash)
         {
             FileName = fileName;
-            Timestamp = timestamp;
+            Hash = hash;
         }
     }
 
@@ -93,14 +93,14 @@ namespace AkyuiUnity
 
         public int Eid { get; }
         [NotNull] public readonly string Reference;
-        public readonly int Timestamp;
+        public readonly long Hash;
         [NotNull] public readonly Override[] Overrides;
 
-        public PrefabElement(int eid, [NotNull] string reference, int timestamp, [NotNull] Override[] overrides)
+        public PrefabElement(int eid, [NotNull] string reference, long hash, [NotNull] Override[] overrides)
         {
             Eid = eid;
             Reference = reference;
-            Timestamp = timestamp;
+            Hash = hash;
             Overrides = overrides;
         }
     }

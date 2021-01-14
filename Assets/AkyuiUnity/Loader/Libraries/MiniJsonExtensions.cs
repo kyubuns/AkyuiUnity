@@ -19,6 +19,13 @@ namespace AkyuiUnity.Loader.Internal
             throw new Exception($"{o} is {o.GetType()}");
         }
 
+        public static long JsonLong(this object o)
+        {
+            if (o is long l) return l;
+            if (o is double d) return (long) d;
+            throw new Exception($"{o} is {o.GetType()}");
+        }
+
         public static float JsonFloat(this object o)
         {
             if (o is long l) return (float) l;

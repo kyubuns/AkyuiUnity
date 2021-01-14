@@ -15,7 +15,7 @@ namespace AkyuiUnity.Generator
             var gameObject = CreateGameObject(assetLoader, layoutInfo, layoutInfo.Root, null, ref metaList);
             var meta = new AkyuiPrefabMeta
             {
-                timestamp = layoutInfo.Timestamp,
+                hash = layoutInfo.Hash,
                 root = gameObject,
                 idAndGameObjects = metaList.ToArray()
             };
@@ -106,9 +106,9 @@ namespace AkyuiUnity.Generator
             {
                 var (prefabGameObject, referenceMeta) = assetLoader.LoadPrefab(parent, prefabElement.Reference);
 
-                if (prefabElement.Timestamp != referenceMeta.timestamp)
+                if (prefabElement.Hash != referenceMeta.hash)
                 {
-                    Debug.LogWarning($"Reference {prefabElement.Reference} timestamp mismatch {prefabElement.Timestamp} != {referenceMeta.timestamp}");
+                    Debug.LogWarning($"Reference {prefabElement.Reference} hash mismatch {prefabElement.Hash} != {referenceMeta.hash}");
                 }
 
                 foreach (var @override in prefabElement.Overrides)

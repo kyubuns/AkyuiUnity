@@ -47,16 +47,16 @@ namespace AkyuiUnity.Editor
             var pathGetter = new PathGetter(settings, akyuiLoader.LayoutInfo.Name);
 
             var layoutInfo = akyuiLoader.LayoutInfo;
-            if (settings.CheckTimestamp)
+            if (settings.CheckHash)
             {
                 var prevMetaFullPath = pathGetter.GetMetaFullPath(akyuiLoader.LayoutInfo.Name);
                 if (File.Exists(prevMetaFullPath))
                 {
                     var prevMetaObject = AssetDatabase.LoadAssetAtPath<GameObject>(pathGetter.GetMetaPath(akyuiLoader.LayoutInfo.Name));
                     var prevMeta = prevMetaObject.GetComponent<AkyuiMeta>().meta;
-                    if (prevMeta.timestamp == layoutInfo.Timestamp)
+                    if (prevMeta.hash == layoutInfo.Hash)
                     {
-                        Debug.Log($"Skip (same timestamp)");
+                        Debug.Log($"Skip (same hash)");
                         return;
                     }
                 }
@@ -92,14 +92,14 @@ namespace AkyuiUnity.Editor
                 var saveFullPath = Path.Combine(unityAssetsParentPath, savePath);
                 var bytes = akyuiLoader.LoadAsset(asset.FileName);
 
-                if (settings.CheckTimestamp)
+                if (settings.CheckHash)
                 {
                     if (File.Exists(saveFullPath))
                     {
                         var import = AssetImporter.GetAtPath(savePath);
-                        if (import.userData == akyuiLoader.LayoutInfo.Timestamp.ToString())
+                        if (import.userData == akyuiLoader.LayoutInfo.Hash.ToString())
                         {
-                            Debug.Log($"Asset {asset.FileName} Skip (same timestamp)");
+                            Debug.Log($"Asset {asset.FileName} Skip (same hash)");
                             continue;
                         }
                     }
@@ -117,7 +117,7 @@ namespace AkyuiUnity.Editor
                 File.WriteAllBytes(saveFullPath, bytes);
 
                 PostProcessImportAsset.ProcessingFile = savePath;
-                PostProcessImportAsset.Timestamp = asset.Timestamp;
+                PostProcessImportAsset.Hash = asset.Hash;
                 using (Disposable.Create(() => PostProcessImportAsset.ProcessingFile = ""))
                 {
                     AssetDatabase.ImportAsset(savePath);
@@ -132,7 +132,7 @@ namespace AkyuiUnity.Editor
     public class PostProcessImportAsset : AssetPostprocessor
     {
         public static string ProcessingFile { get; set; }
-        public static int Timestamp { get; set; }
+        public static long Hash { get; set; }
 
         public void OnPreprocessTexture()
         {
@@ -140,7 +140,7 @@ namespace AkyuiUnity.Editor
 
             var textureImporter = (TextureImporter) assetImporter;
             textureImporter.textureType = TextureImporterType.Sprite;
-            textureImporter.userData = Timestamp.ToString();
+            textureImporter.userData = Hash.ToString();
         }
     }
 

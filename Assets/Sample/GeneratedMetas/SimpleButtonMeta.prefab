@@ -45,7 +45,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   meta:
-    timestamp: 1610182610
+    hash: 1610182610
     root: {fileID: 3988839513225044343}
     idAndGameObjects:
     - eid: 02000000

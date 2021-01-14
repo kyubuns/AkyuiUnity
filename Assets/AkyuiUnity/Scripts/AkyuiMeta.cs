@@ -12,7 +12,7 @@ namespace AkyuiUnity
         {
             return new AkyuiPrefabMeta
             {
-                timestamp = meta.timestamp,
+                hash = meta.hash,
                 root = meta.root,
                 idAndGameObjects = meta.idAndGameObjects
             };
@@ -22,7 +22,7 @@ namespace AkyuiUnity
     [Serializable]
     public class AkyuiPrefabMeta
     {
-        [SerializeField] public int timestamp;
+        [SerializeField] public long hash;
         [SerializeField] public GameObject root;
         [SerializeField] public GameObjectWithId[] idAndGameObjects;
 
