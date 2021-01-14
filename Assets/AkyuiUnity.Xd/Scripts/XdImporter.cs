@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using AkyuiUnity.Editor;
 using AkyuiUnity.Loader;
+using JetBrains.Annotations;
 using UnityEngine;
 using XdParser;
 using XdParser.Internal;
@@ -78,6 +79,7 @@ namespace AkyuiUnity.Xd
             public Dictionary<string, XdStyleFillPatternMetaJson> FileNameToMeta { get; }
 
             private int _nextEid = 1;
+            private Dictionary<string, Rect> _size;
 
             public XdRenderer(XdArtboard xdArtboard)
             {
@@ -87,10 +89,12 @@ namespace AkyuiUnity.Xd
                 Elements = new List<IElement>();
                 Assets = new List<IAsset>();
                 FileNameToMeta = new Dictionary<string, XdStyleFillPatternMetaJson>();
+                _size = new Dictionary<string, Rect>();
 
                 var xdResourcesArtboardsJson = resources.Artboards[xdArtboard.Manifest.Path.Replace("artboard-", "")];
                 var rootSize = new Vector2(xdResourcesArtboardsJson.Width, xdResourcesArtboardsJson.Height);
-                var children = Render(xdArtboard.Artboard.Children.SelectMany(x => x.Artboard.Children).ToArray(), rootSize);
+                CalcPosition(xdArtboard.Artboard.Children.SelectMany(x => x.Artboard.Children).ToArray(), rootSize);
+                var children = Render(xdArtboard.Artboard.Children.SelectMany(x => x.Artboard.Children).ToArray());
                 var root = new ObjectElement(
                     0,
                     xdArtboard.Name,
@@ -104,22 +108,67 @@ namespace AkyuiUnity.Xd
                 Elements.Add(root);
             }
 
-            private IElement[] Render(XdObjectJson[] xdObjects, Vector2 rootSize)
+            private string[] CalcPosition(XdObjectJson[] xdObjects, Vector2 rootSize)
+            {
+                return xdObjects.Select(xdObject => CalcPosition(xdObject, rootSize)).ToArray();
+            }
+
+            private string CalcPosition(XdObjectJson xdObject, Vector2 rootSize)
+            {
+                var children = new string[] { };
+                if (xdObject.Group != null)
+                {
+                    children = CalcPosition(xdObject.Group.Children, rootSize);
+                }
+
+                if (xdObject.Type == "shape")
+                {
+                    var size = new Vector2(xdObject.Shape.Width, xdObject.Shape.Height);
+                    var position = new Vector2(xdObject.Transform.Tx, xdObject.Transform.Ty) - rootSize / 2f;
+                    _size[xdObject.Id] = new Rect(position, size);
+                    return xdObject.Id;
+                }
+
+                if (xdObject.Type == "group")
+                {
+                    var childrenRects = children.Select(x => _size[x]).ToArray();
+                    var minX = childrenRects.Length > 0 ? childrenRects.Min(x => x.min.x) : 0f;
+                    var minY = childrenRects.Length > 0 ? childrenRects.Min(x => x.min.y) : 0f;
+                    var maxX = childrenRects.Length > 0 ? childrenRects.Max(x => x.max.x) : 0f;
+                    var maxY = childrenRects.Length > 0 ? childrenRects.Max(x => x.max.y) : 0f;
+                    var groupRect = Rect.MinMaxRect(minX, minY, maxX, maxY);
+                    _size[xdObject.Id] = groupRect;
+                    foreach (var c in children)
+                    {
+                        var t = _size[c];
+                        t.center = groupRect.center - t.center;
+                        _size[c] = t;
+                    }
+                    return xdObject.Id;
+                }
+
+                throw new Exception($"Unknown object type {xdObject.Type}");
+            }
+
+            private IElement[] Render(XdObjectJson[] xdObjects)
             {
                 var children = new List<IElement>();
-                foreach (var xdObject in xdObjects) children.AddRange(Render(xdObject, rootSize));
+                foreach (var xdObject in xdObjects) children.AddRange(Render(xdObject));
                 return children.ToArray();
             }
 
-            private IElement[] Render(XdObjectJson xdObject, Vector2 rootSize)
+            private IElement[] Render(XdObjectJson xdObject)
             {
                 var eid = _nextEid;
                 _nextEid++;
 
+                var rect = _size[xdObject.Id];
+                var position = new Vector2(rect.center.x, -rect.center.y);
+                var size = rect.size;
                 var children = new IElement[] { };
                 if (xdObject.Group != null)
                 {
-                    children = Render(xdObject.Group.Children, rootSize);
+                    children = Render(xdObject.Group.Children);
                 }
 
                 if (xdObject.Type == "shape")
@@ -138,8 +187,6 @@ namespace AkyuiUnity.Xd
                         FileNameToMeta[spriteUid] = xdObject.Style.Fill.Pattern.Meta;
                     }
 
-                    var size = new Vector2(xdObject.Shape.Width, xdObject.Shape.Height);
-                    var position = new Vector2(xdObject.Transform.Tx - rootSize.x / 2f + size.x / 2f, -(xdObject.Transform.Ty - rootSize.y / 2f + size.y / 2f));
                     var sprite = new ObjectElement(
                         eid,
                         xdObject.Name,
@@ -160,8 +207,8 @@ namespace AkyuiUnity.Xd
                     var group = new ObjectElement(
                         eid,
                         xdObject.Name,
-                        Vector2.zero,
-                        Vector2.zero,
+                        position,
+                        size,
                         AnchorXType.Center,
                         AnchorYType.Middle,
                         new IComponent[] { },
