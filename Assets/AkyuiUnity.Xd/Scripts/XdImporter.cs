@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using AkyuiUnity.Editor;
 using AkyuiUnity.Loader;
@@ -220,7 +221,7 @@ namespace AkyuiUnity.Xd
                     var shapeType = xdObject.Shape?.Type;
                     if (shapeType == "path")
                     {
-                        spriteUid = $"path_{xdObject.Id}.svg";
+                        spriteUid = $"path_{xdObject.Id}.png";
                         Assets.Add(new SpriteAsset(spriteUid, Random.Range(0, 10000)));
                         components.Add(new ImageComponent(
                             0,
@@ -236,7 +237,19 @@ namespace AkyuiUnity.Xd
                             svgArgs.Add($@"fill=""#{ColorUtility.ToHtmlStringRGB(color)}""");
                         }
                         var svg = $@"<svg><path d=""{xdObject.Shape.Path}"" {string.Join(" ", svgArgs)} /></svg>";
-                        FileNameToBytes[spriteUid] = System.Text.Encoding.UTF8.GetBytes(svg);
+                        using (var reader = new StringReader(svg))
+                        {
+                            var sceneInfo = SVGParser.ImportSVG(reader, ViewportOptions.DontPreserve);
+                            var tessOptions = new VectorUtils.TessellationOptions() {
+                                StepDistance = 100.0f,
+                                MaxCordDeviation = 0.5f,
+                                MaxTanAngleDeviation = 0.1f,
+                                SamplingStepSize = 0.01f
+                            };
+                            var geometry = VectorUtils.TessellateScene(sceneInfo.Scene, tessOptions);
+                            var atlas = VectorUtils.GenerateAtlasAndFillUVs(geometry, 64);
+                            FileNameToBytes[spriteUid] = atlas.Texture.EncodeToPNG();
+                        }
                     }
 
                     var sprite = new ObjectElement(
@@ -272,19 +285,6 @@ namespace AkyuiUnity.Xd
                 }
 
                 throw new Exception($"Unknown object type {xdObject.Type}");
-            }
-        }
-    }
-
-    public class SvgPostProcessImportAsset : AssetPostprocessor
-    {
-        public void OnPreprocessAsset()
-        {
-            if (PostProcessImportAsset.ProcessingFile != assetPath) return;
-
-            if (assetImporter is SVGImporter svgImporter)
-            {
-                svgImporter.SvgType = SVGType.TexturedSprite;
             }
         }
     }
