@@ -148,6 +148,9 @@ namespace XdParser.Internal
 
         [JsonProperty("stroke")]
         public XdStyleStrokeJson Stroke { get; set; }
+
+        [JsonProperty("opacity")]
+        public float? Opacity { get; set; }
     }
 
     public class XdStyleFillJson

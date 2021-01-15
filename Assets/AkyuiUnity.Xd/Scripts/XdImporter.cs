@@ -226,11 +226,14 @@ namespace AkyuiUnity.Xd
                 else if (constTop) anchorY = AnchorYType.Top;
                 else if (constBottom) anchorY = AnchorYType.Bottom;
 
+                var color = Color.white;
+                color.a = xdObject.Style?.Opacity ?? 1f;
+
                 if (xdObject.Type == "shape")
                 {
                     var components = new List<IComponent>();
 
-                    var spriteUid = xdObject.Style.Fill.Pattern?.Meta?.Ux?.Uid;
+                    var spriteUid = xdObject.Style?.Fill.Pattern?.Meta?.Ux?.Uid;
                     var shapeType = xdObject.Shape?.Type;
 
                     if (!string.IsNullOrWhiteSpace(spriteUid))
@@ -240,7 +243,7 @@ namespace AkyuiUnity.Xd
                         components.Add(new ImageComponent(
                             0,
                             spriteUid,
-                            Color.white
+                            color
                         ));
                         FileNameToMeta[spriteUid] = xdObject.Style.Fill.Pattern.Meta;
                     }
@@ -252,7 +255,7 @@ namespace AkyuiUnity.Xd
                         components.Add(new ImageComponent(
                             0,
                             spriteUid,
-                            Color.white
+                            color
                         ));
 
                         var svg = SvgUtil.CreateSvg(xdObject);
