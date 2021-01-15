@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using AkyuiUnity.Editor;
 using AkyuiUnity.Loader;
-using JetBrains.Annotations;
 using UnityEngine;
 using XdParser;
 using XdParser.Internal;
@@ -30,11 +29,12 @@ namespace AkyuiUnity.Xd
     {
         private XdFile _xdFile;
         private readonly Dictionary<string, XdStyleFillPatternMetaJson> _fileNameToMeta;
+        private readonly Dictionary<string, XdShapeJson> _fileNameToShape;
 
         public XdAkyuiLoader(XdFile xdFile, XdArtboard xdArtboard)
         {
             _xdFile = xdFile;
-            (LayoutInfo, AssetsInfo, _fileNameToMeta) = Create(xdArtboard);
+            (LayoutInfo, AssetsInfo, _fileNameToMeta, _fileNameToShape) = Create(xdArtboard);
         }
 
         public void Dispose()
@@ -48,11 +48,22 @@ namespace AkyuiUnity.Xd
 
         public byte[] LoadAsset(string fileName)
         {
-            var meta = _fileNameToMeta[fileName];
-            return _xdFile.GetResource(meta);
+            if (_fileNameToMeta.ContainsKey(fileName))
+            {
+                var meta = _fileNameToMeta[fileName];
+                return _xdFile.GetResource(meta);
+            }
+
+            if (_fileNameToShape.ContainsKey(fileName))
+            {
+                var shape = _fileNameToShape[fileName];
+                return SvgRenderer.Render(shape.Path);
+            }
+
+            throw new Exception($"Unknown asset {fileName}");
         }
 
-        private (LayoutInfo, AssetsInfo, Dictionary<string, XdStyleFillPatternMetaJson>) Create(XdArtboard xdArtboard)
+        private (LayoutInfo, AssetsInfo, Dictionary<string, XdStyleFillPatternMetaJson>, Dictionary<string, XdShapeJson>) Create(XdArtboard xdArtboard)
         {
             var renderer = new XdRenderer(xdArtboard);
             var layoutInfo = new LayoutInfo(
@@ -65,7 +76,7 @@ namespace AkyuiUnity.Xd
             var assetsInfo = new AssetsInfo(
                 renderer.Assets.ToArray()
             );
-            return (layoutInfo, assetsInfo, renderer.FileNameToMeta);
+            return (layoutInfo, assetsInfo, renderer.FileNameToMeta, renderer.FileNameToShape);
         }
 
         private class XdRenderer
@@ -77,6 +88,7 @@ namespace AkyuiUnity.Xd
             public List<IElement> Elements { get; }
             public List<IAsset> Assets { get; }
             public Dictionary<string, XdStyleFillPatternMetaJson> FileNameToMeta { get; }
+            public Dictionary<string, XdShapeJson> FileNameToShape { get; }
 
             private int _nextEid = 1;
             private Dictionary<string, Rect> _size;
@@ -89,6 +101,7 @@ namespace AkyuiUnity.Xd
                 Elements = new List<IElement>();
                 Assets = new List<IAsset>();
                 FileNameToMeta = new Dictionary<string, XdStyleFillPatternMetaJson>();
+                FileNameToShape = new Dictionary<string, XdShapeJson>();
                 _size = new Dictionary<string, Rect>();
 
                 var xdResourcesArtboardsJson = resources.Artboards[xdArtboard.Manifest.Path.Replace("artboard-", "")];
@@ -188,7 +201,8 @@ namespace AkyuiUnity.Xd
                 if (xdObject.Type == "shape")
                 {
                     var components = new List<IComponent>();
-                    var spriteUid = xdObject.Style.Fill.Pattern.Meta?.Ux?.Uid;
+
+                    var spriteUid = xdObject.Style.Fill.Pattern?.Meta?.Ux?.Uid;
                     if (!string.IsNullOrWhiteSpace(spriteUid))
                     {
                         spriteUid = $"{spriteUid}.png";
@@ -199,6 +213,19 @@ namespace AkyuiUnity.Xd
                             Color.white
                         ));
                         FileNameToMeta[spriteUid] = xdObject.Style.Fill.Pattern.Meta;
+                    }
+
+                    var shapeType = xdObject.Shape?.Type;
+                    if (shapeType == "path")
+                    {
+                        spriteUid = $"path_{xdObject.Id}.png";
+                        Assets.Add(new SpriteAsset(spriteUid, Random.Range(0, 10000)));
+                        components.Add(new ImageComponent(
+                            0,
+                            spriteUid,
+                            Color.white
+                        ));
+                        FileNameToShape[spriteUid] = xdObject.Shape;
                     }
 
                     var sprite = new ObjectElement(

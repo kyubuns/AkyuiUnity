@@ -220,6 +220,9 @@ namespace XdParser.Internal
 
         [JsonProperty("height")]
         public float Height { get; set; }
+
+        [JsonProperty("path")]
+        public string Path { get; set; }
     }
 
     public class XdManifestJson
