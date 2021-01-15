@@ -109,7 +109,7 @@ namespace AkyuiUnity.Xd
 
                 var xdResourcesArtboardsJson = resources.Artboards[xdArtboard.Manifest.Path.Replace("artboard-", "")];
                 var rootSize = new Vector2(xdResourcesArtboardsJson.Width, xdResourcesArtboardsJson.Height);
-                CalcPosition(xdArtboard.Artboard.Children.SelectMany(x => x.Artboard.Children).ToArray(), rootSize);
+                CalcPosition(xdArtboard.Artboard.Children.SelectMany(x => x.Artboard.Children).ToArray(), rootSize, Vector2.zero);
                 var children = Render(xdArtboard.Artboard.Children.SelectMany(x => x.Artboard.Children).ToArray());
                 var root = new ObjectElement(
                     0,
@@ -124,9 +124,9 @@ namespace AkyuiUnity.Xd
                 Elements.Add(root);
             }
 
-            private string[] CalcPosition(XdObjectJson[] xdObjects, Vector2 rootSize)
+            private string[] CalcPosition(XdObjectJson[] xdObjects, Vector2 rootSize, Vector2 parentPosition)
             {
-                return xdObjects.Select(xdObject => CalcPosition(xdObject, rootSize)).ToArray();
+                return xdObjects.Select(xdObject => CalcPosition(xdObject, rootSize, parentPosition)).ToArray();
             }
 
             private string CreateSvg(XdObjectJson xdObject)
@@ -142,18 +142,19 @@ namespace AkyuiUnity.Xd
                 return svg;
             }
 
-            private string CalcPosition(XdObjectJson xdObject, Vector2 rootSize)
+            private string CalcPosition(XdObjectJson xdObject, Vector2 rootSize, Vector2 parentPosition)
             {
+                var position = new Vector2((xdObject.Transform?.Tx ?? 0f) + parentPosition.x, (xdObject.Transform?.Ty ?? 0f) + parentPosition.y);
+
                 var children = new string[] { };
                 if (xdObject.Group != null)
                 {
-                    children = CalcPosition(xdObject.Group.Children, rootSize);
+                    children = CalcPosition(xdObject.Group.Children, rootSize, position);
                 }
 
                 if (xdObject.Type == "shape")
                 {
                     var size = new Vector2(xdObject.Shape.Width, xdObject.Shape.Height);
-                    var position = new Vector2(xdObject.Transform.Tx, xdObject.Transform.Ty);
 
                     var shapeType = xdObject.Shape?.Type;
                     if (shapeType == "path")
@@ -193,7 +194,7 @@ namespace AkyuiUnity.Xd
                     foreach (var c in children)
                     {
                         var t = _size[c];
-                        t.center = groupRect.center - t.center;
+                        t.center -= groupRect.center;
                         _size[c] = t;
                     }
                     return xdObject.Id;
