@@ -80,12 +80,13 @@ namespace AkyuiUnity.Generator
                 gameObject.transform.SetParent(parent);
 
                 var rectTransform = gameObject.AddComponent<RectTransform>();
-                rectTransform.anchoredPosition = objectElement.Position;
-                rectTransform.sizeDelta = objectElement.Size;
-
                 var (anchorMin, anchorMax) = CalcAnchor(objectElement.AnchorX, objectElement.AnchorY);
+                rectTransform.anchoredPosition = objectElement.Position;
+                var p = rectTransform.localPosition;
                 rectTransform.anchorMin = anchorMin;
                 rectTransform.anchorMax = anchorMax;
+                rectTransform.localPosition = p;
+                rectTransform.SetSize(objectElement.Size);
 
                 var createdComponents = new List<ComponentWithId>();
                 foreach (var component in objectElement.Components)
@@ -119,12 +120,13 @@ namespace AkyuiUnity.Generator
 
                 {
                     var rectTransform = prefabGameObject.GetComponent<RectTransform>();
-                    rectTransform.anchoredPosition = prefabElement.Position;
-                    rectTransform.sizeDelta = prefabElement.Size;
-
                     var (anchorMin, anchorMax) = CalcAnchor(prefabElement.AnchorX, prefabElement.AnchorY);
+                    rectTransform.anchoredPosition = prefabElement.Position;
+                    var p = rectTransform.localPosition;
                     rectTransform.anchorMin = anchorMin;
                     rectTransform.anchorMax = anchorMax;
+                    rectTransform.localPosition = p;
+                    rectTransform.SetSize(prefabElement.Size);
                 }
 
                 foreach (var @override in prefabElement.Overrides)
@@ -274,6 +276,15 @@ namespace AkyuiUnity.Generator
 
             Debug.LogError($"Unknown component type {component}");
             return null;
+        }
+    }
+
+    public static class AkyuiGeneratorExtensions
+    {
+        public static void SetSize(this RectTransform rectTransform, Vector2 size)
+        {
+            rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, size.x);
+            rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, size.y);
         }
     }
 }

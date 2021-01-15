@@ -108,22 +108,31 @@ namespace XdParser.Internal
     public class XdTransformJson
     {
         [JsonProperty("a")]
-        public int A { get; set; }
+        public float A { get; set; }
 
         [JsonProperty("b")]
-        public int B { get; set; }
+        public float B { get; set; }
 
         [JsonProperty("c")]
-        public int C { get; set; }
+        public float C { get; set; }
 
         [JsonProperty("d")]
-        public int D { get; set; }
+        public float D { get; set; }
 
         [JsonProperty("tx")]
         public float Tx { get; set; }
 
         [JsonProperty("ty")]
         public float Ty { get; set; }
+    }
+
+    public class XdSizeJson
+    {
+        [JsonProperty("width")]
+        public float Width { get; set; }
+
+        [JsonProperty("height")]
+        public float Height { get; set; }
     }
 
     public class XdStyleJson
@@ -387,6 +396,36 @@ namespace XdParser.Internal
 
         [JsonProperty("syncMap")]
         public Dictionary<string, string> SyncMap { get; set; }
+
+        [JsonProperty("hasCustomName")]
+        public string HasCustomName { get; set; }
+
+        [JsonProperty("aspectLock")]
+        public XdSizeJson AspectLock { get; set; }
+
+        [JsonProperty("customConstraints")]
+        public bool CustomConstraints { get; set; }
+
+        [JsonProperty("constraintWidth")]
+        public bool ConstraintWidth { get; set; }
+
+        [JsonProperty("constraintHeight")]
+        public bool ConstraintHeight { get; set; }
+
+        [JsonProperty("constraintRight")]
+        public bool ConstraintRight { get; set; }
+
+        [JsonProperty("constraintLeft")]
+        public bool ConstraintLeft { get; set; }
+
+        [JsonProperty("constraintTop")]
+        public bool ConstraintTop { get; set; }
+
+        [JsonProperty("constraintBottom")]
+        public bool ConstraintBottom { get; set; }
+
+        [JsonProperty("localTransform")]
+        public XdTransformJson LocalTransform { get; set; }
     }
 
     public class XdObjectGroupJson

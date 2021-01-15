@@ -171,6 +171,20 @@ namespace AkyuiUnity.Xd
                     children = Render(xdObject.Group.Children);
                 }
 
+                var anchorX = AnchorXType.Center;
+                var anchorY = AnchorYType.Middle;
+                var constRight = xdObject.Meta.Ux.ConstraintRight;
+                var constLeft = xdObject.Meta.Ux.ConstraintLeft;
+                if (constRight && constLeft) anchorX = AnchorXType.Stretch;
+                else if (constRight) anchorX = AnchorXType.Right;
+                else if (constLeft) anchorX = AnchorXType.Left;
+
+                var constTop = xdObject.Meta.Ux.ConstraintTop;
+                var constBottom = xdObject.Meta.Ux.ConstraintBottom;
+                if (constTop && constBottom) anchorY = AnchorYType.Stretch;
+                else if (constTop) anchorY = AnchorYType.Top;
+                else if (constBottom) anchorY = AnchorYType.Bottom;
+
                 if (xdObject.Type == "shape")
                 {
                     var components = new List<IComponent>();
@@ -192,8 +206,8 @@ namespace AkyuiUnity.Xd
                         xdObject.Name,
                         position,
                         size,
-                        AnchorXType.Center,
-                        AnchorYType.Middle,
+                        anchorX,
+                        anchorY,
                         components.ToArray(),
                         children.Select(x => x.Eid).ToArray()
                     );
@@ -209,8 +223,8 @@ namespace AkyuiUnity.Xd
                         xdObject.Name,
                         position,
                         size,
-                        AnchorXType.Center,
-                        AnchorYType.Middle,
+                        anchorX,
+                        anchorY,
                         new IComponent[] { },
                         children.Select(x => x.Eid).ToArray()
                     );
