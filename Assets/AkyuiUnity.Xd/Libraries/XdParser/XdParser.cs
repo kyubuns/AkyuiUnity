@@ -235,6 +235,30 @@ namespace XdParser.Internal
 
         [JsonProperty("winding")]
         public string Winding { get; set; }
+
+        [JsonProperty("cx")]
+        public float Cx { get; set; }
+
+        [JsonProperty("cy")]
+        public float Cy { get; set; }
+
+        [JsonProperty("rx")]
+        public float Rx { get; set; }
+
+        [JsonProperty("ry")]
+        public float Ry { get; set; }
+
+        [JsonProperty("x1")]
+        public float X1 { get; set; }
+
+        [JsonProperty("y1")]
+        public float Y1 { get; set; }
+
+        [JsonProperty("x2")]
+        public float X2 { get; set; }
+
+        [JsonProperty("y2")]
+        public float Y2 { get; set; }
     }
 
     public class XdManifestJson

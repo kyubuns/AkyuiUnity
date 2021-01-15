@@ -145,7 +145,7 @@ namespace AkyuiUnity.Xd
                     var size = new Vector2(xdObject.Shape.Width, xdObject.Shape.Height);
 
                     var shapeType = xdObject.Shape?.Type;
-                    if (shapeType == "path")
+                    if (SvgUtil.Types.Contains(shapeType))
                     {
                         var svg = SvgUtil.CreateSvg(xdObject);
                         using (var reader = new StringReader(svg))
@@ -233,7 +233,7 @@ namespace AkyuiUnity.Xd
                 {
                     var components = new List<IComponent>();
 
-                    var spriteUid = xdObject.Style?.Fill.Pattern?.Meta?.Ux?.Uid;
+                    var spriteUid = xdObject.Style?.Fill?.Pattern?.Meta?.Ux?.Uid;
                     var shapeType = xdObject.Shape?.Type;
 
                     if (!string.IsNullOrWhiteSpace(spriteUid))
@@ -247,7 +247,7 @@ namespace AkyuiUnity.Xd
                         ));
                         FileNameToMeta[spriteUid] = xdObject.Style.Fill.Pattern.Meta;
                     }
-                    else if (shapeType == "path")
+                    else if (SvgUtil.Types.Contains(shapeType))
                     {
                         spriteUid = $"path_{xdObject.Id.Substring(0, 8)}.svg";
                         var userData = new SvgPostProcessImportAsset.SvgImportUserData { Width = Mathf.RoundToInt(size.x), Height = Mathf.RoundToInt(size.y) };
