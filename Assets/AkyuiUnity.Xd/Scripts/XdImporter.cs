@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using AkyuiUnity.Editor;
 using AkyuiUnity.Loader;
+using Newtonsoft.Json;
 using Unity.VectorGraphics;
 using Unity.VectorGraphics.Editor;
 using UnityEditor;
@@ -248,7 +249,7 @@ namespace AkyuiUnity.Xd
                     if (!string.IsNullOrWhiteSpace(spriteUid))
                     {
                         spriteUid = $"{spriteUid}.png";
-                        Assets.Add(new SpriteAsset(spriteUid, Random.Range(0, 10000)));
+                        Assets.Add(new SpriteAsset(spriteUid, Random.Range(0, 10000), null));
                         components.Add(new ImageComponent(
                             0,
                             spriteUid,
@@ -259,7 +260,8 @@ namespace AkyuiUnity.Xd
                     else if (shapeType == "path")
                     {
                         spriteUid = $"path_{xdObject.Id}.svg";
-                        Assets.Add(new SpriteAsset(spriteUid, Random.Range(0, 10000)));
+                        var userData = new SvgPostProcessImportAsset.SvgImportUserData { Width = Mathf.RoundToInt(size.x), Height = Mathf.RoundToInt(size.y) };
+                        Assets.Add(new SpriteAsset(spriteUid, Random.Range(0, 10000), JsonConvert.SerializeObject(userData)));
                         components.Add(new ImageComponent(
                             0,
                             spriteUid,
@@ -315,8 +317,18 @@ namespace AkyuiUnity.Xd
 
             if (assetImporter is SVGImporter svgImporter)
             {
+                var userData = JsonConvert.DeserializeObject<SvgImportUserData>(PostProcessImportAsset.UserData);
                 svgImporter.SvgType = SVGType.TexturedSprite;
+                svgImporter.KeepTextureAspectRatio = false;
+                svgImporter.TextureWidth = userData.Width;
+                svgImporter.TextureHeight = userData.Height;
             }
+        }
+
+        public class SvgImportUserData
+        {
+            public int Width { get; set; }
+            public int Height { get; set; }
         }
     }
 }

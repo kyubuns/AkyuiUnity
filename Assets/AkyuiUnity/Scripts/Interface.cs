@@ -44,6 +44,7 @@ namespace AkyuiUnity
     {
         [NotNull] string FileName { get; }
         long Hash { get; }
+        [CanBeNull] string UserData { get; }
     }
 
     public class SpriteAsset : IAsset
@@ -52,11 +53,13 @@ namespace AkyuiUnity
 
         public string FileName { get; }
         public long Hash { get; }
+        [CanBeNull] public string UserData { get; }
 
-        public SpriteAsset([NotNull] string fileName, long hash)
+        public SpriteAsset([NotNull] string fileName, long hash, [CanBeNull] string userData)
         {
             FileName = fileName;
             Hash = hash;
+            UserData = userData;
         }
     }
 

@@ -113,7 +113,8 @@ namespace AkyuiUnity.Loader
             {
                 return new SpriteAsset(
                     assetJson["file"].JsonString(),
-                    assetJson["hash"].JsonLong()
+                    assetJson["hash"].JsonLong(),
+                    assetJson.ContainsKey("userdata") ? assetJson["userdata"].JsonString() : null
                 );
             }
 

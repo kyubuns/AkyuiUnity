@@ -118,6 +118,7 @@ namespace AkyuiUnity.Editor
 
                 PostProcessImportAsset.ProcessingFile = savePath;
                 PostProcessImportAsset.Hash = asset.Hash;
+                PostProcessImportAsset.UserData = asset.UserData;
                 using (Disposable.Create(() => PostProcessImportAsset.ProcessingFile = ""))
                 {
                     AssetDatabase.ImportAsset(savePath);
@@ -133,6 +134,7 @@ namespace AkyuiUnity.Editor
     {
         public static string ProcessingFile { get; set; }
         public static long Hash { get; set; }
+        public static string UserData { get; set; }
 
         public void OnPreprocessAsset()
         {

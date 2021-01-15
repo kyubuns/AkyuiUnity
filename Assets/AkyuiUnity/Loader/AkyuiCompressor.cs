@@ -141,6 +141,7 @@ namespace AkyuiUnity.Loader
                     {
                         { "type", SpriteAsset.TypeString },
                         { "hash", ToSerializable(spriteAsset.Hash) },
+                        { "userdata", ToSerializable(spriteAsset.UserData) },
                         { "file", ToSerializable(spriteAsset.FileName) },
                     });
                 }
