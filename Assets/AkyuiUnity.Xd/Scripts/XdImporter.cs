@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using AkyuiUnity.Editor;
 using AkyuiUnity.Loader;
+using Unity.VectorGraphics;
+using Unity.VectorGraphics.Editor;
+using UnityEditor;
 using UnityEngine;
 using XdParser;
 using XdParser.Internal;
@@ -29,12 +32,12 @@ namespace AkyuiUnity.Xd
     {
         private XdFile _xdFile;
         private readonly Dictionary<string, XdStyleFillPatternMetaJson> _fileNameToMeta;
-        private readonly Dictionary<string, XdShapeJson> _fileNameToShape;
+        private readonly Dictionary<string, byte[]> _fileNameToBytes;
 
         public XdAkyuiLoader(XdFile xdFile, XdArtboard xdArtboard)
         {
             _xdFile = xdFile;
-            (LayoutInfo, AssetsInfo, _fileNameToMeta, _fileNameToShape) = Create(xdArtboard);
+            (LayoutInfo, AssetsInfo, _fileNameToMeta, _fileNameToBytes) = Create(xdArtboard);
         }
 
         public void Dispose()
@@ -54,16 +57,15 @@ namespace AkyuiUnity.Xd
                 return _xdFile.GetResource(meta);
             }
 
-            if (_fileNameToShape.ContainsKey(fileName))
+            if (_fileNameToBytes.ContainsKey(fileName))
             {
-                var shape = _fileNameToShape[fileName];
-                return SvgRenderer.Render(shape.Path);
+                return _fileNameToBytes[fileName];
             }
 
             throw new Exception($"Unknown asset {fileName}");
         }
 
-        private (LayoutInfo, AssetsInfo, Dictionary<string, XdStyleFillPatternMetaJson>, Dictionary<string, XdShapeJson>) Create(XdArtboard xdArtboard)
+        private (LayoutInfo, AssetsInfo, Dictionary<string, XdStyleFillPatternMetaJson>, Dictionary<string, byte[]>) Create(XdArtboard xdArtboard)
         {
             var renderer = new XdRenderer(xdArtboard);
             var layoutInfo = new LayoutInfo(
@@ -76,7 +78,7 @@ namespace AkyuiUnity.Xd
             var assetsInfo = new AssetsInfo(
                 renderer.Assets.ToArray()
             );
-            return (layoutInfo, assetsInfo, renderer.FileNameToMeta, renderer.FileNameToShape);
+            return (layoutInfo, assetsInfo, renderer.FileNameToMeta, renderer.FileNameToBytes);
         }
 
         private class XdRenderer
@@ -88,7 +90,7 @@ namespace AkyuiUnity.Xd
             public List<IElement> Elements { get; }
             public List<IAsset> Assets { get; }
             public Dictionary<string, XdStyleFillPatternMetaJson> FileNameToMeta { get; }
-            public Dictionary<string, XdShapeJson> FileNameToShape { get; }
+            public Dictionary<string, byte[]> FileNameToBytes { get; }
 
             private int _nextEid = 1;
             private Dictionary<string, Rect> _size;
@@ -101,7 +103,7 @@ namespace AkyuiUnity.Xd
                 Elements = new List<IElement>();
                 Assets = new List<IAsset>();
                 FileNameToMeta = new Dictionary<string, XdStyleFillPatternMetaJson>();
-                FileNameToShape = new Dictionary<string, XdShapeJson>();
+                FileNameToBytes = new Dictionary<string, byte[]>();
                 _size = new Dictionary<string, Rect>();
 
                 var xdResourcesArtboardsJson = resources.Artboards[xdArtboard.Manifest.Path.Replace("artboard-", "")];
@@ -218,14 +220,23 @@ namespace AkyuiUnity.Xd
                     var shapeType = xdObject.Shape?.Type;
                     if (shapeType == "path")
                     {
-                        spriteUid = $"path_{xdObject.Id}.png";
+                        spriteUid = $"path_{xdObject.Id}.svg";
                         Assets.Add(new SpriteAsset(spriteUid, Random.Range(0, 10000)));
                         components.Add(new ImageComponent(
                             0,
                             spriteUid,
                             Color.white
                         ));
-                        FileNameToShape[spriteUid] = xdObject.Shape;
+
+                        var svgArgs = new List<string>();
+                        var fill = xdObject.Style?.Fill;
+                        if (fill != null)
+                        {
+                            var color = new Color32((byte) fill.Color.Value.R, (byte) fill.Color.Value.G, (byte) fill.Color.Value.B, 255);
+                            svgArgs.Add($@"fill=""#{ColorUtility.ToHtmlStringRGB(color)}""");
+                        }
+                        var svg = $@"<svg><path d=""{xdObject.Shape.Path}"" {string.Join(" ", svgArgs)} /></svg>";
+                        FileNameToBytes[spriteUid] = System.Text.Encoding.UTF8.GetBytes(svg);
                     }
 
                     var sprite = new ObjectElement(
@@ -261,6 +272,19 @@ namespace AkyuiUnity.Xd
                 }
 
                 throw new Exception($"Unknown object type {xdObject.Type}");
+            }
+        }
+    }
+
+    public class SvgPostProcessImportAsset : AssetPostprocessor
+    {
+        public void OnPreprocessAsset()
+        {
+            if (PostProcessImportAsset.ProcessingFile != assetPath) return;
+
+            if (assetImporter is SVGImporter svgImporter)
+            {
+                svgImporter.SvgType = SVGType.TexturedSprite;
             }
         }
     }

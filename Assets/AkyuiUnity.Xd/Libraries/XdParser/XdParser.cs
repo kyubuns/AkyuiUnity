@@ -95,6 +95,12 @@ namespace XdParser.Internal
         [JsonProperty("mode")]
         public string Mode { get; set; }
 
+        [JsonProperty("value")]
+        public XdColorValueJson Value { get; set; }
+    }
+
+    public class XdColorValueJson
+    {
         [JsonProperty("r")]
         public int R { get; set; }
 
@@ -156,6 +162,21 @@ namespace XdParser.Internal
         public XdStyleFillPatternJson Pattern { get; set; }
     }
 
+    public class XdStyleStrokeJson
+    {
+        [JsonProperty("type")]
+        public string Type { get; set; }
+
+        [JsonProperty("color")]
+        public XdColorJson Color { get; set; }
+
+        [JsonProperty("width")]
+        public float Width { get; set; }
+
+        [JsonProperty("align")]
+        public string Align { get; set; }
+    }
+
     public class XdStyleFillPatternJson
     {
         [JsonProperty("width")]
@@ -187,21 +208,6 @@ namespace XdParser.Internal
 
         [JsonProperty("hrefLastModifiedDate")]
         public uint HrefLastModifiedDate { get; set; }
-    }
-
-    public class XdStyleStrokeJson
-    {
-        [JsonProperty("type")]
-        public string Type { get; set; }
-
-        [JsonProperty("color")]
-        public XdColorJson Color { get; set; }
-
-        [JsonProperty("width")]
-        public float Width { get; set; }
-
-        [JsonProperty("align")]
-        public string Align { get; set; }
     }
 
     public class XdShapeJson

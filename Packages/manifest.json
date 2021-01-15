@@ -7,6 +7,7 @@
     "com.unity.textmeshpro": "2.1.1",
     "com.unity.timeline": "1.2.17",
     "com.unity.ugui": "1.0.0",
+    "com.unity.vectorgraphics": "2.0.0-preview.14",
     "dev.kyubuns.ankuchen": "https://github.com/kyubuns/AnKuchen.git?path=Unity/Assets/AnKuchen",
     "com.unity.modules.ai": "1.0.0",
     "com.unity.modules.androidjni": "1.0.0",
