@@ -248,7 +248,7 @@ namespace AkyuiUnity.Xd
 
                     if (!string.IsNullOrWhiteSpace(spriteUid))
                     {
-                        spriteUid = $"{spriteUid}.png";
+                        spriteUid = $"{spriteUid.Substring(0, 8)}.png";
                         Assets.Add(new SpriteAsset(spriteUid, Random.Range(0, 10000), null));
                         components.Add(new ImageComponent(
                             0,
@@ -259,7 +259,7 @@ namespace AkyuiUnity.Xd
                     }
                     else if (shapeType == "path")
                     {
-                        spriteUid = $"path_{xdObject.Id}.svg";
+                        spriteUid = $"path_{xdObject.Id.Substring(0, 8)}.svg";
                         var userData = new SvgPostProcessImportAsset.SvgImportUserData { Width = Mathf.RoundToInt(size.x), Height = Mathf.RoundToInt(size.y) };
                         Assets.Add(new SpriteAsset(spriteUid, Random.Range(0, 10000), JsonConvert.SerializeObject(userData)));
                         components.Add(new ImageComponent(
