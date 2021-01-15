@@ -130,19 +130,6 @@ namespace AkyuiUnity.Xd
                 return xdObjects.Select(xdObject => CalcPosition(xdObject, rootSize, parentPosition)).ToArray();
             }
 
-            private string CreateSvg(XdObjectJson xdObject)
-            {
-                var svgArgs = new List<string>();
-                var fill = xdObject.Style?.Fill;
-                if (fill != null)
-                {
-                    var color = new Color32((byte) fill.Color.Value.R, (byte) fill.Color.Value.G, (byte) fill.Color.Value.B, 255);
-                    svgArgs.Add($@"fill=""#{ColorUtility.ToHtmlStringRGB(color)}""");
-                }
-                var svg = $@"<svg><path d=""{xdObject.Shape.Path}"" {string.Join(" ", svgArgs)} /></svg>";
-                return svg;
-            }
-
             private string CalcPosition(XdObjectJson xdObject, Vector2 rootSize, Vector2 parentPosition)
             {
                 var position = new Vector2((xdObject.Transform?.Tx ?? 0f) + parentPosition.x, (xdObject.Transform?.Ty ?? 0f) + parentPosition.y);
@@ -160,7 +147,7 @@ namespace AkyuiUnity.Xd
                     var shapeType = xdObject.Shape?.Type;
                     if (shapeType == "path")
                     {
-                        var svg = CreateSvg(xdObject);
+                        var svg = SvgUtil.CreateSvg(xdObject);
                         using (var reader = new StringReader(svg))
                         {
                             var sceneInfo = SVGParser.ImportSVG(reader, ViewportOptions.DontPreserve);
@@ -268,7 +255,7 @@ namespace AkyuiUnity.Xd
                             Color.white
                         ));
 
-                        var svg = CreateSvg(xdObject);
+                        var svg = SvgUtil.CreateSvg(xdObject);
                         FileNameToBytes[spriteUid] = System.Text.Encoding.UTF8.GetBytes(svg);
                     }
 

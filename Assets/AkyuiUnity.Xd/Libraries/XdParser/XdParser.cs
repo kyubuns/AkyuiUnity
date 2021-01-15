@@ -229,6 +229,9 @@ namespace XdParser.Internal
 
         [JsonProperty("path")]
         public string Path { get; set; }
+
+        [JsonProperty("winding")]
+        public string Winding { get; set; }
     }
 
     public class XdManifestJson
