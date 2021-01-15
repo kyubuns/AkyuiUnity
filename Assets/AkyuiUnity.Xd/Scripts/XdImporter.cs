@@ -129,6 +129,19 @@ namespace AkyuiUnity.Xd
                 return xdObjects.Select(xdObject => CalcPosition(xdObject, rootSize)).ToArray();
             }
 
+            private string CreateSvg(XdObjectJson xdObject)
+            {
+                var svgArgs = new List<string>();
+                var fill = xdObject.Style?.Fill;
+                if (fill != null)
+                {
+                    var color = new Color32((byte) fill.Color.Value.R, (byte) fill.Color.Value.G, (byte) fill.Color.Value.B, 255);
+                    svgArgs.Add($@"fill=""#{ColorUtility.ToHtmlStringRGB(color)}""");
+                }
+                var svg = $@"<svg><path d=""{xdObject.Shape.Path}"" {string.Join(" ", svgArgs)} /></svg>";
+                return svg;
+            }
+
             private string CalcPosition(XdObjectJson xdObject, Vector2 rootSize)
             {
                 var children = new string[] { };
@@ -140,7 +153,30 @@ namespace AkyuiUnity.Xd
                 if (xdObject.Type == "shape")
                 {
                     var size = new Vector2(xdObject.Shape.Width, xdObject.Shape.Height);
-                    var position = new Vector2(xdObject.Transform.Tx, xdObject.Transform.Ty) - rootSize / 2f;
+                    var position = new Vector2(xdObject.Transform.Tx, xdObject.Transform.Ty);
+
+                    var shapeType = xdObject.Shape?.Type;
+                    if (shapeType == "path")
+                    {
+                        var svg = CreateSvg(xdObject);
+                        using (var reader = new StringReader(svg))
+                        {
+                            var sceneInfo = SVGParser.ImportSVG(reader, ViewportOptions.DontPreserve);
+                            var tessOptions = new VectorUtils.TessellationOptions {
+                                StepDistance = 100.0f,
+                                MaxCordDeviation = 0.5f,
+                                MaxTanAngleDeviation = 0.1f,
+                                SamplingStepSize = 0.01f
+                            };
+                            var geometry = VectorUtils.TessellateScene(sceneInfo.Scene, tessOptions, sceneInfo.NodeOpacity);
+                            var vertices = geometry.SelectMany(geom => geom.Vertices.Select(x => (geom.WorldTransform * x))).ToArray();
+                            var bounds = VectorUtils.Bounds(vertices);
+                            size = new Vector2(bounds.width, bounds.height);
+                            position = new Vector2(position.x + bounds.x, position.y + bounds.y);
+                        }
+                    }
+
+                    position -= rootSize / 2f;
                     _size[xdObject.Id] = new Rect(position, size);
                     return xdObject.Id;
                 }
@@ -206,6 +242,8 @@ namespace AkyuiUnity.Xd
                     var components = new List<IComponent>();
 
                     var spriteUid = xdObject.Style.Fill.Pattern?.Meta?.Ux?.Uid;
+                    var shapeType = xdObject.Shape?.Type;
+
                     if (!string.IsNullOrWhiteSpace(spriteUid))
                     {
                         spriteUid = $"{spriteUid}.png";
@@ -217,11 +255,9 @@ namespace AkyuiUnity.Xd
                         ));
                         FileNameToMeta[spriteUid] = xdObject.Style.Fill.Pattern.Meta;
                     }
-
-                    var shapeType = xdObject.Shape?.Type;
-                    if (shapeType == "path")
+                    else if (shapeType == "path")
                     {
-                        spriteUid = $"path_{xdObject.Id}.png";
+                        spriteUid = $"path_{xdObject.Id}.svg";
                         Assets.Add(new SpriteAsset(spriteUid, Random.Range(0, 10000)));
                         components.Add(new ImageComponent(
                             0,
@@ -229,27 +265,8 @@ namespace AkyuiUnity.Xd
                             Color.white
                         ));
 
-                        var svgArgs = new List<string>();
-                        var fill = xdObject.Style?.Fill;
-                        if (fill != null)
-                        {
-                            var color = new Color32((byte) fill.Color.Value.R, (byte) fill.Color.Value.G, (byte) fill.Color.Value.B, 255);
-                            svgArgs.Add($@"fill=""#{ColorUtility.ToHtmlStringRGB(color)}""");
-                        }
-                        var svg = $@"<svg><path d=""{xdObject.Shape.Path}"" {string.Join(" ", svgArgs)} /></svg>";
-                        using (var reader = new StringReader(svg))
-                        {
-                            var sceneInfo = SVGParser.ImportSVG(reader, ViewportOptions.DontPreserve);
-                            var tessOptions = new VectorUtils.TessellationOptions() {
-                                StepDistance = 100.0f,
-                                MaxCordDeviation = 0.5f,
-                                MaxTanAngleDeviation = 0.1f,
-                                SamplingStepSize = 0.01f
-                            };
-                            var geometry = VectorUtils.TessellateScene(sceneInfo.Scene, tessOptions);
-                            var atlas = VectorUtils.GenerateAtlasAndFillUVs(geometry, 64);
-                            FileNameToBytes[spriteUid] = atlas.Texture.EncodeToPNG();
-                        }
+                        var svg = CreateSvg(xdObject);
+                        FileNameToBytes[spriteUid] = System.Text.Encoding.UTF8.GetBytes(svg);
                     }
 
                     var sprite = new ObjectElement(
@@ -285,6 +302,19 @@ namespace AkyuiUnity.Xd
                 }
 
                 throw new Exception($"Unknown object type {xdObject.Type}");
+            }
+        }
+    }
+
+    public class SvgPostProcessImportAsset : AssetPostprocessor
+    {
+        public void OnPreprocessAsset()
+        {
+            if (PostProcessImportAsset.ProcessingFile != assetPath) return;
+
+            if (assetImporter is SVGImporter svgImporter)
+            {
+                svgImporter.SvgType = SVGType.TexturedSprite;
             }
         }
     }

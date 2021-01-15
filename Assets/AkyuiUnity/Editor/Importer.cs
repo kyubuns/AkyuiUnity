@@ -134,13 +134,19 @@ namespace AkyuiUnity.Editor
         public static string ProcessingFile { get; set; }
         public static long Hash { get; set; }
 
+        public void OnPreprocessAsset()
+        {
+            if (ProcessingFile != assetPath) return;
+
+            assetImporter.userData = Hash.ToString();
+        }
+
         public void OnPreprocessTexture()
         {
             if (ProcessingFile != assetPath) return;
 
             var textureImporter = (TextureImporter) assetImporter;
             textureImporter.textureType = TextureImporterType.Sprite;
-            textureImporter.userData = Hash.ToString();
         }
     }
 
