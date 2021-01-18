@@ -2,6 +2,7 @@
 using AnKuchen.Layout;
 using AnKuchen.Map;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace AkyuiUnity.Sample
 {
@@ -12,46 +13,34 @@ namespace AkyuiUnity.Sample
         public void Start()
         {
             var ui = new UiElements(uiCache);
-            for (var i = 0; i < 10; ++i)
-            {
-                ui.Dummy.Duplicate();
-            }
+            ui.ButtonGroup.onClick.AddListener(() => Debug.Log("Click!"));
         }
 
-        private class UiElements : IMappedObject
+        public class UiElements : IMappedObject
         {
             public IMapper Mapper { get; private set; }
             public GameObject Root { get; private set; }
-            public DummyUiElements Dummy { get; private set; }
+            public Image Background { get; private set; }
+            public Image Avocado { get; private set; }
+            public Button ButtonGroup { get; private set; }
+            public Image ButtonBase { get; private set; }
+            public Text ButtonText { get; private set; }
 
-            public UiElements(IMapper mapper)
-            {
-                Initialize(mapper);
-            }
+            public UiElements() { }
+            public UiElements(IMapper mapper) { Initialize(mapper); }
 
             public void Initialize(IMapper mapper)
             {
                 Mapper = mapper;
                 Root = mapper.Get();
-
-                Dummy = mapper.GetChild<DummyUiElements>("Dummy");
+                Background = mapper.Get<Image>("Background");
+                Avocado = mapper.Get<Image>("avocado");
+                ButtonGroup = mapper.Get<Button>("ButtonGroup");
+                ButtonBase = mapper.Get<Image>("ButtonBase");
+                ButtonText = mapper.Get<Text>("ButtonText");
             }
         }
 
-        private class DummyUiElements : IMappedObject
-        {
-            public IMapper Mapper { get; private set; }
-            public GameObject Root { get; private set; }
-
-            public DummyUiElements() { }
-            public DummyUiElements(IMapper mapper) { Initialize(mapper); }
-
-            public void Initialize(IMapper mapper)
-            {
-                Mapper = mapper;
-                Root = mapper.Get();
-            }
-        }
 
     }
 }
