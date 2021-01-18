@@ -14,13 +14,19 @@ namespace AkyuiUnity.Xd
     {
         public static void Import(XdImportSettings settings, string[] xdFilePaths)
         {
-            var loaders = xdFilePaths
-                .Select(x => new XdFile(x))
-                .SelectMany(x => x.Artworks.Select((y => (x, y))))
-                .Where(x => x.y.Name != "pasteboard")
-                .Select(x => (IAkyuiLoader) new XdAkyuiLoader(x.x, x.y))
-                .ToArray();
-            Importer.Import(settings, loaders);
+            var loaders = new List<IAkyuiLoader>();
+            foreach (var xdFilePath in xdFilePaths)
+            {
+                Debug.Log($"Xd Import Start: {xdFilePath}");
+                var file = new XdFile(xdFilePath);
+                foreach (var artwork in file.Artworks)
+                {
+                    if (artwork.Name == "pasteboard") continue;
+                    loaders.Add((IAkyuiLoader) new XdAkyuiLoader(file, artwork));
+                }
+                Debug.Log($"Xd Import Finish: {xdFilePath}");
+            }
+            Importer.Import(settings, loaders.ToArray());
             foreach (var loader in loaders) loader.Dispose();
         }
     }
