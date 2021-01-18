@@ -29,15 +29,18 @@ namespace AkyuiUnity.Xd
 
         public IComponent[] Render(XdObjectJson instanceObject, XdObjectJson symbolObject, ref XdObjectJson[] children)
         {
+            var spacing = 0f;
+
             if (children.Length == 1 && RepeatGridGroupParser.Is(children[0], null))
             {
                 var repeatGrid = children[0];
+                spacing = repeatGrid.Meta?.Ux?.RepeatGrid?.PaddingY ?? 0f;
                 children = new[] { repeatGrid.Group.Children[0].Group.Children[0] };
             }
 
             return new IComponent[]
             {
-                new VerticalListComponent(0)
+                new VerticalListComponent(0, spacing),
             };
         }
     }

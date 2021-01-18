@@ -91,7 +91,7 @@ namespace AkyuiUnity.Generator
                 var createdComponents = new List<ComponentWithId>();
                 foreach (var component in objectElement.Components)
                 {
-                    createdComponents.Add(CreateComponent(assetLoader, gameObject, component, ref rectTransform));
+                    createdComponents.Add(CreateComponent(assetLoader, gameObject, component));
                 }
 
                 meta.Add(new GameObjectWithId
@@ -195,8 +195,7 @@ namespace AkyuiUnity.Generator
                         foreach (var component in @override.Components)
                         {
                             var targetComponent = targetObject.idAndComponents.Single(x => x.cid == component.Cid);
-                            var transform = targetObject.gameObject.GetComponent<RectTransform>();
-                            SetOrCreateComponentValue(targetComponent.component, assetLoader, targetObject.gameObject, component, ref transform);
+                            SetOrCreateComponentValue(targetComponent.component, assetLoader, targetObject.gameObject, component);
                         }
                     }
                 }
@@ -218,12 +217,12 @@ namespace AkyuiUnity.Generator
             return null;
         }
 
-        private static ComponentWithId CreateComponent(IAssetLoader assetLoader, GameObject gameObject, IComponent component, ref RectTransform parentTransform)
+        private static ComponentWithId CreateComponent(IAssetLoader assetLoader, GameObject gameObject, IComponent component)
         {
-            return new ComponentWithId { cid = component.Cid, component = SetOrCreateComponentValue(null, assetLoader, gameObject, component, ref parentTransform) };
+            return new ComponentWithId { cid = component.Cid, component = SetOrCreateComponentValue(null, assetLoader, gameObject, component) };
         }
 
-        private static Component SetOrCreateComponentValue([CanBeNull] Component target, IAssetLoader assetLoader, GameObject gameObject, IComponent component, ref RectTransform parentTransform)
+        private static Component SetOrCreateComponentValue([CanBeNull] Component target, IAssetLoader assetLoader, GameObject gameObject, IComponent component)
         {
             if (component is ImageComponent imageComponent)
             {
@@ -305,7 +304,7 @@ namespace AkyuiUnity.Generator
                 return button;
             }
 
-            if (component is VerticalListComponent)
+            if (component is VerticalListComponent verticalListComponent)
             {
                 var scrollRect = target == null ? gameObject.AddComponent<ScrollRect>() : (ScrollRect) target;
                 scrollRect.horizontal = false;
@@ -326,8 +325,15 @@ namespace AkyuiUnity.Generator
                     contentRectTransform.pivot = new Vector2(0.5f, 1f);
                     contentRectTransform.sizeDelta = gameObject.GetComponent<RectTransform>().sizeDelta;
 
+                    var image = content.AddComponent<Image>();
+                    image.color = Color.clear;
+
+                    var verticalLayoutGroup = content.AddComponent<VerticalLayoutGroup>();
+                    verticalLayoutGroup.childForceExpandWidth = false;
+                    verticalLayoutGroup.childForceExpandHeight = false;
+                    if (verticalListComponent.Spacing != null) verticalLayoutGroup.spacing = verticalListComponent.Spacing.Value;
+
                     scrollRect.content = contentRectTransform;
-                    parentTransform = contentRectTransform;
                 }
 
                 return scrollRect;

@@ -221,10 +221,12 @@ namespace AkyuiUnity
         public const string TypeString = "vertical_layout";
 
         public int Cid { get; }
+        [CanBeNull] public readonly float? Spacing;
 
-        public VerticalListComponent(int cid)
+        public VerticalListComponent(int cid, [CanBeNull] float? spacing)
         {
             Cid = cid;
+            Spacing = spacing;
         }
     }
 
