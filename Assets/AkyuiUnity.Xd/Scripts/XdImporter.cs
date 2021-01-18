@@ -38,9 +38,13 @@ namespace AkyuiUnity.Xd
         private XdFile _xdFile;
         private readonly XdAssetHolder _assetHolder;
 
-        public static IXdObjectParser[] Parsers = {
+        public static IXdObjectParser[] ObjectParsers = {
             new ShapeObjectParser(),
             new TextObjectParser(),
+        };
+
+        public static IXdGroupParser[] GroupParsers = {
+            new ButtonGroupParser(),
         };
 
         public XdAkyuiLoader(XdFile xdFile, XdArtboard xdArtboard)
@@ -91,7 +95,8 @@ namespace AkyuiUnity.Xd
             private readonly XdAssetHolder _xdAssetHolder;
             private int _nextEid = 1;
             private readonly Dictionary<string, Rect> _size;
-            private Dictionary<string, XdObjectJson> _refObjectMap;
+            private Dictionary<string, XdObjectJson> _sourceGuidToObject;
+            private Dictionary<string, XdObjectJson> _symbolIdToObject;
 
             public XdRenderer(XdArtboard xdArtboard, XdAssetHolder xdAssetHolder)
             {
@@ -123,17 +128,20 @@ namespace AkyuiUnity.Xd
 
             private void CreateRefObjectMap(XdResourcesResourcesJson resource)
             {
-                _refObjectMap = new Dictionary<string, XdObjectJson>();
+                _sourceGuidToObject = new Dictionary<string, XdObjectJson>();
+                _symbolIdToObject = new Dictionary<string, XdObjectJson>();
+
                 var symbols = resource.Meta.Ux.Symbols;
                 foreach (var symbol in symbols)
                 {
                     CreateRefObjectMapInternal(symbol);
+                    _symbolIdToObject[symbol.Meta.Ux.SymbolId] = symbol;
                 }
             }
 
             private void CreateRefObjectMapInternal(XdObjectJson xdObject)
             {
-                _refObjectMap[xdObject.Id] = xdObject;
+                _sourceGuidToObject[xdObject.Id] = xdObject;
                 if (xdObject.Group != null)
                 {
                     foreach (var child in xdObject.Group.Children)
@@ -146,7 +154,7 @@ namespace AkyuiUnity.Xd
             private (string, XdObjectJson) GetRefObject(XdObjectJson xdObject)
             {
                 if (xdObject.Type != "syncRef") return (xdObject.Id, xdObject);
-                return (xdObject.Guid, _refObjectMap[xdObject.SyncSourceGuid]);
+                return (xdObject.Guid, _sourceGuidToObject[xdObject.SyncSourceGuid]);
             }
 
             private string[] CalcPosition(XdObjectJson[] xdObjects, Vector2 rootSize, Vector2 parentPosition)
@@ -173,7 +181,7 @@ namespace AkyuiUnity.Xd
                     children = CalcPosition(xdObject.Group.Children, rootSize, position);
                 }
 
-                foreach (var parser in Parsers)
+                foreach (var parser in ObjectParsers)
                 {
                     if (parser.Is(xdObject))
                     {
@@ -236,35 +244,47 @@ namespace AkyuiUnity.Xd
                 else if (constTop) anchorY = AnchorYType.Top;
                 else if (constBottom) anchorY = AnchorYType.Bottom;
 
-                foreach (var parser in Parsers)
+                foreach (var parser in ObjectParsers)
                 {
-                    if (parser.Is(xdObject))
+                    if (!parser.Is(xdObject)) continue;
+                    var (components, assets) = parser.Render(xdObject, size, _xdAssetHolder);
+
+                    var element = new ObjectElement(
+                        eid,
+                        xdObject.Name,
+                        position,
+                        size,
+                        anchorX,
+                        anchorY,
+                        components,
+                        children.Select(x => x.Eid).ToArray()
+                    );
+
+                    foreach (var asset in assets)
                     {
-                        var (components, assets) = parser.Render(xdObject, size, _xdAssetHolder);
-
-                        var element = new ObjectElement(
-                            eid,
-                            xdObject.Name,
-                            position,
-                            size,
-                            anchorX,
-                            anchorY,
-                            components,
-                            children.Select(x => x.Eid).ToArray()
-                        );
-
-                        foreach (var asset in assets)
-                        {
-                            if (Assets.Any(x => x.FileName == asset.FileName)) continue;
-                            Assets.Add(asset);
-                        }
-                        Elements.Add(element);
-                        return new IElement[] { element };
+                        if (Assets.Any(x => x.FileName == asset.FileName)) continue;
+                        Assets.Add(asset);
                     }
+                    Elements.Add(element);
+                    return new IElement[] { element };
                 }
 
                 if (xdObject.Type == "group")
                 {
+                    var symbolId = xdObject.Meta?.Ux?.SymbolId;
+                    XdObjectJson symbolObject = null;
+                    if (!string.IsNullOrWhiteSpace(symbolId))
+                    {
+                        symbolObject = _symbolIdToObject[symbolId];
+                    }
+
+                    var components = new List<IComponent>();
+                    foreach (var parser in GroupParsers)
+                    {
+                        if (!parser.Is(instanceObject, symbolObject)) continue;
+                        components.AddRange(parser.Render(instanceObject, symbolObject));
+                    }
+
                     var group = new ObjectElement(
                         eid,
                         xdObject.Name,
@@ -272,7 +292,7 @@ namespace AkyuiUnity.Xd
                         size,
                         anchorX,
                         anchorY,
-                        new IComponent[] { },
+                        components.ToArray(),
                         children.Select(x => x.Eid).ToArray()
                     );
 
