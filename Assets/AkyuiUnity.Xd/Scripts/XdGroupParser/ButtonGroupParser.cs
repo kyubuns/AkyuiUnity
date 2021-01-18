@@ -14,7 +14,6 @@ namespace AkyuiUnity.Xd
 
         public IComponent[] Render(XdObjectJson instanceObject, XdObjectJson symbolObject)
         {
-            Debug.Log("Render");
             return new IComponent[]
             {
                 new ButtonComponent(0)
