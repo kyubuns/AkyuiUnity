@@ -37,8 +37,9 @@ namespace AkyuiUnity.Xd
         private XdFile _xdFile;
         private readonly XdAssetHolder _assetHolder;
 
-        private static readonly IXdObjectParser[] Parsers = {
+        public static IXdObjectParser[] Parsers = {
             new ShapeObjectParser(),
+            new TextObjectParser(),
         };
 
         public XdAkyuiLoader(XdFile xdFile, XdArtboard xdArtboard)

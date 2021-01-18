@@ -17,11 +17,8 @@ namespace AkyuiUnity.Xd
             var fill = xdObject.Style?.Fill;
             if (fill != null)
             {
-                if (fill.Color?.Value?.R != null)
-                {
-                    var color = new Color32((byte) fill.Color.Value.R, (byte) fill.Color.Value.G, (byte) fill.Color.Value.B, 255);
-                    svgArgs.Add($@"fill=""#{ColorUtility.ToHtmlStringRGB(color)}""");
-                }
+                var color = xdObject.GetFillColor();
+                svgArgs.Add($@"fill=""#{ColorUtility.ToHtmlStringRGB(color)}""");
             }
             else
             {

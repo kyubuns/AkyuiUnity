@@ -49,9 +49,7 @@ namespace AkyuiUnity.Xd
             var components = new List<IComponent>();
             var assets = new List<IAsset>();
 
-            var color = Color.white;
-            color.a = xdObject.Style?.Opacity ?? 1f;
-
+            var color = xdObject.GetFillColor();
             var spriteUid = xdObject.Style?.Fill?.Pattern?.Meta?.Ux?.Uid;
             var shapeType = xdObject.Shape?.Type;
 

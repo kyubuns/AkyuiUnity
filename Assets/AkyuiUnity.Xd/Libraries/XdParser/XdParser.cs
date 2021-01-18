@@ -149,6 +149,9 @@ namespace XdParser.Internal
         [JsonProperty("stroke")]
         public XdStyleStrokeJson Stroke { get; set; }
 
+        [JsonProperty("font")]
+        public XdStyleFontJson Font { get; set; }
+
         [JsonProperty("opacity")]
         public float? Opacity { get; set; }
     }
@@ -178,6 +181,21 @@ namespace XdParser.Internal
 
         [JsonProperty("align")]
         public string Align { get; set; }
+    }
+
+    public class XdStyleFontJson
+    {
+        [JsonProperty("family")]
+        public string Family { get; set; }
+
+        [JsonProperty("postscriptName")]
+        public string PostscriptName { get; set; }
+
+        [JsonProperty("size")]
+        public float Size { get; set; }
+
+        [JsonProperty("style")]
+        public string Style { get; set; }
     }
 
     public class XdStyleFillPatternJson
@@ -259,6 +277,28 @@ namespace XdParser.Internal
 
         [JsonProperty("y2")]
         public float Y2 { get; set; }
+    }
+
+    public class XdTextJson
+    {
+        [JsonProperty("frame")]
+        public XdTextFrameJson Frame { get; set; }
+
+        [JsonProperty("paragraphs")]
+        public XdTextParagraphJson[] Paragraphs { get; set; }
+
+        [JsonProperty("rawText")]
+        public string RawText { get; set; }
+    }
+
+    public class XdTextFrameJson
+    {
+        [JsonProperty("type")]
+        public string Type { get; set; }
+    }
+
+    public class XdTextParagraphJson
+    {
     }
 
     public class XdManifestJson
@@ -360,6 +400,9 @@ namespace XdParser.Internal
 
         [JsonProperty("shape")]
         public XdShapeJson Shape { get; set; }
+
+        [JsonProperty("text")]
+        public XdTextJson Text { get; set; }
 
         [JsonProperty("syncSourceGuid")]
         public string SyncSourceGuid { get; set; }
