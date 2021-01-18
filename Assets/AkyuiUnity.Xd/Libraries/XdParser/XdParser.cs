@@ -549,6 +549,36 @@ namespace XdParser.Internal
 
         [JsonProperty("interactions")]
         public XdInteractionJson[] Interactions { get; set; }
+
+        [JsonProperty("repeatGrid")]
+        public XdRepeatGridJson RepeatGrid { get; set; }
+    }
+
+    public class XdRepeatGridJson
+    {
+        [JsonProperty("cellWidth")]
+        public float CellWidth { get; set; }
+
+        [JsonProperty("cellHeight")]
+        public float CellHeight { get; set; }
+
+        [JsonProperty("width")]
+        public float Width { get; set; }
+
+        [JsonProperty("height")]
+        public float Height { get; set; }
+
+        [JsonProperty("paddingX")]
+        public float PaddingX { get; set; }
+
+        [JsonProperty("paddingY")]
+        public float PaddingY { get; set; }
+
+        [JsonProperty("columns")]
+        public int Columns { get; set; }
+
+        [JsonProperty("rows")]
+        public int Rows { get; set; }
     }
 
     public class XdInteractionJson

@@ -12,7 +12,7 @@ namespace AkyuiUnity.Xd
             return interactions.Any(x => x.Enabled && x.Data.Interaction.TriggerEvent == "hover");
         }
 
-        public IComponent[] Render(XdObjectJson instanceObject, XdObjectJson symbolObject)
+        public IComponent[] Render(XdObjectJson instanceObject, XdObjectJson symbolObject, ref XdObjectJson[] children)
         {
             return new IComponent[]
             {

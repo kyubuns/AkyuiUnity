@@ -240,14 +240,16 @@ namespace AkyuiUnity.Loader
             if (componentType == HorizontalLayoutComponent.TypeString)
             {
                 return new HorizontalLayoutComponent(
-                    componentJson["cid"].JsonInt()
+                    componentJson["cid"].JsonInt(),
+                    componentJson.ContainsKey("spacing") ? componentJson["spacing"].JsonFloat() : (float?) null
                 );
             }
 
             if (componentType == VerticalLayoutComponent.TypeString)
             {
                 return new VerticalLayoutComponent(
-                    componentJson["cid"].JsonInt()
+                    componentJson["cid"].JsonInt(),
+                    componentJson.ContainsKey("spacing") ? componentJson["spacing"].JsonFloat() : (float?) null
                 );
             }
 

@@ -45,6 +45,7 @@ namespace AkyuiUnity.Xd
 
         public static IXdGroupParser[] GroupParsers = {
             new ButtonGroupParser(),
+            new RepeatGridGroupParser(),
         };
 
         public XdAkyuiLoader(XdFile xdFile, XdArtboard xdArtboard)
@@ -224,12 +225,6 @@ namespace AkyuiUnity.Xd
                 var rect = _size[id];
                 var position = new Vector2(rect.center.x, -rect.center.y);
                 var size = rect.size;
-                var children = new IElement[] { };
-                if (xdObject.Group != null)
-                {
-                    children = Render(xdObject.Group.Children);
-                }
-
                 var anchorX = AnchorXType.Center;
                 var anchorY = AnchorYType.Middle;
                 var constRight = xdObject.Meta.Ux.ConstraintRight;
@@ -248,6 +243,9 @@ namespace AkyuiUnity.Xd
                 {
                     if (!parser.Is(xdObject)) continue;
                     var (components, assets) = parser.Render(xdObject, size, _xdAssetHolder);
+
+                    var children = new IElement[] { };
+                    if (xdObject.Group != null) children = Render(xdObject.Group.Children);
 
                     var element = new ObjectElement(
                         eid,
@@ -279,11 +277,17 @@ namespace AkyuiUnity.Xd
                     }
 
                     var components = new List<IComponent>();
+                    var children = new XdObjectJson[] { };
+                    if (xdObject.Group != null) children = xdObject.Group.Children;
+
                     foreach (var parser in GroupParsers)
                     {
                         if (!parser.Is(instanceObject, symbolObject)) continue;
-                        components.AddRange(parser.Render(instanceObject, symbolObject));
+                        components.AddRange(parser.Render(instanceObject, symbolObject, ref children));
                     }
+
+                    var generatedChildren = new IElement[] { };
+                    if (xdObject.Group != null) generatedChildren = Render(children);
 
                     var group = new ObjectElement(
                         eid,
@@ -293,7 +297,7 @@ namespace AkyuiUnity.Xd
                         anchorX,
                         anchorY,
                         components.ToArray(),
-                        children.Select(x => x.Eid).ToArray()
+                        generatedChildren.Select(x => x.Eid).ToArray()
                     );
 
                     Elements.Add(group);

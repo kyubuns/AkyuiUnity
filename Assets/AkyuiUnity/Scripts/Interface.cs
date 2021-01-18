@@ -221,10 +221,12 @@ namespace AkyuiUnity
         public const string TypeString = "horizontal_layout";
 
         public int Cid { get; }
+        [CanBeNull] public readonly float? Spacing;
 
-        public HorizontalLayoutComponent(int cid)
+        public HorizontalLayoutComponent(int cid, [CanBeNull] float? spacing)
         {
             Cid = cid;
+            Spacing = spacing;
         }
     }
 
@@ -233,10 +235,12 @@ namespace AkyuiUnity
         public const string TypeString = "vertical_layout";
 
         public int Cid { get; }
+        [CanBeNull] public readonly float? Spacing;
 
-        public VerticalLayoutComponent(int cid)
+        public VerticalLayoutComponent(int cid, [CanBeNull] float? spacing)
         {
             Cid = cid;
+            Spacing = spacing;
         }
     }
 

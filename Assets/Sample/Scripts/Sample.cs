@@ -13,18 +13,18 @@ namespace AkyuiUnity.Sample
         public void Start()
         {
             var ui = new UiElements(uiCache);
-            ui.ButtonGroup.onClick.AddListener(() => Debug.Log("Click!"));
+
+            for (var i = 0; i < 4; ++i)
+            {
+                ui.Button.Duplicate();
+            }
         }
 
         public class UiElements : IMappedObject
         {
             public IMapper Mapper { get; private set; }
             public GameObject Root { get; private set; }
-            public Image Background { get; private set; }
-            public Image Avocado { get; private set; }
-            public Button ButtonGroup { get; private set; }
-            public Image ButtonBase { get; private set; }
-            public Text ButtonText { get; private set; }
+            public ButtonUiElements Button { get; private set; }
 
             public UiElements() { }
             public UiElements(IMapper mapper) { Initialize(mapper); }
@@ -33,14 +33,27 @@ namespace AkyuiUnity.Sample
             {
                 Mapper = mapper;
                 Root = mapper.Get();
-                Background = mapper.Get<Image>("Background");
-                Avocado = mapper.Get<Image>("avocado");
-                ButtonGroup = mapper.Get<Button>("ButtonGroup");
+                Button = mapper.GetChild<ButtonUiElements>("Button");
+            }
+        }
+
+        public class ButtonUiElements : IMappedObject
+        {
+            public IMapper Mapper { get; private set; }
+            public GameObject Root { get; private set; }
+            public Image ButtonBase { get; private set; }
+            public Text ButtonText { get; private set; }
+
+            public ButtonUiElements() { }
+            public ButtonUiElements(IMapper mapper) { Initialize(mapper); }
+
+            public void Initialize(IMapper mapper)
+            {
+                Mapper = mapper;
+                Root = mapper.Get();
                 ButtonBase = mapper.Get<Image>("ButtonBase");
                 ButtonText = mapper.Get<Text>("ButtonText");
             }
         }
-
-
     }
 }

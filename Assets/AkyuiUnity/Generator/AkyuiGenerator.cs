@@ -303,19 +303,21 @@ namespace AkyuiUnity.Generator
                 return button;
             }
 
-            if (component is HorizontalLayoutComponent)
+            if (component is HorizontalLayoutComponent horizontalLayoutComponent)
             {
                 var horizontalLayoutGroup = target == null ? gameObject.AddComponent<HorizontalLayoutGroup>() : (HorizontalLayoutGroup) target;
                 horizontalLayoutGroup.childForceExpandWidth = false;
                 horizontalLayoutGroup.childForceExpandHeight = false;
+                if (horizontalLayoutComponent.Spacing != null) horizontalLayoutGroup.spacing = horizontalLayoutComponent.Spacing.Value;
                 return horizontalLayoutGroup;
             }
 
-            if (component is VerticalLayoutComponent)
+            if (component is VerticalLayoutComponent verticalLayoutComponent)
             {
                 var verticalLayoutGroup = target == null ? gameObject.AddComponent<VerticalLayoutGroup>() : (VerticalLayoutGroup) target;
                 verticalLayoutGroup.childForceExpandWidth = false;
                 verticalLayoutGroup.childForceExpandHeight = false;
+                if (verticalLayoutComponent.Spacing != null) verticalLayoutGroup.spacing = verticalLayoutComponent.Spacing.Value;
                 return verticalLayoutGroup;
             }
 
