@@ -1,13 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using AkyuiUnity.Editor;
 using AkyuiUnity.Loader;
-using Newtonsoft.Json;
-using Unity.VectorGraphics;
-using Unity.VectorGraphics.Editor;
-using UnityEditor;
 using UnityEngine;
 using XdParser;
 using XdParser.Internal;
@@ -35,6 +30,10 @@ namespace AkyuiUnity.Xd
         private XdFile _xdFile;
         private readonly Dictionary<string, XdStyleFillPatternMetaJson> _fileNameToMeta;
         private readonly Dictionary<string, byte[]> _fileNameToBytes;
+
+        private static readonly IXdObjectParser[] Parsers = {
+            new ShapeObjectParser(),
+        };
 
         public XdAkyuiLoader(XdFile xdFile, XdArtboard xdArtboard)
         {
@@ -140,34 +139,15 @@ namespace AkyuiUnity.Xd
                     children = CalcPosition(xdObject.Group.Children, rootSize, position);
                 }
 
-                if (xdObject.Type == "shape")
+                foreach (var parser in Parsers)
                 {
-                    var size = new Vector2(xdObject.Shape.Width, xdObject.Shape.Height);
-
-                    var shapeType = xdObject.Shape?.Type;
-                    if (SvgUtil.Types.Contains(shapeType))
+                    if (parser.Is(xdObject))
                     {
-                        var svg = SvgUtil.CreateSvg(xdObject);
-                        using (var reader = new StringReader(svg))
-                        {
-                            var sceneInfo = SVGParser.ImportSVG(reader, ViewportOptions.DontPreserve);
-                            var tessOptions = new VectorUtils.TessellationOptions {
-                                StepDistance = 100.0f,
-                                MaxCordDeviation = 0.5f,
-                                MaxTanAngleDeviation = 0.1f,
-                                SamplingStepSize = 0.01f
-                            };
-                            var geometry = VectorUtils.TessellateScene(sceneInfo.Scene, tessOptions, sceneInfo.NodeOpacity);
-                            var vertices = geometry.SelectMany(geom => geom.Vertices.Select(x => (geom.WorldTransform * x))).ToArray();
-                            var bounds = VectorUtils.Bounds(vertices);
-                            size = new Vector2(bounds.width, bounds.height);
-                            position = new Vector2(position.x + bounds.x, position.y + bounds.y);
-                        }
+                        var size = parser.CalcSize(xdObject, position);
+                        size.position -= rootSize / 2f;
+                        _size[xdObject.Id] = size;
+                        return xdObject.Id;
                     }
-
-                    position -= rootSize / 2f;
-                    _size[xdObject.Id] = new Rect(position, size);
-                    return xdObject.Id;
                 }
 
                 if (xdObject.Type == "group")
@@ -226,55 +206,27 @@ namespace AkyuiUnity.Xd
                 else if (constTop) anchorY = AnchorYType.Top;
                 else if (constBottom) anchorY = AnchorYType.Bottom;
 
-                var color = Color.white;
-                color.a = xdObject.Style?.Opacity ?? 1f;
-
-                if (xdObject.Type == "shape")
+                foreach (var parser in Parsers)
                 {
-                    var components = new List<IComponent>();
-
-                    var spriteUid = xdObject.Style?.Fill?.Pattern?.Meta?.Ux?.Uid;
-                    var shapeType = xdObject.Shape?.Type;
-
-                    if (!string.IsNullOrWhiteSpace(spriteUid))
+                    if (parser.Is(xdObject))
                     {
-                        spriteUid = $"{spriteUid.Substring(0, 8)}.png";
-                        Assets.Add(new SpriteAsset(spriteUid, Random.Range(0, 10000), null));
-                        components.Add(new ImageComponent(
-                            0,
-                            spriteUid,
-                            color
-                        ));
-                        FileNameToMeta[spriteUid] = xdObject.Style.Fill.Pattern.Meta;
+                        var (components, assets) = parser.Render(xdObject, size, FileNameToMeta, FileNameToBytes);
+
+                        var element = new ObjectElement(
+                            eid,
+                            xdObject.Name,
+                            position,
+                            size,
+                            anchorX,
+                            anchorY,
+                            components,
+                            children.Select(x => x.Eid).ToArray()
+                        );
+
+                        Assets.AddRange(assets);
+                        Elements.Add(element);
+                        return new IElement[] { element };
                     }
-                    else if (SvgUtil.Types.Contains(shapeType))
-                    {
-                        spriteUid = $"path_{xdObject.Id.Substring(0, 8)}.svg";
-                        var userData = new SvgPostProcessImportAsset.SvgImportUserData { Width = Mathf.RoundToInt(size.x), Height = Mathf.RoundToInt(size.y) };
-                        Assets.Add(new SpriteAsset(spriteUid, Random.Range(0, 10000), JsonConvert.SerializeObject(userData)));
-                        components.Add(new ImageComponent(
-                            0,
-                            spriteUid,
-                            color
-                        ));
-
-                        var svg = SvgUtil.CreateSvg(xdObject);
-                        FileNameToBytes[spriteUid] = System.Text.Encoding.UTF8.GetBytes(svg);
-                    }
-
-                    var sprite = new ObjectElement(
-                        eid,
-                        xdObject.Name,
-                        position,
-                        size,
-                        anchorX,
-                        anchorY,
-                        components.ToArray(),
-                        children.Select(x => x.Eid).ToArray()
-                    );
-
-                    Elements.Add(sprite);
-                    return new IElement[] { sprite };
                 }
 
                 if (xdObject.Type == "group")
@@ -296,29 +248,6 @@ namespace AkyuiUnity.Xd
 
                 throw new Exception($"Unknown object type {xdObject.Type}");
             }
-        }
-    }
-
-    public class SvgPostProcessImportAsset : AssetPostprocessor
-    {
-        public void OnPreprocessAsset()
-        {
-            if (PostProcessImportAsset.ProcessingFile != assetPath) return;
-
-            if (assetImporter is SVGImporter svgImporter)
-            {
-                var userData = JsonConvert.DeserializeObject<SvgImportUserData>(PostProcessImportAsset.UserData);
-                svgImporter.SvgType = SVGType.TexturedSprite;
-                svgImporter.KeepTextureAspectRatio = false;
-                svgImporter.TextureWidth = userData.Width;
-                svgImporter.TextureHeight = userData.Height;
-            }
-        }
-
-        public class SvgImportUserData
-        {
-            public int Width { get; set; }
-            public int Height { get; set; }
         }
     }
 }
