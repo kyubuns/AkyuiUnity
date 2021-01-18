@@ -62,7 +62,7 @@ namespace AkyuiUnity.Editor
                 var saveFullPath = Path.Combine(unityAssetsParentPath, savePath);
                 var bytes = akyuiLoader.LoadAsset(asset.FileName);
 
-                if (settings.CheckHash)
+                if (settings.CheckAssetHash)
                 {
                     if (File.Exists(saveFullPath))
                     {
@@ -103,20 +103,6 @@ namespace AkyuiUnity.Editor
         private static void ImportLayout(IAkyuiImportSettings settings, IAkyuiLoader akyuiLoader, PathGetter pathGetter)
         {
             var layoutInfo = akyuiLoader.LayoutInfo;
-            if (settings.CheckHash)
-            {
-                var prevMetaFullPath = pathGetter.GetMetaFullPath(akyuiLoader.LayoutInfo.Name);
-                if (File.Exists(prevMetaFullPath))
-                {
-                    var prevMetaObject = AssetDatabase.LoadAssetAtPath<GameObject>(pathGetter.GetMetaPath(akyuiLoader.LayoutInfo.Name));
-                    var prevMeta = prevMetaObject.GetComponent<AkyuiMeta>().meta;
-                    if (prevMeta.hash == layoutInfo.Hash)
-                    {
-                        Debug.Log($"Layout {layoutInfo.Name} / Skip (same hash)");
-                        return;
-                    }
-                }
-            }
             Debug.Log($"Layout {layoutInfo.Name} / Import");
 
             var (gameObject, meta) = AkyuiGenerator.GenerateGameObject(new EditorAssetLoader(pathGetter), layoutInfo);
