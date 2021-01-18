@@ -157,6 +157,9 @@ namespace XdParser.Internal
 
         [JsonProperty("opacity")]
         public float? Opacity { get; set; }
+
+        [JsonProperty("isolation")]
+        public string Isolation { get; set; }
     }
 
     public class XdStyleFillJson
@@ -490,6 +493,9 @@ namespace XdParser.Internal
 
     public class XdObjectMetaUxJson
     {
+        [JsonProperty("nameL10N")]
+        public string NameL10N { get; set; }
+
         [JsonProperty("symbolId")]
         public string SymbolId { get; set; }
 
@@ -552,6 +558,12 @@ namespace XdParser.Internal
 
         [JsonProperty("repeatGrid")]
         public XdRepeatGridJson RepeatGrid { get; set; }
+
+        [JsonProperty("viewportWidth")]
+        public float ViewportWidth { get; set; }
+
+        [JsonProperty("viewportHeight")]
+        public float ViewportHeight { get; set; }
     }
 
     public class XdRepeatGridJson

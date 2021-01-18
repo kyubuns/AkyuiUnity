@@ -1,3 +1,4 @@
+using UnityEngine;
 using XdParser.Internal;
 
 namespace AkyuiUnity.Xd
@@ -8,6 +9,11 @@ namespace AkyuiUnity.Xd
         {
             var repeatGrid = instanceObject?.Meta?.Ux?.RepeatGrid;
             return repeatGrid != null;
+        }
+
+        public Rect CalcSize(XdObjectJson xdObject, Vector2 position, Rect rect)
+        {
+            return rect;
         }
 
         public IComponent[] Render(XdObjectJson instanceObject, XdObjectJson symbolObject, ref XdObjectJson[] children)

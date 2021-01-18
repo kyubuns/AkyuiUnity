@@ -184,23 +184,35 @@ namespace AkyuiUnity.Xd
 
                 foreach (var parser in ObjectParsers)
                 {
-                    if (parser.Is(xdObject))
-                    {
-                        var size = parser.CalcSize(xdObject, position);
-                        size.position -= rootSize / 2f;
-                        _size[id] = size;
-                        return id;
-                    }
+                    if (!parser.Is(xdObject)) continue;
+                    var size = parser.CalcSize(xdObject, position);
+                    size.position -= rootSize / 2f;
+                    _size[id] = size;
+                    return id;
                 }
 
                 if (xdObject.Type == "group")
                 {
+                    var symbolId = xdObject.Meta?.Ux?.SymbolId;
+                    XdObjectJson symbolObject = null;
+                    if (!string.IsNullOrWhiteSpace(symbolId))
+                    {
+                        symbolObject = _symbolIdToObject[symbolId];
+                    }
+
                     var childrenRects = children.Select(x => _size[x]).ToArray();
                     var minX = childrenRects.Length > 0 ? childrenRects.Min(x => x.min.x) : 0f;
                     var minY = childrenRects.Length > 0 ? childrenRects.Min(x => x.min.y) : 0f;
                     var maxX = childrenRects.Length > 0 ? childrenRects.Max(x => x.max.x) : 0f;
                     var maxY = childrenRects.Length > 0 ? childrenRects.Max(x => x.max.y) : 0f;
                     var groupRect = Rect.MinMaxRect(minX, minY, maxX, maxY);
+
+                    foreach (var parser in GroupParsers)
+                    {
+                        if (!parser.Is(instanceObject, symbolObject)) continue;
+                        groupRect = parser.CalcSize(xdObject, position, groupRect);
+                    }
+
                     _size[id] = groupRect;
                     foreach (var c in children)
                     {
