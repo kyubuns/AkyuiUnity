@@ -40,7 +40,7 @@ namespace AkyuiUnity.Sample
             {
                 Mapper = mapper;
                 Root = mapper.Get();
-                ScrollRect = mapper.Get<ScrollRect>("Scroll Group 1");
+                ScrollRect = mapper.Get<ScrollRect>("Scroll Group");
                 List = new VerticalList<ButtonUiElements>(
                     ScrollRect,
                     mapper.GetChild<ButtonUiElements>("Button")
