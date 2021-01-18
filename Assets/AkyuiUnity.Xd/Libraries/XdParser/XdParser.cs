@@ -559,11 +559,20 @@ namespace XdParser.Internal
         [JsonProperty("repeatGrid")]
         public XdRepeatGridJson RepeatGrid { get; set; }
 
+        [JsonProperty("scrollingType")]
+        public string ScrollingType { get; set; }
+
         [JsonProperty("viewportWidth")]
         public float ViewportWidth { get; set; }
 
         [JsonProperty("viewportHeight")]
         public float ViewportHeight { get; set; }
+
+        [JsonProperty("offsetX")]
+        public float OffsetX { get; set; }
+
+        [JsonProperty("offsetY")]
+        public float OffsetY { get; set; }
     }
 
     public class XdRepeatGridJson

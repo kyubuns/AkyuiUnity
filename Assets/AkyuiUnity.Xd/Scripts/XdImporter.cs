@@ -46,6 +46,7 @@ namespace AkyuiUnity.Xd
         public static IXdGroupParser[] GroupParsers = {
             new ButtonGroupParser(),
             new RepeatGridGroupParser(),
+            new ScrollGroupParser(),
         };
 
         public XdAkyuiLoader(XdFile xdFile, XdArtboard xdArtboard)
@@ -182,11 +183,11 @@ namespace AkyuiUnity.Xd
                     children = CalcPosition(xdObject.Group.Children, rootSize, position);
                 }
 
+                position -= rootSize / 2f;
                 foreach (var parser in ObjectParsers)
                 {
                     if (!parser.Is(xdObject)) continue;
                     var size = parser.CalcSize(xdObject, position);
-                    size.position -= rootSize / 2f;
                     _size[id] = size;
                     return id;
                 }

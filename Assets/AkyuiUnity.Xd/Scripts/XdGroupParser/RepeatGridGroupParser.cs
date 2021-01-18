@@ -5,7 +5,12 @@ namespace AkyuiUnity.Xd
 {
     public class RepeatGridGroupParser : IXdGroupParser
     {
-        public bool Is(XdObjectJson instanceObject, XdObjectJson symbolObject)
+        bool IXdGroupParser.Is(XdObjectJson instanceObject, XdObjectJson symbolObject)
+        {
+            return Is(instanceObject, symbolObject);
+        }
+
+        public static bool Is(XdObjectJson instanceObject, XdObjectJson symbolObject)
         {
             var repeatGrid = instanceObject?.Meta?.Ux?.RepeatGrid;
             return repeatGrid != null;

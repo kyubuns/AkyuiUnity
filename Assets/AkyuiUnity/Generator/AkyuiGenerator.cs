@@ -292,6 +292,7 @@ namespace AkyuiUnity.Generator
                 if (gameObject.GetComponent<Graphic>() == null)
                 {
                     var image = gameObject.AddComponent<Image>();
+                    image.color = Color.clear;
                     graphic = image;
                 }
                 else
