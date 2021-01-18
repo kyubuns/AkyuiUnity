@@ -59,7 +59,7 @@ namespace AkyuiUnity.Xd
 
             // マジックナンバー
             // たぶんフォント毎に違うんだけどどうしたものか
-            position.y -= height * 0.75f;
+            position.y -= fontSize * 1.075f;
 
             var size = new Vector2(width, height);
             return new Rect(position, size);
