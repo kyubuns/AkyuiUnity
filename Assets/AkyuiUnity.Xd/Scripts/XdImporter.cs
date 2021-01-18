@@ -28,8 +28,7 @@ namespace AkyuiUnity.Xd
     public class XdAkyuiLoader : IAkyuiLoader
     {
         private XdFile _xdFile;
-        private readonly Dictionary<string, XdStyleFillPatternMetaJson> _fileNameToMeta;
-        private readonly Dictionary<string, byte[]> _fileNameToBytes;
+        private readonly XdAssetHolder _assetHolder;
 
         private static readonly IXdObjectParser[] Parsers = {
             new ShapeObjectParser(),
@@ -38,7 +37,8 @@ namespace AkyuiUnity.Xd
         public XdAkyuiLoader(XdFile xdFile, XdArtboard xdArtboard)
         {
             _xdFile = xdFile;
-            (LayoutInfo, AssetsInfo, _fileNameToMeta, _fileNameToBytes) = Create(xdArtboard);
+            _assetHolder = new XdAssetHolder(_xdFile);
+            (LayoutInfo, AssetsInfo) = Create(xdArtboard, _assetHolder);
         }
 
         public void Dispose()
@@ -52,23 +52,12 @@ namespace AkyuiUnity.Xd
 
         public byte[] LoadAsset(string fileName)
         {
-            if (_fileNameToMeta.ContainsKey(fileName))
-            {
-                var meta = _fileNameToMeta[fileName];
-                return _xdFile.GetResource(meta);
-            }
-
-            if (_fileNameToBytes.ContainsKey(fileName))
-            {
-                return _fileNameToBytes[fileName];
-            }
-
-            throw new Exception($"Unknown asset {fileName}");
+            return _assetHolder.Load(fileName);
         }
 
-        private (LayoutInfo, AssetsInfo, Dictionary<string, XdStyleFillPatternMetaJson>, Dictionary<string, byte[]>) Create(XdArtboard xdArtboard)
+        private (LayoutInfo, AssetsInfo) Create(XdArtboard xdArtboard, XdAssetHolder assetHolder)
         {
-            var renderer = new XdRenderer(xdArtboard);
+            var renderer = new XdRenderer(xdArtboard, assetHolder);
             var layoutInfo = new LayoutInfo(
                 renderer.Name,
                 renderer.Hash,
@@ -79,7 +68,7 @@ namespace AkyuiUnity.Xd
             var assetsInfo = new AssetsInfo(
                 renderer.Assets.ToArray()
             );
-            return (layoutInfo, assetsInfo, renderer.FileNameToMeta, renderer.FileNameToBytes);
+            return (layoutInfo, assetsInfo);
         }
 
         private class XdRenderer
@@ -90,21 +79,19 @@ namespace AkyuiUnity.Xd
             public int Root => 0;
             public List<IElement> Elements { get; }
             public List<IAsset> Assets { get; }
-            public Dictionary<string, XdStyleFillPatternMetaJson> FileNameToMeta { get; }
-            public Dictionary<string, byte[]> FileNameToBytes { get; }
 
+            private readonly XdAssetHolder _xdAssetHolder;
             private int _nextEid = 1;
-            private Dictionary<string, Rect> _size;
+            private readonly Dictionary<string, Rect> _size;
 
-            public XdRenderer(XdArtboard xdArtboard)
+            public XdRenderer(XdArtboard xdArtboard, XdAssetHolder xdAssetHolder)
             {
                 var resources = xdArtboard.Resources;
 
-                Name = xdArtboard.Name;
+                _xdAssetHolder = xdAssetHolder;
                 Elements = new List<IElement>();
                 Assets = new List<IAsset>();
-                FileNameToMeta = new Dictionary<string, XdStyleFillPatternMetaJson>();
-                FileNameToBytes = new Dictionary<string, byte[]>();
+                Name = xdArtboard.Name;
                 _size = new Dictionary<string, Rect>();
 
                 var xdResourcesArtboardsJson = resources.Artboards[xdArtboard.Manifest.Path.Replace("artboard-", "")];
@@ -210,7 +197,7 @@ namespace AkyuiUnity.Xd
                 {
                     if (parser.Is(xdObject))
                     {
-                        var (components, assets) = parser.Render(xdObject, size, FileNameToMeta, FileNameToBytes);
+                        var (components, assets) = parser.Render(xdObject, size, _xdAssetHolder);
 
                         var element = new ObjectElement(
                             eid,

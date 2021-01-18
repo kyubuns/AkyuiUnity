@@ -12,7 +12,7 @@ namespace AkyuiUnity.Xd
     {
         bool Is(XdObjectJson xdObject);
         Rect CalcSize(XdObjectJson xdObject, Vector2 position);
-        (IComponent[], IAsset[]) Render(XdObjectJson xdObject, Vector2 size, Dictionary<string, XdStyleFillPatternMetaJson> fileNameToMeta, Dictionary<string, byte[]> fileNameToBytes);
+        (IComponent[], IAsset[]) Render(XdObjectJson xdObject, Vector2 size, XdAssetHolder assetHolder);
     }
 
     public class ShapeObjectParser : IXdObjectParser
@@ -50,7 +50,7 @@ namespace AkyuiUnity.Xd
             return new Rect(position, size);
         }
 
-        public (IComponent[], IAsset[]) Render(XdObjectJson xdObject, Vector2 size, Dictionary<string, XdStyleFillPatternMetaJson> fileNameToMeta, Dictionary<string, byte[]> fileNameToBytes)
+        public (IComponent[], IAsset[]) Render(XdObjectJson xdObject, Vector2 size, XdAssetHolder assetHolder)
         {
             var components = new List<IComponent>();
             var assets = new List<IAsset>();
@@ -70,7 +70,7 @@ namespace AkyuiUnity.Xd
                     spriteUid,
                     color
                 ));
-                fileNameToMeta[spriteUid] = xdObject.Style.Fill.Pattern.Meta;
+                assetHolder.Save(spriteUid, xdObject.Style.Fill.Pattern.Meta);
             }
             else if (SvgUtil.Types.Contains(shapeType))
             {
@@ -84,7 +84,7 @@ namespace AkyuiUnity.Xd
                 ));
 
                 var svg = SvgUtil.CreateSvg(xdObject);
-                fileNameToBytes[spriteUid] = System.Text.Encoding.UTF8.GetBytes(svg);
+                assetHolder.Save(spriteUid, System.Text.Encoding.UTF8.GetBytes(svg));
             }
 
             return (components.ToArray(), assets.ToArray());
