@@ -1,5 +1,4 @@
-﻿using AnKuchen.Extensions;
-using AnKuchen.Layout;
+﻿using AnKuchen.KuchenList;
 using AnKuchen.Map;
 using UnityEngine;
 using UnityEngine.UI;
@@ -14,9 +13,16 @@ namespace AkyuiUnity.Sample
         {
             var ui = new UiElements(uiCache);
 
-            for (var i = 0; i < 4; ++i)
+            using (var editor = ui.List.Edit())
             {
-                ui.Button.Duplicate();
+                for (var i = 0; i < 5; ++i)
+                {
+                    var i1 = i;
+                    editor.Contents.Add(new UIFactory<ButtonUiElements>(x =>
+                    {
+                        x.ButtonText.text = $"Button{i1}";
+                    }));
+                }
             }
         }
 
@@ -24,7 +30,8 @@ namespace AkyuiUnity.Sample
         {
             public IMapper Mapper { get; private set; }
             public GameObject Root { get; private set; }
-            public ButtonUiElements Button { get; private set; }
+            public ScrollRect ScrollRect { get; private set; }
+            public VerticalList<ButtonUiElements> List { get; private set; }
 
             public UiElements() { }
             public UiElements(IMapper mapper) { Initialize(mapper); }
@@ -33,7 +40,11 @@ namespace AkyuiUnity.Sample
             {
                 Mapper = mapper;
                 Root = mapper.Get();
-                Button = mapper.GetChild<ButtonUiElements>("Button");
+                ScrollRect = mapper.Get<ScrollRect>("Scroll Group 1");
+                List = new VerticalList<ButtonUiElements>(
+                    ScrollRect,
+                    mapper.GetChild<ButtonUiElements>("Button")
+                );
             }
         }
 
