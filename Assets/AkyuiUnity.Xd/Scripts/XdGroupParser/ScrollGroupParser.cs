@@ -35,7 +35,10 @@ namespace AkyuiUnity.Xd
                 children = new[] { repeatGrid.Group.Children[0].Group.Children[0] };
             }
 
-            return new IComponent[] { };
+            return new IComponent[]
+            {
+                new VerticalListComponent(0)
+            };
         }
     }
 }

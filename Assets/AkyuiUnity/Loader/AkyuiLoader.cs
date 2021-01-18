@@ -237,6 +237,13 @@ namespace AkyuiUnity.Loader
                 );
             }
 
+            if (componentType == VerticalListComponent.TypeString)
+            {
+                return new VerticalListComponent(
+                    componentJson["cid"].JsonInt()
+                );
+            }
+
             if (componentType == HorizontalLayoutComponent.TypeString)
             {
                 return new HorizontalLayoutComponent(

@@ -91,7 +91,7 @@ namespace AkyuiUnity.Generator
                 var createdComponents = new List<ComponentWithId>();
                 foreach (var component in objectElement.Components)
                 {
-                    createdComponents.Add(CreateComponent(assetLoader, gameObject, component));
+                    createdComponents.Add(CreateComponent(assetLoader, gameObject, component, ref rectTransform));
                 }
 
                 meta.Add(new GameObjectWithId
@@ -103,7 +103,7 @@ namespace AkyuiUnity.Generator
 
                 foreach (var child in objectElement.Children)
                 {
-                    CreateGameObject(assetLoader, layoutInfo, child, gameObject.transform, ref meta);
+                    CreateGameObject(assetLoader, layoutInfo, child, rectTransform, ref meta);
                 }
 
                 return gameObject;
@@ -195,7 +195,8 @@ namespace AkyuiUnity.Generator
                         foreach (var component in @override.Components)
                         {
                             var targetComponent = targetObject.idAndComponents.Single(x => x.cid == component.Cid);
-                            SetOrCreateComponentValue(targetComponent.component, assetLoader, targetObject.gameObject, component);
+                            var transform = targetObject.gameObject.GetComponent<RectTransform>();
+                            SetOrCreateComponentValue(targetComponent.component, assetLoader, targetObject.gameObject, component, ref transform);
                         }
                     }
                 }
@@ -217,12 +218,12 @@ namespace AkyuiUnity.Generator
             return null;
         }
 
-        private static ComponentWithId CreateComponent(IAssetLoader assetLoader, GameObject gameObject, IComponent component)
+        private static ComponentWithId CreateComponent(IAssetLoader assetLoader, GameObject gameObject, IComponent component, ref RectTransform parentTransform)
         {
-            return new ComponentWithId { cid = component.Cid, component = SetOrCreateComponentValue(null, assetLoader, gameObject, component) };
+            return new ComponentWithId { cid = component.Cid, component = SetOrCreateComponentValue(null, assetLoader, gameObject, component, ref parentTransform) };
         }
 
-        private static Component SetOrCreateComponentValue([CanBeNull] Component target, IAssetLoader assetLoader, GameObject gameObject, IComponent component)
+        private static Component SetOrCreateComponentValue([CanBeNull] Component target, IAssetLoader assetLoader, GameObject gameObject, IComponent component, ref RectTransform parentTransform)
         {
             if (component is ImageComponent imageComponent)
             {
@@ -302,6 +303,34 @@ namespace AkyuiUnity.Generator
 
                 button.targetGraphic = graphic;
                 return button;
+            }
+
+            if (component is VerticalListComponent)
+            {
+                var scrollRect = target == null ? gameObject.AddComponent<ScrollRect>() : (ScrollRect) target;
+                scrollRect.horizontal = false;
+                scrollRect.vertical = true;
+
+                if (gameObject.GetComponent<RectMask2D>() == null)
+                {
+                    gameObject.AddComponent<RectMask2D>();
+                }
+
+                if (target == null)
+                {
+                    var content = new GameObject("Content");
+                    content.transform.SetParent(gameObject.transform);
+
+                    var contentRectTransform = content.AddComponent<RectTransform>();
+                    contentRectTransform.anchoredPosition = Vector2.zero;
+                    contentRectTransform.pivot = new Vector2(0.5f, 1f);
+                    contentRectTransform.sizeDelta = gameObject.GetComponent<RectTransform>().sizeDelta;
+
+                    scrollRect.content = contentRectTransform;
+                    parentTransform = contentRectTransform;
+                }
+
+                return scrollRect;
             }
 
             if (component is HorizontalLayoutComponent horizontalLayoutComponent)

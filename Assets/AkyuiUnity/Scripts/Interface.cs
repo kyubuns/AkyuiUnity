@@ -216,6 +216,18 @@ namespace AkyuiUnity
         }
     }
 
+    public class VerticalListComponent : IComponent
+    {
+        public const string TypeString = "vertical_layout";
+
+        public int Cid { get; }
+
+        public VerticalListComponent(int cid)
+        {
+            Cid = cid;
+        }
+    }
+
     public class HorizontalLayoutComponent : IComponent
     {
         public const string TypeString = "horizontal_layout";

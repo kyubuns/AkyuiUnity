@@ -180,6 +180,10 @@ namespace AkyuiUnity.Loader
             {
                 dict["type"] = ButtonComponent.TypeString;
             }
+            else if (source is VerticalListComponent)
+            {
+                dict["type"] = VerticalListComponent.TypeString;
+            }
             else if (source is HorizontalLayoutComponent horizontalLayoutComponent)
             {
                 dict["type"] = HorizontalLayoutComponent.TypeString;
