@@ -287,6 +287,19 @@ namespace AkyuiUnity.Generator
             if (component is ButtonComponent)
             {
                 var button = target == null ? gameObject.AddComponent<Button>() : (Button) target;
+
+                Graphic graphic;
+                if (gameObject.GetComponent<Graphic>() == null)
+                {
+                    var image = gameObject.AddComponent<Image>();
+                    graphic = image;
+                }
+                else
+                {
+                    graphic = gameObject.GetComponent<Graphic>();
+                }
+
+                button.targetGraphic = graphic;
                 return button;
             }
 
