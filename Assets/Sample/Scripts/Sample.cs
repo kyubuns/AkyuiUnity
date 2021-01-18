@@ -15,12 +15,13 @@ namespace AkyuiUnity.Sample
 
             using (var editor = ui.List.Edit())
             {
-                for (var i = 0; i < 5; ++i)
+                for (var i = 0; i < 30; ++i)
                 {
                     var i1 = i;
                     editor.Contents.Add(new UIFactory<ButtonUiElements>(x =>
                     {
                         x.ButtonText.text = $"Button{i1}";
+                        x.Button.onClick.AddListener(() => { Debug.Log($"Click Button{i1}"); });
                     }));
                 }
             }
@@ -48,10 +49,11 @@ namespace AkyuiUnity.Sample
             }
         }
 
-        public class ButtonUiElements : IMappedObject
+        public class ButtonUiElements : IReusableMappedObject
         {
             public IMapper Mapper { get; private set; }
             public GameObject Root { get; private set; }
+            public Button Button { get; private set; }
             public Image ButtonBase { get; private set; }
             public Text ButtonText { get; private set; }
 
@@ -62,8 +64,18 @@ namespace AkyuiUnity.Sample
             {
                 Mapper = mapper;
                 Root = mapper.Get();
+                Button = mapper.Get<Button>();
                 ButtonBase = mapper.Get<Image>("ButtonBase");
                 ButtonText = mapper.Get<Text>("ButtonText");
+            }
+
+            public void Activate()
+            {
+            }
+
+            public void Deactivate()
+            {
+                Button.onClick.RemoveAllListeners();
             }
         }
     }
