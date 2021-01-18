@@ -46,36 +46,11 @@ namespace AkyuiUnity.Editor
         {
             var pathGetter = new PathGetter(settings, akyuiLoader.LayoutInfo.Name);
 
-            var layoutInfo = akyuiLoader.LayoutInfo;
-            if (settings.CheckHash)
-            {
-                var prevMetaFullPath = pathGetter.GetMetaFullPath(akyuiLoader.LayoutInfo.Name);
-                if (File.Exists(prevMetaFullPath))
-                {
-                    var prevMetaObject = AssetDatabase.LoadAssetAtPath<GameObject>(pathGetter.GetMetaPath(akyuiLoader.LayoutInfo.Name));
-                    var prevMeta = prevMetaObject.GetComponent<AkyuiMeta>().meta;
-                    if (prevMeta.hash == layoutInfo.Hash)
-                    {
-                        Debug.Log($"Skip (same hash)");
-                        return;
-                    }
-                }
-            }
-
+            // import asset
             ImportAssets(settings, akyuiLoader, pathGetter);
-            var (gameObject, meta) = AkyuiGenerator.GenerateGameObject(new EditorAssetLoader(pathGetter), layoutInfo);
-            foreach (var trigger in settings.Triggers) trigger.OnPostprocessPrefab(ref gameObject, ref meta.idAndGameObjects);
 
-            // meta
-            var metaGameObject = new GameObject(akyuiLoader.LayoutInfo.Name);
-            gameObject.transform.SetParent(metaGameObject.transform);
-            var akyuiMeta = metaGameObject.AddComponent<AkyuiMeta>();
-            akyuiMeta.meta = meta;
-
-            PrefabUtility.SaveAsPrefabAssetAndConnect(gameObject, pathGetter.PrefabSavePath, InteractionMode.AutomatedAction);
-            PrefabUtility.SaveAsPrefabAsset(metaGameObject, pathGetter.MetaSavePath);
-
-            Object.DestroyImmediate(metaGameObject);
+            // import layout
+            ImportLayout(settings, akyuiLoader, pathGetter);
         }
 
         private static void ImportAssets(IAkyuiImportSettings settings, IAkyuiLoader akyuiLoader, PathGetter pathGetter)
@@ -99,11 +74,12 @@ namespace AkyuiUnity.Editor
                         var import = AssetImporter.GetAtPath(savePath);
                         if (import.userData == akyuiLoader.LayoutInfo.Hash.ToString())
                         {
-                            Debug.Log($"Asset {asset.FileName} Skip (same hash)");
+                            Debug.Log($"Asset {asset.FileName} / Skip (same hash)");
                             continue;
                         }
                     }
                 }
+                Debug.Log($"Asset {asset.FileName} / Import");
 
                 foreach (var trigger in settings.Triggers) trigger.OnPostprocessAsset(ref bytes, ref asset);
                 ImportAsset(asset, savePath, saveFullPath, bytes);
@@ -127,6 +103,40 @@ namespace AkyuiUnity.Editor
             }
 
             Debug.LogError($"Unknown asset type {asset}");
+        }
+
+        private static void ImportLayout(IAkyuiImportSettings settings, IAkyuiLoader akyuiLoader, PathGetter pathGetter)
+        {
+            var layoutInfo = akyuiLoader.LayoutInfo;
+            if (settings.CheckHash)
+            {
+                var prevMetaFullPath = pathGetter.GetMetaFullPath(akyuiLoader.LayoutInfo.Name);
+                if (File.Exists(prevMetaFullPath))
+                {
+                    var prevMetaObject = AssetDatabase.LoadAssetAtPath<GameObject>(pathGetter.GetMetaPath(akyuiLoader.LayoutInfo.Name));
+                    var prevMeta = prevMetaObject.GetComponent<AkyuiMeta>().meta;
+                    if (prevMeta.hash == layoutInfo.Hash)
+                    {
+                        Debug.Log($"Layout {layoutInfo.Name} / Skip (same hash)");
+                        return;
+                    }
+                }
+            }
+            Debug.Log($"Layout {layoutInfo.Name} / Import");
+
+            var (gameObject, meta) = AkyuiGenerator.GenerateGameObject(new EditorAssetLoader(pathGetter), layoutInfo);
+            foreach (var trigger in settings.Triggers) trigger.OnPostprocessPrefab(ref gameObject, ref meta.idAndGameObjects);
+
+            // meta
+            var metaGameObject = new GameObject(akyuiLoader.LayoutInfo.Name);
+            gameObject.transform.SetParent(metaGameObject.transform);
+            var akyuiMeta = metaGameObject.AddComponent<AkyuiMeta>();
+            akyuiMeta.meta = meta;
+
+            PrefabUtility.SaveAsPrefabAssetAndConnect(gameObject, pathGetter.PrefabSavePath, InteractionMode.AutomatedAction);
+            PrefabUtility.SaveAsPrefabAsset(metaGameObject, pathGetter.MetaSavePath);
+
+            Object.DestroyImmediate(metaGameObject);
         }
     }
 
