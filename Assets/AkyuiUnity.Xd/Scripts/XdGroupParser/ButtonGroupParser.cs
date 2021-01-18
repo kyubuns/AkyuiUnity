@@ -8,7 +8,7 @@ namespace AkyuiUnity.Xd
     {
         public bool Is(XdObjectJson instanceObject, XdObjectJson symbolObject)
         {
-            var interactions = symbolObject.Meta?.Ux?.Interactions ?? new XdInteractionJson[] { };
+            var interactions = symbolObject?.Meta?.Ux?.Interactions ?? new XdInteractionJson[] { };
             return interactions.Any(x => x.Enabled && x.Data.Interaction.TriggerEvent == "hover");
         }
 
