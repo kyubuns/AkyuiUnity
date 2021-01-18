@@ -235,6 +235,9 @@ namespace AkyuiUnity.Generator
             if (component is TextComponent textComponent)
             {
                 var text = target == null ? gameObject.AddComponent<Text>() : (Text) target;
+                text.verticalOverflow = VerticalWrapMode.Overflow;
+                text.horizontalOverflow = HorizontalWrapMode.Overflow;
+
                 if (textComponent.Text != null) text.text = textComponent.Text;
                 if (textComponent.Size != null) text.fontSize = Mathf.RoundToInt(textComponent.Size.Value);
                 if (textComponent.Color != null) text.color = textComponent.Color.Value;

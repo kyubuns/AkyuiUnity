@@ -57,9 +57,11 @@ namespace AkyuiUnity.Xd
             position.x += lineJson.X;
             position.y += lineJson.Y;
 
-            // マジックナンバー
-            // たぶんフォント毎に違うんだけどどうしたものか
-            position.y -= fontSize * 1.075f;
+            // マジックナンバー、この数字がマジで謎
+            // A-Zまではフォントに入ってるだろうしきっと最大の高さだろうと思って描画してフォントの最大の高さをとって
+            // 謎係数をかけてずらす
+            var maxHeight = textGenerator.GetPreferredHeight("ABCDEFGHIJKLMNOPQRSTUVWXYZ", settings) * scale;
+            position.y -= maxHeight * 0.75f;
 
             var size = new Vector2(width, height);
             return new Rect(position, size);
