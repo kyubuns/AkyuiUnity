@@ -45,11 +45,7 @@ namespace AkyuiUnity.Editor
         private static void Import(IAkyuiImportSettings settings, IAkyuiLoader akyuiLoader)
         {
             var pathGetter = new PathGetter(settings, akyuiLoader.LayoutInfo.Name);
-
-            // import asset
             ImportAssets(settings, akyuiLoader, pathGetter);
-
-            // import layout
             ImportLayout(settings, akyuiLoader, pathGetter);
         }
 
@@ -72,7 +68,7 @@ namespace AkyuiUnity.Editor
                     if (File.Exists(saveFullPath))
                     {
                         var import = AssetImporter.GetAtPath(savePath);
-                        if (import.userData == akyuiLoader.LayoutInfo.Hash.ToString())
+                        if (import.userData == t.Hash.ToString())
                         {
                             Debug.Log($"Asset {asset.FileName} / Skip (same hash)");
                             continue;

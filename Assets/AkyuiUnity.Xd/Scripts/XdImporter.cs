@@ -22,7 +22,7 @@ namespace AkyuiUnity.Xd
                 foreach (var artwork in file.Artworks)
                 {
                     if (artwork.Name == "pasteboard") continue;
-                    loaders.Add((IAkyuiLoader) new XdAkyuiLoader(file, artwork));
+                    loaders.Add(new XdAkyuiLoader(file, artwork));
                 }
                 Debug.Log($"Xd Import Finish: {xdFilePath}");
             }

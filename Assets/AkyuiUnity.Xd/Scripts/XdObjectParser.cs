@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using AkyuiUnity.Xd.Libraries;
 using Newtonsoft.Json;
 using Unity.VectorGraphics;
 using UnityEngine;
@@ -63,8 +64,8 @@ namespace AkyuiUnity.Xd
 
             if (!string.IsNullOrWhiteSpace(spriteUid))
             {
-                spriteUid = $"{spriteUid.Substring(0, 8)}.png";
-                assets.Add(new SpriteAsset(spriteUid, Random.Range(0, 10000), null));
+                spriteUid = $"{xdObject.Name}_{spriteUid.Substring(0, 8)}.png";
+                assets.Add(new SpriteAsset(spriteUid, xdObject.Style.Fill.Pattern.Meta.Ux.HrefLastModifiedDate, null));
                 components.Add(new ImageComponent(
                     0,
                     spriteUid,
@@ -74,16 +75,16 @@ namespace AkyuiUnity.Xd
             }
             else if (SvgUtil.Types.Contains(shapeType))
             {
-                spriteUid = $"path_{xdObject.Id.Substring(0, 8)}.svg";
+                spriteUid = $"{xdObject.Name}_{xdObject.Id.Substring(0, 8)}.svg";
+                var svg = SvgUtil.CreateSvg(xdObject);
                 var userData = new SvgPostProcessImportAsset.SvgImportUserData { Width = Mathf.RoundToInt(size.x), Height = Mathf.RoundToInt(size.y) };
-                assets.Add(new SpriteAsset(spriteUid, Random.Range(0, 10000), JsonConvert.SerializeObject(userData)));
+                assets.Add(new SpriteAsset(spriteUid, FastHash.CalculateHash(svg), JsonConvert.SerializeObject(userData)));
                 components.Add(new ImageComponent(
                     0,
                     spriteUid,
                     color
                 ));
 
-                var svg = SvgUtil.CreateSvg(xdObject);
                 assetHolder.Save(spriteUid, System.Text.Encoding.UTF8.GetBytes(svg));
             }
 
