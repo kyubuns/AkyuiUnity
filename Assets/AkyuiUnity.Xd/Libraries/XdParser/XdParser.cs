@@ -152,6 +152,9 @@ namespace XdParser.Internal
         [JsonProperty("font")]
         public XdStyleFontJson Font { get; set; }
 
+        [JsonProperty("textAttributes")]
+        public XdStyleTextAttributesJson TextAttributes { get; set; }
+
         [JsonProperty("opacity")]
         public float? Opacity { get; set; }
     }
@@ -196,6 +199,12 @@ namespace XdParser.Internal
 
         [JsonProperty("style")]
         public string Style { get; set; }
+    }
+
+    public class XdStyleTextAttributesJson
+    {
+        [JsonProperty("paragraphAlign")]
+        public string ParagraphAlign { get; set; } // default = left
     }
 
     public class XdStyleFillPatternJson
@@ -299,6 +308,23 @@ namespace XdParser.Internal
 
     public class XdTextParagraphJson
     {
+        [JsonProperty("lines")]
+        public XdTextParagraphLineJson[][] Lines { get; set; }
+    }
+
+    public class XdTextParagraphLineJson
+    {
+        [JsonProperty("from")]
+        public float From { get; set; }
+
+        [JsonProperty("to")]
+        public float To { get; set; }
+
+        [JsonProperty("x")]
+        public float X { get; set; }
+
+        [JsonProperty("y")]
+        public float Y { get; set; }
     }
 
     public class XdManifestJson

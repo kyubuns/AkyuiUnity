@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 using UnityEngine;
 using XdParser;
 using XdParser.Internal;
+using Object = UnityEngine.Object;
 
 namespace AkyuiUnity.Xd
 {

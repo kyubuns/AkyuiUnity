@@ -179,7 +179,6 @@ namespace AkyuiUnity.Editor
 
         public Sprite LoadSprite(string name)
         {
-            Debug.Log(Path.Combine(_pathGetter.AssetOutputDirectoryPath, name));
             return AssetDatabase.LoadAssetAtPath<Sprite>(Path.Combine(_pathGetter.AssetOutputDirectoryPath, name));
         }
 
