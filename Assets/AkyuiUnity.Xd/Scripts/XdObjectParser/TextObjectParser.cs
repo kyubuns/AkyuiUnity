@@ -49,6 +49,8 @@ namespace AkyuiUnity.Xd
                 scale = fontSize / fontAsset.fontSize;
             }
 
+            position.y -= fontAsset.ascent * (fontSize / fontAsset.fontSize);
+
             var textGenerator = new TextGenerator();
             var width = textGenerator.GetPreferredWidth(rawText, settings) * scale;
             var height = textGenerator.GetPreferredHeight(rawText, settings) * scale;
@@ -56,12 +58,6 @@ namespace AkyuiUnity.Xd
             var lineJson = xdObject.Text.Paragraphs[0].Lines[0][0];
             position.x += lineJson.X;
             position.y += lineJson.Y;
-
-            // マジックナンバー、この数字がマジで謎
-            // A-Zまではフォントに入ってるだろうしきっと最大の高さだろうと思って描画してフォントの最大の高さをとって
-            // 謎係数をかけてずらす
-            var maxHeight = textGenerator.GetPreferredHeight("ABCDEFGHIJKLMNOPQRSTUVWXYZ", settings) * scale;
-            position.y -= maxHeight * 0.75f;
 
             var size = new Vector2(width, height);
             return new Rect(position, size);
