@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using AkyuiUnity.Editor.Extensions;
@@ -167,11 +166,6 @@ namespace AkyuiUnity.Editor
             _pathGetter = pathGetter;
         }
 
-        public Sprite LoadSprite(string name)
-        {
-            return AssetDatabase.LoadAssetAtPath<Sprite>(Path.Combine(_pathGetter.AssetOutputDirectoryPath, name));
-        }
-
         public (GameObject, AkyuiPrefabMeta) LoadPrefab(Transform parent, string referenceName)
         {
             var metaGameObject = (GameObject) PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>(_pathGetter.GetMetaPath(referenceName)));
@@ -182,6 +176,26 @@ namespace AkyuiUnity.Editor
             Object.DestroyImmediate(metaGameObject);
             return (prefabGameObject, referenceMeta);
         }
+
+        public Sprite LoadSprite(string name)
+        {
+            Debug.Log(Path.Combine(_pathGetter.AssetOutputDirectoryPath, name));
+            return AssetDatabase.LoadAssetAtPath<Sprite>(Path.Combine(_pathGetter.AssetOutputDirectoryPath, name));
+        }
+
+        public Font LoadFont(string name)
+        {
+            var pathWithoutExtension = Path.Combine(_pathGetter.FontDirectoryPath, name);
+
+            var ttf = AssetDatabase.LoadAssetAtPath<Font>(pathWithoutExtension + ".ttf");
+            if (ttf != null) return ttf;
+
+            var otf = AssetDatabase.LoadAssetAtPath<Font>(pathWithoutExtension + ".otf");
+            if (otf != null) return otf;
+
+            Debug.LogWarning($"Font {pathWithoutExtension} is not found");
+            return null;
+        }
     }
 
     public class PathGetter
@@ -189,6 +203,7 @@ namespace AkyuiUnity.Editor
         public string AssetOutputDirectoryPath { get; }
         public string PrefabSavePath { get; }
         public string MetaSavePath { get; }
+        public string FontDirectoryPath { get; }
 
         public string GetMetaPath(string fileName) => _settings.MetaOutputPath.Replace("{name}", fileName) + ".prefab";
 
@@ -207,6 +222,7 @@ namespace AkyuiUnity.Editor
             AssetOutputDirectoryPath = settings.AssetOutputDirectoryPath.Replace("{name}", fileName);
             PrefabSavePath = settings.PrefabOutputPath.Replace("{name}", fileName) + ".prefab";
             MetaSavePath = GetMetaPath(fileName);
+            FontDirectoryPath = settings.FontDirectoryPath;
         }
     }
 }

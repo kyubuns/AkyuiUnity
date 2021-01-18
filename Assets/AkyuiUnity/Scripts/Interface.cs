@@ -178,19 +178,29 @@ namespace AkyuiUnity
         [CanBeNull] public readonly float? Size;
         [CanBeNull] public readonly Color? Color;
         [CanBeNull] public readonly TextAlign? Align;
+        [CanBeNull] public readonly string Font;
 
         public enum TextAlign
         {
+            UpperLeft,
+            UpperCenter,
+            UpperRight,
+            MiddleLeft,
             MiddleCenter,
+            MiddleRight,
+            LowerLeft,
+            LowerCenter,
+            LowerRight,
         }
 
-        public TextComponent(int cid, [CanBeNull] string text, [CanBeNull] float? size, [CanBeNull] Color? color, [CanBeNull] TextAlign? align)
+        public TextComponent(int cid, [CanBeNull] string text, [CanBeNull] float? size, [CanBeNull] Color? color, [CanBeNull] TextAlign? align, [CanBeNull] string font)
         {
             Cid = cid;
             Text = text;
             Size = size;
             Color = color;
             Align = align;
+            Font = font;
         }
     }
 

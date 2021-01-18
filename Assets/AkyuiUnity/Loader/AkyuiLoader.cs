@@ -219,12 +219,14 @@ namespace AkyuiUnity.Loader
                     align = (TextComponent.TextAlign) Enum.Parse(typeof(TextComponent.TextAlign),
                         componentJson["align"].JsonString().Replace("_", ""), true);
                 }
+
                 return new TextComponent(
                     componentJson["cid"].JsonInt(),
                     componentJson.ContainsKey("text") ? componentJson["text"].JsonString() : null,
                     componentJson.ContainsKey("size") ? componentJson["size"].JsonFloat() : (float?) null,
                     componentJson.ContainsKey("color") ? componentJson["color"].JsonColor() : (Color?) null,
-                    align
+                    align,
+                    componentJson.ContainsKey("font") ? componentJson["font"].JsonString() : null
                 );
             }
 

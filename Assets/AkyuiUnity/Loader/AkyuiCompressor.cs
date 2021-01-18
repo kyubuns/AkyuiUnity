@@ -174,6 +174,7 @@ namespace AkyuiUnity.Loader
                 if (textComponent.Size != null) dict["size"] = ToSerializable(textComponent.Size.Value);
                 if (textComponent.Color != null) dict["color"] = ToSerializable(textComponent.Color.Value);
                 if (textComponent.Align != null) dict["align"] = ToSerializable(textComponent.Align.Value);
+                if (textComponent.Font != null) dict["font"] = ToSerializable(textComponent.Font);
             }
             else if (source is ButtonComponent)
             {
@@ -215,7 +216,15 @@ namespace AkyuiUnity.Loader
         {
             switch (textAlign)
             {
+                case TextComponent.TextAlign.UpperLeft: return "upper_left";
+                case TextComponent.TextAlign.UpperCenter: return "upper_center";
+                case TextComponent.TextAlign.UpperRight: return "upper_right";
+                case TextComponent.TextAlign.MiddleLeft: return "middle_left";
                 case TextComponent.TextAlign.MiddleCenter: return "middle_center";
+                case TextComponent.TextAlign.MiddleRight: return "middle_right";
+                case TextComponent.TextAlign.LowerLeft: return "lower_left";
+                case TextComponent.TextAlign.LowerCenter: return "lower_center";
+                case TextComponent.TextAlign.LowerRight: return "lower_right";
                 default:
                     throw new ArgumentOutOfRangeException(nameof(textAlign), textAlign, null);
             }

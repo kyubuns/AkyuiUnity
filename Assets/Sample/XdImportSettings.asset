@@ -15,6 +15,7 @@ MonoBehaviour:
   prefabOutputPath: Assets/Sample/GeneratedPrefabs/{name}
   assetOutputDirectoryPath: Assets/Sample/GeneratedAssets/{name}/
   metaOutputPath: Assets/Sample/GeneratedMetas/{name}Meta
-  checkHash: 1
+  fontDirectoryPath: Assets/Sample/Fonts/
+  checkHash: 0
   triggers:
   - {fileID: 11400000, guid: ade10f0de76184e83986418daacae910, type: 2}

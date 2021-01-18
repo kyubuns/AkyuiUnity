@@ -242,11 +242,40 @@ namespace AkyuiUnity.Generator
                 {
                     switch (textComponent.Align.Value)
                     {
+                        case TextComponent.TextAlign.UpperLeft:
+                            text.alignment = TextAnchor.UpperLeft;
+                            break;
+                        case TextComponent.TextAlign.UpperCenter:
+                            text.alignment = TextAnchor.UpperCenter;
+                            break;
+                        case TextComponent.TextAlign.UpperRight:
+                            text.alignment = TextAnchor.UpperRight;
+                            break;
+                        case TextComponent.TextAlign.MiddleLeft:
+                            text.alignment = TextAnchor.MiddleLeft;
+                            break;
                         case TextComponent.TextAlign.MiddleCenter:
                             text.alignment = TextAnchor.MiddleCenter;
                             break;
+                        case TextComponent.TextAlign.MiddleRight:
+                            text.alignment = TextAnchor.MiddleRight;
+                            break;
+                        case TextComponent.TextAlign.LowerLeft:
+                            text.alignment = TextAnchor.LowerLeft;
+                            break;
+                        case TextComponent.TextAlign.LowerCenter:
+                            text.alignment = TextAnchor.LowerCenter;
+                            break;
+                        case TextComponent.TextAlign.LowerRight:
+                            text.alignment = TextAnchor.LowerRight;
+                            break;
                         default:
                             throw new ArgumentOutOfRangeException();
+                    }
+
+                    if (textComponent.Font != null)
+                    {
+                        text.font = assetLoader.LoadFont(textComponent.Font);
                     }
                 }
                 return text;

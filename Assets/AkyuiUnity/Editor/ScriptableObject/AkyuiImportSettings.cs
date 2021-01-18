@@ -14,6 +14,9 @@ namespace AkyuiUnity.Editor.ScriptableObject
         public string MetaOutputPath => metaOutputPath;
         [SerializeField] private string metaOutputPath = "Assets/{name}Meta";
 
+        public string FontDirectoryPath => fontDirectoryPath;
+        [SerializeField] private string fontDirectoryPath = "Assets/Fonts/";
+
         public bool CheckHash => checkHash;
         [SerializeField] private bool checkHash = true;
 
@@ -26,6 +29,7 @@ namespace AkyuiUnity.Editor.ScriptableObject
         string PrefabOutputPath { get; }
         string AssetOutputDirectoryPath { get; }
         string MetaOutputPath { get; }
+        string FontDirectoryPath { get; }
         bool CheckHash { get; }
         AkyuiImportTrigger[] Triggers { get; }
     }
