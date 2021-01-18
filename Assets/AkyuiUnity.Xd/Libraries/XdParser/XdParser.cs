@@ -537,6 +537,75 @@ namespace XdParser.Internal
 
         [JsonProperty("localTransform")]
         public XdTransformJson LocalTransform { get; set; }
+
+        [JsonProperty("modTime")]
+        public ulong ModTime { get; set; }
+
+        [JsonProperty("stateId")]
+        public string StateId { get; set; }
+
+        [JsonProperty("states")]
+        public XdObjectJson[] States { get; set; }
+
+        [JsonProperty("interactions")]
+        public XdInteractionJson[] Interactions { get; set; }
+    }
+
+    public class XdInteractionJson
+    {
+        [JsonProperty("data")]
+        public XdInteractionDataJson Data { get; set; }
+
+        [JsonProperty("enabled")]
+        public bool Enabled { get; set; }
+
+        [JsonProperty("guid")]
+        public string Guid { get; set; }
+
+        [JsonProperty("inherited")]
+        public bool Inherited { get; set; }
+
+        [JsonProperty("valid")]
+        public bool Valid { get; set; }
+    }
+
+    public class XdInteractionDataJson
+    {
+        [JsonProperty("interaction")]
+        public XdInteractionDataInteractionJson Interaction { get; set; }
+
+        [JsonProperty("version")]
+        public string Version { get; set; }
+    }
+
+    public class XdInteractionDataInteractionJson
+    {
+        [JsonProperty("action")]
+        public string Action { get; set; }
+
+        [JsonProperty("properties")]
+        public XdInteractionDataInteractionPropertiesJson Properties { get; set; }
+
+        [JsonProperty("triggerEvent")]
+        public string TriggerEvent { get; set; }
+    }
+
+    public class XdInteractionDataInteractionPropertiesJson
+    {
+        [JsonProperty("destination")]
+        public string Destination { get; set; }
+
+        [JsonProperty("duration")]
+        public float Duration { get; set; }
+
+        [JsonProperty("easing")]
+        public string Easing { get; set; }
+
+        [JsonProperty("transition")]
+        public string Transition { get; set; }
+
+        [JsonProperty("voiceLocale")]
+        public string VoiceLocale { get; set; }
     }
 
     public class XdObjectGroupJson
