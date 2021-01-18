@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using AkyuiUnity.Editor;
 using AkyuiUnity.Loader;
+using AkyuiUnity.Xd.Libraries;
+using Newtonsoft.Json;
 using UnityEngine;
 using XdParser;
 using XdParser.Internal;
-using Random = UnityEngine.Random;
 
 namespace AkyuiUnity.Xd
 {
@@ -66,7 +67,7 @@ namespace AkyuiUnity.Xd
             var renderer = new XdRenderer(xdArtboard, assetHolder);
             var layoutInfo = new LayoutInfo(
                 renderer.Name,
-                renderer.Hash,
+                FastHash.CalculateHash(JsonConvert.SerializeObject(xdArtboard.Artboard)),
                 renderer.Meta,
                 renderer.Root,
                 renderer.Elements.ToArray()
@@ -80,7 +81,6 @@ namespace AkyuiUnity.Xd
         private class XdRenderer
         {
             public string Name { get; }
-            public long Hash => Random.Range(0, 100000); // 今は必ず更新する
             public Meta Meta => new Meta(Const.AkyuiVersion, "XdToAkyui", "0.0.0");
             public int Root => 0;
             public List<IElement> Elements { get; }
