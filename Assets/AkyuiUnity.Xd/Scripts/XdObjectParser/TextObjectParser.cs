@@ -32,11 +32,9 @@ namespace AkyuiUnity.Xd
                 scaleFactor = 1.0f,
                 color = Color.white,
                 font = fontAsset,
-                fontSize = Mathf.RoundToInt(fontSize),
                 pivot = Vector2.zero,
                 richText = false,
                 lineSpacing = 0,
-                fontStyle = FontStyle.Normal,
                 resizeTextForBestFit = false,
                 updateBounds = false,
                 horizontalOverflow = HorizontalWrapMode.Overflow,
@@ -44,7 +42,12 @@ namespace AkyuiUnity.Xd
             };
 
             var scale = 1.0f;
-            if (!fontAsset.dynamic)
+            if (fontAsset.dynamic)
+            {
+                settings.fontSize = Mathf.RoundToInt(fontSize);
+                settings.fontStyle = FontStyle.Normal;
+            }
+            else
             {
                 scale = fontSize / fontAsset.fontSize;
             }
