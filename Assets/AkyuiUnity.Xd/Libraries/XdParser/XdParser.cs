@@ -430,6 +430,9 @@ namespace XdParser.Internal
         [JsonProperty("text")]
         public XdTextJson Text { get; set; }
 
+        [JsonProperty("guid")]
+        public string Guid { get; set; }
+
         [JsonProperty("syncSourceGuid")]
         public string SyncSourceGuid { get; set; }
     }

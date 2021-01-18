@@ -91,16 +91,18 @@ namespace AkyuiUnity.Xd
             private readonly XdAssetHolder _xdAssetHolder;
             private int _nextEid = 1;
             private readonly Dictionary<string, Rect> _size;
+            private Dictionary<string, XdObjectJson> _refObjectMap;
 
             public XdRenderer(XdArtboard xdArtboard, XdAssetHolder xdAssetHolder)
             {
                 var resources = xdArtboard.Resources;
-
                 _xdAssetHolder = xdAssetHolder;
                 Elements = new List<IElement>();
                 Assets = new List<IAsset>();
                 Name = xdArtboard.Name;
                 _size = new Dictionary<string, Rect>();
+
+                CreateRefObjectMap(resources.Resources);
 
                 var xdResourcesArtboardsJson = resources.Artboards[xdArtboard.Manifest.Path.Replace("artboard-", "")];
                 var rootSize = new Vector2(xdResourcesArtboardsJson.Width, xdResourcesArtboardsJson.Height);
@@ -119,13 +121,50 @@ namespace AkyuiUnity.Xd
                 Elements.Add(root);
             }
 
+            private void CreateRefObjectMap(XdResourcesResourcesJson resource)
+            {
+                _refObjectMap = new Dictionary<string, XdObjectJson>();
+                var symbols = resource.Meta.Ux.Symbols;
+                foreach (var symbol in symbols)
+                {
+                    CreateRefObjectMapInternal(symbol);
+                }
+            }
+
+            private void CreateRefObjectMapInternal(XdObjectJson xdObject)
+            {
+                _refObjectMap[xdObject.Id] = xdObject;
+                if (xdObject.Group != null)
+                {
+                    foreach (var child in xdObject.Group.Children)
+                    {
+                        CreateRefObjectMapInternal(child);
+                    }
+                }
+            }
+
+            private (string, XdObjectJson) GetRefObject(XdObjectJson xdObject)
+            {
+                if (xdObject.Type != "syncRef") return (xdObject.Id, xdObject);
+                return (xdObject.Guid, _refObjectMap[xdObject.SyncSourceGuid]);
+            }
+
             private string[] CalcPosition(XdObjectJson[] xdObjects, Vector2 rootSize, Vector2 parentPosition)
             {
                 return xdObjects.Select(xdObject => CalcPosition(xdObject, rootSize, parentPosition)).ToArray();
             }
 
-            private string CalcPosition(XdObjectJson xdObject, Vector2 rootSize, Vector2 parentPosition)
+            private IElement[] Render(XdObjectJson[] xdObjects)
             {
+                var children = new List<IElement>();
+                foreach (var xdObject in xdObjects) children.AddRange(Render(xdObject));
+                return children.ToArray();
+            }
+
+            private string CalcPosition(XdObjectJson instanceObject, Vector2 rootSize, Vector2 parentPosition)
+            {
+                var (id, xdObject) = GetRefObject(instanceObject);
+
                 var position = new Vector2((xdObject.Transform?.Tx ?? 0f) + parentPosition.x, (xdObject.Transform?.Ty ?? 0f) + parentPosition.y);
 
                 var children = new string[] { };
@@ -140,8 +179,8 @@ namespace AkyuiUnity.Xd
                     {
                         var size = parser.CalcSize(xdObject, position);
                         size.position -= rootSize / 2f;
-                        _size[xdObject.Id] = size;
-                        return xdObject.Id;
+                        _size[id] = size;
+                        return id;
                     }
                 }
 
@@ -153,32 +192,28 @@ namespace AkyuiUnity.Xd
                     var maxX = childrenRects.Length > 0 ? childrenRects.Max(x => x.max.x) : 0f;
                     var maxY = childrenRects.Length > 0 ? childrenRects.Max(x => x.max.y) : 0f;
                     var groupRect = Rect.MinMaxRect(minX, minY, maxX, maxY);
-                    _size[xdObject.Id] = groupRect;
+                    _size[id] = groupRect;
                     foreach (var c in children)
                     {
                         var t = _size[c];
                         t.center -= groupRect.center;
                         _size[c] = t;
                     }
-                    return xdObject.Id;
+
+                    return id;
                 }
 
                 throw new Exception($"Unknown object type {xdObject.Type}");
             }
 
-            private IElement[] Render(XdObjectJson[] xdObjects)
+            private IElement[] Render(XdObjectJson instanceObject)
             {
-                var children = new List<IElement>();
-                foreach (var xdObject in xdObjects) children.AddRange(Render(xdObject));
-                return children.ToArray();
-            }
+                var (id, xdObject) = GetRefObject(instanceObject);
 
-            private IElement[] Render(XdObjectJson xdObject)
-            {
                 var eid = _nextEid;
                 _nextEid++;
 
-                var rect = _size[xdObject.Id];
+                var rect = _size[id];
                 var position = new Vector2(rect.center.x, -rect.center.y);
                 var size = rect.size;
                 var children = new IElement[] { };
@@ -218,7 +253,11 @@ namespace AkyuiUnity.Xd
                             children.Select(x => x.Eid).ToArray()
                         );
 
-                        Assets.AddRange(assets);
+                        foreach (var asset in assets)
+                        {
+                            if (Assets.Any(x => x.FileName == asset.FileName)) continue;
+                            Assets.Add(asset);
+                        }
                         Elements.Add(element);
                         return new IElement[] { element };
                     }
