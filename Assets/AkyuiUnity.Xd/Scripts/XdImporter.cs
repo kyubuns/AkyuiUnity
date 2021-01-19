@@ -179,7 +179,7 @@ namespace AkyuiUnity.Xd
             {
                 if (xdObject.Type != "syncRef") return (xdObject.Id, xdObject);
 
-                var newXdobjectJson = new XdObjectJson();
+                var newXdObjectJson = new XdObjectJson();
                 var source = _sourceGuidToObject[xdObject.SyncSourceGuid];
                 var propertyInfos = typeof(XdObjectJson).GetProperties();
                 foreach (var propertyInfo in propertyInfos)
@@ -187,11 +187,12 @@ namespace AkyuiUnity.Xd
                     var value = propertyInfo.GetValue(xdObject);
                     if (value == null) value = propertyInfo.GetValue(source);
 
-                    propertyInfo.SetValue(newXdobjectJson, value);
+                    propertyInfo.SetValue(newXdObjectJson, value);
                 }
-                newXdobjectJson.Type = source.Type;
+                newXdObjectJson.Name = source.Name;
+                newXdObjectJson.Type = source.Type;
 
-                return (xdObject.Guid, newXdobjectJson);
+                return (xdObject.Guid, newXdObjectJson);
             }
 
             private string[] CalcPosition(XdObjectJson[] xdObjects, Vector2 rootOffset, Vector2 parentPosition)
