@@ -3,6 +3,7 @@ using System.Linq;
 using AkyuiUnity.Editor.Extensions;
 using AkyuiUnity.Editor.ScriptableObject;
 using AkyuiUnity.Generator;
+using AkyuiUnity.Generator.InternalTrigger;
 using AkyuiUnity.Loader;
 using UnityEngine;
 using UnityEditor;
@@ -105,7 +106,8 @@ namespace AkyuiUnity.Editor
             var layoutInfo = akyuiLoader.LayoutInfo;
             Debug.Log($"Layout {layoutInfo.Name} / Import");
 
-            var (gameObject, meta) = AkyuiGenerator.GenerateGameObject(new EditorAssetLoader(pathGetter), layoutInfo);
+            var triggers = settings.Triggers.Select(x => (IAkyuiGenerateTrigger) x).ToArray();
+            var (gameObject, meta) = AkyuiGenerator.GenerateGameObject(new EditorAssetLoader(pathGetter), layoutInfo, triggers);
             foreach (var trigger in settings.Triggers) trigger.OnPostprocessPrefab(ref gameObject, ref meta.idAndGameObjects);
 
             // meta
