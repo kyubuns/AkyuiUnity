@@ -163,6 +163,14 @@ namespace AkyuiUnity.Xd
                         CreateRefObjectMapInternal(child);
                     }
                 }
+
+                if (xdObject.Meta?.Ux?.States != null)
+                {
+                    foreach (var child in xdObject.Meta.Ux.States)
+                    {
+                        CreateRefObjectMapInternal(child);
+                    }
+                }
             }
 
             private (string, XdObjectJson) GetRefObject(XdObjectJson xdObject)
