@@ -1,4 +1,3 @@
-using System.Linq;
 using UnityEngine;
 using XdParser.Internal;
 
@@ -8,8 +7,7 @@ namespace AkyuiUnity.Xd
     {
         public bool Is(XdObjectJson instanceObject, XdObjectJson symbolObject)
         {
-            var interactions = symbolObject?.Meta?.Ux?.Interactions ?? new XdInteractionJson[] { };
-            return interactions.Any(x => x.Enabled && x.Data.Interaction.TriggerEvent == "hover");
+            return instanceObject.Name.EndsWith("Button");
         }
 
         public Rect CalcSize(XdObjectJson xdObject, Vector2 position, Rect rect)
