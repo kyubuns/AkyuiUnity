@@ -16,10 +16,12 @@ namespace AkyuiUnity.Sample
                     .Where(x => x.color != Color.clear)
                     .ToArray();
 
-                if (image.Length == 1)
+                if (image.Length >= 1)
                 {
                     button.targetGraphic = image.First();
                 }
+
+                DestroyImmediate(button.GetComponent<Image>());
             }
         }
     }
