@@ -126,7 +126,8 @@ namespace AkyuiUnity.Xd
 
                 var xdResourcesArtboardsJson = resources.Artboards[xdArtboard.Manifest.Path.Replace("artboard-", "")];
                 var rootSize = new Vector2(xdResourcesArtboardsJson.Width, xdResourcesArtboardsJson.Height);
-                CalcPosition(xdArtboard.Artboard.Children.SelectMany(x => x.Artboard.Children).ToArray(), rootSize, Vector2.zero);
+                var rootOffset = rootSize / -2f - new Vector2(xdResourcesArtboardsJson.X, xdResourcesArtboardsJson.Y);
+                CalcPosition(xdArtboard.Artboard.Children.SelectMany(x => x.Artboard.Children).ToArray(), rootOffset, Vector2.zero);
                 var children = Render(xdArtboard.Artboard.Children.SelectMany(x => x.Artboard.Children).ToArray());
                 var root = new ObjectElement(
                     0,
@@ -180,9 +181,9 @@ namespace AkyuiUnity.Xd
                 return (xdObject.Guid, _sourceGuidToObject[xdObject.SyncSourceGuid]);
             }
 
-            private string[] CalcPosition(XdObjectJson[] xdObjects, Vector2 rootSize, Vector2 parentPosition)
+            private string[] CalcPosition(XdObjectJson[] xdObjects, Vector2 rootOffset, Vector2 parentPosition)
             {
-                return xdObjects.Select(xdObject => CalcPosition(xdObject, rootSize, parentPosition)).ToArray();
+                return xdObjects.Select(xdObject => CalcPosition(xdObject, rootOffset, parentPosition)).ToArray();
             }
 
             private IElement[] Render(XdObjectJson[] xdObjects)
@@ -192,7 +193,7 @@ namespace AkyuiUnity.Xd
                 return children.ToArray();
             }
 
-            private string CalcPosition(XdObjectJson instanceObject, Vector2 rootSize, Vector2 parentPosition)
+            private string CalcPosition(XdObjectJson instanceObject, Vector2 rootOffset, Vector2 parentPosition)
             {
                 var (id, xdObject) = GetRefObject(instanceObject);
 
@@ -201,10 +202,10 @@ namespace AkyuiUnity.Xd
                 var children = new string[] { };
                 if (xdObject.Group != null)
                 {
-                    children = CalcPosition(xdObject.Group.Children, rootSize, position);
+                    children = CalcPosition(xdObject.Group.Children, rootOffset, position);
                 }
 
-                position -= rootSize / 2f;
+                position += rootOffset;
                 foreach (var parser in ObjectParsers)
                 {
                     if (!parser.Is(xdObject)) continue;
