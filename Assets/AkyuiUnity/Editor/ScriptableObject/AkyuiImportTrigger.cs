@@ -14,7 +14,7 @@ namespace AkyuiUnity.Editor.ScriptableObject
         {
         }
 
-        public Component SetOrCreateComponentValue(GameObject gameObject, TargetComponentGetter componentGetter, IComponent component, IAssetLoader assetLoader)
+        public virtual Component SetOrCreateComponentValue(GameObject gameObject, TargetComponentGetter componentGetter, IComponent component, IAssetLoader assetLoader)
         {
             return null;
         }

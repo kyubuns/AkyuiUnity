@@ -20,4 +20,5 @@ MonoBehaviour:
   triggers:
   - {fileID: 11400000, guid: d056efc8b5c4540d79d0f2319b88b0e7, type: 2}
   - {fileID: 11400000, guid: 7a40d86aba0244ab98bcb9126ab0b167, type: 2}
+  - {fileID: 11400000, guid: 926bf0136d8a1412d958f5924c81c093, type: 2}
   akyuiOutputPath: DumpAkyui/

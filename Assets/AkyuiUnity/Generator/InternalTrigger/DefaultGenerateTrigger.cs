@@ -59,16 +59,17 @@ namespace AkyuiUnity.Generator.InternalTrigger
                         default:
                             throw new ArgumentOutOfRangeException();
                     }
+                }
 
-                    if (textComponent.Font != null)
+                if (textComponent.Font != null)
+                {
+                    text.font = assetLoader.LoadFont(textComponent.Font);
+                    if (text.font == null)
                     {
-                        text.font = assetLoader.LoadFont(textComponent.Font);
-                        if (text.font == null)
-                        {
-                            text.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
-                        }
+                        text.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
                     }
                 }
+
                 return text;
             }
 
