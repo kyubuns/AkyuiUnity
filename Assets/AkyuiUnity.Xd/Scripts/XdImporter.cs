@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using AkyuiUnity.Editor;
 using AkyuiUnity.Loader;
@@ -29,6 +30,18 @@ namespace AkyuiUnity.Xd
                 Debug.Log($"Xd Import Finish: {xdFilePath}");
             }
             Importer.Import(settings, loaders.ToArray());
+
+            if (!string.IsNullOrWhiteSpace(settings.AkyuiOutputPath))
+            {
+                foreach (var loader in loaders)
+                {
+                    var bytes = AkyuiCompressor.Compress(loader);
+                    var outputPath = Path.Combine(settings.AkyuiOutputPath, loader.LayoutInfo.Name + ".aky");
+                    File.WriteAllBytes(outputPath, bytes);
+                    Debug.Log($"Export Akyui {outputPath}");
+                }
+            }
+
             foreach (var loader in loaders) loader.Dispose();
         }
     }
