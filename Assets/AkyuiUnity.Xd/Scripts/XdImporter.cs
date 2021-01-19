@@ -23,7 +23,8 @@ namespace AkyuiUnity.Xd
                 var file = new XdFile(xdFilePath);
                 foreach (var artwork in file.Artworks)
                 {
-                    if (artwork.Name == "pasteboard") continue;
+                    if (artwork.Artboard.Children.Length == 0) continue;
+                    if (!(artwork.Artboard.Children[0].Meta?.Ux?.MarkedForExport ?? false)) continue;
                     loaders.Add(new XdAkyuiLoader(file, artwork));
                 }
                 Debug.Log($"Xd Import Finish: {xdFilePath}");

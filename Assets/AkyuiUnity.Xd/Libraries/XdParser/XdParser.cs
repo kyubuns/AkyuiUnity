@@ -381,11 +381,6 @@ namespace XdParser.Internal
         public float Height { get; set; }
     }
 
-    public class XdMetaJson
-    {
-        // not implemented
-    }
-
     public class XdManifestChildJson
     {
         [JsonProperty("id")]
@@ -464,7 +459,7 @@ namespace XdParser.Internal
         public string Id { get; set; }
 
         [JsonProperty("meta")]
-        public XdMetaJson Meta { get; set; }
+        public XdObjectMetaJson Meta { get; set; }
 
         [JsonProperty("style")]
         public XdStyleJson Style { get; set; }
@@ -479,7 +474,7 @@ namespace XdParser.Internal
         public XdObjectJson[] Children { get; set; }
 
         [JsonProperty("meta")]
-        public XdMetaJson Meta { get; set; }
+        public XdObjectMetaJson Meta { get; set; }
 
         [JsonProperty("ref")]
         public string Ref { get; set; }
@@ -573,6 +568,9 @@ namespace XdParser.Internal
 
         [JsonProperty("offsetY")]
         public float OffsetY { get; set; }
+
+        [JsonProperty("markedForExport")]
+        public bool MarkedForExport { get; set; }
     }
 
     public class XdRepeatGridJson
