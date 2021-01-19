@@ -19,9 +19,14 @@ namespace AkyuiUnity.Xd
         public Rect CalcSize(XdObjectJson xdObject, Vector2 position)
         {
             var size = new Vector2(xdObject.Shape.Width, xdObject.Shape.Height);
+            var scaleBehavior = xdObject.Style?.Fill?.Pattern?.Meta?.Ux?.ScaleBehavior ?? "fill";
 
             var shapeType = xdObject.Shape?.Type;
-            if (SvgUtil.Types.Contains(shapeType))
+            if (shapeType == "rect")
+            {
+                // nothing
+            }
+            else if (SvgUtil.Types.Contains(shapeType))
             {
                 var svg = SvgUtil.CreateSvg(xdObject);
                 using (var reader = new StringReader(svg))
@@ -38,6 +43,30 @@ namespace AkyuiUnity.Xd
                     var bounds = VectorUtils.Bounds(vertices);
                     size = new Vector2(bounds.width, bounds.height);
                     position = new Vector2(position.x + bounds.x, position.y + bounds.y);
+                }
+            }
+
+            if (scaleBehavior == "cover")
+            {
+                var originalWidth = xdObject.Style?.Fill?.Pattern?.Width ?? 0f;
+                var originalHeight = xdObject.Style?.Fill?.Pattern?.Height ?? 0f;
+                var originalSize = new Vector2(originalWidth, originalHeight);
+                var originalAspect = originalSize.x / originalSize.y;
+                var instanceAspect = size.x / size.y;
+
+                if (originalAspect > instanceAspect)
+                {
+                    // 縦はそのまま
+                    var prev = size.x;
+                    size.x = size.y * (originalSize.x / originalSize.y);
+                    position.x -= (size.x - prev) / 2f;
+                }
+                else
+                {
+                    // 横はそのまま
+                    var prev = size.y;
+                    size.y = size.x * (originalSize.y / originalSize.x);
+                    position.y -= (size.y - prev) / 2f;
                 }
             }
 
