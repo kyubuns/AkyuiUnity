@@ -9,6 +9,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d67841a39652145b1ac077748ee5906f, type: 3}
-  m_Name: New Debug Log Trigger
+  m_Script: {fileID: 11500000, guid: f84b883b2504e456cad74c41e603139b, type: 3}
+  m_Name: SetupAnKuchenTrigger
   m_EditorClassIdentifier: 

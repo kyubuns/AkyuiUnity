@@ -4,8 +4,8 @@ using UnityEngine;
 
 namespace AkyuiUnity.AnKuchen
 {
-    [CreateAssetMenu(menuName = "Akyui/AnKuchenTrigger")]
-    public class AnKuchenTrigger : AkyuiImportTrigger
+    [CreateAssetMenu(menuName = "Akyui/Triggers/SetupAnKuchen", fileName = nameof(SetupAnKuchenTrigger))]
+    public class SetupAnKuchenTrigger : AkyuiImportTrigger
     {
         public override void OnPostprocessPrefab(ref GameObject prefab, ref GameObjectWithId[] meta)
         {

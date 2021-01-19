@@ -3,10 +3,10 @@ using AkyuiUnity.Editor.ScriptableObject;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace AkyuiUnity.Sample
+namespace AkyuiUnity.CommonTrigger
 {
-    [CreateAssetMenu(menuName = "AkyuiSample/ButtonPostProcessTrigger")]
-    public class ButtonPostProcessTrigger : AkyuiImportTrigger
+    [CreateAssetMenu(menuName = "Akyui/Triggers/SetButtonTargetGraphic", fileName = nameof(SetButtonTargetGraphicTrigger))]
+    public class SetButtonTargetGraphicTrigger : AkyuiImportTrigger
     {
         public override void OnPostprocessPrefab(ref GameObject prefab, ref GameObjectWithId[] idAndGameObjects)
         {
