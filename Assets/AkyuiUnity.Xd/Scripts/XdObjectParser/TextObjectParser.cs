@@ -20,9 +20,14 @@ namespace AkyuiUnity.Xd
             var fontSize = font.Size;
             var rawText = xdObject.Text.RawText;
 
-            var fontGuid = AssetDatabase.FindAssets($"{font.PostscriptName}").Single();
-            var fontPath = AssetDatabase.GUIDToAssetPath(fontGuid);
-            var fontAsset = AssetDatabase.LoadAssetAtPath<Font>(fontPath);
+            var findFont = AssetDatabase.FindAssets($"{font.PostscriptName}");
+            var fontAsset = Resources.GetBuiltinResource<Font>("Arial.ttf");
+            if (findFont.Length == 1)
+            {
+                var fontGuid = findFont.Single();
+                var fontPath = AssetDatabase.GUIDToAssetPath(fontGuid);
+                fontAsset = AssetDatabase.LoadAssetAtPath<Font>(fontPath);
+            }
 
             var settings = new TextGenerationSettings
             {

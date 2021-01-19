@@ -63,6 +63,10 @@ namespace AkyuiUnity.Generator.InternalTrigger
                     if (textComponent.Font != null)
                     {
                         text.font = assetLoader.LoadFont(textComponent.Font);
+                        if (text.font == null)
+                        {
+                            text.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
+                        }
                     }
                 }
                 return text;
