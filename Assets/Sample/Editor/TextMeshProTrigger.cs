@@ -1,10 +1,10 @@
 ﻿using System;
+using System.IO;
 using AkyuiUnity.Editor.ScriptableObject;
 using AkyuiUnity.Generator;
 using TMPro;
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace AkyuiUnity.CommonTrigger
 {
@@ -64,7 +64,10 @@ namespace AkyuiUnity.CommonTrigger
                 {
                     var fontPath = fontFilePath.Replace("{name}", textComponent.Font + ".asset");
                     text.font = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(fontPath);
-                    Debug.Log($"{fontPath}, {text.font}");
+                    if (text.font == null)
+                    {
+                        Debug.LogWarning($"TextMeshPro Font {fontPath} is not found");
+                    }
                 }
 
                 return text;
