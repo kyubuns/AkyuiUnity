@@ -1,6 +1,5 @@
 using AkyuiUnity.Generator;
 using AkyuiUnity.Generator.InternalTrigger;
-using AkyuiUnity.Loader;
 using UnityEngine;
 
 namespace AkyuiUnity.Editor.ScriptableObject
@@ -15,7 +14,7 @@ namespace AkyuiUnity.Editor.ScriptableObject
         {
         }
 
-        public virtual Component SetOrCreateComponentValue(Component target, IAssetLoader assetLoader, GameObject gameObject, IComponent component)
+        public Component SetOrCreateComponentValue(GameObject gameObject, TargetComponentGetter componentGetter, IComponent component, IAssetLoader assetLoader)
         {
             return null;
         }

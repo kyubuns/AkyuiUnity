@@ -6,11 +6,11 @@ namespace AkyuiUnity.Generator.InternalTrigger
 {
     public class DefaultGenerateTrigger : IAkyuiGenerateTrigger
     {
-        public Component SetOrCreateComponentValue(Component target, IAssetLoader assetLoader, GameObject gameObject, IComponent component)
+        public Component SetOrCreateComponentValue(GameObject gameObject, TargetComponentGetter componentGetter, IComponent component, IAssetLoader assetLoader)
         {
             if (component is ImageComponent imageComponent)
             {
-                var image = target == null ? gameObject.AddComponent<Image>() : (Image) target;
+                var image = componentGetter.GetComponent<Image>();
                 if (imageComponent.Sprite != null) image.sprite = assetLoader.LoadSprite(imageComponent.Sprite);
                 if (imageComponent.Color != null) image.color = imageComponent.Color.Value;
                 return image;
@@ -18,7 +18,7 @@ namespace AkyuiUnity.Generator.InternalTrigger
 
             if (component is TextComponent textComponent)
             {
-                var text = target == null ? gameObject.AddComponent<Text>() : (Text) target;
+                var text = componentGetter.GetComponent<Text>();
                 text.verticalOverflow = VerticalWrapMode.Overflow;
                 text.horizontalOverflow = HorizontalWrapMode.Overflow;
 
@@ -70,7 +70,7 @@ namespace AkyuiUnity.Generator.InternalTrigger
 
             if (component is ButtonComponent)
             {
-                var button = target == null ? gameObject.AddComponent<Button>() : (Button) target;
+                var button = componentGetter.GetComponent<Button>();
 
                 Graphic graphic;
                 if (gameObject.GetComponent<Graphic>() == null)
@@ -90,7 +90,7 @@ namespace AkyuiUnity.Generator.InternalTrigger
 
             if (component is VerticalListComponent verticalListComponent)
             {
-                var scrollRect = target == null ? gameObject.AddComponent<ScrollRect>() : (ScrollRect) target;
+                var scrollRect = componentGetter.GetComponent<ScrollRect>();
                 scrollRect.horizontal = false;
                 scrollRect.vertical = true;
 
@@ -99,7 +99,7 @@ namespace AkyuiUnity.Generator.InternalTrigger
                     gameObject.AddComponent<RectMask2D>();
                 }
 
-                if (target == null)
+                if (scrollRect.content == null)
                 {
                     var content = new GameObject("Content");
                     content.transform.SetParent(gameObject.transform);
@@ -125,7 +125,7 @@ namespace AkyuiUnity.Generator.InternalTrigger
 
             if (component is HorizontalLayoutComponent horizontalLayoutComponent)
             {
-                var horizontalLayoutGroup = target == null ? gameObject.AddComponent<HorizontalLayoutGroup>() : (HorizontalLayoutGroup) target;
+                var horizontalLayoutGroup = componentGetter.GetComponent<HorizontalLayoutGroup>();
                 horizontalLayoutGroup.childForceExpandWidth = false;
                 horizontalLayoutGroup.childForceExpandHeight = false;
                 if (horizontalLayoutComponent.Spacing != null) horizontalLayoutGroup.spacing = horizontalLayoutComponent.Spacing.Value;
@@ -134,7 +134,7 @@ namespace AkyuiUnity.Generator.InternalTrigger
 
             if (component is VerticalLayoutComponent verticalLayoutComponent)
             {
-                var verticalLayoutGroup = target == null ? gameObject.AddComponent<VerticalLayoutGroup>() : (VerticalLayoutGroup) target;
+                var verticalLayoutGroup = componentGetter.GetComponent<VerticalLayoutGroup>();
                 verticalLayoutGroup.childForceExpandWidth = false;
                 verticalLayoutGroup.childForceExpandHeight = false;
                 if (verticalLayoutComponent.Spacing != null) verticalLayoutGroup.spacing = verticalLayoutComponent.Spacing.Value;

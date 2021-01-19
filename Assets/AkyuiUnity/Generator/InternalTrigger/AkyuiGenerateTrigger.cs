@@ -4,6 +4,6 @@ namespace AkyuiUnity.Generator.InternalTrigger
 {
     public interface IAkyuiGenerateTrigger
     {
-        Component SetOrCreateComponentValue(Component target, IAssetLoader assetLoader, GameObject gameObject, IComponent component);
+        Component SetOrCreateComponentValue(GameObject gameObject, TargetComponentGetter componentGetter, IComponent component, IAssetLoader assetLoader);
     }
 }

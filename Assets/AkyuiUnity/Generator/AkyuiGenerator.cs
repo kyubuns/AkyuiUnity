@@ -224,9 +224,10 @@ namespace AkyuiUnity.Generator
 
         private static Component SetOrCreateComponentValue([CanBeNull] Component target, IAssetLoader assetLoader, GameObject gameObject, IComponent component, IAkyuiGenerateTrigger[] triggers)
         {
+            var targetComponentGetter = new TargetComponentGetter(gameObject, target);
             foreach (var trigger in triggers)
             {
-                var result = trigger.SetOrCreateComponentValue(target, assetLoader, gameObject, component);
+                var result = trigger.SetOrCreateComponentValue(gameObject, targetComponentGetter, component, assetLoader);
                 if (result != null) return result;
             }
 
@@ -241,6 +242,23 @@ namespace AkyuiUnity.Generator
         {
             rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, size.x);
             rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, size.y);
+        }
+    }
+
+    public class TargetComponentGetter
+    {
+        private readonly GameObject _gameObject;
+        private readonly Component _target;
+
+        public TargetComponentGetter(GameObject gameObject, Component target)
+        {
+            _gameObject = gameObject;
+            _target = target;
+        }
+
+        public T GetComponent<T>() where T : Component
+        {
+            return _target == null ? _gameObject.AddComponent<T>() : (T) _target;
         }
     }
 }
