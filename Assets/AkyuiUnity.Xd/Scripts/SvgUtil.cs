@@ -15,7 +15,7 @@ namespace AkyuiUnity.Xd
             var shape = xdObject.Shape;
 
             var fill = xdObject.Style?.Fill;
-            if (fill != null)
+            if (fill != null && fill.Type != "none")
             {
                 var color = xdObject.GetFillColor();
                 svgArgs.Add($@"fill=""#{ColorUtility.ToHtmlStringRGB(color)}""");
@@ -26,7 +26,7 @@ namespace AkyuiUnity.Xd
             }
 
             var stroke = xdObject.Style?.Stroke;
-            if (stroke != null)
+            if (stroke != null && stroke.Type != "none")
             {
                 var color = new Color32((byte) stroke.Color.Value.R, (byte) stroke.Color.Value.G, (byte) stroke.Color.Value.B, 255);
                 svgArgs.Add($@"stroke=""#{ColorUtility.ToHtmlStringRGB(color)}""");
