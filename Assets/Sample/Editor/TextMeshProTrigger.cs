@@ -11,7 +11,7 @@ namespace AkyuiUnity.CommonTrigger
     [CreateAssetMenu(menuName = "Akyui/Triggers/TextMeshPro", fileName = nameof(TextMeshProTrigger))]
     public class TextMeshProTrigger : AkyuiImportTrigger
     {
-        [SerializeField] private string fontFilePath = "Assets/Fonts/{name} SDF.asset";
+        [SerializeField] private string fontFilePath = "Assets/Fonts/{name} SDF";
 
         public override Component SetOrCreateComponentValue(GameObject gameObject, TargetComponentGetter componentGetter, IComponent component, IAssetLoader assetLoader)
         {
@@ -62,7 +62,7 @@ namespace AkyuiUnity.CommonTrigger
 
                 if (textComponent.Font != null)
                 {
-                    var fontPath = fontFilePath.Replace("{name}", textComponent.Font);
+                    var fontPath = fontFilePath.Replace("{name}", textComponent.Font + ".asset");
                     text.font = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(fontPath);
                     Debug.Log($"{fontPath}, {text.font}");
                 }

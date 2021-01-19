@@ -12,4 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0055669ec80ff4dfc94bbf5d67abae95, type: 3}
   m_Name: TextMeshProTrigger
   m_EditorClassIdentifier: 
-  fontFilePath: Assets/Sample/Fonts/{name} SDF.asset
+  fontFilePath: Assets/Sample/Fonts/{name} SDF
