@@ -20,15 +20,17 @@ namespace AkyuiUnity.Xd
             var fontSize = font.Size;
             var rawText = xdObject.Text.RawText;
 
-            var findFont = AssetDatabase.FindAssets($"{font.PostscriptName}");
-            var fontAsset = Resources.GetBuiltinResource<Font>("Arial.ttf");
-            if (findFont.Length == 1)
+            var findFont = AssetDatabase.FindAssets($"{font.PostscriptName} t:Font")
+                .Select(guid => AssetDatabase.GUIDToAssetPath(guid))
+                .Select(path => AssetDatabase.LoadAssetAtPath<Object>(path))
+                .OfType<Font>()
+                .ToArray();
+            var fontAsset = findFont.FirstOrDefault();
+            if (fontAsset == null)
             {
-                var fontGuid = findFont.Single();
-                var fontPath = AssetDatabase.GUIDToAssetPath(fontGuid);
-                fontAsset = AssetDatabase.LoadAssetAtPath<Font>(fontPath);
+                Debug.LogWarning($"{font.PostscriptName} is not found in project");
+                fontAsset = Resources.GetBuiltinResource<Font>("Arial.ttf");
             }
-
             var settings = new TextGenerationSettings
             {
                 generationExtents = Vector2.zero,
@@ -62,12 +64,12 @@ namespace AkyuiUnity.Xd
             var textGenerator = new TextGenerator();
             var width = textGenerator.GetPreferredWidth(rawText, settings) * scale;
             var height = textGenerator.GetPreferredHeight(rawText, settings) * scale;
+            var size = new Vector2(width, height);
 
             var lineJson = xdObject.Text.Paragraphs[0].Lines[0][0];
             position.x += lineJson.X;
             position.y += lineJson.Y;
 
-            var size = new Vector2(width, height);
             return new Rect(position, size);
         }
 
