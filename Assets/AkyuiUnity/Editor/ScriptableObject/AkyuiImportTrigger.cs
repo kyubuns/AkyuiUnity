@@ -11,7 +11,7 @@ namespace AkyuiUnity.Editor.ScriptableObject
         {
         }
 
-        public virtual void OnUnityPreprocessAsset(AssetImporter assetImporter, string userdata)
+        public virtual void OnUnityPreprocessAsset(AssetImporter assetImporter, IAsset asset)
         {
         }
 

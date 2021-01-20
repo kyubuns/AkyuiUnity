@@ -85,15 +85,13 @@ namespace AkyuiUnity.Editor
         private static void ImportAsset(IAsset asset, string savePath, string saveFullPath, byte[] bytes, IAkyuiImportSettings importSettings)
         {
             PostProcessImportAsset.ProcessingFile = savePath;
-            PostProcessImportAsset.Hash = asset.Hash;
-            PostProcessImportAsset.UserData = asset.UserData;
+            PostProcessImportAsset.Asset = asset;
             PostProcessImportAsset.Triggers = importSettings.Triggers;
 
             using (Disposable.Create(() =>
             {
                 PostProcessImportAsset.ProcessingFile = null;
-                PostProcessImportAsset.Hash = 0;
-                PostProcessImportAsset.UserData = null;
+                PostProcessImportAsset.Asset = null;
                 PostProcessImportAsset.Triggers = null;
             }))
             {
@@ -133,16 +131,15 @@ namespace AkyuiUnity.Editor
     public class PostProcessImportAsset : AssetPostprocessor
     {
         public static string ProcessingFile { get; set; }
-        public static long Hash { get; set; }
-        public static string UserData { get; set; }
+        public static IAsset Asset { get; set; }
         public static AkyuiImportTrigger[] Triggers { get; set; }
 
         public void OnPreprocessAsset()
         {
             if (ProcessingFile != assetPath) return;
 
-            assetImporter.userData = Hash.ToString();
-            foreach (var trigger in Triggers) trigger.OnUnityPreprocessAsset(assetImporter, UserData);
+            assetImporter.userData = Asset.Hash.ToString();
+            foreach (var trigger in Triggers) trigger.OnUnityPreprocessAsset(assetImporter, Asset);
         }
 
         public void OnPreprocessTexture()

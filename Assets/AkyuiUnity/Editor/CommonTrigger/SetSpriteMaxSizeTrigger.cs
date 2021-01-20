@@ -11,7 +11,7 @@ namespace AkyuiUnity.CommonTrigger
     {
         [SerializeField] private int maxTextureSize = 512;
 
-        public override void OnUnityPreprocessAsset(AssetImporter assetImporter, string userdata)
+        public override void OnUnityPreprocessAsset(AssetImporter assetImporter, IAsset asset)
         {
             if (assetImporter is TextureImporter textureImporter)
             {

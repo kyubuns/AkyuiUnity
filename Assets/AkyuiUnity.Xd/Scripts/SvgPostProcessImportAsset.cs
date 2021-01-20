@@ -13,7 +13,7 @@ namespace AkyuiUnity.Xd
 
             if (assetImporter is SVGImporter svgImporter)
             {
-                var userData = JsonConvert.DeserializeObject<SvgImportUserData>(PostProcessImportAsset.UserData);
+                var userData = JsonConvert.DeserializeObject<SvgImportUserData>(PostProcessImportAsset.Asset.UserData ?? string.Empty);
                 svgImporter.SvgType = SVGType.TexturedSprite;
                 svgImporter.KeepTextureAspectRatio = false;
                 svgImporter.TextureWidth = userData.Width;
