@@ -576,10 +576,10 @@ namespace XdParser.Internal
     public class XdRepeatGridJson
     {
         [JsonProperty("cellWidth")]
-        public float CellWidth { get; set; }
+        public float? CellWidth { get; set; }
 
         [JsonProperty("cellHeight")]
-        public float CellHeight { get; set; }
+        public float? CellHeight { get; set; }
 
         [JsonProperty("width")]
         public float Width { get; set; }
