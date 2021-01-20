@@ -5,14 +5,14 @@ namespace AkyuiUnity.Xd
 {
     public class RepeatGridGroupParser : IXdGroupParser
     {
-        bool IXdGroupParser.Is(XdObjectJson instanceObject, XdObjectJson symbolObject)
+        bool IXdGroupParser.Is(XdObjectJson xdObject)
         {
-            return Is(instanceObject, symbolObject);
+            return Is(xdObject);
         }
 
-        public static bool Is(XdObjectJson instanceObject, XdObjectJson symbolObject)
+        public static bool Is(XdObjectJson xdObject)
         {
-            var repeatGrid = instanceObject?.Meta?.Ux?.RepeatGrid;
+            var repeatGrid = xdObject?.Meta?.Ux?.RepeatGrid;
             return repeatGrid != null;
         }
 
@@ -21,9 +21,9 @@ namespace AkyuiUnity.Xd
             return rect;
         }
 
-        public IComponent[] Render(XdObjectJson instanceObject, XdObjectJson symbolObject, ref XdObjectJson[] children)
+        public IComponent[] Render(XdObjectJson xdObject, ref XdObjectJson[] children)
         {
-            var repeatGrid = instanceObject?.Meta?.Ux?.RepeatGrid ?? new XdRepeatGridJson();
+            var repeatGrid = xdObject?.Meta?.Ux?.RepeatGrid ?? new XdRepeatGridJson();
 
             var item = children[0].Group.Children[0];
             children = new[] { item };

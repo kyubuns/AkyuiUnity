@@ -5,8 +5,8 @@ namespace AkyuiUnity.Xd
 {
     public interface IXdGroupParser
     {
-        bool Is(XdObjectJson instanceObject, XdObjectJson symbolObject);
+        bool Is(XdObjectJson xdObject);
         Rect CalcSize(XdObjectJson xdObject, Vector2 position, Rect rect);
-        IComponent[] Render(XdObjectJson instanceObject, XdObjectJson symbolObject, ref XdObjectJson[] children);
+        IComponent[] Render(XdObjectJson xdObject, ref XdObjectJson[] children);
     }
 }

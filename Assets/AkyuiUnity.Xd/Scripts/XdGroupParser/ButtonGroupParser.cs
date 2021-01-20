@@ -5,9 +5,9 @@ namespace AkyuiUnity.Xd
 {
     public class ButtonGroupParser : IXdGroupParser
     {
-        public bool Is(XdObjectJson instanceObject, XdObjectJson symbolObject)
+        public bool Is(XdObjectJson xdObject)
         {
-            return instanceObject.Name?.EndsWith("Button") ?? false;
+            return xdObject.Name?.EndsWith("Button") ?? false;
         }
 
         public Rect CalcSize(XdObjectJson xdObject, Vector2 position, Rect rect)
@@ -15,7 +15,7 @@ namespace AkyuiUnity.Xd
             return rect;
         }
 
-        public IComponent[] Render(XdObjectJson instanceObject, XdObjectJson symbolObject, ref XdObjectJson[] children)
+        public IComponent[] Render(XdObjectJson xdObject, ref XdObjectJson[] children)
         {
             return new IComponent[]
             {

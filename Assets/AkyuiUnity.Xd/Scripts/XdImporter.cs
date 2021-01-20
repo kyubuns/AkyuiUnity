@@ -246,7 +246,7 @@ namespace AkyuiUnity.Xd
 
                     foreach (var parser in GroupParsers)
                     {
-                        if (!parser.Is(instanceObject, symbolObject)) continue;
+                        if (!parser.Is(xdObject)) continue;
                         groupRect = parser.CalcSize(xdObject, position, groupRect);
                     }
 
@@ -331,8 +331,8 @@ namespace AkyuiUnity.Xd
 
                     foreach (var parser in GroupParsers)
                     {
-                        if (!parser.Is(instanceObject, symbolObject)) continue;
-                        components.AddRange(parser.Render(instanceObject, symbolObject, ref children));
+                        if (!parser.Is(xdObject)) continue;
+                        components.AddRange(parser.Render(xdObject, ref children));
                     }
 
                     var generatedChildren = new IElement[] { };

@@ -5,9 +5,9 @@ namespace AkyuiUnity.Xd
 {
     public class ScrollGroupParser : IXdGroupParser
     {
-        public bool Is(XdObjectJson instanceObject, XdObjectJson symbolObject)
+        public bool Is(XdObjectJson xdObject)
         {
-            var scrollingType = instanceObject?.Meta?.Ux?.ScrollingType;
+            var scrollingType = xdObject?.Meta?.Ux?.ScrollingType;
             return !string.IsNullOrWhiteSpace(scrollingType);
         }
 
@@ -29,12 +29,12 @@ namespace AkyuiUnity.Xd
             }
         }
 
-        public IComponent[] Render(XdObjectJson instanceObject, XdObjectJson symbolObject, ref XdObjectJson[] children)
+        public IComponent[] Render(XdObjectJson xdObject, ref XdObjectJson[] children)
         {
             var spacing = 0f;
 
-            var scrollingType = instanceObject?.Meta?.Ux?.ScrollingType;
-            if (children.Length == 1 && RepeatGridGroupParser.Is(children[0], null))
+            var scrollingType = xdObject?.Meta?.Ux?.ScrollingType;
+            if (children.Length == 1 && RepeatGridGroupParser.Is(children[0]))
             {
                 var repeatGrid = children[0];
                 if (scrollingType == "vertical")
