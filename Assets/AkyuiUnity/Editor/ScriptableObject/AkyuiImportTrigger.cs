@@ -7,7 +7,7 @@ namespace AkyuiUnity.Editor.ScriptableObject
 {
     public abstract class AkyuiImportTrigger : UnityEngine.ScriptableObject, IAkyuiGenerateTrigger
     {
-        public virtual void OnPostprocessAsset(ref byte[] bytes, ref IAsset asset)
+        public virtual void OnPreprocessAsset(ref byte[] bytes, ref IAsset asset)
         {
         }
 

@@ -77,7 +77,7 @@ namespace AkyuiUnity.Editor
                 }
                 Debug.Log($"Asset {asset.FileName} / Import");
 
-                foreach (var trigger in settings.Triggers) trigger.OnPostprocessAsset(ref bytes, ref asset);
+                foreach (var trigger in settings.Triggers) trigger.OnPreprocessAsset(ref bytes, ref asset);
                 ImportAsset(asset, savePath, saveFullPath, bytes, settings);
             }
         }
