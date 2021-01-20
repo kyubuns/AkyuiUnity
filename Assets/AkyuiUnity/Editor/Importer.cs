@@ -78,24 +78,31 @@ namespace AkyuiUnity.Editor
                 Debug.Log($"Asset {asset.FileName} / Import");
 
                 foreach (var trigger in settings.Triggers) trigger.OnPostprocessAsset(ref bytes, ref asset);
-                ImportAsset(asset, savePath, saveFullPath, bytes);
+                ImportAsset(asset, savePath, saveFullPath, bytes, settings);
             }
         }
 
-        private static void ImportAsset(IAsset asset, string savePath, string saveFullPath, byte[] bytes)
+        private static void ImportAsset(IAsset asset, string savePath, string saveFullPath, byte[] bytes, IAkyuiImportSettings importSettings)
         {
-            if (asset is SpriteAsset)
-            {
-                File.WriteAllBytes(saveFullPath, bytes);
+            PostProcessImportAsset.ProcessingFile = savePath;
+            PostProcessImportAsset.Hash = asset.Hash;
+            PostProcessImportAsset.UserData = asset.UserData;
+            PostProcessImportAsset.Triggers = importSettings.Triggers;
 
-                PostProcessImportAsset.ProcessingFile = savePath;
-                PostProcessImportAsset.Hash = asset.Hash;
-                PostProcessImportAsset.UserData = asset.UserData;
-                using (Disposable.Create(() => PostProcessImportAsset.ProcessingFile = ""))
+            using (Disposable.Create(() =>
+            {
+                PostProcessImportAsset.ProcessingFile = null;
+                PostProcessImportAsset.Hash = 0;
+                PostProcessImportAsset.UserData = null;
+                PostProcessImportAsset.Triggers = null;
+            }))
+            {
+                if (asset is SpriteAsset)
                 {
+                    File.WriteAllBytes(saveFullPath, bytes);
                     AssetDatabase.ImportAsset(savePath);
+                    return;
                 }
-                return;
             }
 
             Debug.LogError($"Unknown asset type {asset}");
@@ -128,12 +135,14 @@ namespace AkyuiUnity.Editor
         public static string ProcessingFile { get; set; }
         public static long Hash { get; set; }
         public static string UserData { get; set; }
+        public static AkyuiImportTrigger[] Triggers { get; set; }
 
         public void OnPreprocessAsset()
         {
             if (ProcessingFile != assetPath) return;
 
             assetImporter.userData = Hash.ToString();
+            foreach (var trigger in Triggers) trigger.OnUnityPreprocessAsset(assetImporter, UserData);
         }
 
         public void OnPreprocessTexture()
