@@ -6,7 +6,7 @@ namespace AkyuiUnity.Generator.InternalTrigger
 {
     public class DefaultGenerateTrigger : IAkyuiGenerateTrigger
     {
-        public Component SetOrCreateComponentValue(GameObject gameObject, TargetComponentGetter componentGetter, IComponent component, IAssetLoader assetLoader)
+        public Component SetOrCreateComponentValue(GameObject gameObject, TargetComponentGetter componentGetter, IComponent component, GameObject[] children, IAssetLoader assetLoader)
         {
             if (component is ImageComponent imageComponent)
             {
@@ -144,6 +144,32 @@ namespace AkyuiUnity.Generator.InternalTrigger
                 verticalLayoutGroup.childForceExpandHeight = false;
                 if (verticalLayoutComponent.Spacing != null) verticalLayoutGroup.spacing = verticalLayoutComponent.Spacing.Value;
                 return verticalLayoutGroup;
+            }
+
+            if (component is GridLayoutComponent gridLayoutComponent)
+            {
+                var gridLayoutGroup = componentGetter.GetComponent<GridLayoutGroup>();
+
+                var spacing = Vector2.zero;
+                if (gridLayoutComponent.SpacingX != null) spacing.x = gridLayoutComponent.SpacingX.Value;
+                if (gridLayoutComponent.SpacingY != null) spacing.y = gridLayoutComponent.SpacingY.Value;
+                gridLayoutGroup.spacing = spacing;
+
+                if (children.Length == 1)
+                {
+                    var childRect = RectTransformUtility.CalculateRelativeRectTransformBounds(children[0].GetComponent<RectTransform>());
+
+                    var cellSize = Vector2.zero;
+                    cellSize.x = childRect.size.x;
+                    cellSize.y = childRect.size.y;
+                    gridLayoutGroup.cellSize = cellSize;
+                }
+                else
+                {
+                    Debug.LogWarning($"need children.Length({children.Length}) == 1");
+                }
+
+                return gridLayoutGroup;
             }
 
             return null;

@@ -12,7 +12,7 @@ namespace AkyuiUnity.CommonTrigger
     {
         [SerializeField] private string fontFilePath = "Assets/Fonts/{name} SDF";
 
-        public override Component SetOrCreateComponentValue(GameObject gameObject, TargetComponentGetter componentGetter, IComponent component, IAssetLoader assetLoader)
+        public override Component SetOrCreateComponentValue(GameObject gameObject, TargetComponentGetter componentGetter, IComponent component, GameObject[] children, IAssetLoader assetLoader)
         {
             if (!(component is TextComponent textComponent)) return null;
 

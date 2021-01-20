@@ -261,6 +261,15 @@ namespace AkyuiUnity.Loader
                 );
             }
 
+            if (componentType == GridLayoutComponent.TypeString)
+            {
+                return new GridLayoutComponent(
+                    componentJson["cid"].JsonInt(),
+                    componentJson.ContainsKey("spacing_x") ? componentJson["spacing_x"].JsonFloat() : (float?) null,
+                    componentJson.ContainsKey("spacing_y") ? componentJson["spacing_y"].JsonFloat() : (float?) null
+                );
+            }
+
             throw new NotSupportedException($"Component type {componentType} is not supported");
         }
     }

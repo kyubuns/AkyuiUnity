@@ -258,6 +258,22 @@ namespace AkyuiUnity
         }
     }
 
+    public class GridLayoutComponent : IComponent
+    {
+        public const string TypeString = "grid_layout";
+
+        public int Cid { get; }
+        [CanBeNull] public readonly float? SpacingX;
+        [CanBeNull] public readonly float? SpacingY;
+
+        public GridLayoutComponent(int cid, [CanBeNull] float? spacingX, [CanBeNull] float? spacingY)
+        {
+            Cid = cid;
+            SpacingX = spacingX;
+            SpacingY = spacingY;
+        }
+    }
+
     public enum AnchorXType
     {
         Left,

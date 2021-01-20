@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using XdParser.Internal;
 
@@ -28,18 +29,29 @@ namespace AkyuiUnity.Xd
             var item = children[0].Group.Children[0];
             children = new[] { item };
 
-            if (repeatGrid.Columns > 1)
+            if (repeatGrid.Columns > 1 && repeatGrid.Rows > 1)
+            {
+                return new IComponent[]
+                {
+                    new GridLayoutComponent(0, repeatGrid.PaddingX, repeatGrid.PaddingY)
+                };
+            }
+            else if (repeatGrid.Columns > 1)
             {
                 return new IComponent[]
                 {
                     new HorizontalLayoutComponent(0, repeatGrid.PaddingX)
                 };
             }
-
-            return new IComponent[]
+            else
             {
-                new VerticalLayoutComponent(0, repeatGrid.PaddingY)
-            };
+                return new IComponent[]
+                {
+                    new VerticalLayoutComponent(0, repeatGrid.PaddingY)
+                };
+            }
+
+            throw new Exception();
         }
     }
 }

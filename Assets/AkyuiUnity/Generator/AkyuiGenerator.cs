@@ -88,10 +88,16 @@ namespace AkyuiUnity.Generator
                 rectTransform.localPosition = p;
                 rectTransform.SetSize(objectElement.Size);
 
+                var children = new List<GameObject>();
+                foreach (var child in objectElement.Children)
+                {
+                    children.Add(CreateGameObject(assetLoader, layoutInfo, child, rectTransform, triggers, ref meta));
+                }
+
                 var createdComponents = new List<ComponentWithId>();
                 foreach (var component in objectElement.Components)
                 {
-                    createdComponents.Add(CreateComponent(assetLoader, gameObject, component, triggers));
+                    createdComponents.Add(CreateComponent(assetLoader, gameObject, component, triggers, children.ToArray()));
                 }
 
                 meta.Add(new GameObjectWithId
@@ -100,11 +106,6 @@ namespace AkyuiUnity.Generator
                     gameObject = gameObject,
                     idAndComponents = createdComponents.ToArray(),
                 });
-
-                foreach (var child in objectElement.Children)
-                {
-                    CreateGameObject(assetLoader, layoutInfo, child, rectTransform, triggers, ref meta);
-                }
 
                 return gameObject;
             }
@@ -195,7 +196,12 @@ namespace AkyuiUnity.Generator
                         foreach (var component in @override.Components)
                         {
                             var targetComponent = targetObject.idAndComponents.Single(x => x.cid == component.Cid);
-                            SetOrCreateComponentValue(targetComponent.component, assetLoader, targetObject.gameObject, component, triggers);
+                            var children = new List<GameObject>();
+                            foreach (Transform c in targetObject.gameObject.transform)
+                            {
+                                children.Add(c.gameObject);
+                            }
+                            SetOrCreateComponentValue(targetComponent.component, assetLoader, targetObject.gameObject, component, triggers, children.ToArray());
                         }
                     }
                 }
@@ -217,17 +223,17 @@ namespace AkyuiUnity.Generator
             return null;
         }
 
-        private static ComponentWithId CreateComponent(IAssetLoader assetLoader, GameObject gameObject, IComponent component, IAkyuiGenerateTrigger[] triggers)
+        private static ComponentWithId CreateComponent(IAssetLoader assetLoader, GameObject gameObject, IComponent component, IAkyuiGenerateTrigger[] triggers, GameObject[] children)
         {
-            return new ComponentWithId { cid = component.Cid, component = SetOrCreateComponentValue(null, assetLoader, gameObject, component, triggers) };
+            return new ComponentWithId { cid = component.Cid, component = SetOrCreateComponentValue(null, assetLoader, gameObject, component, triggers, children) };
         }
 
-        private static Component SetOrCreateComponentValue([CanBeNull] Component target, IAssetLoader assetLoader, GameObject gameObject, IComponent component, IAkyuiGenerateTrigger[] triggers)
+        private static Component SetOrCreateComponentValue([CanBeNull] Component target, IAssetLoader assetLoader, GameObject gameObject, IComponent component, IAkyuiGenerateTrigger[] triggers, GameObject[] children)
         {
             var targetComponentGetter = new TargetComponentGetter(gameObject, target);
             foreach (var trigger in triggers)
             {
-                var result = trigger.SetOrCreateComponentValue(gameObject, targetComponentGetter, component, assetLoader);
+                var result = trigger.SetOrCreateComponentValue(gameObject, targetComponentGetter, component, children, assetLoader);
                 if (result != null) return result;
             }
 

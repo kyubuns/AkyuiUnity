@@ -195,6 +195,12 @@ namespace AkyuiUnity.Loader
                 dict["type"] = VerticalLayoutComponent.TypeString;
                 if (verticalLayoutComponent.Spacing != null) dict["spacing"] = ToSerializable(verticalLayoutComponent.Spacing.Value);
             }
+            else if (source is GridLayoutComponent gridLayoutComponent)
+            {
+                dict["type"] = GridLayoutComponent.TypeString;
+                if (gridLayoutComponent.SpacingX != null) dict["spacing_x"] = ToSerializable(gridLayoutComponent.SpacingX.Value);
+                if (gridLayoutComponent.SpacingY != null) dict["spacing_y"] = ToSerializable(gridLayoutComponent.SpacingY.Value);
+            }
             else
             {
                 throw new NotSupportedException($"Component type {source} is not supported");
