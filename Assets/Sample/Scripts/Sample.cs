@@ -1,4 +1,5 @@
 ﻿using AnKuchen.KuchenList;
+using AnKuchen.Layout;
 using AnKuchen.Map;
 using UnityEngine;
 using UnityEngine.UI;
@@ -17,66 +18,88 @@ namespace AkyuiUnity.Sample
             {
                 for (var i = 0; i < 30; ++i)
                 {
-                    var i1 = i;
-                    editor.Contents.Add(new UIFactory<ButtonUiElements>(x =>
+                    Debug.Log(i);
+                    editor.Contents.Add(new UIFactory<ListItem>(x =>
                     {
-                        x.ButtonText.text = $"Button{i1}";
-                        x.Button.onClick.AddListener(() => { Debug.Log($"Click Button{i1}"); });
+                        using (var e = Layouter.LeftToRight(x.Item))
+                        {
+                            e.Create();
+                            e.Create();
+                            e.Create();
+                        }
                     }));
                 }
             }
         }
+    }
 
-        public class UiElements : IMappedObject
+    public class UiElements : IMappedObject
+    {
+        public IMapper Mapper { get; private set; }
+        public GameObject Root { get; private set; }
+        public VerticalList<ListItem> List { get; private set; }
+
+        public UiElements()
         {
-            public IMapper Mapper { get; private set; }
-            public GameObject Root { get; private set; }
-            public ScrollRect ScrollRect { get; private set; }
-            public VerticalList<ButtonUiElements> List { get; private set; }
-
-            public UiElements() { }
-            public UiElements(IMapper mapper) { Initialize(mapper); }
-
-            public void Initialize(IMapper mapper)
-            {
-                Mapper = mapper;
-                Root = mapper.Get();
-                ScrollRect = mapper.Get<ScrollRect>("Scroll Group");
-                List = new VerticalList<ButtonUiElements>(
-                    ScrollRect,
-                    mapper.GetChild<ButtonUiElements>("Button")
-                );
-            }
         }
 
-        public class ButtonUiElements : IReusableMappedObject
+        public UiElements(IMapper mapper)
         {
-            public IMapper Mapper { get; private set; }
-            public GameObject Root { get; private set; }
-            public Button Button { get; private set; }
-            public Image ButtonBase { get; private set; }
-            public Text ButtonText { get; private set; }
+            Initialize(mapper);
+        }
 
-            public ButtonUiElements() { }
-            public ButtonUiElements(IMapper mapper) { Initialize(mapper); }
+        public void Initialize(IMapper mapper)
+        {
+            Mapper = mapper;
+            Root = mapper.Get();
+            List = new VerticalList<ListItem>(
+                mapper.Get<ScrollRect>("Scroll Group 1"),
+                mapper.GetChild<ListItem>("Repeat Grid 1")
+            );
+        }
+    }
 
-            public void Initialize(IMapper mapper)
-            {
-                Mapper = mapper;
-                Root = mapper.Get();
-                Button = mapper.Get<Button>();
-                ButtonBase = mapper.Get<Image>("ButtonBase");
-                ButtonText = mapper.Get<Text>("ButtonText");
-            }
+    public class ListItem : IMappedObject
+    {
+        public IMapper Mapper { get; private set; }
+        public GameObject Root { get; private set; }
+        public Item Item { get; private set; }
 
-            public void Activate()
-            {
-            }
+        public ListItem()
+        {
+        }
 
-            public void Deactivate()
-            {
-                Button.onClick.RemoveAllListeners();
-            }
+        public ListItem(IMapper mapper)
+        {
+            Initialize(mapper);
+        }
+
+        public void Initialize(IMapper mapper)
+        {
+            Mapper = mapper;
+            Root = mapper.Get();
+            Item = mapper.GetChild<Item>("Item");
+        }
+    }
+
+    public class Item : IMappedObject
+    {
+        public IMapper Mapper { get; private set; }
+        public GameObject Root { get; private set; }
+
+        public Item()
+        {
+        }
+
+        public Item(IMapper mapper)
+        {
+            Initialize(mapper);
+        }
+
+        public void Initialize(IMapper mapper)
+        {
+            Mapper = mapper;
+            Root = mapper.Get();
         }
     }
 }
