@@ -1,0 +1,72 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!687078895 &4343727234628468602
+SpriteAtlas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Main
+  m_EditorData:
+    serializedVersion: 2
+    textureSettings:
+      serializedVersion: 2
+      anisoLevel: 1
+      compressionQuality: 50
+      maxTextureSize: 2048
+      textureCompression: 0
+      filterMode: 1
+      generateMipMaps: 0
+      readable: 0
+      crunchedCompression: 0
+      sRGB: 1
+    platformSettings: []
+    packingSettings:
+      serializedVersion: 2
+      padding: 4
+      blockOffset: 1
+      allowAlphaSplitting: 0
+      enableRotation: 1
+      enableTightPacking: 1
+    variantMultiplier: 1
+    packables:
+    - {fileID: 102900000, guid: 931914cd9abd042dfa6253332fe6f032, type: 3}
+    totalSpriteSurfaceArea: 0
+    bindAsDefault: 1
+  m_MasterAtlas: {fileID: 0}
+  m_PackedSprites:
+  - {fileID: 21300000, guid: d844da901f90d4b858f6ac561722e319, type: 3}
+  - {fileID: 21300000, guid: 73017ff0a7a5e4cf6a737e4ee8094d9c, type: 3}
+  - {fileID: 21300000, guid: 07309bf2c049f4365b66cfb26a71f3f2, type: 3}
+  - {fileID: 21300000, guid: bf19d134b09084571bd39399d4a45dcd, type: 3}
+  - {fileID: 21300000, guid: b7b595e4d7fdf4b468859e889f87f382, type: 3}
+  - {fileID: 21300000, guid: 4623a036bc7f4438ebcafe43a3e1dc69, type: 3}
+  - {fileID: 21300000, guid: 62360d077575d47ceb77d05325da4e4f, type: 3}
+  - {fileID: 21300000, guid: 9c3befd7b1f524b6195183c6c3f15a66, type: 3}
+  - {fileID: 21300000, guid: d0fa85f7e9ed34960b6436f2ea2b8170, type: 3}
+  - {fileID: 21300000, guid: d038a6a94f89d4e55ac6739334ebdabb, type: 3}
+  - {fileID: 21300000, guid: 0b4925ab5ac6948708867e46ffea31d5, type: 3}
+  - {fileID: 21300000, guid: f21191cb6eedf425cb2f353c2b5fc4d7, type: 3}
+  - {fileID: 21300000, guid: 5cfda03c2f15c4a2f9c32be7c3349b1f, type: 3}
+  - {fileID: 21300000, guid: d572953c58dd544ab96fba21dd47a60d, type: 3}
+  - {fileID: 21300000, guid: 5ad6793c777ec4714bdd7c5ef0b8f551, type: 3}
+  - {fileID: 21300000, guid: 1fe9236e1fc2b4cba9ab0d4b6dd709d5, type: 3}
+  m_PackedSpriteNamesToIndex:
+  - Icon Equip_acee3e88
+  - Icon Friend_f4200525
+  - Base_8296cc1f
+  - Background_09298be1
+  - Notification_10aaf491
+  - Player EXP Gauge Fill_009b66d7
+  - Icon Gold_f31ebcf0
+  - Resource Base_cac51823
+  - Player Level Base_17c51f48
+  - Icon Gem_971ebbed
+  - Player EXP Gauge Base_d23bdd87
+  - Icon Home_1e250df4
+  - Icon Player Level_74024310
+  - Menu Button_b982438a
+  - Icon Shop_8b2f588c
+  - Base_42b33eef
+  m_Tag: Main
+  m_IsVariant: 0

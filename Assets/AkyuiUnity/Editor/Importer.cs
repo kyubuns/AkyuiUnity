@@ -80,6 +80,8 @@ namespace AkyuiUnity.Editor
                 foreach (var trigger in settings.Triggers) trigger.OnPreprocessAsset(ref bytes, ref asset);
                 ImportAsset(asset, savePath, saveFullPath, bytes, settings);
             }
+
+            foreach (var trigger in settings.Triggers) trigger.OnPostprocessAllAssets(pathGetter.AssetOutputDirectoryPath);
         }
 
         private static void ImportAsset(IAsset asset, string savePath, string saveFullPath, byte[] bytes, IAkyuiImportSettings importSettings)
@@ -212,7 +214,10 @@ namespace AkyuiUnity.Editor
         {
             _settings = settings;
 
-            AssetOutputDirectoryPath = settings.AssetOutputDirectoryPath.Replace("{name}", fileName);
+            var assetOutputDirectoryPath = settings.AssetOutputDirectoryPath.Replace("{name}", fileName);
+            if (!assetOutputDirectoryPath.EndsWith("/")) assetOutputDirectoryPath += "/";
+            AssetOutputDirectoryPath = assetOutputDirectoryPath;
+
             PrefabSavePath = settings.PrefabOutputPath.Replace("{name}", fileName) + ".prefab";
             MetaSavePath = GetMetaPath(fileName);
             FontDirectoryPath = settings.FontDirectoryPath;

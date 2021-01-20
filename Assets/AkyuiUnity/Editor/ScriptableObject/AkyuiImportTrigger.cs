@@ -19,6 +19,10 @@ namespace AkyuiUnity.Editor.ScriptableObject
         {
         }
 
+        public virtual void OnPostprocessAllAssets(string outputDirectoryPath)
+        {
+        }
+
         public virtual Component SetOrCreateComponentValue(GameObject gameObject, TargetComponentGetter componentGetter, IComponent component, IAssetLoader assetLoader)
         {
             return null;
