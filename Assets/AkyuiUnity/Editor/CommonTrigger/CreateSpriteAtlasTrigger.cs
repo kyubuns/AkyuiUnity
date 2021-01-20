@@ -28,9 +28,8 @@ namespace AkyuiUnity.CommonTrigger
             }
 
             var spriteDirectory = AssetDatabase.LoadAssetAtPath<Object>(tmpPath);
-            Debug.Log($"{spriteDirectory}, {tmpPath}");
+            spriteAtlas.Remove(new[] { spriteDirectory });
             spriteAtlas.Add(new[] { spriteDirectory });
-
         }
     }
 }
