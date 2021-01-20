@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using AkyuiUnity.Editor.ScriptableObject;
 using AkyuiUnity.Generator;
 using TMPro;
@@ -62,7 +61,7 @@ namespace AkyuiUnity.CommonTrigger
 
                 if (textComponent.Font != null)
                 {
-                    var fontPath = fontFilePath.Replace("{name}", textComponent.Font + ".asset");
+                    var fontPath = fontFilePath.Replace("{name}", textComponent.Font) + ".asset";
                     text.font = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(fontPath);
                     if (text.font == null)
                     {
