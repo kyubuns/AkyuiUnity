@@ -43,7 +43,7 @@ namespace AkyuiUnity.Xd
                 richText = false,
                 lineSpacing = 0,
                 resizeTextForBestFit = false,
-                updateBounds = false,
+                updateBounds = true,
                 horizontalOverflow = HorizontalWrapMode.Overflow,
                 verticalOverflow = VerticalWrapMode.Overflow
             };
@@ -62,8 +62,11 @@ namespace AkyuiUnity.Xd
             position.y -= fontAsset.ascent * (fontSize / fontAsset.fontSize);
 
             var textGenerator = new TextGenerator();
-            var width = textGenerator.GetPreferredWidth(rawText, settings) * scale;
-            var height = textGenerator.GetPreferredHeight(rawText, settings) * scale;
+            textGenerator.Populate(rawText, settings);
+            var preferredWidth = textGenerator.rectExtents.width;
+            var preferredHeight = textGenerator.rectExtents.height;
+            var width = preferredWidth * scale;
+            var height = preferredHeight * scale;
             var size = new Vector2(width, height);
 
             var lineJson = xdObject.Text.Paragraphs[0].Lines[0][0];
