@@ -68,41 +68,32 @@ namespace AkyuiUnity.Xd
 
         private static (XdObjectJson[], float Spacing) ExpandRepeatGridGroup(XdObjectJson xdObject, XdObjectJson repeatGrid, string scrollingType)
         {
-            float spacing;
-
-            if (scrollingType == "vertical")
-            {
-                spacing = repeatGrid.Meta?.Ux?.RepeatGrid?.PaddingY ?? 0f;
-            }
-            else
-            {
-                spacing = repeatGrid.Meta?.Ux?.RepeatGrid?.PaddingX ?? 0f;
-            }
+            var spacing = repeatGrid.GetRepeatGridSpacing(scrollingType);
 
             var listItems = new[] { repeatGrid.Group.Children[0].Group.Children[0] };
             if (xdObject.GetParameters().Contains("multiitems"))
             {
-                listItems = ExpandMultiItemsList(listItems[0], scrollingType);
+                float? overwriteSpacing;
+                (listItems, overwriteSpacing) = ExpandMultiItemsList(listItems[0], scrollingType);
+                if (overwriteSpacing != null)
+                {
+                    // 小さい方に合わせているがこれで良いかは微妙
+                    spacing = Mathf.Min(spacing, overwriteSpacing.Value);
+                }
             }
 
-            // 変なconstraintが付いてたらリスト作るときに死ぬので解除
             foreach (var listItem in listItems)
             {
-                if (listItem?.Meta?.Ux != null)
-                {
-                    listItem.Meta.Ux.ConstraintRight = false;
-                    listItem.Meta.Ux.ConstraintLeft = false;
-                    listItem.Meta.Ux.ConstraintTop = false;
-                    listItem.Meta.Ux.ConstraintBottom = false;
-                }
+                listItem.RemoveConstraint();
             }
 
             return (listItems.ToArray(), spacing);
         }
 
-        private static XdObjectJson[] ExpandMultiItemsList(XdObjectJson listItemRoot, string scrollingType)
+        private static (XdObjectJson[], float? OverwriteSpacing) ExpandMultiItemsList(XdObjectJson listItemRoot, string scrollingType)
         {
             var listItems = new List<XdObjectJson>();
+            float? overwriteSpacing = null;
 
             // 孫を解析して、それもRepeatGridなら更に子供
             var tmp = listItemRoot.Group.Children.ToList();
@@ -111,6 +102,7 @@ namespace AkyuiUnity.Xd
             {
                 if (RepeatGridGroupParser.Is(listItem, scrollingType))
                 {
+                    overwriteSpacing = listItem.GetRepeatGridSpacing(scrollingType);
                     listItems.AddRange(listItem.Group.Children[0].Group.Children);
                 }
                 else
@@ -119,7 +111,7 @@ namespace AkyuiUnity.Xd
                 }
             }
 
-            return listItems.ToArray();
+            return (listItems.ToArray(), overwriteSpacing);
         }
     }
 }
