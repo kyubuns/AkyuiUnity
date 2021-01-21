@@ -108,10 +108,12 @@ namespace AkyuiUnity.Xd
             var rawText = xdObject.Text.RawText;
 
             var textAlign = TextComponent.TextAlign.MiddleLeft;
+            var wrap = false;
             var paragraphAlign = xdObject.Style?.TextAttributes?.ParagraphAlign ?? "left";
 
             if (xdObject.Text?.Frame?.Type == "positioned")
             {
+                wrap = false;
                 if (paragraphAlign == "left") textAlign = TextComponent.TextAlign.MiddleLeft;
                 if (paragraphAlign == "center") textAlign = TextComponent.TextAlign.MiddleCenter;
                 if (paragraphAlign == "right") textAlign = TextComponent.TextAlign.MiddleRight;
@@ -119,12 +121,13 @@ namespace AkyuiUnity.Xd
 
             if (xdObject.Text?.Frame?.Type == "area")
             {
+                wrap = true;
                 if (paragraphAlign == "left") textAlign = TextComponent.TextAlign.UpperLeft;
                 if (paragraphAlign == "center") textAlign = TextComponent.TextAlign.UpperCenter;
                 if (paragraphAlign == "right") textAlign = TextComponent.TextAlign.UpperRight;
             }
 
-            components.Add(new TextComponent(0, rawText, fontSize, color, textAlign, font.PostscriptName));
+            components.Add(new TextComponent(0, rawText, fontSize, color, textAlign, font.PostscriptName, wrap));
 
             return (components.ToArray(), new IAsset[] { });
         }

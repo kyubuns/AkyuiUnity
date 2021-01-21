@@ -71,6 +71,11 @@ namespace AkyuiUnity.Generator.InternalTrigger
                     }
                 }
 
+                if (textComponent.Wrap != null)
+                {
+                    text.horizontalOverflow = textComponent.Wrap.Value ? HorizontalWrapMode.Wrap : HorizontalWrapMode.Overflow;
+                }
+
                 return text;
             }
 

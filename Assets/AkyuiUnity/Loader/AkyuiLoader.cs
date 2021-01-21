@@ -228,7 +228,8 @@ namespace AkyuiUnity.Loader
                     componentJson.ContainsKey("size") ? componentJson["size"].JsonFloat() : (float?) null,
                     componentJson.ContainsKey("color") ? componentJson["color"].JsonColor() : (Color?) null,
                     align,
-                    componentJson.ContainsKey("font") ? componentJson["font"].JsonString() : null
+                    componentJson.ContainsKey("font") ? componentJson["font"].JsonString() : null,
+                    componentJson.ContainsKey("wrap") ? componentJson["wrap"].JsonBool() : (bool?) null
                 );
             }
 

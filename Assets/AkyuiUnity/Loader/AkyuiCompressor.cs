@@ -177,6 +177,7 @@ namespace AkyuiUnity.Loader
                 if (textComponent.Color != null) dict["color"] = ToSerializable(textComponent.Color.Value);
                 if (textComponent.Align != null) dict["align"] = ToSerializable(textComponent.Align.Value);
                 if (textComponent.Font != null) dict["font"] = ToSerializable(textComponent.Font);
+                if (textComponent.Wrap != null) dict["wrap"] = ToSerializable(textComponent.Wrap.Value);
             }
             else if (source is ButtonComponent)
             {

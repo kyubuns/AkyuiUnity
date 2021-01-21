@@ -74,6 +74,11 @@ namespace AkyuiUnity.Sample.Trigger
                 }
             }
 
+            if (textComponent.Wrap != null)
+            {
+                text.enableWordWrapping = true;
+            }
+
             return text;
 
         }
