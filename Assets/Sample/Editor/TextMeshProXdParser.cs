@@ -46,8 +46,7 @@ namespace AkyuiUnity.Sample.XdParser
 
             var fontSize = font.Size;
             var rawText = xdObject.Text.RawText;
-
-            position.y -= fontSize;
+            position.y -= fontAsset.faceInfo.ascentLine * (fontSize / fontAsset.faceInfo.pointSize);
 
             var dummyObject = new GameObject("Dummy");
             var textMeshPro = dummyObject.AddComponent<TextMeshProUGUI>();
