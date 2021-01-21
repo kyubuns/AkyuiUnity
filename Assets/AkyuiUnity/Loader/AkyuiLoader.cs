@@ -144,6 +144,7 @@ namespace AkyuiUnity.Loader
                     elementJson["size"].JsonVector2(),
                     anchorX,
                     anchorY,
+                    elementJson["visible"].JsonBool(),
                     components.ToArray(),
                     elementJson["children"].JsonIntArray()
                 );
@@ -189,6 +190,7 @@ namespace AkyuiUnity.Loader
                     elementJson["size"].JsonVector2(),
                     rootAnchorX,
                     rootAnchorY,
+                    elementJson["visible"].JsonBool(),
                     elementJson["reference"].JsonString(),
                     elementJson["hash"].JsonLong(),
                     overrides.ToArray()

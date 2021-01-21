@@ -12,6 +12,12 @@ namespace AkyuiUnity.Loader.Internal
             return (string) o;
         }
 
+        public static bool JsonBool(this object o)
+        {
+            if (o is bool b) return b;
+            throw new Exception($"{o} is {o.GetType()}");
+        }
+
         public static int JsonInt(this object o)
         {
             if (o is long l) return (int) l;

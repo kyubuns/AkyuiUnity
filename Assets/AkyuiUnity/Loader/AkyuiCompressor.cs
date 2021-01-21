@@ -82,6 +82,7 @@ namespace AkyuiUnity.Loader
                         { "size", ToSerializable(objectElement.Size) },
                         { "anchor_x", ToSerializable(objectElement.AnchorX) },
                         { "anchor_y", ToSerializable(objectElement.AnchorY) },
+                        { "visible", ToSerializable(objectElement.Visible) },
                         { "components", objectElement.Components.Select(ToSerializable).ToArray() },
                         { "children", ToSerializable(objectElement.Children) },
                     });
@@ -96,6 +97,7 @@ namespace AkyuiUnity.Loader
                         { "size", ToSerializable(prefabElement.Size) },
                         { "anchor_x", ToSerializable(prefabElement.AnchorX) },
                         { "anchor_y", ToSerializable(prefabElement.AnchorY) },
+                        { "visible", ToSerializable(prefabElement.Visible) },
                         { "reference", ToSerializable(prefabElement.Reference) },
                         { "hash", ToSerializable(prefabElement.Hash) },
                         { "overrides", prefabElement.Overrides.Select(ToSerializable).ToArray() }
@@ -209,6 +211,7 @@ namespace AkyuiUnity.Loader
             return dict;
         }
 
+        private static bool ToSerializable(bool flag) => flag;
         private static string ToSerializable(string text) => text;
         private static int ToSerializable(int number) => number;
         private static float ToSerializable(float number) => number;

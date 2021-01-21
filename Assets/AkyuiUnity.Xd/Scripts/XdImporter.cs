@@ -147,6 +147,7 @@ namespace AkyuiUnity.Xd
                     rootSize,
                     AnchorXType.Center,
                     AnchorYType.Middle,
+                    true,
                     new IComponent[] { },
                     children.Select(x => x.Eid).ToArray()
                 );
@@ -325,6 +326,7 @@ namespace AkyuiUnity.Xd
                         size,
                         anchorX,
                         anchorY,
+                        xdObject.Visible ?? true,
                         components,
                         children.Select(x => x.Eid).ToArray()
                     );
@@ -360,6 +362,7 @@ namespace AkyuiUnity.Xd
                         size,
                         anchorX,
                         anchorY,
+                        xdObject.Visible ?? true,
                         components.ToArray(),
                         generatedChildren.Select(x => x.Eid).ToArray()
                     );

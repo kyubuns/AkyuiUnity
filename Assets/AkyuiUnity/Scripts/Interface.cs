@@ -83,10 +83,11 @@ namespace AkyuiUnity
         public Vector2 Size { get; }
         public AnchorXType AnchorX { get; }
         public AnchorYType AnchorY { get; }
+        public bool Visible { get; }
         [NotNull] public readonly IComponent[] Components;
         [NotNull] public readonly int[] Children;
 
-        public ObjectElement(int eid, [NotNull] string name, Vector2 position, Vector2 size, AnchorXType anchorX, AnchorYType anchorY, [NotNull] IComponent[] components, [NotNull] int[] children)
+        public ObjectElement(int eid, [NotNull] string name, Vector2 position, Vector2 size, AnchorXType anchorX, AnchorYType anchorY, bool visible, [NotNull] IComponent[] components, [NotNull] int[] children)
         {
             Eid = eid;
             Name = name;
@@ -94,6 +95,7 @@ namespace AkyuiUnity
             Size = size;
             AnchorX = anchorX;
             AnchorY = anchorY;
+            Visible = visible;
             Components = components;
             Children = children;
         }
@@ -110,16 +112,18 @@ namespace AkyuiUnity
         public Vector2 Size { get; }
         public AnchorXType AnchorX { get; }
         public AnchorYType AnchorY { get; }
+        public bool Visible { get; }
         public readonly long Hash;
         [NotNull] public readonly Override[] Overrides;
 
-        public PrefabElement(int eid, Vector2 position, Vector2 size, AnchorXType anchorX, AnchorYType anchorY, [NotNull] string reference, long hash, [NotNull] Override[] overrides)
+        public PrefabElement(int eid, Vector2 position, Vector2 size, AnchorXType anchorX, AnchorYType anchorY, bool visible, [NotNull] string reference, long hash, [NotNull] Override[] overrides)
         {
             Eid = eid;
             Position = position;
             Size = size;
             AnchorX = anchorX;
             AnchorY = anchorY;
+            Visible = visible;
             Reference = reference;
             Hash = hash;
             Overrides = overrides;

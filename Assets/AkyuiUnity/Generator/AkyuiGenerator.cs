@@ -81,6 +81,7 @@ namespace AkyuiUnity.Generator
 
                 var rectTransform = gameObject.AddComponent<RectTransform>();
                 var (anchorMin, anchorMax) = CalcAnchor(objectElement.AnchorX, objectElement.AnchorY);
+                gameObject.SetActive(objectElement.Visible);
                 rectTransform.anchoredPosition = objectElement.Position;
                 var p = rectTransform.localPosition;
                 rectTransform.anchorMin = anchorMin;
@@ -122,6 +123,7 @@ namespace AkyuiUnity.Generator
                 {
                     var rectTransform = prefabGameObject.GetComponent<RectTransform>();
                     var (anchorMin, anchorMax) = CalcAnchor(prefabElement.AnchorX, prefabElement.AnchorY);
+                    prefabGameObject.SetActive(prefabElement.Visible);
                     rectTransform.anchoredPosition = prefabElement.Position;
                     var p = rectTransform.localPosition;
                     rectTransform.anchorMin = anchorMin;
