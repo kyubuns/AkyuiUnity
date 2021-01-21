@@ -35,63 +35,84 @@ namespace AkyuiUnity.Xd
         {
             var spacing = 0f;
 
-            var scrollingType = xdObject?.Meta?.Ux?.ScrollingType;
             if (children.Length == 1 && RepeatGridGroupParser.Is(children[0]))
             {
-                var repeatGrid = children[0];
-                if (scrollingType == "vertical")
-                {
-                    spacing = repeatGrid.Meta?.Ux?.RepeatGrid?.PaddingY ?? 0f;
-                }
-                else
-                {
-                    spacing = repeatGrid.Meta?.Ux?.RepeatGrid?.PaddingX ?? 0f;
-                }
-
-                var listItems = new List<XdObjectJson> { repeatGrid.Group.Children[0].Group.Children[0] };
-
-                // @MultiItems なら孫要素を解析する
-                if (xdObject.GetParameters().Contains("multiitems"))
-                {
-                    // 孫を解析して、それもRepeatGridなら更に子供
-                    var tmp = listItems[0].Group.Children.ToList();
-                    listItems.Clear();
-
-                    foreach (var listItem in tmp)
-                    {
-                        if (RepeatGridGroupParser.Is(listItem, xdObject?.Meta?.Ux?.ScrollingType))
-                        {
-                            listItems.AddRange(listItem.Group.Children[0].Group.Children);
-                        }
-                        else
-                        {
-                            listItems.Add(listItem);
-                        }
-                    }
-                }
-
-                // 変なconstraintが付いてたらリスト作るときに死ぬので解除
-                foreach (var listItem in listItems)
-                {
-                    if (listItem?.Meta?.Ux != null)
-                    {
-                        listItem.Meta.Ux.ConstraintRight = false;
-                        listItem.Meta.Ux.ConstraintLeft = false;
-                        listItem.Meta.Ux.ConstraintTop = false;
-                        listItem.Meta.Ux.ConstraintBottom = false;
-                    }
-                }
-                children = listItems.ToArray();
+                spacing = ExpandRepeatGridGroup(xdObject, ref children, sizeGetter);
             }
 
-            // padding計算
-            var firstChild = children[0];
-            var paddingTop = -sizeGetter.Get(firstChild).yMin;
+            var (paddingTop, paddingBottom) = CalcPadding(children, sizeGetter);
 
             return new IComponent[]
             {
-                new VerticalListComponent(0, spacing, paddingTop, 0f),
+                new VerticalListComponent(0, spacing, paddingTop, paddingBottom),
             };
+        }
+
+        private static (float Top, float Bottom) CalcPadding(XdObjectJson[] children, ISizeGetter sizeGetter)
+        {
+            var firstChild = children[0];
+            var top = -sizeGetter.Get(firstChild).yMin;
+
+            return (top, 0f);
+        }
+
+        private static float ExpandRepeatGridGroup(XdObjectJson xdObject, ref XdObjectJson[] children, ISizeGetter sizeGetter)
+        {
+            float spacing;
+            var scrollingType = xdObject?.Meta?.Ux?.ScrollingType;
+
+            var repeatGrid = children[0];
+            if (scrollingType == "vertical")
+            {
+                spacing = repeatGrid.Meta?.Ux?.RepeatGrid?.PaddingY ?? 0f;
+            }
+            else
+            {
+                spacing = repeatGrid.Meta?.Ux?.RepeatGrid?.PaddingX ?? 0f;
+            }
+
+            var listItems = new[] { repeatGrid.Group.Children[0].Group.Children[0] };
+            if (xdObject.GetParameters().Contains("multiitems"))
+            {
+                listItems = ExpandMultiItemsList(listItems[0], scrollingType);
+            }
+
+            // 変なconstraintが付いてたらリスト作るときに死ぬので解除
+            foreach (var listItem in listItems)
+            {
+                if (listItem?.Meta?.Ux != null)
+                {
+                    listItem.Meta.Ux.ConstraintRight = false;
+                    listItem.Meta.Ux.ConstraintLeft = false;
+                    listItem.Meta.Ux.ConstraintTop = false;
+                    listItem.Meta.Ux.ConstraintBottom = false;
+                }
+            }
+            children = listItems.ToArray();
+
+            return spacing;
+        }
+
+        private static XdObjectJson[] ExpandMultiItemsList(XdObjectJson listItemRoot, string scrollingType)
+        {
+            var listItems = new List<XdObjectJson>();
+
+            // 孫を解析して、それもRepeatGridなら更に子供
+            var tmp = listItemRoot.Group.Children.ToList();
+
+            foreach (var listItem in tmp)
+            {
+                if (RepeatGridGroupParser.Is(listItem, scrollingType))
+                {
+                    listItems.AddRange(listItem.Group.Children[0].Group.Children);
+                }
+                else
+                {
+                    listItems.Add(listItem);
+                }
+            }
+
+            return listItems.ToArray();
         }
     }
 }
