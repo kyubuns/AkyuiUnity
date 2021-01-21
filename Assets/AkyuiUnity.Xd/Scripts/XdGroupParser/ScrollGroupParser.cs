@@ -73,13 +73,7 @@ namespace AkyuiUnity.Xd
             var listItems = new[] { repeatGrid.Group.Children[0].Group.Children[0] };
             if (xdObject.GetParameters().Contains("multiitems"))
             {
-                float? overwriteSpacing;
-                (listItems, overwriteSpacing) = ExpandMultiItemsList(listItems[0], scrollingType);
-                if (overwriteSpacing != null)
-                {
-                    // 小さい方に合わせているがこれで良いかは微妙
-                    spacing = Mathf.Min(spacing, overwriteSpacing.Value);
-                }
+                listItems = ExpandMultiItemsList(listItems[0], scrollingType);
             }
 
             foreach (var listItem in listItems)
@@ -90,10 +84,9 @@ namespace AkyuiUnity.Xd
             return (listItems.ToArray(), spacing);
         }
 
-        private static (XdObjectJson[], float? OverwriteSpacing) ExpandMultiItemsList(XdObjectJson listItemRoot, string scrollingType)
+        private static XdObjectJson[] ExpandMultiItemsList(XdObjectJson listItemRoot, string scrollingType)
         {
             var listItems = new List<XdObjectJson>();
-            float? overwriteSpacing = null;
 
             // 孫を解析して、それもRepeatGridなら更に子供
             var tmp = listItemRoot.Group.Children.ToList();
@@ -102,7 +95,6 @@ namespace AkyuiUnity.Xd
             {
                 if (RepeatGridGroupParser.Is(listItem, scrollingType))
                 {
-                    overwriteSpacing = listItem.GetRepeatGridSpacing(scrollingType);
                     listItems.AddRange(listItem.Group.Children[0].Group.Children);
                 }
                 else
@@ -111,7 +103,7 @@ namespace AkyuiUnity.Xd
                 }
             }
 
-            return (listItems.ToArray(), overwriteSpacing);
+            return listItems.ToArray();
         }
     }
 }
