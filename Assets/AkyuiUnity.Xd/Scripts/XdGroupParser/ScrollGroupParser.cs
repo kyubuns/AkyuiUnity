@@ -38,15 +38,16 @@ namespace AkyuiUnity.Xd
 
             var (paddingTop, paddingBottom) = CalcPadding(xdObject, children, sizeGetter);
 
+            var specialSpacings = new List<SpecialSpacing>();
             var repeatGrid = children.FirstOrDefault(x => RepeatGridGroupParser.Is(x));
             if (repeatGrid != null)
             {
-                (children, spacing) = ExpandRepeatGridGroup(xdObject, repeatGrid, scrollingType);
+                (children, spacing) = ExpandRepeatGridGroup(xdObject, repeatGrid, scrollingType, sizeGetter, ref specialSpacings);
             }
 
             return new IComponent[]
             {
-                new VerticalListComponent(0, spacing, paddingTop, paddingBottom, new SpecialSpacing[] { }),
+                new VerticalListComponent(0, spacing, paddingTop, paddingBottom, specialSpacings.ToArray()),
             };
         }
 
@@ -66,14 +67,14 @@ namespace AkyuiUnity.Xd
             return (top, bottom);
         }
 
-        private static (XdObjectJson[], float Spacing) ExpandRepeatGridGroup(XdObjectJson xdObject, XdObjectJson repeatGrid, string scrollingType)
+        private static (XdObjectJson[], float Spacing) ExpandRepeatGridGroup(XdObjectJson xdObject, XdObjectJson repeatGrid, string scrollingType, ISizeGetter sizeGetter, ref List<SpecialSpacing> specialSpacings)
         {
             var spacing = repeatGrid.GetRepeatGridSpacing(scrollingType);
 
             var listItems = new[] { repeatGrid.Group.Children[0].Group.Children[0] };
             if (xdObject.GetParameters().Contains("multiitems"))
             {
-                listItems = ExpandMultiItemsList(listItems[0], scrollingType);
+                listItems = ExpandMultiItemsList(listItems[0], scrollingType, sizeGetter, ref specialSpacings);
             }
 
             foreach (var listItem in listItems)
@@ -84,23 +85,37 @@ namespace AkyuiUnity.Xd
             return (listItems.ToArray(), spacing);
         }
 
-        private static XdObjectJson[] ExpandMultiItemsList(XdObjectJson listItemRoot, string scrollingType)
+        private static XdObjectJson[] ExpandMultiItemsList(XdObjectJson listItemRoot, string scrollingType, ISizeGetter sizeGetter, ref List<SpecialSpacing> specialSpacings)
         {
             var listItems = new List<XdObjectJson>();
 
             // 孫を解析して、それもRepeatGridなら更に子供
             var tmp = listItemRoot.Group.Children.ToList();
+            var size = new List<(string Name, Rect Size)>();
 
             foreach (var listItem in tmp)
             {
                 if (RepeatGridGroupParser.Is(listItem, scrollingType))
                 {
-                    listItems.AddRange(listItem.Group.Children[0].Group.Children);
+                    var listListItem = listItem.Group.Children[0].Group.Children[0];
+                    specialSpacings.Add(new SpecialSpacing(listListItem.Name, listListItem.Name, listItem.GetRepeatGridSpacing(scrollingType)));
+                    listItems.Add(listListItem);
+
+                    // 名前は参照されるので子供の名前を使うが、サイズは親のものとして計算する。
+                    // XDのデザイン上は親のサイズなので。
+                    size.Add((listListItem.Name, sizeGetter.Get(listItem)));
                 }
                 else
                 {
                     listItems.Add(listItem);
+                    size.Add((listItem.Name, sizeGetter.Get(listItem)));
                 }
+            }
+
+            var orderedSize = size.OrderBy(x => x.Size.y).ToArray();
+            foreach (var (item1, item2) in orderedSize.Zip(orderedSize.Skip(1), (x, y) => (x, y)))
+            {
+                specialSpacings.Add(new SpecialSpacing(item1.Name, item2.Name, item2.Size.yMin - item1.Size.yMax));
             }
 
             return listItems.ToArray();
