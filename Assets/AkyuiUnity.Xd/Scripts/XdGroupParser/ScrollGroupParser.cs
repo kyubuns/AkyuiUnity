@@ -46,7 +46,15 @@ namespace AkyuiUnity.Xd
                     spacing = repeatGrid.Meta?.Ux?.RepeatGrid?.PaddingX ?? 0f;
                 }
 
-                children = new[] { repeatGrid.Group.Children[0].Group.Children[0] };
+                var listItem = repeatGrid.Group.Children[0].Group.Children[0];
+                if (listItem?.Meta?.Ux != null)
+                {
+                    listItem.Meta.Ux.ConstraintRight = false;
+                    listItem.Meta.Ux.ConstraintLeft = false;
+                    listItem.Meta.Ux.ConstraintTop = false;
+                    listItem.Meta.Ux.ConstraintBottom = false;
+                }
+                children = new[] { listItem };
             }
 
             return new IComponent[]
