@@ -1,8 +1,10 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
 using XdParser.Internal;
+using Object = UnityEngine.Object;
 
 namespace AkyuiUnity.Xd
 {
@@ -14,6 +16,27 @@ namespace AkyuiUnity.Xd
         }
 
         public Rect CalcSize(XdObjectJson xdObject, Vector2 position)
+        {
+            if (xdObject.Text?.Frame?.Type == "area")
+            {
+                return CalcSizeFromFrame(xdObject, position);
+            }
+
+            if (xdObject.Text?.Frame?.Type == "positioned")
+            {
+                return CalcSizeFromText(xdObject, position);
+            }
+
+            throw new NotSupportedException($"Unknown Text Type {xdObject.Text?.Frame?.Type}");
+        }
+
+        public static Rect CalcSizeFromFrame(XdObjectJson xdObject, Vector2 position)
+        {
+            var size = new Vector2(xdObject.Text.Frame.Width, xdObject.Text.Frame.Height);
+            return new Rect(position, size);
+        }
+
+        public static Rect CalcSizeFromText(XdObjectJson xdObject, Vector2 position)
         {
             var font = xdObject.Style.Font;
             var fontSize = font.Size;
@@ -86,9 +109,21 @@ namespace AkyuiUnity.Xd
 
             var textAlign = TextComponent.TextAlign.MiddleLeft;
             var paragraphAlign = xdObject.Style?.TextAttributes?.ParagraphAlign ?? "left";
-            if (paragraphAlign == "left") textAlign = TextComponent.TextAlign.MiddleLeft;
-            if (paragraphAlign == "center") textAlign = TextComponent.TextAlign.MiddleCenter;
-            if (paragraphAlign == "right") textAlign = TextComponent.TextAlign.MiddleRight;
+
+            if (xdObject.Text?.Frame?.Type == "positioned")
+            {
+                if (paragraphAlign == "left") textAlign = TextComponent.TextAlign.MiddleLeft;
+                if (paragraphAlign == "center") textAlign = TextComponent.TextAlign.MiddleCenter;
+                if (paragraphAlign == "right") textAlign = TextComponent.TextAlign.MiddleRight;
+            }
+
+            if (xdObject.Text?.Frame?.Type == "area")
+            {
+                if (paragraphAlign == "left") textAlign = TextComponent.TextAlign.UpperLeft;
+                if (paragraphAlign == "center") textAlign = TextComponent.TextAlign.UpperCenter;
+                if (paragraphAlign == "right") textAlign = TextComponent.TextAlign.UpperRight;
+            }
+
             components.Add(new TextComponent(0, rawText, fontSize, color, textAlign, font.PostscriptName));
 
             return (components.ToArray(), new IAsset[] { });

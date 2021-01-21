@@ -307,6 +307,12 @@ namespace XdParser.Internal
     {
         [JsonProperty("type")]
         public string Type { get; set; }
+
+        [JsonProperty("width")]
+        public float Width { get; set; }
+
+        [JsonProperty("height")]
+        public float Height { get; set; }
     }
 
     public class XdTextParagraphJson

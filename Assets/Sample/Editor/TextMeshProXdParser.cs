@@ -18,6 +18,17 @@ namespace AkyuiUnity.Sample.XdParser
 
         public override Rect CalcSize(XdObjectJson xdObject, Vector2 position)
         {
+            if (xdObject.Text?.Frame?.Type == "positioned")
+            {
+                return CalcSizeFromText(xdObject, position);
+            }
+
+            var textParser = new TextObjectParser();
+            return textParser.CalcSize(xdObject, position);
+        }
+
+        public static Rect CalcSizeFromText(XdObjectJson xdObject, Vector2 position)
+        {
             var font = xdObject.Style.Font;
             var fontAsset = AssetDatabase.FindAssets($"{font.PostscriptName}")
                 .Select(guid => AssetDatabase.GUIDToAssetPath(guid))
