@@ -18,7 +18,6 @@ namespace AkyuiUnity.Sample
             {
                 for (var i = 0; i < 30; ++i)
                 {
-                    Debug.Log(i);
                     editor.Contents.Add(new UIFactory<ListItem>(x =>
                     {
                         using (var e = Layouter.LeftToRight(x.Item))
@@ -53,8 +52,8 @@ namespace AkyuiUnity.Sample
             Mapper = mapper;
             Root = mapper.Get();
             List = new VerticalList<ListItem>(
-                mapper.Get<ScrollRect>("Scroll Group 1"),
-                mapper.GetChild<ListItem>("Repeat Grid 1")
+                mapper.Get<ScrollRect>("Scroll"),
+                mapper.GetChild<ListItem>("Line")
             );
         }
     }
