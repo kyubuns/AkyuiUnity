@@ -34,13 +34,15 @@ namespace AkyuiUnity.Xd
         public IComponent[] Render(XdObjectJson xdObject, ref XdObjectJson[] children, ISizeGetter sizeGetter)
         {
             var spacing = 0f;
+            var scrollingType = xdObject?.Meta?.Ux?.ScrollingType;
 
-            if (children.Length == 1 && RepeatGridGroupParser.Is(children[0]))
+            var (paddingTop, paddingBottom) = CalcPadding(xdObject, children, sizeGetter);
+
+            var repeatGrid = children.FirstOrDefault(x => RepeatGridGroupParser.Is(x));
+            if (repeatGrid != null)
             {
-                spacing = ExpandRepeatGridGroup(xdObject, ref children, sizeGetter);
+                (children, spacing) = ExpandRepeatGridGroup(xdObject, repeatGrid, scrollingType);
             }
-
-            var (paddingTop, paddingBottom) = CalcPadding(children, sizeGetter);
 
             return new IComponent[]
             {
@@ -48,20 +50,26 @@ namespace AkyuiUnity.Xd
             };
         }
 
-        private static (float Top, float Bottom) CalcPadding(XdObjectJson[] children, ISizeGetter sizeGetter)
+        private static (float Top, float Bottom) CalcPadding(XdObjectJson xdObject, XdObjectJson[] children, ISizeGetter sizeGetter)
         {
-            var firstChild = children[0];
-            var top = -sizeGetter.Get(firstChild).yMin;
+            var rootRect = sizeGetter.Get(xdObject);
 
-            return (top, 0f);
+            var top = -children.Select(x => rootRect.yMin - sizeGetter.Get(x).yMin).Max();
+
+            var bottom = 0f;
+            var spacer = children.FirstOrDefault(x => x.GetParameters().Contains("spacer"));
+            if (spacer != null)
+            {
+                bottom = sizeGetter.Get(spacer).height;
+            }
+
+            return (top, bottom);
         }
 
-        private static float ExpandRepeatGridGroup(XdObjectJson xdObject, ref XdObjectJson[] children, ISizeGetter sizeGetter)
+        private static (XdObjectJson[], float Spacing) ExpandRepeatGridGroup(XdObjectJson xdObject, XdObjectJson repeatGrid, string scrollingType)
         {
             float spacing;
-            var scrollingType = xdObject?.Meta?.Ux?.ScrollingType;
 
-            var repeatGrid = children[0];
             if (scrollingType == "vertical")
             {
                 spacing = repeatGrid.Meta?.Ux?.RepeatGrid?.PaddingY ?? 0f;
@@ -88,9 +96,8 @@ namespace AkyuiUnity.Xd
                     listItem.Meta.Ux.ConstraintBottom = false;
                 }
             }
-            children = listItems.ToArray();
 
-            return spacing;
+            return (listItems.ToArray(), spacing);
         }
 
         private static XdObjectJson[] ExpandMultiItemsList(XdObjectJson listItemRoot, string scrollingType)
