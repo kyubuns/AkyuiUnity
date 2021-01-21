@@ -84,7 +84,7 @@ namespace AkyuiUnity.Xd
 
             if (!string.IsNullOrWhiteSpace(spriteUid))
             {
-                spriteUid = $"{xdObject.Name}_{spriteUid.Substring(0, 8)}.png";
+                spriteUid = $"{xdObject.Name.Split('@')[0]}_{spriteUid.Substring(0, 8)}.png";
                 assets.Add(new SpriteAsset(spriteUid, xdObject.Style.Fill.Pattern.Meta.Ux.HrefLastModifiedDate, null));
                 components.Add(new ImageComponent(
                     0,
@@ -95,7 +95,7 @@ namespace AkyuiUnity.Xd
             }
             else if (SvgUtil.Types.Contains(shapeType))
             {
-                spriteUid = $"{xdObject.Name}_{xdObject.Id.Substring(0, 8)}.svg";
+                spriteUid = $"{xdObject.Name.Split('@')[0]}_{xdObject.Id.Substring(0, 8)}.svg";
                 var svg = SvgUtil.CreateSvg(xdObject);
                 var userData = new SvgPostProcessImportAsset.SvgImportUserData { Width = Mathf.RoundToInt(size.x), Height = Mathf.RoundToInt(size.y) };
                 assets.Add(new SpriteAsset(spriteUid, FastHash.CalculateHash(svg), JsonConvert.SerializeObject(userData)));

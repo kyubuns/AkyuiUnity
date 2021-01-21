@@ -7,7 +7,7 @@ namespace AkyuiUnity.Xd
     {
         public bool Is(XdObjectJson xdObject)
         {
-            return xdObject.Name?.EndsWith("Button") ?? false;
+            return xdObject.Name?.Split('@')[0].EndsWith("Button") ?? false;
         }
 
         public Rect CalcSize(XdObjectJson xdObject, Vector2 position, Rect rect)

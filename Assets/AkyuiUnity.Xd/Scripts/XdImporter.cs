@@ -321,7 +321,7 @@ namespace AkyuiUnity.Xd
 
                     var element = new ObjectElement(
                         eid,
-                        xdObject.Name,
+                        xdObject.Name.Split('@')[0],
                         position,
                         size,
                         anchorX,
@@ -357,7 +357,7 @@ namespace AkyuiUnity.Xd
 
                     var group = new ObjectElement(
                         eid,
-                        xdObject.Name,
+                        xdObject.Name.Split('@')[0],
                         position,
                         size,
                         anchorX,
