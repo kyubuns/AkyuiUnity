@@ -8,5 +8,11 @@ namespace AkyuiUnity.Xd
     {
         public string AkyuiOutputPath => akyuiOutputPath;
         [SerializeField] private string akyuiOutputPath = "";
+
+        public AkyuiXdObjectParser[] ObjectParsers => objectParsers;
+        [SerializeField] private AkyuiXdObjectParser[] objectParsers = default;
+
+        public AkyuiXdGroupParser[] GroupParsers => groupParsers;
+        [SerializeField] private AkyuiXdGroupParser[] groupParsers = default;
     }
 }

@@ -25,7 +25,9 @@ namespace AkyuiUnity.Xd
                 {
                     if (artwork.Artboard.Children.Length == 0) continue;
                     if (!(artwork.Artboard.Children[0].Meta?.Ux?.MarkedForExport ?? false)) continue;
-                    loaders.Add(new XdAkyuiLoader(file, artwork));
+                    var akyuiXdObjectParsers = settings.ObjectParsers ?? new AkyuiXdObjectParser[] { };
+                    var akyuiXdGroupParsers = settings.GroupParsers ?? new AkyuiXdGroupParser[] { };
+                    loaders.Add(new XdAkyuiLoader(file, artwork, akyuiXdObjectParsers, akyuiXdGroupParsers));
                 }
                 Debug.Log($"Xd Import Finish: {xdFilePath}");
             }
@@ -49,22 +51,26 @@ namespace AkyuiUnity.Xd
     public class XdAkyuiLoader : IAkyuiLoader
     {
         private XdFile _xdFile;
+        private readonly IXdObjectParser[] _objectParsers;
+        private readonly IXdGroupParser[] _groupParsers;
         private readonly XdAssetHolder _assetHolder;
 
-        public static IXdObjectParser[] ObjectParsers = {
+        private static readonly IXdObjectParser[] DefaultObjectParsers = {
             new ShapeObjectParser(),
             new TextObjectParser(),
         };
 
-        public static IXdGroupParser[] GroupParsers = {
+        private static readonly IXdGroupParser[] DefaultGroupParsers = {
             new ButtonGroupParser(),
             new RepeatGridGroupParser(),
             new ScrollGroupParser(),
         };
 
-        public XdAkyuiLoader(XdFile xdFile, XdArtboard xdArtboard)
+        public XdAkyuiLoader(XdFile xdFile, XdArtboard xdArtboard, AkyuiXdObjectParser[] objectParsers, AkyuiXdGroupParser[] groupParsers)
         {
             _xdFile = xdFile;
+            _objectParsers = objectParsers.Concat(DefaultObjectParsers).ToArray();
+            _groupParsers = groupParsers.Concat(DefaultGroupParsers).ToArray();
             _assetHolder = new XdAssetHolder(_xdFile);
             (LayoutInfo, AssetsInfo) = Create(xdArtboard, _assetHolder);
         }
@@ -85,7 +91,7 @@ namespace AkyuiUnity.Xd
 
         private (LayoutInfo, AssetsInfo) Create(XdArtboard xdArtboard, XdAssetHolder assetHolder)
         {
-            var renderer = new XdRenderer(xdArtboard, assetHolder);
+            var renderer = new XdRenderer(xdArtboard, assetHolder, _objectParsers, _groupParsers);
             var layoutInfo = new LayoutInfo(
                 renderer.Name,
                 FastHash.CalculateHash(JsonConvert.SerializeObject(xdArtboard.Artboard)),
@@ -108,15 +114,18 @@ namespace AkyuiUnity.Xd
             public List<IAsset> Assets { get; }
 
             private readonly XdAssetHolder _xdAssetHolder;
+            private readonly IXdObjectParser[] _objectParsers;
+            private readonly IXdGroupParser[] _groupParsers;
             private int _nextEid = 1;
             private readonly Dictionary<string, Rect> _size;
             private Dictionary<string, XdObjectJson> _sourceGuidToObject;
-            private Dictionary<string, XdObjectJson> _symbolIdToObject;
 
-            public XdRenderer(XdArtboard xdArtboard, XdAssetHolder xdAssetHolder)
+            public XdRenderer(XdArtboard xdArtboard, XdAssetHolder xdAssetHolder, IXdObjectParser[] objectParsers, IXdGroupParser[] groupParsers)
             {
                 var resources = xdArtboard.Resources;
                 _xdAssetHolder = xdAssetHolder;
+                _objectParsers = objectParsers;
+                _groupParsers = groupParsers;
                 Elements = new List<IElement>();
                 Assets = new List<IAsset>();
                 Name = xdArtboard.Name;
@@ -145,13 +154,11 @@ namespace AkyuiUnity.Xd
             private void CreateRefObjectMap(XdResourcesResourcesJson resource)
             {
                 _sourceGuidToObject = new Dictionary<string, XdObjectJson>();
-                _symbolIdToObject = new Dictionary<string, XdObjectJson>();
 
                 var symbols = resource.Meta.Ux.Symbols;
                 foreach (var symbol in symbols)
                 {
                     CreateRefObjectMapInternal(symbol);
-                    _symbolIdToObject[symbol.Meta.Ux.SymbolId] = symbol;
                 }
             }
 
@@ -220,7 +227,7 @@ namespace AkyuiUnity.Xd
                 }
 
                 position += rootOffset;
-                foreach (var parser in ObjectParsers)
+                foreach (var parser in _objectParsers)
                 {
                     if (!parser.Is(xdObject)) continue;
                     var size = parser.CalcSize(xdObject, position);
@@ -230,13 +237,6 @@ namespace AkyuiUnity.Xd
 
                 if (xdObject.Type == "group")
                 {
-                    var symbolId = xdObject.Meta?.Ux?.SymbolId;
-                    XdObjectJson symbolObject = null;
-                    if (!string.IsNullOrWhiteSpace(symbolId))
-                    {
-                        symbolObject = _symbolIdToObject[symbolId];
-                    }
-
                     var childrenRects = children.Select(x => _size[x]).ToArray();
                     var minX = childrenRects.Length > 0 ? childrenRects.Min(x => x.min.x) : 0f;
                     var minY = childrenRects.Length > 0 ? childrenRects.Min(x => x.min.y) : 0f;
@@ -244,7 +244,7 @@ namespace AkyuiUnity.Xd
                     var maxY = childrenRects.Length > 0 ? childrenRects.Max(x => x.max.y) : 0f;
                     var groupRect = Rect.MinMaxRect(minX, minY, maxX, maxY);
 
-                    foreach (var parser in GroupParsers)
+                    foreach (var parser in _groupParsers)
                     {
                         if (!parser.Is(xdObject)) continue;
                         groupRect = parser.CalcSize(xdObject, position, groupRect);
@@ -288,7 +288,7 @@ namespace AkyuiUnity.Xd
                 else if (constTop) anchorY = AnchorYType.Top;
                 else if (constBottom) anchorY = AnchorYType.Bottom;
 
-                foreach (var parser in ObjectParsers)
+                foreach (var parser in _objectParsers)
                 {
                     if (!parser.Is(xdObject)) continue;
                     var (components, assets) = parser.Render(xdObject, size, _xdAssetHolder);
@@ -318,18 +318,11 @@ namespace AkyuiUnity.Xd
 
                 if (xdObject.Type == "group")
                 {
-                    var symbolId = xdObject.Meta?.Ux?.SymbolId;
-                    XdObjectJson symbolObject = null;
-                    if (!string.IsNullOrWhiteSpace(symbolId))
-                    {
-                        symbolObject = _symbolIdToObject[symbolId];
-                    }
-
                     var components = new List<IComponent>();
                     var children = new XdObjectJson[] { };
                     if (xdObject.Group != null) children = xdObject.Group.Children;
 
-                    foreach (var parser in GroupParsers)
+                    foreach (var parser in _groupParsers)
                     {
                         if (!parser.Is(xdObject)) continue;
                         components.AddRange(parser.Render(xdObject, ref children));

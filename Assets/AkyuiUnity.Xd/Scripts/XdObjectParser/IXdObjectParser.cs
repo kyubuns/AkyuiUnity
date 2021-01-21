@@ -10,6 +10,13 @@ namespace AkyuiUnity.Xd
         (IComponent[], IAsset[]) Render(XdObjectJson xdObject, Vector2 size, XdAssetHolder assetHolder);
     }
 
+    public abstract class AkyuiXdObjectParser : ScriptableObject, IXdObjectParser
+    {
+        public abstract bool Is(XdObjectJson xdObject);
+        public abstract Rect CalcSize(XdObjectJson xdObject, Vector2 position);
+        public abstract (IComponent[], IAsset[]) Render(XdObjectJson xdObject, Vector2 size, XdAssetHolder assetHolder);
+    }
+
     public static class XdObjectParserExtension
     {
         public static Color GetFillColor(this XdObjectJson xdObject)

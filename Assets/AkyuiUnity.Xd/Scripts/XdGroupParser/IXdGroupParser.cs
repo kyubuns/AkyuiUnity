@@ -9,4 +9,11 @@ namespace AkyuiUnity.Xd
         Rect CalcSize(XdObjectJson xdObject, Vector2 position, Rect rect);
         IComponent[] Render(XdObjectJson xdObject, ref XdObjectJson[] children);
     }
+
+    public abstract class AkyuiXdGroupParser : ScriptableObject, IXdGroupParser
+    {
+        public abstract bool Is(XdObjectJson xdObject);
+        public abstract Rect CalcSize(XdObjectJson xdObject, Vector2 position, Rect rect);
+        public abstract IComponent[] Render(XdObjectJson xdObject, ref XdObjectJson[] children);
+    }
 }
