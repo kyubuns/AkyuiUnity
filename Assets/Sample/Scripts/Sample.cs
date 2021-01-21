@@ -16,17 +16,24 @@ namespace AkyuiUnity.Sample
 
             using (var editor = ui.List.Edit())
             {
-                for (var i = 0; i < 30; ++i)
+                for (var y = 0; y < 5; ++y)
                 {
-                    editor.Contents.Add(new UIFactory<ListItem>(x =>
+                    editor.Contents.Add(new UIFactory<Items, Title>((Title x) =>
                     {
-                        using (var e = Layouter.LeftToRight(x.Item))
-                        {
-                            e.Create();
-                            e.Create();
-                            e.Create();
-                        }
                     }));
+
+                    for (var i = 0; i < 5; ++i)
+                    {
+                        editor.Contents.Add(new UIFactory<Items, Title>(x =>
+                        {
+                            using (var e = Layouter.LeftToRight(x.Item))
+                            {
+                                e.Create();
+                                e.Create();
+                                e.Create();
+                            }
+                        }));
+                    }
                 }
             }
         }
@@ -36,7 +43,7 @@ namespace AkyuiUnity.Sample
     {
         public IMapper Mapper { get; private set; }
         public GameObject Root { get; private set; }
-        public VerticalList<ListItem> List { get; private set; }
+        public VerticalList<Items, Title> List { get; private set; }
 
         public UiElements()
         {
@@ -51,24 +58,46 @@ namespace AkyuiUnity.Sample
         {
             Mapper = mapper;
             Root = mapper.Get();
-            List = new VerticalList<ListItem>(
+            List = new VerticalList<Items, Title>(
                 mapper.Get<ScrollRect>("Scroll"),
-                mapper.GetChild<ListItem>("Line")
+                mapper.GetChild<Items>("Row"),
+                mapper.GetChild<Title>("Title")
             );
         }
     }
 
-    public class ListItem : IMappedObject
+    public class Title : IMappedObject
+    {
+        public IMapper Mapper { get; private set; }
+        public GameObject Root { get; private set; }
+
+        public Title()
+        {
+        }
+
+        public Title(IMapper mapper)
+        {
+            Initialize(mapper);
+        }
+
+        public void Initialize(IMapper mapper)
+        {
+            Mapper = mapper;
+            Root = mapper.Get();
+        }
+    }
+
+    public class Items : IMappedObject
     {
         public IMapper Mapper { get; private set; }
         public GameObject Root { get; private set; }
         public Item Item { get; private set; }
 
-        public ListItem()
+        public Items()
         {
         }
 
-        public ListItem(IMapper mapper)
+        public Items(IMapper mapper)
         {
             Initialize(mapper);
         }

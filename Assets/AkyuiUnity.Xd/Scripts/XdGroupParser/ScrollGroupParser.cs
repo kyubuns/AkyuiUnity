@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using XdParser.Internal;
 
@@ -46,15 +48,40 @@ namespace AkyuiUnity.Xd
                     spacing = repeatGrid.Meta?.Ux?.RepeatGrid?.PaddingX ?? 0f;
                 }
 
-                var listItem = repeatGrid.Group.Children[0].Group.Children[0];
-                if (listItem?.Meta?.Ux != null)
+                var listItems = new List<XdObjectJson> { repeatGrid.Group.Children[0].Group.Children[0] };
+
+                // @MultiItems なら孫要素を解析する
+                if (xdObject.GetParameters().Contains("multiitems"))
                 {
-                    listItem.Meta.Ux.ConstraintRight = false;
-                    listItem.Meta.Ux.ConstraintLeft = false;
-                    listItem.Meta.Ux.ConstraintTop = false;
-                    listItem.Meta.Ux.ConstraintBottom = false;
+                    // 孫を解析して、それもRepeatGridなら更に子供
+                    var tmp = listItems[0].Group.Children.ToList();
+                    listItems.Clear();
+
+                    foreach (var listItem in tmp)
+                    {
+                        if (RepeatGridGroupParser.Is(listItem, xdObject?.Meta?.Ux?.ScrollingType))
+                        {
+                            listItems.AddRange(listItem.Group.Children[0].Group.Children);
+                        }
+                        else
+                        {
+                            listItems.Add(listItem);
+                        }
+                    }
                 }
-                children = new[] { listItem };
+
+                // 変なconstraintが付いてたらリスト作るときに死ぬので解除
+                foreach (var listItem in listItems)
+                {
+                    if (listItem?.Meta?.Ux != null)
+                    {
+                        listItem.Meta.Ux.ConstraintRight = false;
+                        listItem.Meta.Ux.ConstraintLeft = false;
+                        listItem.Meta.Ux.ConstraintTop = false;
+                        listItem.Meta.Ux.ConstraintBottom = false;
+                    }
+                }
+                children = listItems.ToArray();
             }
 
             return new IComponent[]

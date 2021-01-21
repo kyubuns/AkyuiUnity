@@ -17,6 +17,16 @@ namespace AkyuiUnity.Xd
             return repeatGrid != null;
         }
 
+        public static bool Is(XdObjectJson xdObject, string scrollingType)
+        {
+            var repeatGrid = xdObject?.Meta?.Ux?.RepeatGrid;
+            if (repeatGrid == null) return false;
+
+            if (scrollingType == "vertical" && repeatGrid.Rows > 1) return true;
+            if (scrollingType == "horizontal" && repeatGrid.Columns > 1) return true;
+            return false;
+        }
+
         public Rect CalcSize(XdObjectJson xdObject, Vector2 position, Rect rect)
         {
             return rect;
