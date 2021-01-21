@@ -5,7 +5,7 @@ using TMPro;
 using UnityEditor;
 using UnityEngine;
 
-namespace AkyuiUnity.CommonTrigger
+namespace AkyuiUnity.Sample.Trigger
 {
     // DefaultGenerateTrigger.csのText部分と合わせる
     [CreateAssetMenu(menuName = "Akyui/Triggers/TextMeshPro", fileName = nameof(TextMeshProTrigger))]
