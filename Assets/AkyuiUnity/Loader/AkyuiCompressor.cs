@@ -186,6 +186,8 @@ namespace AkyuiUnity.Loader
             {
                 dict["type"] = VerticalListComponent.TypeString;
                 if (verticalListComponent.Spacing != null) dict["spacing"] = ToSerializable(verticalListComponent.Spacing.Value);
+                if (verticalListComponent.PaddingTop != null) dict["padding_top"] = ToSerializable(verticalListComponent.PaddingTop.Value);
+                if (verticalListComponent.PaddingBottom != null) dict["padding_bottom"] = ToSerializable(verticalListComponent.PaddingBottom.Value);
             }
             else if (source is HorizontalLayoutComponent horizontalLayoutComponent)
             {

@@ -243,7 +243,9 @@ namespace AkyuiUnity.Loader
             {
                 return new VerticalListComponent(
                     componentJson["cid"].JsonInt(),
-                    componentJson.ContainsKey("spacing") ? componentJson["spacing"].JsonFloat() : (float?) null
+                    componentJson.ContainsKey("spacing") ? componentJson["spacing"].JsonFloat() : (float?) null,
+                    componentJson.ContainsKey("padding_top") ? componentJson["padding_top"].JsonFloat() : (float?) null,
+                    componentJson.ContainsKey("padding_bottom") ? componentJson["padding_bottom"].JsonFloat() : (float?) null
                 );
             }
 

@@ -34,6 +34,8 @@ namespace AkyuiUnity.Xd
         public IComponent[] Render(XdObjectJson xdObject, ref XdObjectJson[] children)
         {
             var spacing = 0f;
+            var paddingTop = 0f;
+            var paddingBottom = 0f;
 
             var scrollingType = xdObject?.Meta?.Ux?.ScrollingType;
             if (children.Length == 1 && RepeatGridGroupParser.Is(children[0]))
@@ -86,7 +88,7 @@ namespace AkyuiUnity.Xd
 
             return new IComponent[]
             {
-                new VerticalListComponent(0, spacing),
+                new VerticalListComponent(0, spacing, paddingTop, paddingBottom),
             };
         }
     }

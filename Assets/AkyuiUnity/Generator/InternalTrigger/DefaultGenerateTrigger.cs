@@ -122,6 +122,8 @@ namespace AkyuiUnity.Generator.InternalTrigger
                     verticalLayoutGroup.childForceExpandWidth = false;
                     verticalLayoutGroup.childForceExpandHeight = false;
                     if (verticalListComponent.Spacing != null) verticalLayoutGroup.spacing = verticalListComponent.Spacing.Value;
+                    if (verticalListComponent.PaddingTop != null) verticalLayoutGroup.padding.top = Mathf.RoundToInt(verticalListComponent.PaddingTop.Value);
+                    if (verticalListComponent.PaddingBottom != null) verticalLayoutGroup.padding.bottom = Mathf.RoundToInt(verticalListComponent.PaddingBottom.Value);
 
                     scrollRect.content = contentRectTransform;
                 }

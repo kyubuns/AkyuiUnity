@@ -226,11 +226,15 @@ namespace AkyuiUnity
 
         public int Cid { get; }
         [CanBeNull] public readonly float? Spacing;
+        [CanBeNull] public readonly float? PaddingTop;
+        [CanBeNull] public readonly float? PaddingBottom;
 
-        public VerticalListComponent(int cid, [CanBeNull] float? spacing)
+        public VerticalListComponent(int cid, [CanBeNull] float? spacing, [CanBeNull] float? paddingTop, [CanBeNull] float? paddingBottom)
         {
             Cid = cid;
             Spacing = spacing;
+            PaddingTop = paddingTop;
+            PaddingBottom = paddingBottom;
         }
     }
 
