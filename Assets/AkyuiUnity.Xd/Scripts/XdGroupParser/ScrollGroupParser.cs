@@ -15,18 +15,18 @@ namespace AkyuiUnity.Xd
 
         public Rect CalcSize(XdObjectJson xdObject, Vector2 position, Rect rect)
         {
-            var scrollingType = xdObject?.Meta?.Ux?.ScrollingType;
+            var scrollingType = xdObject.Meta?.Ux?.ScrollingType;
 
             if (scrollingType == "vertical")
             {
-                var offsetY = xdObject?.Meta?.Ux?.OffsetY ?? 0f;
-                var viewportHeight = xdObject?.Meta?.Ux?.ViewportHeight ?? 0f;
+                var offsetY = xdObject.Meta?.Ux?.OffsetY ?? 0f;
+                var viewportHeight = xdObject.Meta?.Ux?.ViewportHeight ?? 0f;
                 return new Rect(rect.position.x, position.y + offsetY, rect.size.x, viewportHeight);
             }
             else
             {
-                var offsetX = xdObject?.Meta?.Ux?.OffsetX ?? 0f;
-                var viewportWidth = xdObject?.Meta?.Ux?.ViewportWidth ?? 0f;
+                var offsetX = xdObject.Meta?.Ux?.OffsetX ?? 0f;
+                var viewportWidth = xdObject.Meta?.Ux?.ViewportWidth ?? 0f;
                 return new Rect(position.x + offsetX, rect.position.y, viewportWidth, rect.size.y);
             }
         }
@@ -34,8 +34,6 @@ namespace AkyuiUnity.Xd
         public IComponent[] Render(XdObjectJson xdObject, ref XdObjectJson[] children, ISizeGetter sizeGetter)
         {
             var spacing = 0f;
-            var paddingTop = 0f;
-            var paddingBottom = 0f;
 
             var scrollingType = xdObject?.Meta?.Ux?.ScrollingType;
             if (children.Length == 1 && RepeatGridGroupParser.Is(children[0]))
@@ -86,9 +84,13 @@ namespace AkyuiUnity.Xd
                 children = listItems.ToArray();
             }
 
+            // padding計算
+            var firstChild = children[0];
+            var paddingTop = -sizeGetter.Get(firstChild).yMin;
+
             return new IComponent[]
             {
-                new VerticalListComponent(0, spacing, paddingTop, paddingBottom),
+                new VerticalListComponent(0, spacing, paddingTop, 0f),
             };
         }
     }
