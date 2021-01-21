@@ -347,7 +347,7 @@ namespace AkyuiUnity.Xd
                     foreach (var parser in _groupParsers)
                     {
                         if (!parser.Is(xdObject)) continue;
-                        components.AddRange(parser.Render(xdObject, ref children));
+                        components.AddRange(parser.Render(xdObject, ref children, _sizeHolder));
                     }
 
                     var generatedChildren = new IElement[] { };
@@ -374,7 +374,7 @@ namespace AkyuiUnity.Xd
         }
     }
 
-    public class SizeHolder
+    public class SizeHolder : ISizeGetter
     {
         private readonly Dictionary<string, Rect> _size;
 
@@ -392,5 +392,10 @@ namespace AkyuiUnity.Xd
         {
             return _size[xdObjectJson.Id ?? xdObjectJson.Guid];
         }
+    }
+
+    public interface ISizeGetter
+    {
+        Rect Get(XdObjectJson xdObjectJson);
     }
 }

@@ -31,7 +31,7 @@ namespace AkyuiUnity.Xd
             }
         }
 
-        public IComponent[] Render(XdObjectJson xdObject, ref XdObjectJson[] children)
+        public IComponent[] Render(XdObjectJson xdObject, ref XdObjectJson[] children, ISizeGetter sizeGetter)
         {
             var spacing = 0f;
             var paddingTop = 0f;
