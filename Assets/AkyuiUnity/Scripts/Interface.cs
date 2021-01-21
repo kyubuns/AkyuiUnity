@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using JetBrains.Annotations;
 using UnityEngine;
 
@@ -230,13 +231,29 @@ namespace AkyuiUnity
         [CanBeNull] public readonly float? Spacing;
         [CanBeNull] public readonly float? PaddingTop;
         [CanBeNull] public readonly float? PaddingBottom;
+        [CanBeNull] public readonly SpecialSpacing[] SpacialSpacings;
 
-        public VerticalListComponent(int cid, [CanBeNull] float? spacing, [CanBeNull] float? paddingTop, [CanBeNull] float? paddingBottom)
+        public VerticalListComponent(int cid, [CanBeNull] float? spacing, [CanBeNull] float? paddingTop, [CanBeNull] float? paddingBottom, [CanBeNull] SpecialSpacing[] spacialSpacings)
         {
             Cid = cid;
             Spacing = spacing;
             PaddingTop = paddingTop;
             PaddingBottom = paddingBottom;
+            SpacialSpacings = spacialSpacings;
+        }
+    }
+
+    public class SpecialSpacing
+    {
+        public readonly string Item1;
+        public readonly string Item2;
+        public readonly float Spacing;
+
+        public SpecialSpacing(string item1, string item2, float spacing)
+        {
+            Item1 = item1;
+            Item2 = item2;
+            Spacing = spacing;
         }
     }
 

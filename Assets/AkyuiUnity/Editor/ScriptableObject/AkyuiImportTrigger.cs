@@ -27,5 +27,9 @@ namespace AkyuiUnity.Editor.ScriptableObject
         {
             return null;
         }
+
+        public void OnPostprocessComponent(GameObject gameObject, IComponent component)
+        {
+        }
     }
 }

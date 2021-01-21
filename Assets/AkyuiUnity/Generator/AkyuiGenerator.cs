@@ -236,7 +236,11 @@ namespace AkyuiUnity.Generator
             foreach (var trigger in triggers)
             {
                 var result = trigger.SetOrCreateComponentValue(gameObject, targetComponentGetter, component, children, assetLoader);
-                if (result != null) return result;
+                if (result != null)
+                {
+                    foreach (var postprocessTrigger in triggers) postprocessTrigger.OnPostprocessComponent(gameObject, component);
+                    return result;
+                }
             }
 
             Debug.LogError($"Unknown component type {component}");

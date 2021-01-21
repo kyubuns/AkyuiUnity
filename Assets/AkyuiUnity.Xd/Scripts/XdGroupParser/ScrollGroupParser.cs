@@ -46,7 +46,7 @@ namespace AkyuiUnity.Xd
 
             return new IComponent[]
             {
-                new VerticalListComponent(0, spacing, paddingTop, paddingBottom),
+                new VerticalListComponent(0, spacing, paddingTop, paddingBottom, new SpecialSpacing[] { }),
             };
         }
 

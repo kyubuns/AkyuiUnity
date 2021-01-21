@@ -189,6 +189,20 @@ namespace AkyuiUnity.Loader
                 if (verticalListComponent.Spacing != null) dict["spacing"] = ToSerializable(verticalListComponent.Spacing.Value);
                 if (verticalListComponent.PaddingTop != null) dict["padding_top"] = ToSerializable(verticalListComponent.PaddingTop.Value);
                 if (verticalListComponent.PaddingBottom != null) dict["padding_bottom"] = ToSerializable(verticalListComponent.PaddingBottom.Value);
+                if (verticalListComponent.SpacialSpacings != null)
+                {
+                    var inner = new List<Dictionary<string, object>>();
+                    foreach (var a in verticalListComponent.SpacialSpacings)
+                    {
+                        inner.Add(new Dictionary<string, object>
+                        {
+                            { "item1", a.Item1 },
+                            { "item2", a.Item2 },
+                            { "spacing", a.Spacing },
+                        });
+                    }
+                    dict["spacial_spacings"] = inner;
+                }
             }
             else if (source is HorizontalLayoutComponent horizontalLayoutComponent)
             {

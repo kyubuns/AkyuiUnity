@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using AkyuiUnity.Editor.MiniJSON;
 using AkyuiUnity.Loader.Internal;
 using ICSharpCode.SharpZipLib.Zip;
@@ -246,7 +247,14 @@ namespace AkyuiUnity.Loader
                     componentJson["cid"].JsonInt(),
                     componentJson.ContainsKey("spacing") ? componentJson["spacing"].JsonFloat() : (float?) null,
                     componentJson.ContainsKey("padding_top") ? componentJson["padding_top"].JsonFloat() : (float?) null,
-                    componentJson.ContainsKey("padding_bottom") ? componentJson["padding_bottom"].JsonFloat() : (float?) null
+                    componentJson.ContainsKey("padding_bottom") ? componentJson["padding_bottom"].JsonFloat() : (float?) null,
+                    componentJson.ContainsKey("spacial_spacings") ? componentJson["spacial_spacings"].JsonDictionaryArray().Select(x =>
+                        new SpecialSpacing(
+                            x["item1"].JsonString(),
+                            x["item2"].JsonString(),
+                            x["spacing"].JsonFloat()
+                        )
+                    ).ToArray() : null
                 );
             }
 
