@@ -116,8 +116,8 @@ namespace AkyuiUnity.Xd
             private readonly XdAssetHolder _xdAssetHolder;
             private readonly IXdObjectParser[] _objectParsers;
             private readonly IXdGroupParser[] _groupParsers;
+            private readonly SizeHolder _sizeHolder;
             private int _nextEid = 1;
-            private readonly Dictionary<string, Rect> _size;
             private Dictionary<string, XdObjectJson> _sourceGuidToObject;
 
             public XdRenderer(XdArtboard xdArtboard, XdAssetHolder xdAssetHolder, IXdObjectParser[] objectParsers, IXdGroupParser[] groupParsers)
@@ -129,7 +129,7 @@ namespace AkyuiUnity.Xd
                 Elements = new List<IElement>();
                 Assets = new List<IAsset>();
                 Name = xdArtboard.Name;
-                _size = new Dictionary<string, Rect>();
+                _sizeHolder = new SizeHolder();
 
                 CreateRefObjectMap(resources.Resources);
 
@@ -227,7 +227,7 @@ namespace AkyuiUnity.Xd
                 return newXdObjectJson;
             }
 
-            private string[] CalcPosition(XdObjectJson[] xdObjects, Vector2 rootOffset, Vector2 parentPosition)
+            private XdObjectJson[] CalcPosition(XdObjectJson[] xdObjects, Vector2 rootOffset, Vector2 parentPosition)
             {
                 return xdObjects.Select(xdObject => CalcPosition(xdObject, rootOffset, parentPosition)).ToArray();
             }
@@ -239,12 +239,11 @@ namespace AkyuiUnity.Xd
                 return children.ToArray();
             }
 
-            private string CalcPosition(XdObjectJson xdObject, Vector2 rootOffset, Vector2 parentPosition)
+            private XdObjectJson CalcPosition(XdObjectJson xdObject, Vector2 rootOffset, Vector2 parentPosition)
             {
-                var id = xdObject.Id ?? xdObject.Guid;
                 var position = new Vector2((xdObject.Transform?.Tx ?? 0f) + parentPosition.x, (xdObject.Transform?.Ty ?? 0f) + parentPosition.y);
 
-                var children = new string[] { };
+                var children = new XdObjectJson[] { };
                 if (xdObject.Group != null)
                 {
                     children = CalcPosition(xdObject.Group.Children, rootOffset, position);
@@ -255,13 +254,13 @@ namespace AkyuiUnity.Xd
                 {
                     if (!parser.Is(xdObject)) continue;
                     var size = parser.CalcSize(xdObject, position);
-                    _size[id] = size;
-                    return id;
+                    _sizeHolder.Set(xdObject, size);
+                    return xdObject;
                 }
 
                 if (xdObject.Type == "group")
                 {
-                    var childrenRects = children.Select(x => _size[x]).ToArray();
+                    var childrenRects = children.Select(x => _sizeHolder.Get(x)).ToArray();
                     var minX = childrenRects.Length > 0 ? childrenRects.Min(x => x.min.x) : 0f;
                     var minY = childrenRects.Length > 0 ? childrenRects.Min(x => x.min.y) : 0f;
                     var maxX = childrenRects.Length > 0 ? childrenRects.Max(x => x.max.x) : 0f;
@@ -274,15 +273,15 @@ namespace AkyuiUnity.Xd
                         groupRect = parser.CalcSize(xdObject, position, groupRect);
                     }
 
-                    _size[id] = groupRect;
+                    _sizeHolder.Set(xdObject, groupRect);
                     foreach (var c in children)
                     {
-                        var t = _size[c];
+                        var t = _sizeHolder.Get(c);
                         t.center -= groupRect.center;
-                        _size[c] = t;
+                        _sizeHolder.Set(c, t);
                     }
 
-                    return id;
+                    return xdObject;
                 }
 
                 throw new Exception($"Unknown object type {xdObject.Type}");
@@ -290,11 +289,10 @@ namespace AkyuiUnity.Xd
 
             private IElement[] Render(XdObjectJson xdObject)
             {
-                var id = xdObject.Id ?? xdObject.Guid;
                 var eid = _nextEid;
                 _nextEid++;
 
-                var rect = _size[id];
+                var rect = _sizeHolder.Get(xdObject);
                 var position = new Vector2(rect.center.x, -rect.center.y);
                 var size = rect.size;
                 var anchorX = AnchorXType.Center;
@@ -373,6 +371,26 @@ namespace AkyuiUnity.Xd
 
                 throw new Exception($"Unknown object type {xdObject.Type}");
             }
+        }
+    }
+
+    public class SizeHolder
+    {
+        private readonly Dictionary<string, Rect> _size;
+
+        public SizeHolder()
+        {
+            _size = new Dictionary<string, Rect>();
+        }
+
+        public void Set(XdObjectJson xdObjectJson, Rect rect)
+        {
+            _size[xdObjectJson.Id ?? xdObjectJson.Guid] = rect;
+        }
+
+        public Rect Get(XdObjectJson xdObjectJson)
+        {
+            return _size[xdObjectJson.Id ?? xdObjectJson.Guid];
         }
     }
 }
