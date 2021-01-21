@@ -4,7 +4,8 @@
 
 AkyuiUnity is a Unity implementation of [Akyui](https://github.com/kyubuns/Akyui).
 
-under development
+**under development**  
+**開発中です。ぜひWatch/Starして頂き、もうしばらくお待ち下さい。**
 
 UnityPackageManager `https://github.com/kyubuns/AkyuiUnity.git?path=Assets/AkyuiUnity`
 
