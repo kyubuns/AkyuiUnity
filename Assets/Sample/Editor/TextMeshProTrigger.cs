@@ -7,6 +7,7 @@ using UnityEngine;
 
 namespace AkyuiUnity.CommonTrigger
 {
+    // DefaultGenerateTrigger.csのText部分と合わせる
     [CreateAssetMenu(menuName = "Akyui/Triggers/TextMeshPro", fileName = nameof(TextMeshProTrigger))]
     public class TextMeshProTrigger : AkyuiImportTrigger
     {

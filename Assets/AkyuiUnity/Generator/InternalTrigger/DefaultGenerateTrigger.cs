@@ -16,6 +16,7 @@ namespace AkyuiUnity.Generator.InternalTrigger
                 return image;
             }
 
+            // TextMeshProTrigger.csと合わせる
             if (component is TextComponent textComponent)
             {
                 var text = componentGetter.GetComponent<Text>();
