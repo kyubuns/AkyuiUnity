@@ -1,12 +1,14 @@
 using System;
 using System.Linq;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace AkyuiUnity
 {
     public class AkyuiMeta : MonoBehaviour
     {
         [SerializeField] public AkyuiPrefabMeta meta;
+        [SerializeField] public Object[] assets;
 
         public AkyuiPrefabMeta GetCopiedMeta()
         {
