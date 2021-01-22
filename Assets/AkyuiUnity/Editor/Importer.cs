@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -44,8 +45,23 @@ namespace AkyuiUnity.Editor
             File.WriteAllBytes(filePath, bytes);
         }
 
+        private static void CheckVersion(IAkyuiLoader loader)
+        {
+            var loaderVersionFull = loader.LayoutInfo.Meta.AkyuiVersion;
+            var e1 = loaderVersionFull.Split('.');
+            var loaderVersion = $"{e1[0]}.{e1[1]}";
+
+            var e2 = Const.AkyuiVersion.Split('.');
+            var importerVersion = $"{e2[0]}.{e2[1]}";
+
+            if (loaderVersion == importerVersion) return;
+            throw new Exception($"Cannot load version {loaderVersionFull} file. (Importer version is {Const.AkyuiVersion})");
+        }
+
         private static void Import(IAkyuiImportSettings settings, IAkyuiLoader akyuiLoader)
         {
+            CheckVersion(akyuiLoader);
+
             var pathGetter = new PathGetter(settings, akyuiLoader.LayoutInfo.Name);
             var assets = ImportAssets(settings, akyuiLoader, pathGetter);
             var (gameObject, meta) = ImportLayout(settings, akyuiLoader, pathGetter);
