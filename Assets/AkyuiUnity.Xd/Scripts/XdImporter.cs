@@ -27,7 +27,8 @@ namespace AkyuiUnity.Xd
                     if (!(artwork.Artboard.Children[0].Meta?.Ux?.MarkedForExport ?? false)) continue;
                     var akyuiXdObjectParsers = settings.ObjectParsers ?? new AkyuiXdObjectParser[] { };
                     var akyuiXdGroupParsers = settings.GroupParsers ?? new AkyuiXdGroupParser[] { };
-                    loaders.Add(new XdAkyuiLoader(file, artwork, akyuiXdObjectParsers, akyuiXdGroupParsers));
+                    var triggers = settings.XdTriggers ?? new AkyuiXdImportTrigger[] { };
+                    loaders.Add(new XdAkyuiLoader(file, artwork, akyuiXdObjectParsers, akyuiXdGroupParsers, triggers));
                 }
                 Debug.Log($"Xd Import Finish: {xdFilePath}");
             }
@@ -53,6 +54,7 @@ namespace AkyuiUnity.Xd
         private XdFile _xdFile;
         private readonly IXdObjectParser[] _objectParsers;
         private readonly IXdGroupParser[] _groupParsers;
+        private readonly AkyuiXdImportTrigger[] _triggers;
         private readonly XdAssetHolder _assetHolder;
 
         private static readonly IXdObjectParser[] DefaultObjectParsers = {
@@ -66,11 +68,12 @@ namespace AkyuiUnity.Xd
             new ScrollGroupParser(),
         };
 
-        public XdAkyuiLoader(XdFile xdFile, XdArtboard xdArtboard, AkyuiXdObjectParser[] objectParsers, AkyuiXdGroupParser[] groupParsers)
+        public XdAkyuiLoader(XdFile xdFile, XdArtboard xdArtboard, AkyuiXdObjectParser[] objectParsers, AkyuiXdGroupParser[] groupParsers, AkyuiXdImportTrigger[] triggers)
         {
             _xdFile = xdFile;
             _objectParsers = objectParsers.Concat(DefaultObjectParsers).ToArray();
             _groupParsers = groupParsers.Concat(DefaultGroupParsers).ToArray();
+            _triggers = triggers;
             _assetHolder = new XdAssetHolder(_xdFile);
             (LayoutInfo, AssetsInfo) = Create(xdArtboard, _assetHolder);
         }
@@ -91,7 +94,7 @@ namespace AkyuiUnity.Xd
 
         private (LayoutInfo, AssetsInfo) Create(XdArtboard xdArtboard, XdAssetHolder assetHolder)
         {
-            var renderer = new XdRenderer(xdArtboard, assetHolder, _objectParsers, _groupParsers);
+            var renderer = new XdRenderer(xdArtboard, assetHolder, _objectParsers, _groupParsers, _triggers);
             var layoutInfo = new LayoutInfo(
                 renderer.Name,
                 FastHash.CalculateHash(JsonConvert.SerializeObject(xdArtboard.Artboard)),
@@ -120,7 +123,7 @@ namespace AkyuiUnity.Xd
             private int _nextEid = 1;
             private Dictionary<string, XdObjectJson> _sourceGuidToObject;
 
-            public XdRenderer(XdArtboard xdArtboard, XdAssetHolder xdAssetHolder, IXdObjectParser[] objectParsers, IXdGroupParser[] groupParsers)
+            public XdRenderer(XdArtboard xdArtboard, XdAssetHolder xdAssetHolder, IXdObjectParser[] objectParsers, IXdGroupParser[] groupParsers, AkyuiXdImportTrigger[] triggers)
             {
                 var resources = xdArtboard.Resources;
                 _xdAssetHolder = xdAssetHolder;
@@ -137,7 +140,7 @@ namespace AkyuiUnity.Xd
                 var rootSize = new Vector2(xdResourcesArtboardsJson.Width, xdResourcesArtboardsJson.Height);
                 var rootOffset = rootSize / -2f - new Vector2(xdResourcesArtboardsJson.X, xdResourcesArtboardsJson.Y);
                 var xdObjectJsons = xdArtboard.Artboard.Children.SelectMany(x => x.Artboard.Children).ToArray();
-                var convertedXdObjectJsons = ConvertRefObject(xdObjectJsons);
+                var convertedXdObjectJsons = ConvertRefObject(xdObjectJsons, triggers);
                 CalcPosition(convertedXdObjectJsons, rootOffset, Vector2.zero);
                 var children = Render(convertedXdObjectJsons);
                 var root = new ObjectElement(
@@ -185,44 +188,54 @@ namespace AkyuiUnity.Xd
                 }
             }
 
-            private XdObjectJson ConvertRefObject(XdObjectJson xdObject)
+            private XdObjectJson ConvertRefObject(XdObjectJson xdObject, AkyuiXdImportTrigger[] triggers)
             {
-                var newXdObjectJson = GetRefObject(xdObject);
+                var newXdObjectJson = GetRefObject(xdObject, triggers);
 
-                if (newXdObjectJson.Group != null)
+                if (newXdObjectJson?.Group != null)
                 {
-                    newXdObjectJson.Group = new XdObjectGroupJson { Children = ConvertRefObject(newXdObjectJson.Group.Children) };
+                    newXdObjectJson.Group = new XdObjectGroupJson { Children = ConvertRefObject(newXdObjectJson.Group.Children, triggers) };
                 }
 
                 return newXdObjectJson;
             }
 
-            private XdObjectJson[] ConvertRefObject(XdObjectJson[] xdObject)
+            private XdObjectJson[] ConvertRefObject(XdObjectJson[] xdObject, AkyuiXdImportTrigger[] triggers)
             {
                 var a = new List<XdObjectJson>();
                 foreach (var x in xdObject)
                 {
-                    a.Add(ConvertRefObject(x));
+                    var tmp = ConvertRefObject(x, triggers);
+                    if (tmp != null) a.Add(tmp);
                 }
                 return a.ToArray();
             }
 
-            private XdObjectJson GetRefObject(XdObjectJson xdObject)
+            private XdObjectJson GetRefObject(XdObjectJson xdObject, AkyuiXdImportTrigger[] triggers)
             {
-                if (xdObject.Type != "syncRef") return xdObject;
+                var newXdObjectJson = xdObject;
 
-                var newXdObjectJson = new XdObjectJson();
-                var source = _sourceGuidToObject[xdObject.SyncSourceGuid];
-                var propertyInfos = typeof(XdObjectJson).GetProperties();
-                foreach (var propertyInfo in propertyInfos)
+                if (xdObject.Type == "syncRef")
                 {
-                    var value = propertyInfo.GetValue(xdObject);
-                    if (value == null) value = propertyInfo.GetValue(source);
+                    newXdObjectJson = new XdObjectJson();
+                    var source = _sourceGuidToObject[xdObject.SyncSourceGuid];
+                    var propertyInfos = typeof(XdObjectJson).GetProperties();
+                    foreach (var propertyInfo in propertyInfos)
+                    {
+                        var value = propertyInfo.GetValue(xdObject);
+                        if (value == null) value = propertyInfo.GetValue(source);
 
-                    propertyInfo.SetValue(newXdObjectJson, value);
+                        propertyInfo.SetValue(newXdObjectJson, value);
+                    }
+                    newXdObjectJson.Name = source.Name;
+                    newXdObjectJson.Type = source.Type;
                 }
-                newXdObjectJson.Name = source.Name;
-                newXdObjectJson.Type = source.Type;
+
+                foreach (var trigger in triggers)
+                {
+                    newXdObjectJson = trigger.OnCreateXdObject(newXdObjectJson);
+                    if (newXdObjectJson == null) break;
+                }
 
                 return newXdObjectJson;
             }

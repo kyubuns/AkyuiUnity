@@ -12,6 +12,9 @@ namespace AkyuiUnity.Xd
         public AkyuiXdGroupParser[] GroupParsers => groupParsers;
         [SerializeField] private AkyuiXdGroupParser[] groupParsers = default;
 
+        public AkyuiXdImportTrigger[] XdTriggers => xdTriggers;
+        [SerializeField] private AkyuiXdImportTrigger[] xdTriggers = default;
+
         public string AkyuiOutputPath => akyuiOutputPath;
         [SerializeField] private string akyuiOutputPath = "";
     }
