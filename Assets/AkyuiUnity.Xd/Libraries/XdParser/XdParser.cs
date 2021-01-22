@@ -187,6 +187,15 @@ namespace XdParser.Internal
 
         [JsonProperty("align")]
         public string Align { get; set; }
+
+        [JsonProperty("cap")]
+        public string Cap { get; set; }
+
+        [JsonProperty("join")]
+        public string Join { get; set; }
+
+        [JsonProperty("dash")]
+        public float[] Dash { get; set; }
     }
 
     public class XdStyleFontJson
@@ -583,6 +592,18 @@ namespace XdParser.Internal
 
         [JsonProperty("markedForExport")]
         public bool MarkedForExport { get; set; }
+
+        [JsonProperty("clipPathResources")]
+        public XdClipPathResourcesJson ClipPathResources { get; set; }
+    }
+
+    public class XdClipPathResourcesJson
+    {
+        [JsonProperty("type")]
+        public string Type { get; set; }
+
+        [JsonProperty("children")]
+        public XdObjectJson[] Children { get; set; }
     }
 
     public class XdRepeatGridJson
