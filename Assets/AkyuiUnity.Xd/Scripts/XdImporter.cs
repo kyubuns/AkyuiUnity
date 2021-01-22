@@ -93,6 +93,7 @@ namespace AkyuiUnity.Xd
             new ButtonGroupParser(),
             new RepeatGridGroupParser(),
             new ScrollGroupParser(),
+            new SvgGroupParser(),
         };
 
         public XdAkyuiLoader(XdFile xdFile, XdArtboard xdArtboard, AkyuiXdObjectParser[] objectParsers, AkyuiXdGroupParser[] groupParsers, AkyuiXdImportTrigger[] triggers)

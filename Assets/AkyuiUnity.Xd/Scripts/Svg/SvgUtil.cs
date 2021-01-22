@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using XdParser.Internal;
 
@@ -9,7 +10,14 @@ namespace AkyuiUnity.Xd
     {
         public static readonly string[] Types = { "path", "rect", "ellipse", "line" };
 
-        public static string CreateSvg(XdObjectJson xdObject)
+        public static string CreateSvg(XdObjectJson[] xdObjects)
+        {
+            var body = string.Join("", xdObjects.Select(CreateSvgLine));
+            var svg = $@"<svg>{body}</svg>";
+            return svg;
+        }
+
+        private static string CreateSvgLine(XdObjectJson xdObject)
         {
             var svgArgs = new List<string>();
             var shape = xdObject.Shape;
@@ -60,7 +68,8 @@ namespace AkyuiUnity.Xd
             }
 
             if (body == null) throw new NotSupportedException($"Unknown type {shape.Type}");
-            return $@"<svg><{body} {string.Join(" ", svgArgs)} /></svg>";
+
+            return $"<{body} {string.Join(" ", svgArgs)} />";
         }
     }
 }

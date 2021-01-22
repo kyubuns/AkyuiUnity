@@ -28,7 +28,7 @@ namespace AkyuiUnity.Xd
             }
             else if (SvgUtil.Types.Contains(shapeType))
             {
-                var svg = SvgUtil.CreateSvg(xdObject);
+                var svg = SvgUtil.CreateSvg(new[] { xdObject });
                 using (var reader = new StringReader(svg))
                 {
                     var sceneInfo = SVGParser.ImportSVG(reader, ViewportOptions.DontPreserve);
@@ -96,7 +96,7 @@ namespace AkyuiUnity.Xd
             else if (SvgUtil.Types.Contains(shapeType))
             {
                 spriteUid = $"{xdObject.GetSimpleName()}_{xdObject.Id.Substring(0, 8)}.svg";
-                var svg = SvgUtil.CreateSvg(xdObject);
+                var svg = SvgUtil.CreateSvg(new[] { xdObject });
                 var userData = new SvgImportTrigger.SvgImportUserData { Width = Mathf.RoundToInt(size.x), Height = Mathf.RoundToInt(size.y) };
                 assets.Add(new SpriteAsset(spriteUid, FastHash.CalculateHash(svg), JsonConvert.SerializeObject(userData)));
                 components.Add(new ImageComponent(
