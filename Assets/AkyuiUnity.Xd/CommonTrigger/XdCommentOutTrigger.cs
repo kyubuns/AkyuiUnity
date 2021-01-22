@@ -11,7 +11,6 @@ namespace AkyuiUnity.Xd.CommonTrigger
         public override XdObjectJson OnCreateXdObject(XdObjectJson xdObject)
         {
             var xdObjectName = xdObject?.Name ?? "";
-            Debug.Log($"Trigger! {xdObjectName}");
             if (xdObjectName.StartsWith(startsWith)) return null;
 
             return xdObject;
