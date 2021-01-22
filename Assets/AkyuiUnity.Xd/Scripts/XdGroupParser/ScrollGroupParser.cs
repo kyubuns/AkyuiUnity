@@ -31,7 +31,7 @@ namespace AkyuiUnity.Xd
             }
         }
 
-        public IComponent[] Render(XdObjectJson xdObject, ref XdObjectJson[] children, XdAssetHolder assetHolder, ISizeGetter sizeGetter)
+        public (IComponent[], IAsset[]) Render(XdObjectJson xdObject, ref XdObjectJson[] children, XdAssetHolder assetHolder, ISizeGetter sizeGetter)
         {
             var spacing = 0f;
             var scrollingType = xdObject?.Meta?.Ux?.ScrollingType;
@@ -45,10 +45,10 @@ namespace AkyuiUnity.Xd
                 (children, spacing) = ExpandRepeatGridGroup(xdObject, repeatGrid, scrollingType, sizeGetter, ref specialSpacings);
             }
 
-            return new IComponent[]
+            return (new IComponent[]
             {
                 new VerticalListComponent(0, spacing, paddingTop, paddingBottom, specialSpacings.ToArray()),
-            };
+            }, new IAsset[] { });
         }
 
         private static (float Top, float Bottom) CalcPadding(XdObjectJson xdObject, XdObjectJson[] children, ISizeGetter sizeGetter)

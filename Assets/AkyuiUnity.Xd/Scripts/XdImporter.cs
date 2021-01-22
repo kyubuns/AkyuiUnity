@@ -387,7 +387,14 @@ namespace AkyuiUnity.Xd
                     foreach (var parser in _groupParsers)
                     {
                         if (!parser.Is(xdObject)) continue;
-                        components.AddRange(parser.Render(xdObject, ref children, _xdAssetHolder, _sizeHolder));
+                        var (c, assets) = parser.Render(xdObject, ref children, _xdAssetHolder, _sizeHolder);
+                        components.AddRange(c);
+
+                        foreach (var asset in assets)
+                        {
+                            if (Assets.Any(x => x.FileName == asset.FileName)) continue;
+                            Assets.Add(asset);
+                        }
                     }
 
                     var generatedChildren = new IElement[] { };
