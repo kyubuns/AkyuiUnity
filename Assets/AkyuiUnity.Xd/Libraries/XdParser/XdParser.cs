@@ -441,7 +441,10 @@ namespace XdParser.Internal
         public string SyncSourceGuid { get; set; }
 
         [JsonProperty("visible")]
-        public bool? Visible { get; set; }
+        public bool Visible { get; set; } = true;
+
+        [JsonProperty("markedForExport")]
+        public bool MarkedForExport { get; set; }
     }
 
     public class XdArtboardJson

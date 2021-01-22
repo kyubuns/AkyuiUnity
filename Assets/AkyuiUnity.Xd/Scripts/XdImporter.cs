@@ -364,7 +364,7 @@ namespace AkyuiUnity.Xd
                         size,
                         anchorX,
                         anchorY,
-                        xdObject.Visible ?? true,
+                        xdObject.Visible,
                         components,
                         children.Select(x => x.Eid).ToArray()
                     );
@@ -400,7 +400,7 @@ namespace AkyuiUnity.Xd
                         size,
                         anchorX,
                         anchorY,
-                        xdObject.Visible ?? true,
+                        xdObject.Visible,
                         components.ToArray(),
                         generatedChildren.Select(x => x.Eid).ToArray()
                     );
