@@ -12,7 +12,7 @@ namespace AkyuiUnity.CommonTrigger
     {
         [SerializeField] private string spriteAtlasOutputPath = "Assets/{name}SpriteAtlas";
 
-        public override void OnPostprocessAllAssets(string outputDirectoryPath)
+        public override void OnPostprocessAllAssets(string outputDirectoryPath, Object[] importAssets)
         {
             var tmpPath = outputDirectoryPath.TrimEnd('/');
             var fileName = Path.GetFileName(tmpPath);

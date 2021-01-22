@@ -114,9 +114,10 @@ namespace AkyuiUnity.Editor
                 assets.Add(AssetDatabase.LoadAssetAtPath<Object>(savePath));
             }
 
-            foreach (var trigger in settings.Triggers) trigger.OnPostprocessAllAssets(pathGetter.AssetOutputDirectoryPath);
+            var importAssets = assets.ToArray();
+            foreach (var trigger in settings.Triggers) trigger.OnPostprocessAllAssets(pathGetter.AssetOutputDirectoryPath, importAssets);
 
-            return assets.ToArray();
+            return importAssets;
         }
 
         private static void ImportAsset(IAsset asset, string savePath, string saveFullPath, byte[] bytes, IAkyuiImportSettings importSettings)

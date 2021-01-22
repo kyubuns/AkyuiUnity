@@ -10,7 +10,7 @@ namespace AkyuiUnity.Editor.ScriptableObject
         void OnPreprocessAsset(ref byte[] bytes, ref IAsset asset);
         void OnUnityPreprocessAsset(AssetImporter assetImporter, IAsset asset);
         void OnPostprocessPrefab(ref GameObject prefab, ref GameObjectWithId[] meta);
-        void OnPostprocessAllAssets(string outputDirectoryPath);
+        void OnPostprocessAllAssets(string outputDirectoryPath, Object[] importAssets);
     }
 
     public abstract class AkyuiImportTrigger : UnityEngine.ScriptableObject, IAkyuiImportTrigger
@@ -27,7 +27,7 @@ namespace AkyuiUnity.Editor.ScriptableObject
         {
         }
 
-        public virtual void OnPostprocessAllAssets(string outputDirectoryPath)
+        public virtual void OnPostprocessAllAssets(string outputDirectoryPath, Object[] importAssets)
         {
         }
 
