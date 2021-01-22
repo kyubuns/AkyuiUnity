@@ -23,7 +23,9 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 926bf0136d8a1412d958f5924c81c093, type: 2}
   - {fileID: 11400000, guid: 06a86c8ec3532442b936abd544012a30, type: 2}
   - {fileID: 11400000, guid: 4e9af532bee9945eba20b738c71b314d, type: 2}
-  akyuiOutputPath: DumpAkyui/
   objectParsers:
   - {fileID: 11400000, guid: d62fb04b11a7b412b834e0b33fda755a, type: 2}
   groupParsers: []
+  xdTriggers:
+  - {fileID: 11400000, guid: 5ebfc96f2d6264e85aac0be81238bbc5, type: 2}
+  akyuiOutputPath: DumpAkyui/
