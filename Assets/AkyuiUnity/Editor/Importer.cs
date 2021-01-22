@@ -34,6 +34,7 @@ namespace AkyuiUnity.Editor
                 Debug.Log($"Import Finish: {loader.LayoutInfo.Name}");
             }
 
+            AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
         }
 
