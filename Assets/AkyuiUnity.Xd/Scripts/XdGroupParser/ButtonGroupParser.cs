@@ -15,7 +15,7 @@ namespace AkyuiUnity.Xd
             return rect;
         }
 
-        public IComponent[] Render(XdObjectJson xdObject, ref XdObjectJson[] children, ISizeGetter sizeGetter)
+        public IComponent[] Render(XdObjectJson xdObject, ref XdObjectJson[] children, XdAssetHolder assetHolder, ISizeGetter sizeGetter)
         {
             return new IComponent[]
             {
