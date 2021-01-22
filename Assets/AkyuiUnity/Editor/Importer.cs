@@ -134,22 +134,19 @@ namespace AkyuiUnity.Editor
     {
         public static string ProcessingFile { get; set; }
         public static IAsset Asset { get; set; }
-        public static AkyuiImportTrigger[] Triggers { get; set; }
+        public static IAkyuiImportTrigger[] Triggers { get; set; }
 
         public void OnPreprocessAsset()
         {
             if (ProcessingFile != assetPath) return;
 
+            if (assetImporter is TextureImporter textureImporter)
+            {
+                textureImporter.textureType = TextureImporterType.Sprite;
+            }
+
             assetImporter.userData = Asset.Hash.ToString();
             foreach (var trigger in Triggers) trigger.OnUnityPreprocessAsset(assetImporter, Asset);
-        }
-
-        public void OnPreprocessTexture()
-        {
-            if (ProcessingFile != assetPath) return;
-
-            var textureImporter = (TextureImporter) assetImporter;
-            textureImporter.textureType = TextureImporterType.Sprite;
         }
     }
 

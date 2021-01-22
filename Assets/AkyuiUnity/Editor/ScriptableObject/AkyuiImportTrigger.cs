@@ -5,7 +5,15 @@ using UnityEngine;
 
 namespace AkyuiUnity.Editor.ScriptableObject
 {
-    public abstract class AkyuiImportTrigger : UnityEngine.ScriptableObject, IAkyuiGenerateTrigger
+    public interface IAkyuiImportTrigger : IAkyuiGenerateTrigger
+    {
+        void OnPreprocessAsset(ref byte[] bytes, ref IAsset asset);
+        void OnUnityPreprocessAsset(AssetImporter assetImporter, IAsset asset);
+        void OnPostprocessPrefab(ref GameObject prefab, ref GameObjectWithId[] meta);
+        void OnPostprocessAllAssets(string outputDirectoryPath);
+    }
+
+    public abstract class AkyuiImportTrigger : UnityEngine.ScriptableObject, IAkyuiImportTrigger
     {
         public virtual void OnPreprocessAsset(ref byte[] bytes, ref IAsset asset)
         {

@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Linq;
+using UnityEngine;
 
 namespace AkyuiUnity.Editor.ScriptableObject
 {
@@ -20,7 +21,7 @@ namespace AkyuiUnity.Editor.ScriptableObject
         public bool CheckAssetHash => checkAssetHash;
         [SerializeField] private bool checkAssetHash = true;
 
-        public AkyuiImportTrigger[] Triggers => triggers;
+        public IAkyuiImportTrigger[] Triggers => triggers.Cast<IAkyuiImportTrigger>().ToArray();
         [SerializeField] private AkyuiImportTrigger[] triggers = default;
     }
 
@@ -31,6 +32,6 @@ namespace AkyuiUnity.Editor.ScriptableObject
         string MetaOutputPath { get; }
         string FontDirectoryPath { get; }
         bool CheckAssetHash { get; }
-        AkyuiImportTrigger[] Triggers { get; }
+        IAkyuiImportTrigger[] Triggers { get; }
     }
 }
