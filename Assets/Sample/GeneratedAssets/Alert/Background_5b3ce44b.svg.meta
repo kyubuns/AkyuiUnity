@@ -4,7 +4,7 @@ ScriptedImporter:
   internalIDToNameTable: []
   externalObjects: {}
   serializedVersion: 2
-  userData: 1386953645
+  userData: 823901355
   assetBundleName: 
   assetBundleVariant: 
   script: {fileID: 11500000, guid: a57477913897c46af95d590f580878bd, type: 3}
@@ -29,8 +29,8 @@ ScriptedImporter:
   maxTangentAngle: 5
   keepTextureAspectRatio: 0
   textureSize: 256
-  textureWidth: 298
-  textureHeight: 414
+  textureWidth: 375
+  textureHeight: 812
   wrapMode: 0
   filterMode: 1
   sampleCount: 4
@@ -50,6 +50,6 @@ ScriptedImporter:
         y: 0
         width: 0
         height: 0
-      spriteID: 3758801115e8e46fba3442bbc3486b61
+      spriteID: 38419f606d1f04cbb85adcf1284c2604
       internalID: 0
     PhysicsOutlines: []
