@@ -12,7 +12,8 @@ namespace XdParser
         public static string CreateSvg(XdObjectJson xdObject)
         {
             var defs = new List<IDefElement>();
-            var body = CreateSvgLine(xdObject, false, defs);
+            var body = CreateSvgLine(xdObject, defs);
+            body.Parameter.Transform = new Transform(); // 一番上のTransformは要らない
 
             var root = new RootElement
             {
@@ -22,7 +23,7 @@ namespace XdParser
             return root.ToSvg();
         }
 
-        private static IElement CreateSvgLine(XdObjectJson xdObject, bool withTransform, List<IDefElement> defs)
+        private static IElement CreateSvgLine(XdObjectJson xdObject, List<IDefElement> defs)
         {
             var id = xdObject.Name.Replace(" ", "_");
             var dataName = xdObject.Name;
@@ -35,11 +36,8 @@ namespace XdParser
 
             var tx = xdObject.Transform?.Tx ?? 0f;
             var ty = xdObject.Transform?.Ty ?? 0f;
-            if (withTransform)
-            {
-                parameter.Transform.X = tx;
-                parameter.Transform.Y = ty;
-            }
+            parameter.Transform.X = tx;
+            parameter.Transform.Y = ty;
 
             if (xdObject.Group != null)
             {
@@ -66,7 +64,7 @@ namespace XdParser
                     defs.Add(new ClipPathDefElement { Id = "clip-path", Path = clipPathPath });
                 }
 
-                var children = xdObject.Group.Children.Select(x => CreateSvgLine(x, true, defs)).ToArray();
+                var children = xdObject.Group.Children.Select(x => CreateSvgLine(x, defs)).ToArray();
                 return new GroupElement { Parameter = parameter, Children = children };
             }
 
