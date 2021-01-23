@@ -71,7 +71,7 @@ namespace AkyuiUnity.Xd
         {
             get
             {
-                return new IAkyuiImportTrigger[] { new SvgImportTrigger() }.Concat(_settings.Triggers).ToArray();
+                return new IAkyuiImportTrigger[] { new SvgImportTrigger(_settings.SvgSaveScale) }.Concat(_settings.Triggers).ToArray();
             }
         }
     }

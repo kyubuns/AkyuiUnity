@@ -28,4 +28,5 @@ MonoBehaviour:
   groupParsers: []
   xdTriggers:
   - {fileID: 11400000, guid: 5ebfc96f2d6264e85aac0be81238bbc5, type: 2}
+  svgSaveScale: 3
   akyuiOutputPath: DumpAkyui/

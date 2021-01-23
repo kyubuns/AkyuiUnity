@@ -10,6 +10,13 @@ namespace AkyuiUnity.Xd
 {
     public class SvgImportTrigger : IAkyuiImportTrigger
     {
+        private readonly float _saveScale;
+
+        public SvgImportTrigger(float saveScale)
+        {
+            _saveScale = saveScale;
+        }
+
         public void OnUnityPreprocessAsset(AssetImporter assetImporter, IAsset asset)
         {
             if (!(assetImporter is SVGImporter svgImporter)) return;
@@ -17,8 +24,8 @@ namespace AkyuiUnity.Xd
             var userData = JsonConvert.DeserializeObject<SvgImportUserData>(PostProcessImportAsset.Asset.UserData ?? string.Empty);
             svgImporter.SvgType = SVGType.TexturedSprite;
             svgImporter.KeepTextureAspectRatio = false;
-            svgImporter.TextureWidth = userData.Width;
-            svgImporter.TextureHeight = userData.Height;
+            svgImporter.TextureWidth = Mathf.RoundToInt(userData.Width * _saveScale);
+            svgImporter.TextureHeight = Mathf.RoundToInt(userData.Height * _saveScale);
         }
 
         public class SvgImportUserData

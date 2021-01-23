@@ -15,6 +15,9 @@ namespace AkyuiUnity.Xd
         public AkyuiXdImportTrigger[] XdTriggers => xdTriggers;
         [SerializeField] private AkyuiXdImportTrigger[] xdTriggers = default;
 
+        public float SvgSaveScale => svgSaveScale;
+        [SerializeField] private float svgSaveScale = 1.0f;
+
         public string AkyuiOutputPath => akyuiOutputPath;
         [SerializeField] private string akyuiOutputPath = "";
     }
