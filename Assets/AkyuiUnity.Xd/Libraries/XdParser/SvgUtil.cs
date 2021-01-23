@@ -100,6 +100,8 @@ namespace XdParser
 
                 if (stroke.Align == null)
                 {
+                    parameter.Transform.X += stroke.Width / 2f;
+                    parameter.Transform.Y += stroke.Width / 2f;
                 }
                 else if (stroke.Align == "outside")
                 {
@@ -210,7 +212,7 @@ namespace XdParser
             private string StrokeWidthToSvg()
             {
                 if (StrokeWidth == null) return null;
-                return $@"stroke-width=""{StrokeWidth.Value:0.000}""";
+                return $@"stroke-width=""{StrokeWidth.Value:0.###}""";
             }
 
             private string StrokeLinejoinToSvg()
@@ -228,7 +230,7 @@ namespace XdParser
             private string StrokeDasharrayToSvg()
             {
                 if (StrokeDasharray == null) return null;
-                return $@"stroke-dasharray=""{StrokeDasharray[0]:0.000} {StrokeDasharray[1]:0.000}""";
+                return $@"stroke-dasharray=""{StrokeDasharray[0]:0.###} {StrokeDasharray[1]:0.###}""";
             }
         }
 
@@ -240,7 +242,7 @@ namespace XdParser
             public string ToSvg()
             {
                 if (Math.Abs(X) < 0.0001f && Math.Abs(Y) < 0.0001f) return null;
-                return $@"transform=""translate({X:0.000} {Y:0.000})""";
+                return $@"transform=""translate({X:0.###} {Y:0.###})""";
             }
         }
 
@@ -311,7 +313,7 @@ namespace XdParser
 
             public string ToSvg()
             {
-                return $@"<rect width=""{Width:0.000}"" height=""{Height:0.000}"" {Parameter.GetString()} />";
+                return $@"<rect width=""{Width:0.###}"" height=""{Height:0.###}"" {Parameter.GetString()} />";
             }
         }
 
@@ -326,7 +328,7 @@ namespace XdParser
 
             public string ToSvg()
             {
-                return $@"<ellipse cx=""{Cx:0.000}"" cy=""{Cy:0.000}"" rx=""{Rx:0.000}"" ry=""{Ry:0.000}"" {Parameter.GetString()} />";
+                return $@"<ellipse cx=""{Cx:0.###}"" cy=""{Cy:0.###}"" rx=""{Rx:0.###}"" ry=""{Ry:0.###}"" {Parameter.GetString()} />";
             }
         }
 
@@ -341,7 +343,7 @@ namespace XdParser
 
             public string ToSvg()
             {
-                return $@"<line x1=""{X1:0.000}"" y1=""{Y1:0.000}"" x2=""{X2:0.000}"" y2=""{Y2:0.000}"" {Parameter.GetString()} />";
+                return $@"<line x1=""{X1:0.###}"" y1=""{Y1:0.###}"" x2=""{X2:0.###}"" y2=""{Y2:0.###}"" {Parameter.GetString()} />";
             }
         }
     }
