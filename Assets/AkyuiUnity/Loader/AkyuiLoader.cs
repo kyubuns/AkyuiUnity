@@ -214,6 +214,14 @@ namespace AkyuiUnity.Loader
                 );
             }
 
+            if (componentType == AlphaComponent.TypeString)
+            {
+                return new AlphaComponent(
+                    componentJson["cid"].JsonInt(),
+                    componentJson.ContainsKey("alpha") ? componentJson["alpha"].JsonFloat() : (float?) null
+                );
+            }
+
             if (componentType == TextComponent.TypeString)
             {
                 TextComponent.TextAlign? align = null;

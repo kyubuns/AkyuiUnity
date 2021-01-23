@@ -169,6 +169,11 @@ namespace AkyuiUnity.Loader
                 if (imageComponent.Sprite != null) dict["sprite"] = ToSerializable(imageComponent.Sprite);
                 if (imageComponent.Color != null) dict["color"] = ToSerializable(imageComponent.Color.Value);
             }
+            else if (source is AlphaComponent alphaComponent)
+            {
+                dict["type"] = AlphaComponent.TypeString;
+                if (alphaComponent.Alpha != null) dict["alpha"] = ToSerializable(alphaComponent.Alpha.Value);
+            }
             else if (source is TextComponent textComponent)
             {
                 dict["type"] = TextComponent.TypeString;

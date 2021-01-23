@@ -94,6 +94,7 @@ namespace AkyuiUnity.Xd
             new RepeatGridGroupParser(),
             new ScrollGroupParser(),
             new SvgGroupParser(),
+            new AlphaGroupParser(), // SvgGroupParserより後
         };
 
         public XdAkyuiLoader(XdFile xdFile, XdArtboard xdArtboard, AkyuiXdObjectParser[] objectParsers, AkyuiXdGroupParser[] groupParsers, AkyuiXdImportTrigger[] triggers)
@@ -407,6 +408,7 @@ namespace AkyuiUnity.Xd
                             if (Assets.Any(x => x.FileName == asset.FileName)) continue;
                             Assets.Add(asset);
                         }
+                        break;
                     }
 
                     var generatedChildren = new IElement[] { };

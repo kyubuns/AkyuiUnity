@@ -174,6 +174,20 @@ namespace AkyuiUnity
         }
     }
 
+    public class AlphaComponent : IComponent
+    {
+        public const string TypeString = "alpha";
+
+        public int Cid { get; }
+        [CanBeNull] public readonly float? Alpha;
+
+        public AlphaComponent(int cid, float? alpha)
+        {
+            Cid = cid;
+            Alpha = alpha;
+        }
+    }
+
     public class TextComponent : IComponent
     {
         public const string TypeString = "text";

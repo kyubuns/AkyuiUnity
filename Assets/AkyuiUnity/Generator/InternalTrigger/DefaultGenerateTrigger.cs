@@ -79,6 +79,18 @@ namespace AkyuiUnity.Generator.InternalTrigger
                 return text;
             }
 
+            if (component is AlphaComponent alphaComponent)
+            {
+                var canvasGroup = componentGetter.GetComponent<CanvasGroup>();
+
+                if (alphaComponent.Alpha != null)
+                {
+                    canvasGroup.alpha = alphaComponent.Alpha.Value;
+                }
+
+                return canvasGroup;
+            }
+
             if (component is ButtonComponent)
             {
                 var button = componentGetter.GetComponent<Button>();
