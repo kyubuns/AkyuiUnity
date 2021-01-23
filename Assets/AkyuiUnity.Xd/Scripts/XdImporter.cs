@@ -276,7 +276,18 @@ namespace AkyuiUnity.Xd
             private IElement[] Render(XdObjectJson[] xdObjects)
             {
                 var children = new List<IElement>();
-                foreach (var xdObject in xdObjects) children.AddRange(Render(xdObject));
+                foreach (var xdObject in xdObjects)
+                {
+                    try
+                    {
+                        children.AddRange(Render(xdObject));
+                    }
+                    catch (Exception)
+                    {
+                        Debug.LogError($"Cause exception in {xdObject.Name}(id: {xdObject.Id}, guid: {xdObject.Guid})");
+                        throw;
+                    }
+                }
                 return children.ToArray();
             }
 
