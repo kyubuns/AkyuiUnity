@@ -24,7 +24,9 @@ namespace AkyuiUnity.Xd
 
         private static string CreateSvgLine(XdObjectJson xdObject, bool withTransform, List<string> defs)
         {
-            var transform = $@"transform=""translate({xdObject.Transform.Tx:0.000} {xdObject.Transform.Ty:0.000})""";
+            var tx = xdObject.Transform?.Tx ?? 0f;
+            var ty = xdObject.Transform?.Ty ?? 0f;
+            var transform = $@"transform=""translate({tx:0.000} {ty:0.000})""";
             var id = xdObject.Name.Replace(" ", "_");
             var dataName = xdObject.Name;
             var data = $@"id=""{id}"" data-name=""{dataName}""";
