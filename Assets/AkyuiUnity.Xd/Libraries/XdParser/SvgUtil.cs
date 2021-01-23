@@ -85,6 +85,13 @@ namespace XdParser
                 parameter.FillRule = shape.Winding;
             }
 
+            if (shape.R != null)
+            {
+                parameter.Rx = shape.R[0];
+                if (parameter.Rx > shape.Width / 2f) parameter.Rx = shape.Width / 2f;
+                if (parameter.Rx > shape.Height / 2f) parameter.Rx = shape.Height / 2f;
+            }
+
             var stroke = xdObject.Style?.Stroke;
             if (stroke != null && stroke.Type != "none")
             {
@@ -107,22 +114,18 @@ namespace XdParser
                     parameter.StrokeDasharray = stroke.Dash;
                 }
 
-                var rx = (float?) null;
-                if (shape.R != null)
-                {
-                    rx = shape.R[0];
-                }
-
                 if (stroke.Align == null)
                 {
                     parameter.Transform.X += parameter.StrokeWidth.Value / 2f;
                     parameter.Transform.Y += parameter.StrokeWidth.Value / 2f;
-                    parameter.Rx = rx;
                 }
                 else if (stroke.Align == "outside")
                 {
                     parameter.Transform.X += parameter.StrokeWidth.Value;
                     parameter.Transform.Y += parameter.StrokeWidth.Value;
+
+                    var rx = parameter.Rx;
+                    parameter.Rx = null;
                     return new GroupElement
                     {
                         Parameter = parameter, Children = new IElement[]
@@ -154,6 +157,8 @@ namespace XdParser
                 }
                 else if (stroke.Align == "inside")
                 {
+                    var rx = parameter.Rx;
+                    parameter.Rx = null;
                     return new GroupElement
                     {
                         Parameter = parameter, Children = new IElement[]
