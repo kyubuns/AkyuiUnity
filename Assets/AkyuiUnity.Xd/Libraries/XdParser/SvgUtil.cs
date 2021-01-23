@@ -71,15 +71,22 @@ namespace XdParser
             }
 
             var fill = xdObject.Style?.Fill;
+            parameter.EnableFill = true;
             if (fill != null && fill.Type != "none")
             {
                 var color = xdObject.GetFillColor();
                 parameter.Fill = color;
             }
 
+            if (!string.IsNullOrWhiteSpace(shape.Winding))
+            {
+                parameter.FillRule = shape.Winding;
+            }
+
             var stroke = xdObject.Style?.Stroke;
             if (stroke != null && stroke.Type != "none")
             {
+                parameter.EnableStroke = true;
                 parameter.Stroke = stroke.Color.Value;
                 parameter.StrokeWidth = stroke.Width;
 
@@ -100,16 +107,68 @@ namespace XdParser
 
                 if (stroke.Align == null)
                 {
-                    parameter.Transform.X += stroke.Width / 2f;
-                    parameter.Transform.Y += stroke.Width / 2f;
+                    parameter.Transform.X += parameter.StrokeWidth.Value / 2f;
+                    parameter.Transform.Y += parameter.StrokeWidth.Value / 2f;
                 }
                 else if (stroke.Align == "outside")
                 {
-
+                    parameter.Transform.X += parameter.StrokeWidth.Value;
+                    parameter.Transform.Y += parameter.StrokeWidth.Value;
+                    return new GroupElement
+                    {
+                        Parameter = parameter, Children = new IElement[]
+                        {
+                            new RectElement
+                            {
+                                Parameter = new ElementParameter
+                                {
+                                    EnableStroke = true,
+                                },
+                                Width = shape.Width,
+                                Height = shape.Height,
+                            },
+                            new RectElement
+                            {
+                                Parameter = new ElementParameter
+                                {
+                                    X = -parameter.StrokeWidth.Value / 2f,
+                                    Y = -parameter.StrokeWidth.Value / 2f,
+                                    EnableFill = true,
+                                },
+                                Width = shape.Width + parameter.StrokeWidth.Value,
+                                Height = shape.Height + parameter.StrokeWidth.Value,
+                            },
+                        }
+                    };
                 }
                 else if (stroke.Align == "inside")
                 {
-
+                    return new GroupElement
+                    {
+                        Parameter = parameter, Children = new IElement[]
+                        {
+                            new RectElement
+                            {
+                                Parameter = new ElementParameter
+                                {
+                                    EnableStroke = true,
+                                },
+                                Width = shape.Width,
+                                Height = shape.Height,
+                            },
+                            new RectElement
+                            {
+                                Parameter = new ElementParameter
+                                {
+                                    X = parameter.StrokeWidth.Value / 2f,
+                                    Y = parameter.StrokeWidth.Value / 2f,
+                                    EnableFill = true,
+                                },
+                                Width = shape.Width - parameter.StrokeWidth.Value,
+                                Height = shape.Height - parameter.StrokeWidth.Value,
+                            },
+                        }
+                    };
                 }
                 else
                 {
@@ -120,11 +179,6 @@ namespace XdParser
                 {
                     throw new NotSupportedException($"{xdObject} has unknown stroke type {stroke.Type}");
                 }
-            }
-
-            if (!string.IsNullOrWhiteSpace(shape.Winding))
-            {
-                parameter.FillRule = shape.Winding;
             }
 
             if (shape.Type == "path") return new PathElement { Parameter = parameter, D = shape.Path };
@@ -145,9 +199,13 @@ namespace XdParser
             public string Id { get; set; }
             public string DataName { get; set; }
             public string ClipPath { get; set; }
+            public float? X { get; set; }
+            public float? Y { get; set; }
             public Transform Transform { get; set; } = new Transform();
+            public bool EnableFill { get; set; }
             public XdColorValueJson Fill { get; set; }
             public string FillRule { get; set; }
+            public bool EnableStroke { get; set; }
             public XdColorValueJson Stroke { get; set; }
             public float? StrokeWidth { get; set; }
             public string StrokeLinejoin { get; set; }
@@ -161,6 +219,8 @@ namespace XdParser
                     IdToSvg(),
                     DataNameToSvg(),
                     ClipPathToSvg(),
+                    XToSvg(),
+                    YToSvg(),
                     Transform.ToSvg(),
                     FillToSvg(),
                     FillRuleToSvg(),
@@ -191,44 +251,63 @@ namespace XdParser
                 return $@"clip-path=""{ClipPath}""";
             }
 
+            private string XToSvg()
+            {
+                if (X == null) return null;
+                return $@"x=""{X:0.###}""";
+            }
+
+            private string YToSvg()
+            {
+                if (Y == null) return null;
+                return $@"y=""{Y:0.###}""";
+            }
+
             private string FillToSvg()
             {
+                if (!EnableFill) return null;
                 if (Fill == null) return @"fill=""none""";
                 return $@"fill=""{Fill.ToColorString()}""";
             }
 
             private string FillRuleToSvg()
             {
+                if (!EnableFill) return null;
                 if (string.IsNullOrWhiteSpace(FillRule)) return null;
                 return $@"fill-rule=""{FillRule}""";
             }
 
             private string StrokeToSvg()
             {
-                if (Stroke == null) return null;
+                if (!EnableStroke) return null;
+                if (Stroke == null) return @"stroke=""none""";
                 return $@"stroke=""{Stroke.ToColorString()}""";
             }
 
             private string StrokeWidthToSvg()
             {
+                if (!EnableStroke) return null;
                 if (StrokeWidth == null) return null;
                 return $@"stroke-width=""{StrokeWidth.Value:0.###}""";
             }
 
             private string StrokeLinejoinToSvg()
             {
+                if (!EnableStroke) return null;
                 if (string.IsNullOrWhiteSpace(StrokeLinejoin)) return null;
                 return $@"stroke-linejoin=""{StrokeLinejoin}""";
             }
 
             private string StrokeLinecapToSvg()
             {
+                if (!EnableStroke) return null;
                 if (string.IsNullOrWhiteSpace(StrokeLinecap)) return null;
                 return $@"stroke-linecap=""{StrokeLinecap}""";
             }
 
             private string StrokeDasharrayToSvg()
             {
+                if (!EnableStroke) return null;
                 if (StrokeDasharray == null) return null;
                 return $@"stroke-dasharray=""{StrokeDasharray[0]:0.###} {StrokeDasharray[1]:0.###}""";
             }

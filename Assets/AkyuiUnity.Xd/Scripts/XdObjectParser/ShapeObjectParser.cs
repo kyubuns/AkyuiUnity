@@ -21,9 +21,10 @@ namespace AkyuiUnity.Xd
         {
             var size = new Vector2(xdObject.Shape.Width, xdObject.Shape.Height);
             var scaleBehavior = xdObject.Style?.Fill?.Pattern?.Meta?.Ux?.ScaleBehavior ?? "fill";
+            var spriteUid = xdObject.Style?.Fill?.Pattern?.Meta?.Ux?.Uid;
 
             var shapeType = xdObject.Shape?.Type;
-            if (shapeType == "rect")
+            if (!string.IsNullOrWhiteSpace(spriteUid))
             {
                 // nothing
             }
