@@ -3,6 +3,7 @@ using System.Linq;
 using AkyuiUnity.Xd.Libraries;
 using Newtonsoft.Json;
 using UnityEngine;
+using XdParser;
 using XdParser.Internal;
 
 namespace AkyuiUnity.Xd

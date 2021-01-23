@@ -5,6 +5,7 @@ using AkyuiUnity.Xd.Libraries;
 using Newtonsoft.Json;
 using Unity.VectorGraphics;
 using UnityEngine;
+using XdParser;
 using XdParser.Internal;
 
 namespace AkyuiUnity.Xd
@@ -78,7 +79,7 @@ namespace AkyuiUnity.Xd
             var components = new List<IComponent>();
             var assets = new List<IAsset>();
 
-            var color = xdObject.GetFillColor();
+            var color = xdObject.GetFillUnityColor();
             var spriteUid = xdObject.Style?.Fill?.Pattern?.Meta?.Ux?.Uid;
             var shapeType = xdObject.Shape?.Type;
 

@@ -104,7 +104,7 @@ namespace AkyuiUnity.Xd
 
             var font = xdObject.Style.Font;
             var fontSize = font.Size;
-            var color = xdObject.GetFillColor();
+            var color = xdObject.GetFillUnityColor();
             var rawText = xdObject.Text.RawText;
 
             var textAlign = TextComponent.TextAlign.MiddleLeft;

@@ -1,4 +1,6 @@
 using System.Linq;
+using UnityEngine;
+using XdParser;
 using XdParser.Internal;
 
 namespace AkyuiUnity.Xd
@@ -46,6 +48,14 @@ namespace AkyuiUnity.Xd
                 xdObjectJson.Meta.Ux.ConstraintTop = false;
                 xdObjectJson.Meta.Ux.ConstraintBottom = false;
             }
+        }
+
+        public static Color GetFillUnityColor(this XdObjectJson xdObjectJson)
+        {
+            var colorJson = xdObjectJson.GetFillColor();
+            Color color = new Color32((byte) colorJson.R, (byte) colorJson.G, (byte) colorJson.B, 255);
+            color.a = xdObjectJson.Style?.Opacity ?? 1f;
+            return color;
         }
     }
 }
