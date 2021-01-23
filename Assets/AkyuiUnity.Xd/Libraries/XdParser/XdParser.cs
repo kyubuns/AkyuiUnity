@@ -298,6 +298,9 @@ namespace XdParser.Internal
 
         [JsonProperty("y2")]
         public float Y2 { get; set; }
+
+        [JsonProperty("R")]
+        public float[] R { get; set; }
     }
 
     public class XdTextJson

@@ -103,10 +103,17 @@ namespace XdParser
                     parameter.StrokeDasharray = stroke.Dash;
                 }
 
+                var rx = (float?) null;
+                if (shape.R != null)
+                {
+                    rx = shape.R[0];
+                }
+
                 if (stroke.Align == null)
                 {
                     parameter.Transform.X += parameter.StrokeWidth.Value / 2f;
                     parameter.Transform.Y += parameter.StrokeWidth.Value / 2f;
+                    parameter.Rx = rx;
                 }
                 else if (stroke.Align == "outside")
                 {
@@ -121,6 +128,7 @@ namespace XdParser
                                 Parameter = new ElementParameter
                                 {
                                     EnableStroke = true,
+                                    Rx = rx,
                                 },
                                 Width = shape.Width,
                                 Height = shape.Height,
@@ -132,6 +140,7 @@ namespace XdParser
                                     X = -parameter.StrokeWidth.Value / 2f,
                                     Y = -parameter.StrokeWidth.Value / 2f,
                                     EnableFill = true,
+                                    Rx = rx + parameter.StrokeWidth.Value / 2f,
                                 },
                                 Width = shape.Width + parameter.StrokeWidth.Value,
                                 Height = shape.Height + parameter.StrokeWidth.Value,
@@ -150,6 +159,7 @@ namespace XdParser
                                 Parameter = new ElementParameter
                                 {
                                     EnableStroke = true,
+                                    Rx = rx,
                                 },
                                 Width = shape.Width,
                                 Height = shape.Height,
@@ -161,6 +171,7 @@ namespace XdParser
                                     X = parameter.StrokeWidth.Value / 2f,
                                     Y = parameter.StrokeWidth.Value / 2f,
                                     EnableFill = true,
+                                    Rx = rx - parameter.StrokeWidth.Value / 2f,
                                 },
                                 Width = shape.Width - parameter.StrokeWidth.Value,
                                 Height = shape.Height - parameter.StrokeWidth.Value,
@@ -209,6 +220,7 @@ namespace XdParser
             public string StrokeLinejoin { get; set; }
             public string StrokeLinecap { get; set; }
             public float[] StrokeDasharray { get; set; }
+            public float? Rx { get; set; }
 
             public string GetString()
             {
@@ -226,7 +238,8 @@ namespace XdParser
                     StrokeWidthToSvg(),
                     StrokeLinejoinToSvg(),
                     StrokeLinecapToSvg(),
-                    StrokeDasharrayToSvg()
+                    StrokeDasharrayToSvg(),
+                    RxToSvg(),
                 }.Where(x => !string.IsNullOrWhiteSpace(x));
                 return string.Join(" ", parameters);
             }
@@ -308,6 +321,12 @@ namespace XdParser
                 if (!EnableStroke) return null;
                 if (StrokeDasharray == null) return null;
                 return $@"stroke-dasharray=""{StrokeDasharray[0]:0.###} {StrokeDasharray[1]:0.###}""";
+            }
+
+            private string RxToSvg()
+            {
+                if (Rx == null) return null;
+                return $@"rx=""{Rx:0.###}""";
             }
         }
 
