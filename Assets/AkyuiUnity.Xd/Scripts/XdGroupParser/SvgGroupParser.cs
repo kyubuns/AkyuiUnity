@@ -26,6 +26,7 @@ namespace AkyuiUnity.Xd
             var assets = new List<IAsset>();
 
             var spriteUid = $"{xdObject.GetSimpleName()}_{xdObject.Id.Substring(0, 8)}.svg";
+            var color = xdObject.GetFillUnityColor();
             var svg = SvgUtil.CreateSvg(xdObject);
             if (children.Length > 0) children = new XdObjectJson[] { };
             var size = sizeGetter.Get(xdObject).size;
@@ -34,7 +35,7 @@ namespace AkyuiUnity.Xd
             components.Add(new ImageComponent(
                 0,
                 spriteUid,
-                Color.white
+                new Color(1f, 1f, 1f, color.a)
             ));
 
             assetHolder.Save(spriteUid, System.Text.Encoding.UTF8.GetBytes(svg));

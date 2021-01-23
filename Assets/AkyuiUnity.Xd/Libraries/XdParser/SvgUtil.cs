@@ -13,7 +13,8 @@ namespace XdParser
         {
             var defs = new List<IDefElement>();
             var body = CreateSvgLine(xdObject, defs);
-            body.Parameter.Transform = new Transform(); // 一番上のTransformは要らない
+            body.Parameter.Transform = new Transform();
+            body.Parameter.Opacity = 1.0f;
 
             var root = new RootElement
             {
@@ -38,6 +39,9 @@ namespace XdParser
             var ty = xdObject.Transform?.Ty ?? 0f;
             parameter.Transform.X = tx;
             parameter.Transform.Y = ty;
+
+            var opacity = xdObject.Style?.Opacity;
+            parameter.Opacity = opacity;
 
             if (xdObject.Group != null)
             {
@@ -221,6 +225,7 @@ namespace XdParser
             public string StrokeLinecap { get; set; }
             public float[] StrokeDasharray { get; set; }
             public float? Rx { get; set; }
+            public float? Opacity { get; set; }
 
             public string GetString()
             {
@@ -240,6 +245,7 @@ namespace XdParser
                     StrokeLinecapToSvg(),
                     StrokeDasharrayToSvg(),
                     RxToSvg(),
+                    OpacityToSvg(),
                 }.Where(x => !string.IsNullOrWhiteSpace(x));
                 return string.Join(" ", parameters);
             }
@@ -327,6 +333,13 @@ namespace XdParser
             {
                 if (Rx == null) return null;
                 return $@"rx=""{Rx:0.###}""";
+            }
+
+            private string OpacityToSvg()
+            {
+                if (Opacity == null) return null;
+                if (Math.Abs(Opacity.Value - 1.0f) < 0.0001f) return null;
+                return $@"opacity=""{Opacity:0.###}""";
             }
         }
 

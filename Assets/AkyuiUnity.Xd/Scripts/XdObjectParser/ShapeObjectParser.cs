@@ -104,7 +104,7 @@ namespace AkyuiUnity.Xd
                 components.Add(new ImageComponent(
                     0,
                     spriteUid,
-                    Color.white // svgについてる色をそのまま使う
+                    new Color(1f, 1f, 1f, color.a)
                 ));
 
                 assetHolder.Save(spriteUid, System.Text.Encoding.UTF8.GetBytes(svg));
