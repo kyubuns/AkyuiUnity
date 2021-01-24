@@ -116,14 +116,9 @@ namespace XdParser
 
                 if (stroke.Align == null)
                 {
-                    parameter.Transform.X += parameter.StrokeWidth.Value / 2f;
-                    parameter.Transform.Y += parameter.StrokeWidth.Value / 2f;
                 }
                 else if (stroke.Align == "outside")
                 {
-                    parameter.Transform.X += parameter.StrokeWidth.Value;
-                    parameter.Transform.Y += parameter.StrokeWidth.Value;
-
                     var rx = parameter.Rx;
                     parameter.Rx = null;
                     return new GroupElement
