@@ -1,0 +1,16 @@
+{
+  "name": "dev.kyubuns.akyuiunityxd",
+  "displayName": "AkyuiUnity.Xd",
+  "version": "0.1.0",
+  "unity": "2019.4",
+  "description": "Generate Akyui from XD",
+  "documentationUrl": "https://github.com/kyubuns/AkyuiUnity",
+  "dependencies": {
+  },
+  "author": {
+    "name": "kyubuns",
+    "email": "kyubuns@gmail.com",
+    "url": "https://kyubuns.dev/"
+  },
+  "type": "library"
+}
