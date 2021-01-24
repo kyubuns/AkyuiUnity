@@ -17,7 +17,21 @@ namespace AkyuiUnity.Generator.InternalTrigger
             if (component is HorizontalLayoutComponent horizontalLayoutComponent) return CreateHorizontalLayout(componentGetter, horizontalLayoutComponent);
             if (component is VerticalLayoutComponent verticalLayoutComponent) return CreateVerticalLayout(componentGetter, verticalLayoutComponent);
             if (component is GridLayoutComponent gridLayoutComponent) return CreateGridLayout(componentGetter, children, gridLayoutComponent);
+            if (component is InputFieldComponent) return CreateInputField(gameObject, componentGetter);
             return null;
+        }
+
+        private static Component CreateInputField(GameObject gameObject, TargetComponentGetter componentGetter)
+        {
+            var inputField = componentGetter.GetComponent<InputField>();
+
+            var text = gameObject.GetComponentInDirectChildren<Text>();
+            if (text != null)
+            {
+                inputField.textComponent = text;
+            }
+
+            return inputField;
         }
 
         private static Component CreateGridLayout(TargetComponentGetter componentGetter, GameObject[] children, GridLayoutComponent gridLayoutComponent)

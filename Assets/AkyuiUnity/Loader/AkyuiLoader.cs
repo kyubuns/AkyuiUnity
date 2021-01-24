@@ -214,8 +214,16 @@ namespace AkyuiUnity.Loader
             if (componentType == HorizontalLayoutComponent.TypeString) return ParseHorizontalLayout(componentJson);
             if (componentType == VerticalLayoutComponent.TypeString) return ParseVerticalLayout(componentJson);
             if (componentType == GridLayoutComponent.TypeString) return ParseGridLayout(componentJson);
+            if (componentType == InputFieldComponent.TypeString) return ParseInputField(componentJson);
 
             throw new NotSupportedException($"Component type {componentType} is not supported");
+        }
+
+        private static InputFieldComponent ParseInputField(Dictionary<string, object> componentJson)
+        {
+            return new InputFieldComponent(
+                componentJson["cid"].JsonInt()
+            );
         }
 
         private static GridLayoutComponent ParseGridLayout(Dictionary<string, object> componentJson)

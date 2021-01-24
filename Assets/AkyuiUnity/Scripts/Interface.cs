@@ -344,4 +344,16 @@ namespace AkyuiUnity
         Bottom,
         Stretch
     }
+
+    public class InputFieldComponent : IComponent
+    {
+        public const string TypeString = "inputfield";
+
+        public int Cid { get; }
+
+        public InputFieldComponent(int cid)
+        {
+            Cid = cid;
+        }
+    }
 }

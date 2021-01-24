@@ -230,6 +230,10 @@ namespace AkyuiUnity.Loader
                 if (gridLayoutComponent.SpacingX != null) dict["spacing_x"] = ToSerializable(gridLayoutComponent.SpacingX.Value);
                 if (gridLayoutComponent.SpacingY != null) dict["spacing_y"] = ToSerializable(gridLayoutComponent.SpacingY.Value);
             }
+            else if (source is InputFieldComponent)
+            {
+                dict["type"] = InputFieldComponent.TypeString;
+            }
             else
             {
                 throw new NotSupportedException($"Component type {source} is not supported");
