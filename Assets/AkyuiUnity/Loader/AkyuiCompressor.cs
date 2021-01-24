@@ -188,9 +188,9 @@ namespace AkyuiUnity.Loader
             {
                 dict["type"] = ButtonComponent.TypeString;
             }
-            else if (source is ScrollbarComponent scrollbarComponent)
+            else if (source is VerticalScrollbarComponent scrollbarComponent)
             {
-                dict["type"] = ScrollbarComponent.TypeString;
+                dict["type"] = VerticalScrollbarComponent.TypeString;
                 if (scrollbarComponent.Image != null) dict["image"] = ToSerializable(scrollbarComponent.Image);
             }
             else if (source is VerticalListComponent verticalListComponent)

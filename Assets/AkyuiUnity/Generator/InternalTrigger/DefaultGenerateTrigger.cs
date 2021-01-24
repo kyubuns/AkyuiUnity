@@ -12,7 +12,7 @@ namespace AkyuiUnity.Generator.InternalTrigger
             if (component is TextComponent textComponent) return CreateText(componentGetter, assetLoader, textComponent);
             if (component is AlphaComponent alphaComponent) return CreateAlpha(componentGetter, alphaComponent);
             if (component is ButtonComponent) return CreateButton(gameObject, componentGetter);
-            if (component is ScrollbarComponent scrollbarComponent) return CreateScrollbar(gameObject, scrollbarComponent, componentGetter, assetLoader);
+            if (component is VerticalScrollbarComponent scrollbarComponent) return CreateScrollbar(gameObject, scrollbarComponent, componentGetter, assetLoader);
             if (component is VerticalListComponent verticalListComponent) return CreateVerticalList(gameObject, componentGetter, verticalListComponent);
             if (component is HorizontalLayoutComponent horizontalLayoutComponent) return CreateHorizontalLayout(componentGetter, horizontalLayoutComponent);
             if (component is VerticalLayoutComponent verticalLayoutComponent) return CreateVerticalLayout(componentGetter, verticalLayoutComponent);
@@ -129,7 +129,7 @@ namespace AkyuiUnity.Generator.InternalTrigger
             return button;
         }
 
-        private static Component CreateScrollbar(GameObject gameObject, ScrollbarComponent scrollbarComponent, TargetComponentGetter componentGetter, IAssetLoader assetLoader)
+        private static Component CreateScrollbar(GameObject gameObject, VerticalScrollbarComponent verticalScrollbarComponent, TargetComponentGetter componentGetter, IAssetLoader assetLoader)
         {
             var scrollbar = componentGetter.GetComponent<Scrollbar>();
             scrollbar.transition = Selectable.Transition.None;
@@ -149,10 +149,10 @@ namespace AkyuiUnity.Generator.InternalTrigger
                 handle.AddComponent<Image>();
             }
 
-            if (scrollbarComponent.Image != null)
+            if (verticalScrollbarComponent.Image != null)
             {
                 var image = scrollbar.handleRect.GetComponent<Image>();
-                UpdateImage(image, scrollbarComponent.Image, assetLoader);
+                UpdateImage(image, verticalScrollbarComponent.Image, assetLoader);
             }
 
             return scrollbar;
