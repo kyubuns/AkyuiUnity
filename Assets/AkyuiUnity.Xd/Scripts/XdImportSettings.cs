@@ -6,13 +6,13 @@ namespace AkyuiUnity.Xd
     [CreateAssetMenu(menuName = "AkyuiXd/XdImportSettings", fileName = "XdImportSettings")]
     public class XdImportSettings : AkyuiImportSettings
     {
-        public AkyuiXdObjectParser[] ObjectParsers => objectParsers;
+        public AkyuiXdObjectParser[] ObjectParsers => objectParsers ?? new AkyuiXdObjectParser[] { };
         [SerializeField] private AkyuiXdObjectParser[] objectParsers = default;
 
-        public AkyuiXdGroupParser[] GroupParsers => groupParsers;
+        public AkyuiXdGroupParser[] GroupParsers => groupParsers ?? new AkyuiXdGroupParser[] { };
         [SerializeField] private AkyuiXdGroupParser[] groupParsers = default;
 
-        public AkyuiXdImportTrigger[] XdTriggers => xdTriggers;
+        public AkyuiXdImportTrigger[] XdTriggers => xdTriggers ?? new AkyuiXdImportTrigger[] { };
         [SerializeField] private AkyuiXdImportTrigger[] xdTriggers = default;
 
         public float SvgSaveScale => svgSaveScale;

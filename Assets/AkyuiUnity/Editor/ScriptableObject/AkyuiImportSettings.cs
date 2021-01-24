@@ -21,7 +21,7 @@ namespace AkyuiUnity.Editor.ScriptableObject
         public bool CheckAssetHash => checkAssetHash;
         [SerializeField] private bool checkAssetHash = true;
 
-        public IAkyuiImportTrigger[] Triggers => triggers.Cast<IAkyuiImportTrigger>().ToArray();
+        public IAkyuiImportTrigger[] Triggers => triggers?.Cast<IAkyuiImportTrigger>().ToArray() ?? new IAkyuiImportTrigger[] { };
         [SerializeField] private AkyuiImportTrigger[] triggers = default;
     }
 
