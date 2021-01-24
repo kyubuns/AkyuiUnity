@@ -3,6 +3,7 @@ using System.Linq;
 using TMPro;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.UI;
 using XdParser.Internal;
 
 namespace AkyuiUnity.Xd.TextMeshProExtension
@@ -36,7 +37,7 @@ namespace AkyuiUnity.Xd.TextMeshProExtension
         {
             var calcSizeFromText = CalcSizeFromText(xdObject, position, xdObject.Text.Frame.Width);
             var size = new Vector2(xdObject.Text.Frame.Width, calcSizeFromText.height);
-            return new Rect(calcSizeFromText.position, size);
+            return new Rect(position, size);
         }
 
         public static Rect CalcSizeFromText(XdObjectJson xdObject, Vector2 position, float? width)
@@ -61,7 +62,6 @@ namespace AkyuiUnity.Xd.TextMeshProExtension
             position.y -= fontAsset.faceInfo.ascentLine * (fontSize / fontAsset.faceInfo.pointSize);
 
             var dummyObject = new GameObject("Dummy");
-
             var dummyRectTransform = dummyObject.AddComponent<RectTransform>();
             dummyRectTransform.sizeDelta = new Vector2(width ?? 0f, 0f);
 
@@ -71,7 +71,7 @@ namespace AkyuiUnity.Xd.TextMeshProExtension
             textMeshPro.text = rawText;
             if (width != null) textMeshPro.enableWordWrapping = true;
 
-            var size = new Vector2(textMeshPro.preferredWidth, textMeshPro.preferredHeight);
+            var size = new Vector2(LayoutUtility.GetPreferredSize(dummyRectTransform, 0), LayoutUtility.GetPreferredSize(dummyRectTransform, 1));
             DestroyImmediate(dummyObject);
 
             var lineJson = xdObject.Text.Paragraphs[0].Lines[0][0];
