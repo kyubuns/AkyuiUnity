@@ -27,12 +27,24 @@ namespace AkyuiUnity.Xd
                 return CalcSizeFromText(xdObject, position);
             }
 
+            if (xdObject.Text?.Frame?.Type == "autoHeight")
+            {
+                return CalcSizeAutoHeight(xdObject, position);
+            }
+
             throw new NotSupportedException($"Unknown Text Type {xdObject.Text?.Frame?.Type}");
         }
 
         public static Rect CalcSizeFromFrame(XdObjectJson xdObject, Vector2 position)
         {
             var size = new Vector2(xdObject.Text.Frame.Width, xdObject.Text.Frame.Height);
+            return new Rect(position, size);
+        }
+
+        public static Rect CalcSizeAutoHeight(XdObjectJson xdObject, Vector2 position)
+        {
+            var calcSizeFromText = CalcSizeFromText(xdObject, position);
+            var size = new Vector2(xdObject.Text.Frame.Width, calcSizeFromText.height);
             return new Rect(position, size);
         }
 
@@ -119,7 +131,7 @@ namespace AkyuiUnity.Xd
                 if (paragraphAlign == "right") textAlign = TextComponent.TextAlign.MiddleRight;
             }
 
-            if (xdObject.Text?.Frame?.Type == "area")
+            if (xdObject.Text?.Frame?.Type == "area" || xdObject.Text?.Frame?.Type == "autoHeight")
             {
                 wrap = true;
                 if (paragraphAlign == "left") textAlign = TextComponent.TextAlign.UpperLeft;

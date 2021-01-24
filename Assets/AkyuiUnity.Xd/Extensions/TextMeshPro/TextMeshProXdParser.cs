@@ -20,14 +20,26 @@ namespace AkyuiUnity.Xd.TextMeshProExtension
         {
             if (xdObject.Text?.Frame?.Type == "positioned")
             {
-                return CalcSizeFromText(xdObject, position);
+                return CalcSizeFromText(xdObject, position, null);
+            }
+
+            if (xdObject.Text?.Frame?.Type == "autoHeight")
+            {
+                return CalcSizeAutoHeight(xdObject, position);
             }
 
             var textParser = new TextObjectParser();
             return textParser.CalcSize(xdObject, position);
         }
 
-        public static Rect CalcSizeFromText(XdObjectJson xdObject, Vector2 position)
+        public static Rect CalcSizeAutoHeight(XdObjectJson xdObject, Vector2 position)
+        {
+            var calcSizeFromText = CalcSizeFromText(xdObject, position, xdObject.Text.Frame.Width);
+            var size = new Vector2(xdObject.Text.Frame.Width, calcSizeFromText.height);
+            return new Rect(calcSizeFromText.position, size);
+        }
+
+        public static Rect CalcSizeFromText(XdObjectJson xdObject, Vector2 position, float? width)
         {
             var font = xdObject.Style.Font;
             var fontAsset = AssetDatabase.FindAssets($"{font.PostscriptName}")
@@ -49,10 +61,16 @@ namespace AkyuiUnity.Xd.TextMeshProExtension
             position.y -= fontAsset.faceInfo.ascentLine * (fontSize / fontAsset.faceInfo.pointSize);
 
             var dummyObject = new GameObject("Dummy");
+
+            var dummyRectTransform = dummyObject.AddComponent<RectTransform>();
+            dummyRectTransform.sizeDelta = new Vector2(width ?? 0f, 0f);
+
             var textMeshPro = dummyObject.AddComponent<TextMeshProUGUI>();
             textMeshPro.font = fontAsset;
             textMeshPro.fontSize = fontSize;
             textMeshPro.text = rawText;
+            if (width != null) textMeshPro.enableWordWrapping = true;
+
             var size = new Vector2(textMeshPro.preferredWidth, textMeshPro.preferredHeight);
             DestroyImmediate(dummyObject);
 
