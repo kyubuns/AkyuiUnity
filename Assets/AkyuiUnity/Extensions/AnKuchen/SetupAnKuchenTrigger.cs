@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿#if AKYUIUNITY_ANKUCHEN_SUPPORT
+using System.Collections.Generic;
 using AkyuiUnity.Editor.ScriptableObject;
 using AnKuchen.AdditionalInfo;
 using AnKuchen.Map;
@@ -42,3 +43,4 @@ namespace AkyuiUnity.AnKuchenExtension
         }
     }
 }
+#endif
