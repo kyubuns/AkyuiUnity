@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if AKYUIUNITY_TEXTMESHPRO_SUPPORT
+using System;
 using AkyuiUnity.Editor.ScriptableObject;
 using AkyuiUnity.Generator;
 using AkyuiUnity.Generator.InternalTrigger;
@@ -119,3 +120,4 @@ namespace AkyuiUnity.Sample.Trigger
         }
     }
 }
+#endif
