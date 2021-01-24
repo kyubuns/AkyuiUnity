@@ -96,6 +96,10 @@ namespace AkyuiUnity.Generator.InternalTrigger
                 if (verticalListComponent.PaddingTop != null) verticalLayoutGroup.padding.top = Mathf.RoundToInt(verticalListComponent.PaddingTop.Value);
                 if (verticalListComponent.PaddingBottom != null)
                     verticalLayoutGroup.padding.bottom = Mathf.RoundToInt(verticalListComponent.PaddingBottom.Value);
+                
+                var contentSizeFitter = content.AddComponent<ContentSizeFitter>();
+                contentSizeFitter.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
+                contentSizeFitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
 
                 scrollRect.content = contentRectTransform;
             }
