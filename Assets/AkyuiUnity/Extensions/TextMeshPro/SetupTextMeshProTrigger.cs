@@ -8,7 +8,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace AkyuiUnity.Extensions.TextMeshPro
+namespace AkyuiUnity.TextMeshProExtension
 {
     // DefaultGenerateTrigger.csのText部分と合わせる
     [CreateAssetMenu(menuName = "Akyui/Triggers/SetupTextMeshPro", fileName = nameof(SetupTextMeshProTrigger))]
