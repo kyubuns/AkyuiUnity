@@ -84,7 +84,7 @@ namespace AkyuiUnity.Xd
 
             var listElement = repeatGrid.Group.Children[0].Group.Children[0];
             var listItems = new[] { listElement };
-            if (xdObject.GetParameters().Contains("multiitems"))
+            if (xdObject.HasParameter("multiitems"))
             {
                 var listElementSize = sizeGetter.Get(listElement);
                 offset += listElementSize.center;

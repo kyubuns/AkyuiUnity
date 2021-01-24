@@ -18,7 +18,12 @@ namespace AkyuiUnity.Xd
             return GetSimpleName(xdObjectJson).ToLowerInvariant().EndsWith(name.ToLowerInvariant());
         }
 
-        public static string[] GetParameters(this XdObjectJson xdObjectJson)
+        public static bool HasParameter(this XdObjectJson xdObjectJson, string name)
+        {
+            return xdObjectJson.GetParameters().Contains(name.ToLowerInvariant());
+        }
+
+        private static string[] GetParameters(this XdObjectJson xdObjectJson)
         {
             if (xdObjectJson.Name == null) return new string[] { };
 

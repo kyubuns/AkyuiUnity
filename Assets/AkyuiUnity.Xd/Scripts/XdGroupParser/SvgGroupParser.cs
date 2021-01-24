@@ -12,7 +12,7 @@ namespace AkyuiUnity.Xd
     {
         public bool Is(XdObjectJson xdObject)
         {
-            return xdObject.GetParameters().Contains("vector");
+            return xdObject.HasParameter("vector");
         }
 
         public Rect CalcSize(XdObjectJson xdObject, Vector2 position, Rect rect)
