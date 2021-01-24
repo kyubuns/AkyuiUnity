@@ -20,6 +20,8 @@ namespace AkyuiUnity.Sample.Trigger
             var text = componentGetter.GetComponent<TextMeshProUGUI>();
             text.enableWordWrapping = false;
             text.overflowMode = TextOverflowModes.Overflow;
+            text.richText = false;
+            text.raycastTarget = false;
 
             if (textComponent.Text != null) text.text = textComponent.Text;
             if (textComponent.Size != null) text.fontSize = Mathf.RoundToInt(textComponent.Size.Value);

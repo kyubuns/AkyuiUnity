@@ -180,6 +180,8 @@ namespace AkyuiUnity.Generator.InternalTrigger
             var text = componentGetter.GetComponent<Text>();
             text.verticalOverflow = VerticalWrapMode.Overflow;
             text.horizontalOverflow = HorizontalWrapMode.Overflow;
+            text.supportRichText = false;
+            text.raycastTarget = false;
 
             if (textComponent.Text != null) text.text = textComponent.Text;
             if (textComponent.Size != null) text.fontSize = Mathf.RoundToInt(textComponent.Size.Value);
