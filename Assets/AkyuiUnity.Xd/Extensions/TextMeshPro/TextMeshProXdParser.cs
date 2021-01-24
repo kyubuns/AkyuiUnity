@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿#if AKYUIUNITY_XD_TEXTMESHPRO_SUPPORT
+using System.Linq;
 using AkyuiUnity.Xd;
 using TMPro;
 using UnityEditor;
@@ -70,3 +71,4 @@ namespace AkyuiUnity.Sample.XdParser
         }
     }
 }
+#endif

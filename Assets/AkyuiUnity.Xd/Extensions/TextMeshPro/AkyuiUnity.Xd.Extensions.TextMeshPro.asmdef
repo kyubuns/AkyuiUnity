@@ -1,0 +1,25 @@
+{
+    "name": "AkyuiUnity.Xd.Extensions.TextMeshPro",
+    "references": [
+        "GUID:a439073e6c93d4a5bbdeebbe28645a3f",
+        "GUID:09bd244455e48452aa7708448209f3ed",
+        "GUID:6055be8ebefd69e48b49212b09b47b2f"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [
+        {
+            "name": "com.unity.textmeshpro",
+            "expression": "",
+            "define": "AKYUIUNITY_XD_TEXTMESHPRO_SUPPORT"
+        }
+    ],
+    "noEngineReferences": false
+}
