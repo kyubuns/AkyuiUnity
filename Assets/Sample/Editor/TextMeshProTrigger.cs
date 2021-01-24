@@ -1,9 +1,11 @@
 ﻿using System;
 using AkyuiUnity.Editor.ScriptableObject;
 using AkyuiUnity.Generator;
+using AkyuiUnity.Generator.InternalTrigger;
 using TMPro;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace AkyuiUnity.Sample.Trigger
 {
@@ -15,8 +17,13 @@ namespace AkyuiUnity.Sample.Trigger
 
         public override Component SetOrCreateComponentValue(GameObject gameObject, TargetComponentGetter componentGetter, IComponent component, GameObject[] children, IAssetLoader assetLoader)
         {
-            if (!(component is TextComponent textComponent)) return null;
+            if (component is InputFieldComponent) return CreateInputField(gameObject, componentGetter);
+            if (component is TextComponent textComponent) return CreateText(componentGetter, textComponent);
+            return null;
+        }
 
+        private Component CreateText(TargetComponentGetter componentGetter, TextComponent textComponent)
+        {
             var text = componentGetter.GetComponent<TextMeshProUGUI>();
             text.enableWordWrapping = false;
             text.overflowMode = TextOverflowModes.Overflow;
@@ -82,7 +89,33 @@ namespace AkyuiUnity.Sample.Trigger
             }
 
             return text;
+        }
 
+        private static Component CreateInputField(GameObject gameObject, TargetComponentGetter componentGetter)
+        {
+            var inputField = componentGetter.GetComponent<TMP_InputField>();
+            inputField.transition = Selectable.Transition.None;
+
+            var texts = gameObject.GetComponentsInDirectChildren<TextMeshProUGUI>();
+            if (texts.Length > 0)
+            {
+                var text = texts[0];
+                var originalText = text.text;
+                inputField.text = string.Empty;
+                text.text = Convert.ToChar(0x200b).ToString(); // ゼロ幅スペース、これにしないとPrefabに差分が出る
+                inputField.textComponent = text;
+
+                if (inputField.placeholder == null)
+                {
+                    var placeholder = Instantiate(text.gameObject, text.transform, true);
+                    var placeHolderText = placeholder.GetComponent<TextMeshProUGUI>();
+                    inputField.placeholder = placeHolderText;
+                    placeholder.name = "Placeholder";
+                    placeHolderText.text = originalText;
+                }
+            }
+
+            return inputField;
         }
     }
 }

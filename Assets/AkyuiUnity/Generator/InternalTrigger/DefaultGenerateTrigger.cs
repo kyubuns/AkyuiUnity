@@ -22,6 +22,7 @@ namespace AkyuiUnity.Generator.InternalTrigger
             return null;
         }
 
+        // TextMeshProTrigger.csと合わせる
         private static Component CreateInputField(GameObject gameObject, TargetComponentGetter componentGetter)
         {
             var inputField = componentGetter.GetComponent<InputField>();
@@ -31,15 +32,18 @@ namespace AkyuiUnity.Generator.InternalTrigger
             if (texts.Length > 0)
             {
                 var text = texts[0];
+                var originalText = text.text;
+                inputField.text = string.Empty;
+                text.text = string.Empty;
                 inputField.textComponent = text;
 
                 if (inputField.placeholder == null)
                 {
-                    var placeholder = Object.Instantiate(text.gameObject, text.transform);
-                    inputField.placeholder = placeholder.GetComponent<Text>();
+                    var placeholder = Object.Instantiate(text.gameObject, text.transform, true);
+                    var placeHolderText = placeholder.GetComponent<Text>();
+                    inputField.placeholder = placeHolderText;
                     placeholder.name = "Placeholder";
-
-                    inputField.text = string.Empty;
+                    placeHolderText.text = originalText;
                 }
             }
 
