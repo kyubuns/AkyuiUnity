@@ -11,8 +11,8 @@ using UnityEngine.UI;
 namespace AkyuiUnity.Extensions.TextMeshPro
 {
     // DefaultGenerateTrigger.csのText部分と合わせる
-    [CreateAssetMenu(menuName = "Akyui/Triggers/TextMeshPro", fileName = nameof(TextMeshProTrigger))]
-    public class TextMeshProTrigger : AkyuiImportTrigger
+    [CreateAssetMenu(menuName = "Akyui/Triggers/SetupTextMeshPro", fileName = nameof(SetupTextMeshProTrigger))]
+    public class SetupTextMeshProTrigger : AkyuiImportTrigger
     {
         [SerializeField] private string fontFilePath = "Assets/Fonts/{name} SDF";
 
