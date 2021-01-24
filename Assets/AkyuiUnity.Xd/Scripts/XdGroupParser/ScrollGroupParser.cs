@@ -58,13 +58,13 @@ namespace AkyuiUnity.Xd
         {
             var rootRect = sizeGetter.Get(xdObject);
 
-            var top = -children.Select(x => rootRect.yMin - sizeGetter.Get(x).yMin).Max();
+            var top = Mathf.Max(children.Select(x => rootRect.height / 2f + sizeGetter.Get(x).position.y).Min(), 0f);
 
             var bottom = 0f;
             var spacer = children.FirstOrDefault(x => x.NameEndsWith("spacer"));
             if (spacer != null)
             {
-                bottom = sizeGetter.Get(spacer).height;
+                bottom = Mathf.Max(sizeGetter.Get(spacer).height, 0f);
                 children = children.Where(x => x != spacer).ToArray();
             }
 
