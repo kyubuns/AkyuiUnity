@@ -13,6 +13,11 @@ namespace AkyuiUnity.Xd
             return xdObjectJson.Name.Split('@')[0];
         }
 
+        public static bool NameEndsWith(this XdObjectJson xdObjectJson, string name)
+        {
+            return GetSimpleName(xdObjectJson).ToLowerInvariant().EndsWith(name.ToLowerInvariant());
+        }
+
         public static string[] GetParameters(this XdObjectJson xdObjectJson)
         {
             if (xdObjectJson.Name == null) return new string[] { };

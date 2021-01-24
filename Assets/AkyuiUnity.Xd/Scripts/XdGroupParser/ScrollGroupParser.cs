@@ -58,7 +58,7 @@ namespace AkyuiUnity.Xd
             var top = -children.Select(x => rootRect.yMin - sizeGetter.Get(x).yMin).Max();
 
             var bottom = 0f;
-            var spacer = children.FirstOrDefault(x => x.GetParameters().Contains("spacer"));
+            var spacer = children.FirstOrDefault(x => x.NameEndsWith("spacer"));
             if (spacer != null)
             {
                 bottom = sizeGetter.Get(spacer).height;
