@@ -82,9 +82,9 @@ namespace AkyuiUnity.Generator.InternalTrigger
                 content.transform.SetParent(gameObject.transform);
 
                 var contentRectTransform = content.AddComponent<RectTransform>();
-                contentRectTransform.anchoredPosition = Vector2.zero;
                 contentRectTransform.pivot = new Vector2(0.5f, 1f);
                 contentRectTransform.sizeDelta = gameObject.GetComponent<RectTransform>().sizeDelta;
+                contentRectTransform.anchoredPosition = new Vector2(0f, contentRectTransform.sizeDelta.y / 2f);
 
                 var image = content.AddComponent<Image>();
                 image.color = Color.clear;
