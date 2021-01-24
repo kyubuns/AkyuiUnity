@@ -96,6 +96,7 @@ namespace AkyuiUnity.Xd
             new ScrollGroupParser(),
             new SvgGroupParser(),
             new AlphaGroupParser(), // SvgGroupParserより後
+            new InputFieldGroupParser(),
         };
 
         public XdAkyuiLoader(XdFile xdFile, XdArtboard xdArtboard, AkyuiXdObjectParser[] objectParsers, AkyuiXdGroupParser[] groupParsers, AkyuiXdImportTrigger[] triggers)

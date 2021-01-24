@@ -24,11 +24,15 @@ namespace AkyuiUnity.Generator.InternalTrigger
         private static Component CreateInputField(GameObject gameObject, TargetComponentGetter componentGetter)
         {
             var inputField = componentGetter.GetComponent<InputField>();
+            inputField.transition = Selectable.Transition.None;
 
-            var text = gameObject.GetComponentInDirectChildren<Text>();
-            if (text != null)
+            var texts = gameObject.GetComponentsInDirectChildren<Text>();
+            if (texts.Length > 0)
             {
+                var text = texts[0];
+                var originalText = text.text;
                 inputField.textComponent = text;
+                inputField.text = originalText;
             }
 
             return inputField;
@@ -118,9 +122,10 @@ namespace AkyuiUnity.Generator.InternalTrigger
                 scrollRect.content = contentRectTransform;
             }
 
-            var scrollbar = gameObject.GetComponentInDirectChildren<Scrollbar>();
-            if (scrollbar != null)
+            var scrollbars = gameObject.GetComponentsInDirectChildren<Scrollbar>();
+            if (scrollbars.Length > 0)
             {
+                var scrollbar = scrollbars[0];
                 scrollRect.verticalScrollbar = scrollbar;
             }
 
