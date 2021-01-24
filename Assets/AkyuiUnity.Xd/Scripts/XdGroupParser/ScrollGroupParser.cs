@@ -46,6 +46,9 @@ namespace AkyuiUnity.Xd
                 (newChildren, spacing) = ExpandRepeatGridGroup(xdObject, repeatGrid, scrollingType, sizeGetter, ref specialSpacings);
 
                 children = children.Where(x => x != repeatGrid).Concat(newChildren).ToArray();
+
+                var rootRect = sizeGetter.Get(xdObject);
+                paddingTop = Mathf.Max(newChildren.Select(x => rootRect.height / 2f + sizeGetter.Get(x).position.y).Min(), 0f);
             }
 
             return (new IComponent[]
@@ -56,10 +59,7 @@ namespace AkyuiUnity.Xd
 
         private static (float Top, float Bottom) CalcPadding(XdObjectJson xdObject, ref XdObjectJson[] children, ISizeGetter sizeGetter)
         {
-            var rootRect = sizeGetter.Get(xdObject);
-
-            var top = Mathf.Max(children.Select(x => rootRect.height / 2f + sizeGetter.Get(x).position.y).Min(), 0f);
-
+            var top = 0f;
             var bottom = 0f;
             var spacer = children.FirstOrDefault(x => x.NameEndsWith("spacer"));
             if (spacer != null)
@@ -74,14 +74,15 @@ namespace AkyuiUnity.Xd
         private static (XdObjectJson[], float Spacing) ExpandRepeatGridGroup(XdObjectJson xdObject, XdObjectJson repeatGrid, string scrollingType, ISizeGetter sizeGetter, ref List<SpecialSpacing> specialSpacings)
         {
             var spacing = repeatGrid.GetRepeatGridSpacing(scrollingType);
+            var offset = Vector2.zero;
+
+            var repeatGridSize = sizeGetter.Get(repeatGrid);
+            offset += repeatGridSize.center;
+
+            var repeatGridChildSize = sizeGetter.Get(repeatGrid.Group.Children[0]);
+            offset += repeatGridChildSize.center;
 
             var listElement = repeatGrid.Group.Children[0].Group.Children[0];
-            var xdObjectSize = sizeGetter.Get(xdObject);
-            var repeatGridSize = sizeGetter.Get(repeatGrid);
-            var offset = repeatGridSize.position - xdObjectSize.position;
-            offset.y = 0f;
-            sizeGetter.Offset(listElement, offset);
-
             var listItems = new[] { listElement };
             if (xdObject.GetParameters().Contains("multiitems"))
             {
@@ -90,6 +91,7 @@ namespace AkyuiUnity.Xd
 
             foreach (var listItem in listItems)
             {
+                sizeGetter.Offset(listElement, offset);
                 listItem.RemoveConstraint();
             }
 
