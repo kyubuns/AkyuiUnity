@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using UnityEngine.UI;
+using Object = UnityEngine.Object;
 
 namespace AkyuiUnity.Generator.InternalTrigger
 {
@@ -30,9 +31,16 @@ namespace AkyuiUnity.Generator.InternalTrigger
             if (texts.Length > 0)
             {
                 var text = texts[0];
-                var originalText = text.text;
                 inputField.textComponent = text;
-                inputField.text = originalText;
+
+                if (inputField.placeholder == null)
+                {
+                    var placeholder = Object.Instantiate(text.gameObject, text.transform);
+                    inputField.placeholder = placeholder.GetComponent<Text>();
+                    placeholder.name = "Placeholder";
+
+                    inputField.text = string.Empty;
+                }
             }
 
             return inputField;
