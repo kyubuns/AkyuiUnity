@@ -8,7 +8,11 @@ AkyuiUnity is a Unity implementation of [Akyui](https://github.com/kyubuns/Akyui
 **開発中です。ぜひWatch/Starして頂き、もうしばらくお待ち下さい。**  
 詳細は[Discussions](https://github.com/kyubuns/AkyuiUnity/discussions)をご覧ください。
 
-UnityPackageManager `https://github.com/kyubuns/AkyuiUnity.git?path=Assets/AkyuiUnity`
+---
+
+## UnityPackageManager
+- AkyuiUnity `https://github.com/kyubuns/AkyuiUnity.git?path=Assets/AkyuiUnity`
+- AkyuiUnity.Xd `https://github.com/kyubuns/AkyuiUnity.git?path=Assets/AkyuiUnity.Xd`
 
 ---
 
