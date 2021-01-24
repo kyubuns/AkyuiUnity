@@ -1,12 +1,11 @@
 ﻿#if AKYUIUNITY_XD_TEXTMESHPRO_SUPPORT
 using System.Linq;
-using AkyuiUnity.Xd;
 using TMPro;
 using UnityEditor;
 using UnityEngine;
 using XdParser.Internal;
 
-namespace AkyuiUnity.Sample.XdParser
+namespace AkyuiUnity.Xd.Extensions.TextMeshPro
 {
     [CreateAssetMenu(menuName = "AkyuiXd/ObjectParsers/TextMeshProXdParser", fileName = nameof(TextMeshProXdParser))]
     public class TextMeshProXdParser : AkyuiXdObjectParser
