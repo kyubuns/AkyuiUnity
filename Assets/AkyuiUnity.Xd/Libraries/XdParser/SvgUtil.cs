@@ -98,6 +98,7 @@ namespace XdParser
                 parameter.EnableStroke = true;
                 parameter.Stroke = stroke.Color.Value;
                 parameter.StrokeWidth = stroke.Width;
+                parameter.StrokeMiterLimit = stroke.MiterLimit;
 
                 if (!string.IsNullOrWhiteSpace(stroke.Join))
                 {
@@ -221,6 +222,7 @@ namespace XdParser
             public bool EnableStroke { get; set; }
             public XdColorValueJson Stroke { get; set; }
             public float? StrokeWidth { get; set; }
+            public float? StrokeMiterLimit { get; set; }
             public string StrokeLinejoin { get; set; }
             public string StrokeLinecap { get; set; }
             public float[] StrokeDasharray { get; set; }
@@ -241,6 +243,7 @@ namespace XdParser
                     FillRuleToSvg(),
                     StrokeToSvg(),
                     StrokeWidthToSvg(),
+                    StrokeMiterLimitToSvg(),
                     StrokeLinejoinToSvg(),
                     StrokeLinecapToSvg(),
                     StrokeDasharrayToSvg(),
@@ -306,6 +309,13 @@ namespace XdParser
                 if (!EnableStroke) return null;
                 if (StrokeWidth == null) return null;
                 return $@"stroke-width=""{StrokeWidth.Value:0.###}""";
+            }
+
+            private string StrokeMiterLimitToSvg()
+            {
+                if (!EnableStroke) return null;
+                if (StrokeMiterLimit == null) return null;
+                return $@"stroke-miterlimit=""{StrokeMiterLimit.Value:0.###}""";
             }
 
             private string StrokeLinejoinToSvg()

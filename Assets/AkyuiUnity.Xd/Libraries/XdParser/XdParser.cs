@@ -194,6 +194,9 @@ namespace XdParser.Internal
         [JsonProperty("join")]
         public string Join { get; set; }
 
+        [JsonProperty("miterLimit")]
+        public float? MiterLimit { get; set; }
+
         [JsonProperty("dash")]
         public float[] Dash { get; set; }
     }
