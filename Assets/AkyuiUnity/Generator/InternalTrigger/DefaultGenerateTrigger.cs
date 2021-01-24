@@ -104,7 +104,7 @@ namespace AkyuiUnity.Generator.InternalTrigger
                 scrollRect.content = contentRectTransform;
             }
 
-            var scrollbar = gameObject.GetComponentInChildren<Scrollbar>();
+            var scrollbar = gameObject.GetComponentInDirectChildren<Scrollbar>();
             if (scrollbar != null)
             {
                 scrollRect.verticalScrollbar = scrollbar;
