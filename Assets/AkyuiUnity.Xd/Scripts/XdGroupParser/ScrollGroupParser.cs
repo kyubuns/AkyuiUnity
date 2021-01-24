@@ -86,13 +86,16 @@ namespace AkyuiUnity.Xd
             var listItems = new[] { listElement };
             if (xdObject.GetParameters().Contains("multiitems"))
             {
-                listItems = ExpandMultiItemsList(listItems[0], scrollingType, sizeGetter, ref specialSpacings);
+                var listElementSize = sizeGetter.Get(listElement);
+                offset += listElementSize.center;
+
+                listItems = ExpandMultiItemsList(listElement, scrollingType, sizeGetter, ref specialSpacings);
             }
 
             foreach (var listItem in listItems)
             {
-                sizeGetter.Offset(listElement, offset);
                 listItem.RemoveConstraint();
+                sizeGetter.Offset(listItem, offset);
             }
 
             return (listItems.ToArray(), spacing);
@@ -111,6 +114,13 @@ namespace AkyuiUnity.Xd
                 if (RepeatGridGroupParser.Is(listItem, scrollingType))
                 {
                     var listListItem = listItem.Group.Children[0].Group.Children[0];
+
+                    // offsetを再計算
+                    var repeatGridSize = sizeGetter.Get(listItem);
+                    var parentSize = sizeGetter.Get(listItem.Group.Children[0]);
+                    sizeGetter.Offset(listListItem, parentSize.center + repeatGridSize.center);
+
+                    // 登録
                     specialSpacings.Add(new SpecialSpacing(listListItem.Name, listListItem.Name, listItem.GetRepeatGridSpacing(scrollingType)));
                     listItems.Add(listListItem);
 
