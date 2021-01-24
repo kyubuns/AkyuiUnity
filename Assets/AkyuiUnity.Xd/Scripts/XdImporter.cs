@@ -449,6 +449,13 @@ namespace AkyuiUnity.Xd
             _size[xdObjectJson.Id ?? xdObjectJson.Guid] = rect;
         }
 
+        public void Offset(XdObjectJson xdObjectJson, Vector2 offset)
+        {
+            var s = Get(xdObjectJson);
+            s.center += offset;
+            Set(xdObjectJson, s);
+        }
+
         public Rect Get(XdObjectJson xdObjectJson)
         {
             return _size[xdObjectJson.Id ?? xdObjectJson.Guid];
@@ -457,6 +464,7 @@ namespace AkyuiUnity.Xd
 
     public interface ISizeGetter
     {
+        void Offset(XdObjectJson xdObjectJson, Vector2 offset);
         Rect Get(XdObjectJson xdObjectJson);
     }
 }

@@ -71,7 +71,14 @@ namespace AkyuiUnity.Xd
         {
             var spacing = repeatGrid.GetRepeatGridSpacing(scrollingType);
 
-            var listItems = new[] { repeatGrid.Group.Children[0].Group.Children[0] };
+            var listElement = repeatGrid.Group.Children[0].Group.Children[0];
+            var xdObjectSize = sizeGetter.Get(xdObject);
+            var repeatGridSize = sizeGetter.Get(repeatGrid);
+            var offset = repeatGridSize.position - xdObjectSize.position;
+            offset.y = 0f;
+            sizeGetter.Offset(listElement, offset);
+
+            var listItems = new[] { listElement };
             if (xdObject.GetParameters().Contains("multiitems"))
             {
                 listItems = ExpandMultiItemsList(listItems[0], scrollingType, sizeGetter, ref specialSpacings);
