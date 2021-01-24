@@ -87,9 +87,12 @@ namespace XdParser
 
             if (shape.R != null)
             {
-                parameter.Rx = shape.R[0];
-                if (parameter.Rx > shape.Width / 2f) parameter.Rx = shape.Width / 2f;
-                if (parameter.Rx > shape.Height / 2f) parameter.Rx = shape.Height / 2f;
+                if (shape.Type == "rect")
+                {
+                    parameter.Rx = ((float[]) shape.R)[0];
+                    if (parameter.Rx > shape.Width / 2f) parameter.Rx = shape.Width / 2f;
+                    if (parameter.Rx > shape.Height / 2f) parameter.Rx = shape.Height / 2f;
+                }
             }
 
             var stroke = xdObject.Style?.Stroke;

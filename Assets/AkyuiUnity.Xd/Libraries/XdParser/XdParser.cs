@@ -303,7 +303,9 @@ namespace XdParser.Internal
         public float Y2 { get; set; }
 
         [JsonProperty("R")]
-        public float[] R { get; set; }
+        public object R { get; set; }
+        // Type == "circle" -> float
+        // Type == "rect" -> float[4]
     }
 
     public class XdTextJson
