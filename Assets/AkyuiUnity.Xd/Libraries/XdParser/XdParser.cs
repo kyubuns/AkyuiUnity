@@ -304,8 +304,6 @@ namespace XdParser.Internal
 
         [JsonProperty("R")]
         public object R { get; set; }
-        // Type == "circle" -> float
-        // Type == "rect" -> float[4]
     }
 
     public class XdTextJson
