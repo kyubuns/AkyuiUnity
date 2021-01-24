@@ -205,93 +205,113 @@ namespace AkyuiUnity.Loader
         {
             var componentType = componentJson["type"].JsonString();
 
-            if (componentType == ImageComponent.TypeString)
-            {
-                return new ImageComponent(
-                    componentJson["cid"].JsonInt(),
-                    componentJson.ContainsKey("sprite") ? componentJson["sprite"].JsonString() : null,
-                    componentJson.ContainsKey("color") ? componentJson["color"].JsonColor() : (Color?) null
-                );
-            }
+            if (componentType == ImageComponent.TypeString) return ParseImage(componentJson);
+            if (componentType == AlphaComponent.TypeString) return ParseAlpha(componentJson);
+            if (componentType == TextComponent.TypeString) return ParseText(componentJson);
+            if (componentType == ButtonComponent.TypeString) return ParseButton(componentJson);
+            if (componentType == ScrollbarComponent.TypeString) return ParseScrollbar(componentJson);
+            if (componentType == VerticalListComponent.TypeString) return ParseVerticalList(componentJson);
+            if (componentType == HorizontalLayoutComponent.TypeString) return ParseHorizontalLayout(componentJson);
+            if (componentType == VerticalLayoutComponent.TypeString) return ParseVerticalLayout(componentJson);
+            if (componentType == GridLayoutComponent.TypeString) return ParseGridLayout(componentJson);
 
-            if (componentType == AlphaComponent.TypeString)
-            {
-                return new AlphaComponent(
-                    componentJson["cid"].JsonInt(),
-                    componentJson.ContainsKey("alpha") ? componentJson["alpha"].JsonFloat() : (float?) null
-                );
-            }
+            throw new NotSupportedException($"Component type {componentType} is not supported");
+        }
 
-            if (componentType == TextComponent.TypeString)
-            {
-                TextComponent.TextAlign? align = null;
-                if (componentJson.ContainsKey("align"))
-                {
-                    align = (TextComponent.TextAlign) Enum.Parse(typeof(TextComponent.TextAlign),
-                        componentJson["align"].JsonString().Replace("_", ""), true);
-                }
+        private static GridLayoutComponent ParseGridLayout(Dictionary<string, object> componentJson)
+        {
+            return new GridLayoutComponent(
+                componentJson["cid"].JsonInt(),
+                componentJson.ContainsKey("spacing_x") ? componentJson["spacing_x"].JsonFloat() : (float?) null,
+                componentJson.ContainsKey("spacing_y") ? componentJson["spacing_y"].JsonFloat() : (float?) null
+            );
+        }
 
-                return new TextComponent(
-                    componentJson["cid"].JsonInt(),
-                    componentJson.ContainsKey("text") ? componentJson["text"].JsonString() : null,
-                    componentJson.ContainsKey("size") ? componentJson["size"].JsonFloat() : (float?) null,
-                    componentJson.ContainsKey("color") ? componentJson["color"].JsonColor() : (Color?) null,
-                    align,
-                    componentJson.ContainsKey("font") ? componentJson["font"].JsonString() : null,
-                    componentJson.ContainsKey("wrap") ? componentJson["wrap"].JsonBool() : (bool?) null
-                );
-            }
+        private static VerticalLayoutComponent ParseVerticalLayout(Dictionary<string, object> componentJson)
+        {
+            return new VerticalLayoutComponent(
+                componentJson["cid"].JsonInt(),
+                componentJson.ContainsKey("spacing") ? componentJson["spacing"].JsonFloat() : (float?) null
+            );
+        }
 
-            if (componentType == ButtonComponent.TypeString)
-            {
-                return new ButtonComponent(
-                    componentJson["cid"].JsonInt()
-                );
-            }
+        private static HorizontalLayoutComponent ParseHorizontalLayout(Dictionary<string, object> componentJson)
+        {
+            return new HorizontalLayoutComponent(
+                componentJson["cid"].JsonInt(),
+                componentJson.ContainsKey("spacing") ? componentJson["spacing"].JsonFloat() : (float?) null
+            );
+        }
 
-            if (componentType == VerticalListComponent.TypeString)
-            {
-                return new VerticalListComponent(
-                    componentJson["cid"].JsonInt(),
-                    componentJson.ContainsKey("spacing") ? componentJson["spacing"].JsonFloat() : (float?) null,
-                    componentJson.ContainsKey("padding_top") ? componentJson["padding_top"].JsonFloat() : (float?) null,
-                    componentJson.ContainsKey("padding_bottom") ? componentJson["padding_bottom"].JsonFloat() : (float?) null,
-                    componentJson.ContainsKey("spacial_spacings") ? componentJson["spacial_spacings"].JsonDictionaryArray().Select(x =>
+        private static VerticalListComponent ParseVerticalList(Dictionary<string, object> componentJson)
+        {
+            return new VerticalListComponent(
+                componentJson["cid"].JsonInt(),
+                componentJson.ContainsKey("spacing") ? componentJson["spacing"].JsonFloat() : (float?) null,
+                componentJson.ContainsKey("padding_top") ? componentJson["padding_top"].JsonFloat() : (float?) null,
+                componentJson.ContainsKey("padding_bottom") ? componentJson["padding_bottom"].JsonFloat() : (float?) null,
+                componentJson.ContainsKey("spacial_spacings")
+                    ? componentJson["spacial_spacings"].JsonDictionaryArray().Select(x =>
                         new SpecialSpacing(
                             x["item1"].JsonString(),
                             x["item2"].JsonString(),
                             x["spacing"].JsonFloat()
                         )
-                    ).ToArray() : null
-                );
-            }
+                    ).ToArray()
+                    : null
+            );
+        }
 
-            if (componentType == HorizontalLayoutComponent.TypeString)
+        private static ScrollbarComponent ParseScrollbar(Dictionary<string, object> componentJson)
+        {
+            return new ScrollbarComponent(
+                componentJson["cid"].JsonInt(),
+                componentJson.ContainsKey("image") ? ParseImage(componentJson["image"].JsonDictionary()) : null
+            );
+        }
+
+        private static ButtonComponent ParseButton(Dictionary<string, object> componentJson)
+        {
+            return new ButtonComponent(
+                componentJson["cid"].JsonInt()
+            );
+        }
+
+        private static TextComponent ParseText(Dictionary<string, object> componentJson)
+        {
+            TextComponent.TextAlign? align = null;
+            if (componentJson.ContainsKey("align"))
             {
-                return new HorizontalLayoutComponent(
-                    componentJson["cid"].JsonInt(),
-                    componentJson.ContainsKey("spacing") ? componentJson["spacing"].JsonFloat() : (float?) null
-                );
+                align = (TextComponent.TextAlign) Enum.Parse(typeof(TextComponent.TextAlign),
+                    componentJson["align"].JsonString().Replace("_", ""), true);
             }
 
-            if (componentType == VerticalLayoutComponent.TypeString)
-            {
-                return new VerticalLayoutComponent(
-                    componentJson["cid"].JsonInt(),
-                    componentJson.ContainsKey("spacing") ? componentJson["spacing"].JsonFloat() : (float?) null
-                );
-            }
+            return new TextComponent(
+                componentJson["cid"].JsonInt(),
+                componentJson.ContainsKey("text") ? componentJson["text"].JsonString() : null,
+                componentJson.ContainsKey("size") ? componentJson["size"].JsonFloat() : (float?) null,
+                componentJson.ContainsKey("color") ? componentJson["color"].JsonColor() : (Color?) null,
+                align,
+                componentJson.ContainsKey("font") ? componentJson["font"].JsonString() : null,
+                componentJson.ContainsKey("wrap") ? componentJson["wrap"].JsonBool() : (bool?) null
+            );
+        }
 
-            if (componentType == GridLayoutComponent.TypeString)
-            {
-                return new GridLayoutComponent(
-                    componentJson["cid"].JsonInt(),
-                    componentJson.ContainsKey("spacing_x") ? componentJson["spacing_x"].JsonFloat() : (float?) null,
-                    componentJson.ContainsKey("spacing_y") ? componentJson["spacing_y"].JsonFloat() : (float?) null
-                );
-            }
+        private static AlphaComponent ParseAlpha(Dictionary<string, object> componentJson)
+        {
+            return new AlphaComponent(
+                componentJson["cid"].JsonInt(),
+                componentJson.ContainsKey("alpha") ? componentJson["alpha"].JsonFloat() : (float?) null
+            );
+        }
 
-            throw new NotSupportedException($"Component type {componentType} is not supported");
+        private static ImageComponent ParseImage(Dictionary<string, object> componentJson)
+        {
+            return new ImageComponent(
+                componentJson["cid"].JsonInt(),
+                componentJson.ContainsKey("sprite") ? componentJson["sprite"].JsonString() : null,
+                componentJson.ContainsKey("color") ? componentJson["color"].JsonColor() : (Color?) null
+            );
         }
     }
 }

@@ -188,6 +188,11 @@ namespace AkyuiUnity.Loader
             {
                 dict["type"] = ButtonComponent.TypeString;
             }
+            else if (source is ScrollbarComponent scrollbarComponent)
+            {
+                dict["type"] = ScrollbarComponent.TypeString;
+                if (scrollbarComponent.Image != null) dict["image"] = ToSerializable(scrollbarComponent.Image);
+            }
             else if (source is VerticalListComponent verticalListComponent)
             {
                 dict["type"] = VerticalListComponent.TypeString;

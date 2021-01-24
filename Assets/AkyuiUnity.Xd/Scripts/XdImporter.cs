@@ -85,6 +85,7 @@ namespace AkyuiUnity.Xd
         private readonly XdAssetHolder _assetHolder;
 
         private static readonly IXdObjectParser[] DefaultObjectParsers = {
+            new ScrollbarObjectParser(), // ShapeObjectParserより前
             new ShapeObjectParser(),
             new TextObjectParser(),
         };

@@ -237,6 +237,20 @@ namespace AkyuiUnity
         }
     }
 
+    public class ScrollbarComponent : IComponent
+    {
+        public const string TypeString = "scrollbar";
+
+        public int Cid { get; }
+        [CanBeNull] public readonly ImageComponent Image;
+
+        public ScrollbarComponent(int cid, ImageComponent image)
+        {
+            Cid = cid;
+            Image = image;
+        }
+    }
+
     public class VerticalListComponent : IComponent
     {
         public const string TypeString = "vertical_layout";

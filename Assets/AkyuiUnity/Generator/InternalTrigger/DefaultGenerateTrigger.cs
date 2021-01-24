@@ -12,6 +12,7 @@ namespace AkyuiUnity.Generator.InternalTrigger
             if (component is TextComponent textComponent) return CreateText(componentGetter, assetLoader, textComponent);
             if (component is AlphaComponent alphaComponent) return CreateAlpha(componentGetter, alphaComponent);
             if (component is ButtonComponent) return CreateButton(gameObject, componentGetter);
+            if (component is ScrollbarComponent scrollbarComponent) return CreateScrollbar(gameObject, scrollbarComponent, componentGetter, assetLoader);
             if (component is VerticalListComponent verticalListComponent) return CreateVerticalList(gameObject, componentGetter, verticalListComponent);
             if (component is HorizontalLayoutComponent horizontalLayoutComponent) return CreateHorizontalLayout(componentGetter, horizontalLayoutComponent);
             if (component is VerticalLayoutComponent verticalLayoutComponent) return CreateVerticalLayout(componentGetter, verticalLayoutComponent);
@@ -99,6 +100,12 @@ namespace AkyuiUnity.Generator.InternalTrigger
                 scrollRect.content = contentRectTransform;
             }
 
+            var scrollbar = gameObject.GetComponentInChildren<Scrollbar>();
+            if (scrollbar != null)
+            {
+                scrollRect.verticalScrollbar = scrollbar;
+            }
+
             return scrollRect;
         }
 
@@ -120,6 +127,35 @@ namespace AkyuiUnity.Generator.InternalTrigger
 
             button.targetGraphic = graphic;
             return button;
+        }
+
+        private static Component CreateScrollbar(GameObject gameObject, ScrollbarComponent scrollbarComponent, TargetComponentGetter componentGetter, IAssetLoader assetLoader)
+        {
+            var scrollbar = componentGetter.GetComponent<Scrollbar>();
+            scrollbar.transition = Selectable.Transition.None;
+            scrollbar.direction = Scrollbar.Direction.BottomToTop;
+
+            if (scrollbar.handleRect == null)
+            {
+                var handle = new GameObject("Handle");
+                var handleRect = handle.AddComponent<RectTransform>();
+                handleRect.SetParent(gameObject.transform);
+                handleRect.anchorMin = Vector2.zero;
+                handleRect.anchorMax = Vector2.one;
+                handleRect.anchoredPosition = Vector2.zero;
+                handleRect.sizeDelta = Vector2.zero;
+                scrollbar.handleRect = handleRect;
+
+                handle.AddComponent<Image>();
+            }
+
+            if (scrollbarComponent.Image != null)
+            {
+                var image = scrollbar.handleRect.GetComponent<Image>();
+                UpdateImage(image, scrollbarComponent.Image, assetLoader);
+            }
+
+            return scrollbar;
         }
 
         private static Component CreateAlpha(TargetComponentGetter componentGetter, AlphaComponent alphaComponent)
@@ -200,9 +236,14 @@ namespace AkyuiUnity.Generator.InternalTrigger
         private static Image CreateImage(TargetComponentGetter componentGetter, IAssetLoader assetLoader, ImageComponent imageComponent)
         {
             var image = componentGetter.GetComponent<Image>();
+            UpdateImage(image, imageComponent, assetLoader);
+            return image;
+        }
+
+        private static void UpdateImage(Image image, ImageComponent imageComponent, IAssetLoader assetLoader)
+        {
             if (imageComponent.Sprite != null) image.sprite = assetLoader.LoadSprite(imageComponent.Sprite);
             if (imageComponent.Color != null) image.color = imageComponent.Color.Value;
-            return image;
         }
 
         public void OnPostprocessComponent(GameObject gameObject, IComponent component)
