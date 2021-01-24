@@ -43,8 +43,11 @@ namespace AkyuiUnity.Xd
                     var geometry = VectorUtils.TessellateScene(sceneInfo.Scene, tessOptions, sceneInfo.NodeOpacity);
                     var vertices = geometry.SelectMany(geom => geom.Vertices.Select(x => (geom.WorldTransform * x))).ToArray();
                     var bounds = VectorUtils.Bounds(vertices);
-                    size = new Vector2(bounds.width, bounds.height);
-                    position = new Vector2(position.x + bounds.x, position.y + bounds.y);
+                    if (bounds.width > 0.0001f && bounds.height > 0.0001f)
+                    {
+                        size = new Vector2(bounds.width, bounds.height);
+                        position = new Vector2(position.x + bounds.x, position.y + bounds.y);
+                    }
                 }
             }
 
