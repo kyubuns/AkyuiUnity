@@ -7,7 +7,7 @@ using XdParser.Internal;
 
 namespace AkyuiUnity.Sample.XdParser
 {
-    [CreateAssetMenu(menuName = "AkyuiXd/TextMeshProXdParser", fileName = nameof(TextMeshProXdParser))]
+    [CreateAssetMenu(menuName = "AkyuiXd/ObjectParsers/TextMeshProXdParser", fileName = nameof(TextMeshProXdParser))]
     public class TextMeshProXdParser : AkyuiXdObjectParser
     {
         public override bool Is(XdObjectJson xdObject)

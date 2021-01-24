@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace AkyuiUnity.Xd
 {
-    [CreateAssetMenu(menuName = "Akyui/XdImportSettings", fileName = "XdImportSettings")]
+    [CreateAssetMenu(menuName = "AkyuiXd/XdImportSettings", fileName = "XdImportSettings")]
     public class XdImportSettings : AkyuiImportSettings
     {
         public AkyuiXdObjectParser[] ObjectParsers => objectParsers;
