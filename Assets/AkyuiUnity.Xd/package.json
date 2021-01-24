@@ -6,7 +6,6 @@
   "description": "Generate Akyui from XD",
   "documentationUrl": "https://github.com/kyubuns/AkyuiUnity",
   "dependencies": {
-    "dev.kyubuns.akyuiunity": "https://github.com/kyubuns/AkyuiUnity.git?path=Assets/AkyuiUnity",
     "com.unity.vectorgraphics": "2.0.0-preview.14"
   },
   "author": {
