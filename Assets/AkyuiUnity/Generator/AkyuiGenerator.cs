@@ -75,7 +75,7 @@ namespace AkyuiUnity.Generator
                 var (anchorMin, anchorMax) = CalcAnchor(objectElement.AnchorX, objectElement.AnchorY);
                 gameObject.SetActive(objectElement.Visible);
                 rectTransform.anchoredPosition = new Vector2(objectElement.Position.x, -objectElement.Position.y);
-                rectTransform.rotation = Quaternion.AngleAxis(objectElement.Rotation, Vector3.back);
+                rectTransform.localRotation = Quaternion.AngleAxis(objectElement.Rotation, Vector3.back);
                 var p = rectTransform.localPosition;
                 rectTransform.anchorMin = anchorMin;
                 rectTransform.anchorMax = anchorMax;
