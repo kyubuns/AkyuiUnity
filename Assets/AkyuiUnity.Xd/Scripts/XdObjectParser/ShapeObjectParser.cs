@@ -95,7 +95,13 @@ namespace AkyuiUnity.Xd
 
         public (IComponent[], IAsset[]) Render(XdObjectJson xdObject, Obb obb, XdAssetHolder assetHolder)
         {
-            var components = new List<IComponent>();
+            var (imageComponent, assets) = RenderImage(xdObject, obb, assetHolder);
+            return (new IComponent[] { imageComponent }, assets);
+        }
+
+        public static (ImageComponent, IAsset[]) RenderImage(XdObjectJson xdObject, Obb obb, XdAssetHolder assetHolder)
+        {
+            ImageComponent imageComponent = null;
             var assets = new List<IAsset>();
 
             var color = xdObject.GetFillUnityColor();
@@ -110,11 +116,11 @@ namespace AkyuiUnity.Xd
             {
                 spriteUid = $"{xdObject.GetSimpleName()}_{spriteUid.Substring(0, 8)}.png";
                 assets.Add(new SpriteAsset(spriteUid, xdObject.Style.Fill.Pattern.Meta.Ux.HrefLastModifiedDate, null));
-                components.Add(new ImageComponent(
+                imageComponent = new ImageComponent(
                     spriteUid,
                     color,
                     direction
-                ));
+                );
                 assetHolder.Save(spriteUid, xdObject.Style.Fill.Pattern.Meta);
             }
             else if (SvgUtil.Types.Contains(shapeType))
@@ -123,16 +129,20 @@ namespace AkyuiUnity.Xd
                 var svg = SvgUtil.CreateSvg(xdObject);
                 var userData = new SvgImportTrigger.SvgImportUserData { Width = Mathf.RoundToInt(obb.Size.x), Height = Mathf.RoundToInt(obb.Size.y) };
                 assets.Add(new SpriteAsset(spriteUid, FastHash.CalculateHash(svg), JsonConvert.SerializeObject(userData)));
-                components.Add(new ImageComponent(
+                imageComponent = new ImageComponent(
                     spriteUid,
                     new Color(1f, 1f, 1f, color.a),
                     direction
-                ));
+                );
 
                 assetHolder.Save(spriteUid, System.Text.Encoding.UTF8.GetBytes(svg));
             }
+            else
+            {
+                Debug.LogError($"Unknown shape type {shapeType}");
+            }
 
-            return (components.ToArray(), assets.ToArray());
+            return (imageComponent, assets.ToArray());
         }
     }
 }

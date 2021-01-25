@@ -34,6 +34,7 @@ namespace AkyuiUnity.Xd
             new SvgGroupParser(),
             new AlphaGroupParser(), // SvgGroupParserより後
             new InputFieldGroupParser(),
+            new MaskGroupParser(),
         };
 
         public XdAkyuiLoader(XdFile xdFile, XdArtboard xdArtboard, AkyuiXdObjectParser[] objectParsers, AkyuiXdGroupParser[] groupParsers,

@@ -124,10 +124,10 @@ namespace XdParser
                     parameter.StrokeDasharray = stroke.Dash;
                 }
 
-                if (stroke.Align == null)
+                if (shape.Type != "rect" || stroke.Align == null)
                 {
                 }
-                else if (stroke.Align == "outside")
+                else if (shape.Type == "rect" && stroke.Align == "outside")
                 {
                     var rx = parameter.Rx;
                     parameter.Rx = null;
@@ -160,7 +160,7 @@ namespace XdParser
                         }
                     };
                 }
-                else if (stroke.Align == "inside")
+                else if (shape.Type == "rect" && stroke.Align == "inside")
                 {
                     var rx = parameter.Rx;
                     parameter.Rx = null;

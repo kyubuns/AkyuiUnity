@@ -19,10 +19,9 @@ namespace AkyuiUnity.Xd
 
         public (IComponent[], IAsset[]) Render(XdObjectJson xdObject, Obb obb, XdAssetHolder assetHolder)
         {
-            var shapeObjectParser = new ShapeObjectParser();
-            var (components, assets) = shapeObjectParser.Render(xdObject, obb, assetHolder);
+            var (imageComponent, assets) = ShapeObjectParser.RenderImage(xdObject, obb, assetHolder);
 
-            var scrollbar = new VerticalScrollbarComponent((ImageComponent) components[0]);
+            var scrollbar = new VerticalScrollbarComponent(imageComponent);
             return (new IComponent[] { scrollbar }, assets);
         }
     }
