@@ -181,6 +181,7 @@ namespace AkyuiUnity.Xd
                     rootSize,
                     AnchorXType.Center,
                     AnchorYType.Middle,
+                    0f,
                     true,
                     new IComponent[] { },
                     children.Select(x => x.Eid).ToArray()
@@ -352,6 +353,7 @@ namespace AkyuiUnity.Xd
                 var size = rect.size;
                 var anchorX = AnchorXType.Center;
                 var anchorY = AnchorYType.Middle;
+                var rotation = xdObject.Meta.Ux.Rotation;
                 var constRight = xdObject.Meta.Ux.ConstraintRight;
                 var constLeft = xdObject.Meta.Ux.ConstraintLeft;
                 if (constRight && constLeft) anchorX = AnchorXType.Stretch;
@@ -379,6 +381,7 @@ namespace AkyuiUnity.Xd
                         size,
                         anchorX,
                         anchorY,
+                        rotation,
                         xdObject.Visible,
                         components,
                         children.Select(x => x.Eid).ToArray()
@@ -423,6 +426,7 @@ namespace AkyuiUnity.Xd
                         size,
                         anchorX,
                         anchorY,
+                        rotation,
                         xdObject.Visible,
                         components.ToArray(),
                         generatedChildren.Select(x => x.Eid).ToArray()
