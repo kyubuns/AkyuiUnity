@@ -17,30 +17,30 @@ namespace AkyuiUnity.Xd.TextMeshProExtension
             return textParser.Is(xdObject);
         }
 
-        public override Rect CalcSize(XdObjectJson xdObject, Vector2 position)
+        public override Rect CalcSize(XdObjectJson xdObject)
         {
             if (xdObject.Text?.Frame?.Type == "positioned")
             {
-                return CalcSizeFromText(xdObject, position, null);
+                return CalcSizeFromText(xdObject, null);
             }
 
             if (xdObject.Text?.Frame?.Type == "autoHeight")
             {
-                return CalcSizeAutoHeight(xdObject, position);
+                return CalcSizeAutoHeight(xdObject);
             }
 
             var textParser = new TextObjectParser();
-            return textParser.CalcSize(xdObject, position);
+            return textParser.CalcSize(xdObject);
         }
 
-        public static Rect CalcSizeAutoHeight(XdObjectJson xdObject, Vector2 position)
+        public static Rect CalcSizeAutoHeight(XdObjectJson xdObject)
         {
-            var calcSizeFromText = CalcSizeFromText(xdObject, position, xdObject.Text.Frame.Width);
+            var calcSizeFromText = CalcSizeFromText(xdObject, xdObject.Text.Frame.Width);
             var size = new Vector2(xdObject.Text.Frame.Width, calcSizeFromText.height);
-            return new Rect(position, size);
+            return new Rect(Vector2.zero, size);
         }
 
-        public static Rect CalcSizeFromText(XdObjectJson xdObject, Vector2 position, float? width)
+        public static Rect CalcSizeFromText(XdObjectJson xdObject, float? width)
         {
             var font = xdObject.Style.Font;
             var fontAsset = AssetDatabase.FindAssets($"{font.PostscriptName}")
@@ -54,9 +54,10 @@ namespace AkyuiUnity.Xd.TextMeshProExtension
             {
                 Debug.LogWarning($"TextMeshPro Asset {font.PostscriptName} is not found");
                 var textParser = new TextObjectParser();
-                return textParser.CalcSize(xdObject, position);
+                return textParser.CalcSize(xdObject);
             }
 
+            var position = Vector2.zero;
             var fontSize = font.Size;
             var rawText = xdObject.Text.RawText;
             position.y -= fontAsset.faceInfo.ascentLine * (fontSize / fontAsset.faceInfo.pointSize);
@@ -81,10 +82,10 @@ namespace AkyuiUnity.Xd.TextMeshProExtension
             return new Rect(position, size);
         }
 
-        public override (IComponent[], IAsset[]) Render(XdObjectJson xdObject, Vector2 size, XdAssetHolder assetHolder)
+        public override (IComponent[], IAsset[]) Render(XdObjectJson xdObject, Obb obb, XdAssetHolder assetHolder)
         {
             var textParser = new TextObjectParser();
-            return textParser.Render(xdObject, size, assetHolder);
+            return textParser.Render(xdObject, obb, assetHolder);
         }
     }
 }

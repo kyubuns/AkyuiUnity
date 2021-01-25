@@ -17,8 +17,9 @@ namespace AkyuiUnity.Xd
             return xdObject.Type == "shape";
         }
 
-        public Rect CalcSize(XdObjectJson xdObject, Vector2 position)
+        public Rect CalcSize(XdObjectJson xdObject)
         {
+            var position = Vector2.zero;
             var size = new Vector2(xdObject.Shape.Width, xdObject.Shape.Height);
             var scaleBehavior = xdObject.Style?.Fill?.Pattern?.Meta?.Ux?.ScaleBehavior ?? "fill";
             var spriteUid = xdObject.Style?.Fill?.Pattern?.Meta?.Ux?.Uid;
@@ -46,7 +47,7 @@ namespace AkyuiUnity.Xd
                     if (bounds.width > 0.0001f && bounds.height > 0.0001f)
                     {
                         size = new Vector2(bounds.width, bounds.height);
-                        position = new Vector2(position.x + bounds.x, position.y + bounds.y);
+                        position = new Vector2(bounds.x, bounds.y);
                     }
                 }
             }
@@ -78,7 +79,7 @@ namespace AkyuiUnity.Xd
             return new Rect(position, size);
         }
 
-        public (IComponent[], IAsset[]) Render(XdObjectJson xdObject, Vector2 size, XdAssetHolder assetHolder)
+        public (IComponent[], IAsset[]) Render(XdObjectJson xdObject, Obb obb, XdAssetHolder assetHolder)
         {
             var components = new List<IComponent>();
             var assets = new List<IAsset>();
@@ -106,7 +107,7 @@ namespace AkyuiUnity.Xd
             {
                 spriteUid = $"{xdObject.GetSimpleName()}_{xdObject.Id.Substring(0, 8)}.svg";
                 var svg = SvgUtil.CreateSvg(xdObject);
-                var userData = new SvgImportTrigger.SvgImportUserData { Width = Mathf.RoundToInt(size.x), Height = Mathf.RoundToInt(size.y) };
+                var userData = new SvgImportTrigger.SvgImportUserData { Width = Mathf.RoundToInt(obb.Size.x), Height = Mathf.RoundToInt(obb.Size.y) };
                 assets.Add(new SpriteAsset(spriteUid, FastHash.CalculateHash(svg), JsonConvert.SerializeObject(userData)));
                 components.Add(new ImageComponent(
                     spriteUid,

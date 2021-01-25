@@ -27,17 +27,17 @@ namespace AkyuiUnity.Xd
             return false;
         }
 
-        public Rect CalcSize(XdObjectJson xdObject, Vector2 position, Rect rect)
+        public Rect CalcSize(XdObjectJson xdObject, Rect rect)
         {
             return rect;
         }
 
-        public (IComponent[], IAsset[]) Render(XdObjectJson xdObject, ref XdObjectJson[] children, XdAssetHolder assetHolder, ISizeGetter sizeGetter)
+        public (IComponent[], IAsset[]) Render(XdObjectJson xdObject, XdAssetHolder assetHolder, IObbGetter obbGetter)
         {
-            var repeatGrid = xdObject?.Meta?.Ux?.RepeatGrid ?? new XdRepeatGridJson();
+            var repeatGrid = xdObject.Meta?.Ux?.RepeatGrid ?? new XdRepeatGridJson();
 
-            var item = children[0].Group.Children[0];
-            children = new[] { item };
+            var item = xdObject.Group.Children[0].Group.Children[0];
+            xdObject.Group.Children = new[] { item };
 
             if (repeatGrid.Columns > 1 && repeatGrid.Rows > 1)
             {

@@ -15,44 +15,45 @@ namespace AkyuiUnity.Xd
             return xdObject.Type == "text";
         }
 
-        public Rect CalcSize(XdObjectJson xdObject, Vector2 position)
+        public Rect CalcSize(XdObjectJson xdObject)
         {
             if (xdObject.Text?.Frame?.Type == "area")
             {
-                return CalcSizeFromFrame(xdObject, position);
+                return CalcSizeFromFrame(xdObject);
             }
 
             if (xdObject.Text?.Frame?.Type == "positioned")
             {
-                return CalcSizeFromText(xdObject, position);
+                return CalcSizeFromText(xdObject);
             }
 
             if (xdObject.Text?.Frame?.Type == "autoHeight")
             {
-                return CalcSizeAutoHeight(xdObject, position);
+                return CalcSizeAutoHeight(xdObject);
             }
 
             throw new NotSupportedException($"Unknown Text Type {xdObject.Text?.Frame?.Type}");
         }
 
-        public static Rect CalcSizeFromFrame(XdObjectJson xdObject, Vector2 position)
+        public static Rect CalcSizeFromFrame(XdObjectJson xdObject)
         {
             var size = new Vector2(xdObject.Text.Frame.Width, xdObject.Text.Frame.Height);
-            return new Rect(position, size);
+            return new Rect(Vector2.zero, size);
         }
 
-        public static Rect CalcSizeAutoHeight(XdObjectJson xdObject, Vector2 position)
+        public static Rect CalcSizeAutoHeight(XdObjectJson xdObject)
         {
-            var calcSizeFromText = CalcSizeFromText(xdObject, position);
+            var calcSizeFromText = CalcSizeFromText(xdObject);
             var size = new Vector2(xdObject.Text.Frame.Width, calcSizeFromText.height);
-            return new Rect(position, size);
+            return new Rect(Vector2.zero, size);
         }
 
-        public static Rect CalcSizeFromText(XdObjectJson xdObject, Vector2 position)
+        public static Rect CalcSizeFromText(XdObjectJson xdObject)
         {
             var font = xdObject.Style.Font;
             var fontSize = font.Size;
             var rawText = xdObject.Text.RawText;
+            var position = Vector2.zero;
 
             var findFont = AssetDatabase.FindAssets($"{font.PostscriptName} t:Font")
                 .Select(guid => AssetDatabase.GUIDToAssetPath(guid))
@@ -110,7 +111,7 @@ namespace AkyuiUnity.Xd
             return new Rect(position, size);
         }
 
-        public (IComponent[], IAsset[]) Render(XdObjectJson xdObject, Vector2 size, XdAssetHolder assetHolder)
+        public (IComponent[], IAsset[]) Render(XdObjectJson xdObject, Obb obb, XdAssetHolder assetHolder)
         {
             var components = new List<IComponent>();
 

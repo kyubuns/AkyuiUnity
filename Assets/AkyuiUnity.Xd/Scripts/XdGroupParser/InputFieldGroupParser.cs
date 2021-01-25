@@ -10,12 +10,12 @@ namespace AkyuiUnity.Xd
             return xdObject.NameEndsWith("inputfield");
         }
 
-        public Rect CalcSize(XdObjectJson xdObject, Vector2 position, Rect rect)
+        public Rect CalcSize(XdObjectJson xdObject, Rect rect)
         {
             return rect;
         }
 
-        public (IComponent[], IAsset[]) Render(XdObjectJson xdObject, ref XdObjectJson[] children, XdAssetHolder assetHolder, ISizeGetter sizeGetter)
+        public (IComponent[], IAsset[]) Render(XdObjectJson xdObject, XdAssetHolder assetHolder, IObbGetter obbGetter)
         {
             return (new IComponent[]
             {

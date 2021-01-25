@@ -12,12 +12,12 @@ namespace AkyuiUnity.Xd
             return true;
         }
 
-        public Rect CalcSize(XdObjectJson xdObject, Vector2 position, Rect rect)
+        public Rect CalcSize(XdObjectJson xdObject, Rect rect)
         {
             return rect;
         }
 
-        public (IComponent[], IAsset[]) Render(XdObjectJson xdObject, ref XdObjectJson[] children, XdAssetHolder assetHolder, ISizeGetter sizeGetter)
+        public (IComponent[], IAsset[]) Render(XdObjectJson xdObject, XdAssetHolder assetHolder, IObbGetter obbGetter)
         {
             var opacity = xdObject.Style?.Opacity ?? 1.0f;
             return (new IComponent[]

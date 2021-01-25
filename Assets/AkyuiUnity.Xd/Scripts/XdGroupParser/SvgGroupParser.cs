@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using AkyuiUnity.Xd.Libraries;
 using Newtonsoft.Json;
 using UnityEngine;
@@ -15,12 +14,12 @@ namespace AkyuiUnity.Xd
             return xdObject.HasParameter("vector");
         }
 
-        public Rect CalcSize(XdObjectJson xdObject, Vector2 position, Rect rect)
+        public Rect CalcSize(XdObjectJson xdObject, Rect rect)
         {
             return rect;
         }
 
-        public (IComponent[], IAsset[]) Render(XdObjectJson xdObject, ref XdObjectJson[] children, XdAssetHolder assetHolder, ISizeGetter sizeGetter)
+        public (IComponent[], IAsset[]) Render(XdObjectJson xdObject, XdAssetHolder assetHolder, IObbGetter obbGetter)
         {
             var components = new List<IComponent>();
             var assets = new List<IAsset>();
@@ -28,8 +27,9 @@ namespace AkyuiUnity.Xd
             var spriteUid = $"{xdObject.GetSimpleName()}_{xdObject.Id.Substring(0, 8)}.svg";
             var color = xdObject.GetFillUnityColor();
             var svg = SvgUtil.CreateSvg(xdObject);
-            if (children.Length > 0) children = new XdObjectJson[] { };
-            var size = sizeGetter.Get(xdObject).size;
+            xdObject.Group.Children = new XdObjectJson[] { };
+
+            var size = obbGetter.Get(xdObject).Size;
             var userData = new SvgImportTrigger.SvgImportUserData { Width = Mathf.RoundToInt(size.x), Height = Mathf.RoundToInt(size.y) };
             assets.Add(new SpriteAsset(spriteUid, FastHash.CalculateHash(svg), JsonConvert.SerializeObject(userData)));
             components.Add(new ImageComponent(
