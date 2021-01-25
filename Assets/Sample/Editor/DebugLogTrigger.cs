@@ -6,7 +6,7 @@ namespace AkyuiUnity.Sample
     [CreateAssetMenu(menuName = "AkyuiSample/DebugLogTrigger")]
     public class DebugLogTrigger : AkyuiImportTrigger
     {
-        public override void OnPostprocessPrefab(ref GameObject prefab, ref GameObjectWithId[] idAndGameObjects)
+        public override void OnPostprocessPrefab(ref GameObject prefab)
         {
             Debug.Log($"OnPostprocessPrefab: {prefab}");
         }

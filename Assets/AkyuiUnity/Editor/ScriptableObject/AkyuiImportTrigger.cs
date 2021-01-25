@@ -9,7 +9,7 @@ namespace AkyuiUnity.Editor.ScriptableObject
     {
         void OnPreprocessAsset(ref byte[] bytes, ref IAsset asset);
         void OnUnityPreprocessAsset(AssetImporter assetImporter, IAsset asset);
-        void OnPostprocessPrefab(ref GameObject prefab, ref GameObjectWithId[] meta);
+        void OnPostprocessPrefab(ref GameObject prefab);
         void OnPostprocessAllAssets(string outputDirectoryPath, Object[] importAssets);
     }
 
@@ -23,7 +23,7 @@ namespace AkyuiUnity.Editor.ScriptableObject
         {
         }
 
-        public virtual void OnPostprocessPrefab(ref GameObject prefab, ref GameObjectWithId[] meta)
+        public virtual void OnPostprocessPrefab(ref GameObject prefab)
         {
         }
 
@@ -31,7 +31,7 @@ namespace AkyuiUnity.Editor.ScriptableObject
         {
         }
 
-        public virtual Component SetOrCreateComponentValue(GameObject gameObject, TargetComponentGetter componentGetter, IComponent component, GameObject[] children, IAssetLoader assetLoader)
+        public virtual Component CreateComponent(GameObject gameObject, IComponent component, IAssetLoader assetLoader)
         {
             return null;
         }

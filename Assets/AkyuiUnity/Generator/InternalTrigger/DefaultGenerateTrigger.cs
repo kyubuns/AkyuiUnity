@@ -7,25 +7,25 @@ namespace AkyuiUnity.Generator.InternalTrigger
 {
     public class DefaultGenerateTrigger : IAkyuiGenerateTrigger
     {
-        public Component SetOrCreateComponentValue(GameObject gameObject, TargetComponentGetter componentGetter, IComponent component, GameObject[] children, IAssetLoader assetLoader)
+        public Component CreateComponent(GameObject gameObject, IComponent component, IAssetLoader assetLoader)
         {
-            if (component is ImageComponent imageComponent) return CreateImage(gameObject, componentGetter, assetLoader, imageComponent);
-            if (component is TextComponent textComponent) return CreateText(componentGetter, assetLoader, textComponent);
-            if (component is AlphaComponent alphaComponent) return CreateAlpha(componentGetter, alphaComponent);
-            if (component is ButtonComponent) return CreateButton(gameObject, componentGetter);
-            if (component is VerticalScrollbarComponent scrollbarComponent) return CreateScrollbar(gameObject, scrollbarComponent, componentGetter, assetLoader);
-            if (component is VerticalListComponent verticalListComponent) return CreateVerticalList(gameObject, componentGetter, verticalListComponent);
-            if (component is HorizontalLayoutComponent horizontalLayoutComponent) return CreateHorizontalLayout(componentGetter, horizontalLayoutComponent);
-            if (component is VerticalLayoutComponent verticalLayoutComponent) return CreateVerticalLayout(componentGetter, verticalLayoutComponent);
-            if (component is GridLayoutComponent gridLayoutComponent) return CreateGridLayout(componentGetter, children, gridLayoutComponent);
-            if (component is InputFieldComponent) return CreateInputField(gameObject, componentGetter);
+            if (component is ImageComponent imageComponent) return CreateImage(gameObject, assetLoader, imageComponent);
+            if (component is TextComponent textComponent) return CreateText(gameObject, assetLoader, textComponent);
+            if (component is AlphaComponent alphaComponent) return CreateAlpha(gameObject, assetLoader, alphaComponent);
+            if (component is ButtonComponent) return CreateButton(gameObject, assetLoader);
+            if (component is VerticalScrollbarComponent scrollbarComponent) return VerticalCreateScrollbar(gameObject, assetLoader, scrollbarComponent);
+            if (component is VerticalListComponent verticalListComponent) return CreateVerticalList(gameObject, assetLoader, verticalListComponent);
+            if (component is HorizontalLayoutComponent horizontalLayoutComponent) return CreateHorizontalLayout(gameObject, assetLoader, horizontalLayoutComponent);
+            if (component is VerticalLayoutComponent verticalLayoutComponent) return CreateVerticalLayout(gameObject, assetLoader, verticalLayoutComponent);
+            if (component is GridLayoutComponent gridLayoutComponent) return CreateGridLayout(gameObject, assetLoader, gridLayoutComponent);
+            if (component is InputFieldComponent) return CreateInputField(gameObject, assetLoader);
             return null;
         }
 
         // TextMeshProTrigger.csと合わせる
-        private static Component CreateInputField(GameObject gameObject, TargetComponentGetter componentGetter)
+        private static Component CreateInputField(GameObject gameObject, IAssetLoader assetLoader)
         {
-            var inputField = componentGetter.GetComponent<InputField>();
+            var inputField = gameObject.AddComponent<InputField>();
             inputField.transition = Selectable.Transition.None;
 
             var texts = gameObject.GetComponentsInDirectChildren<Text>();
@@ -50,15 +50,16 @@ namespace AkyuiUnity.Generator.InternalTrigger
             return inputField;
         }
 
-        private static Component CreateGridLayout(TargetComponentGetter componentGetter, GameObject[] children, GridLayoutComponent gridLayoutComponent)
+        private static Component CreateGridLayout(GameObject gameObject, IAssetLoader assetLoader, GridLayoutComponent gridLayoutComponent)
         {
-            var gridLayoutGroup = componentGetter.GetComponent<GridLayoutGroup>();
+            var gridLayoutGroup = gameObject.AddComponent<GridLayoutGroup>();
 
             var spacing = Vector2.zero;
             if (gridLayoutComponent.SpacingX != null) spacing.x = gridLayoutComponent.SpacingX.Value;
             if (gridLayoutComponent.SpacingY != null) spacing.y = gridLayoutComponent.SpacingY.Value;
             gridLayoutGroup.spacing = spacing;
 
+            var children = gameObject.GetDirectChildren();
             if (children.Length == 1)
             {
                 var childRect = RectTransformUtility.CalculateRelativeRectTransformBounds(children[0].GetComponent<RectTransform>());
@@ -76,63 +77,55 @@ namespace AkyuiUnity.Generator.InternalTrigger
             return gridLayoutGroup;
         }
 
-        private static Component CreateVerticalLayout(TargetComponentGetter componentGetter, VerticalLayoutComponent verticalLayoutComponent)
+        private static Component CreateVerticalLayout(GameObject gameObject, IAssetLoader assetLoader, VerticalLayoutComponent verticalLayoutComponent)
         {
-            var verticalLayoutGroup = componentGetter.GetComponent<VerticalLayoutGroup>();
+            var verticalLayoutGroup = gameObject.AddComponent<VerticalLayoutGroup>();
             verticalLayoutGroup.childForceExpandWidth = false;
             verticalLayoutGroup.childForceExpandHeight = false;
             if (verticalLayoutComponent.Spacing != null) verticalLayoutGroup.spacing = verticalLayoutComponent.Spacing.Value;
             return verticalLayoutGroup;
         }
 
-        private static Component CreateHorizontalLayout(TargetComponentGetter componentGetter, HorizontalLayoutComponent horizontalLayoutComponent)
+        private static Component CreateHorizontalLayout(GameObject gameObject, IAssetLoader assetLoader, HorizontalLayoutComponent horizontalLayoutComponent)
         {
-            var horizontalLayoutGroup = componentGetter.GetComponent<HorizontalLayoutGroup>();
+            var horizontalLayoutGroup = gameObject.AddComponent<HorizontalLayoutGroup>();
             horizontalLayoutGroup.childForceExpandWidth = false;
             horizontalLayoutGroup.childForceExpandHeight = false;
             if (horizontalLayoutComponent.Spacing != null) horizontalLayoutGroup.spacing = horizontalLayoutComponent.Spacing.Value;
             return horizontalLayoutGroup;
         }
 
-        private static Component CreateVerticalList(GameObject gameObject, TargetComponentGetter componentGetter,
-            VerticalListComponent verticalListComponent)
+        private static Component CreateVerticalList(GameObject gameObject, IAssetLoader assetLoader, VerticalListComponent verticalListComponent)
         {
-            var scrollRect = componentGetter.GetComponent<ScrollRect>();
+            var scrollRect = gameObject.AddComponent<ScrollRect>();
             scrollRect.horizontal = false;
             scrollRect.vertical = true;
 
-            if (gameObject.GetComponent<RectMask2D>() == null)
-            {
-                gameObject.AddComponent<RectMask2D>();
-            }
+            gameObject.AddComponent<RectMask2D>();
 
-            if (scrollRect.content == null)
-            {
-                var content = new GameObject("Content");
-                content.transform.SetParent(gameObject.transform);
+            var content = new GameObject("Content");
+            content.transform.SetParent(gameObject.transform);
 
-                var contentRectTransform = content.AddComponent<RectTransform>();
-                contentRectTransform.pivot = new Vector2(0.5f, 1f);
-                contentRectTransform.sizeDelta = gameObject.GetComponent<RectTransform>().sizeDelta;
-                contentRectTransform.anchoredPosition = new Vector2(0f, contentRectTransform.sizeDelta.y / 2f);
+            var contentRectTransform = content.AddComponent<RectTransform>();
+            contentRectTransform.pivot = new Vector2(0.5f, 1f);
+            contentRectTransform.sizeDelta = gameObject.GetComponent<RectTransform>().sizeDelta;
+            contentRectTransform.anchoredPosition = new Vector2(0f, contentRectTransform.sizeDelta.y / 2f);
 
-                var image = content.AddComponent<Image>();
-                image.color = Color.clear;
+            var image = content.AddComponent<Image>();
+            image.color = Color.clear;
 
-                var verticalLayoutGroup = content.AddComponent<VerticalLayoutGroup>();
-                verticalLayoutGroup.childForceExpandWidth = false;
-                verticalLayoutGroup.childForceExpandHeight = false;
-                if (verticalListComponent.Spacing != null) verticalLayoutGroup.spacing = verticalListComponent.Spacing.Value;
-                if (verticalListComponent.PaddingTop != null) verticalLayoutGroup.padding.top = Mathf.RoundToInt(verticalListComponent.PaddingTop.Value);
-                if (verticalListComponent.PaddingBottom != null)
-                    verticalLayoutGroup.padding.bottom = Mathf.RoundToInt(verticalListComponent.PaddingBottom.Value);
-                
-                var contentSizeFitter = content.AddComponent<ContentSizeFitter>();
-                contentSizeFitter.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
-                contentSizeFitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+            var verticalLayoutGroup = content.AddComponent<VerticalLayoutGroup>();
+            verticalLayoutGroup.childForceExpandWidth = false;
+            verticalLayoutGroup.childForceExpandHeight = false;
+            if (verticalListComponent.Spacing != null) verticalLayoutGroup.spacing = verticalListComponent.Spacing.Value;
+            if (verticalListComponent.PaddingTop != null) verticalLayoutGroup.padding.top = Mathf.RoundToInt(verticalListComponent.PaddingTop.Value);
+            if (verticalListComponent.PaddingBottom != null) verticalLayoutGroup.padding.bottom = Mathf.RoundToInt(verticalListComponent.PaddingBottom.Value);
 
-                scrollRect.content = contentRectTransform;
-            }
+            var contentSizeFitter = content.AddComponent<ContentSizeFitter>();
+            contentSizeFitter.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
+            contentSizeFitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+
+            scrollRect.content = contentRectTransform;
 
             var scrollbars = gameObject.GetComponentsInDirectChildren<Scrollbar>();
             if (scrollbars.Length > 0)
@@ -144,9 +137,9 @@ namespace AkyuiUnity.Generator.InternalTrigger
             return scrollRect;
         }
 
-        private static Component CreateButton(GameObject gameObject, TargetComponentGetter componentGetter)
+        private static Component CreateButton(GameObject gameObject, IAssetLoader assetLoader)
         {
-            var button = componentGetter.GetComponent<Button>();
+            var button = gameObject.AddComponent<Button>();
 
             Graphic graphic;
             if (gameObject.GetComponent<Graphic>() == null)
@@ -164,9 +157,9 @@ namespace AkyuiUnity.Generator.InternalTrigger
             return button;
         }
 
-        private static Component CreateScrollbar(GameObject gameObject, VerticalScrollbarComponent verticalScrollbarComponent, TargetComponentGetter componentGetter, IAssetLoader assetLoader)
+        private static Component VerticalCreateScrollbar(GameObject gameObject, IAssetLoader assetLoader, VerticalScrollbarComponent verticalScrollbarComponent)
         {
-            var scrollbar = componentGetter.GetComponent<Scrollbar>();
+            var scrollbar = gameObject.AddComponent<Scrollbar>();
             scrollbar.transition = Selectable.Transition.None;
             scrollbar.direction = Scrollbar.Direction.BottomToTop;
 
@@ -193,9 +186,9 @@ namespace AkyuiUnity.Generator.InternalTrigger
             return scrollbar;
         }
 
-        private static Component CreateAlpha(TargetComponentGetter componentGetter, AlphaComponent alphaComponent)
+        private static Component CreateAlpha(GameObject gameObject, IAssetLoader assetLoader, AlphaComponent alphaComponent)
         {
-            var canvasGroup = componentGetter.GetComponent<CanvasGroup>();
+            var canvasGroup = gameObject.AddComponent<CanvasGroup>();
 
             if (alphaComponent.Alpha != null)
             {
@@ -206,9 +199,9 @@ namespace AkyuiUnity.Generator.InternalTrigger
         }
 
         // TextMeshProTrigger.csと合わせる
-        private static Component CreateText(TargetComponentGetter componentGetter, IAssetLoader assetLoader, TextComponent textComponent)
+        private static Component CreateText(GameObject gameObject, IAssetLoader assetLoader, TextComponent textComponent)
         {
-            var text = componentGetter.GetComponent<Text>();
+            var text = gameObject.AddComponent<Text>();
             text.verticalOverflow = VerticalWrapMode.Overflow;
             text.horizontalOverflow = HorizontalWrapMode.Overflow;
             text.supportRichText = false;
@@ -270,9 +263,9 @@ namespace AkyuiUnity.Generator.InternalTrigger
             return text;
         }
 
-        private static Image CreateImage(GameObject gameObject, TargetComponentGetter componentGetter, IAssetLoader assetLoader, ImageComponent imageComponent)
+        private static Image CreateImage(GameObject gameObject, IAssetLoader assetLoader, ImageComponent imageComponent)
         {
-            var image = componentGetter.GetComponent<Image>();
+            var image = gameObject.AddComponent<Image>();
             UpdateImage(gameObject, image, imageComponent, assetLoader);
             return image;
         }

@@ -1,5 +1,6 @@
 ﻿#if AKYUIUNITY_TEXTMESHPRO_SUPPORT
 using System;
+using System.Linq;
 using AkyuiUnity.Editor.ScriptableObject;
 using AkyuiUnity.Generator;
 using AkyuiUnity.Generator.InternalTrigger;
@@ -16,16 +17,16 @@ namespace AkyuiUnity.TextMeshProExtension
     {
         [SerializeField] private string fontFilePath = "Assets/Fonts/{name} SDF";
 
-        public override Component SetOrCreateComponentValue(GameObject gameObject, TargetComponentGetter componentGetter, IComponent component, GameObject[] children, IAssetLoader assetLoader)
+        public override Component CreateComponent(GameObject gameObject, IComponent component, IAssetLoader assetLoader)
         {
-            if (component is InputFieldComponent) return CreateInputField(gameObject, componentGetter);
-            if (component is TextComponent textComponent) return CreateText(componentGetter, textComponent);
+            if (component is InputFieldComponent) return CreateInputField(gameObject);
+            if (component is TextComponent textComponent) return CreateText(gameObject, textComponent);
             return null;
         }
 
-        private Component CreateText(TargetComponentGetter componentGetter, TextComponent textComponent)
+        private Component CreateText(GameObject gameObject, TextComponent textComponent)
         {
-            var text = componentGetter.GetComponent<TextMeshProUGUI>();
+            var text = gameObject.AddComponent<TextMeshProUGUI>();
             text.enableWordWrapping = false;
             text.overflowMode = TextOverflowModes.Overflow;
             text.richText = false;
@@ -86,21 +87,20 @@ namespace AkyuiUnity.TextMeshProExtension
 
             if (textComponent.Wrap != null)
             {
-                text.enableWordWrapping = true;
+                text.enableWordWrapping = textComponent.Wrap.Value;
             }
 
             return text;
         }
 
-        private static Component CreateInputField(GameObject gameObject, TargetComponentGetter componentGetter)
+        private static Component CreateInputField(GameObject gameObject)
         {
-            var inputField = componentGetter.GetComponent<TMP_InputField>();
+            var inputField = gameObject.AddComponent<TMP_InputField>();
             inputField.transition = Selectable.Transition.None;
 
-            var texts = gameObject.GetComponentsInDirectChildren<TextMeshProUGUI>();
-            if (texts.Length > 0)
+            var text = gameObject.GetComponentsInDirectChildren<TextMeshProUGUI>().FirstOrDefault();
+            if (text != null)
             {
-                var text = texts[0];
                 var originalText = text.text;
                 inputField.text = string.Empty;
                 text.text = Convert.ToChar(0x200b).ToString(); // ゼロ幅スペース、これにしないとPrefabに差分が出る

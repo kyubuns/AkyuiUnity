@@ -88,46 +88,11 @@ namespace AkyuiUnity.Loader
                         { "children", ToSerializable(objectElement.Children) },
                     });
                 }
-                else if (element is PrefabElement prefabElement)
-                {
-                    elements.Add(new Dictionary<string, object>
-                    {
-                        { "eid", ToSerializable(prefabElement.Eid) },
-                        { "type", ToSerializable(PrefabElement.TypeString) },
-                        { "position", ToSerializable(prefabElement.Position) },
-                        { "size", ToSerializable(prefabElement.Size) },
-                        { "anchor_x", ToSerializable(prefabElement.AnchorX) },
-                        { "anchor_y", ToSerializable(prefabElement.AnchorY) },
-                        { "rotation", ToSerializable(prefabElement.Rotation) },
-                        { "visible", ToSerializable(prefabElement.Visible) },
-                        { "reference", ToSerializable(prefabElement.Reference) },
-                        { "hash", ToSerializable(prefabElement.Hash) },
-                        { "overrides", prefabElement.Overrides.Select(ToSerializable).ToArray() }
-                    });
-                }
                 else
                 {
                     throw new NotSupportedException($"Element type {element} is not supported");
                 }
             }
-
-            return dict;
-        }
-
-        private static Dictionary<string, object> ToSerializable(Override source)
-        {
-            var dict = new Dictionary<string, object>
-            {
-                { "eid", source.Eid },
-            };
-
-            if (source.Name != null) dict["name"] = ToSerializable(source.Name);
-            if (source.Position != null) dict["position"] = ToSerializable(source.Position.Value);
-            if (source.Size != null) dict["size"] = ToSerializable(source.Size.Value);
-            if (source.AnchorX != null) dict["anchor_x"] = ToSerializable(source.AnchorX.Value);
-            if (source.AnchorY != null) dict["anchor_y"] = ToSerializable(source.AnchorY.Value);
-            if (source.Rotation != null) dict["rotation"] = ToSerializable(source.Rotation.Value);
-            if (source.Components != null) dict["components"] = source.Components.Select(ToSerializable).ToArray();
 
             return dict;
         }
@@ -161,10 +126,7 @@ namespace AkyuiUnity.Loader
 
         private static Dictionary<string, object> ToSerializable(IComponent source)
         {
-            var dict = new Dictionary<string, object>
-            {
-                { "cid", ToSerializable(source.Cid) },
-            };
+            var dict = new Dictionary<string, object>();
 
             if (source is ImageComponent imageComponent)
             {

@@ -10,7 +10,7 @@ namespace AkyuiUnity.AnKuchenExtension
     [CreateAssetMenu(menuName = "Akyui/Triggers/SetupAnKuchen", fileName = nameof(SetupAnKuchenTrigger))]
     public class SetupAnKuchenTrigger : AkyuiImportTrigger
     {
-        public override void OnPostprocessPrefab(ref GameObject prefab, ref GameObjectWithId[] meta)
+        public override void OnPostprocessPrefab(ref GameObject prefab)
         {
             var uiCache = prefab.AddComponent<UICache>();
             uiCache.CreateCache();

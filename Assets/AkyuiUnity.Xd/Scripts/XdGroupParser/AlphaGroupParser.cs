@@ -22,7 +22,7 @@ namespace AkyuiUnity.Xd
             var opacity = xdObject.Style?.Opacity ?? 1.0f;
             return (new IComponent[]
             {
-                new AlphaComponent(0, opacity)
+                new AlphaComponent(opacity)
             }, new IAsset[] { });
         }
     }

@@ -33,7 +33,6 @@ namespace AkyuiUnity.Xd
             var userData = new SvgImportTrigger.SvgImportUserData { Width = Mathf.RoundToInt(size.x), Height = Mathf.RoundToInt(size.y) };
             assets.Add(new SpriteAsset(spriteUid, FastHash.CalculateHash(svg), JsonConvert.SerializeObject(userData)));
             components.Add(new ImageComponent(
-                0,
                 spriteUid,
                 new Color(1f, 1f, 1f, color.a),
                 Vector2Int.one

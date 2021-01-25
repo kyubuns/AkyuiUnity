@@ -19,7 +19,7 @@ namespace AkyuiUnity.Xd
         {
             return (new IComponent[]
             {
-                new InputFieldComponent(0)
+                new InputFieldComponent()
             }, new IAsset[] { });
         }
     }

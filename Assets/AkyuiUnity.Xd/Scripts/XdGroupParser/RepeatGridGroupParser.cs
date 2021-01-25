@@ -43,21 +43,21 @@ namespace AkyuiUnity.Xd
             {
                 return (new IComponent[]
                 {
-                    new GridLayoutComponent(0, repeatGrid.PaddingX, repeatGrid.PaddingY)
+                    new GridLayoutComponent(repeatGrid.PaddingX, repeatGrid.PaddingY)
                 }, new IAsset[] { });
             }
             else if (repeatGrid.Columns > 1)
             {
                 return (new IComponent[]
                 {
-                    new HorizontalLayoutComponent(0, repeatGrid.PaddingX)
+                    new HorizontalLayoutComponent(repeatGrid.PaddingX)
                 }, new IAsset[] { });
             }
             else
             {
                 return (new IComponent[]
                 {
-                    new VerticalLayoutComponent(0, repeatGrid.PaddingY)
+                    new VerticalLayoutComponent(repeatGrid.PaddingY)
                 }, new IAsset[] { });
             }
 

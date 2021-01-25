@@ -35,10 +35,9 @@ namespace AkyuiUnity.Xd
         }
 
         public void OnPreprocessAsset(ref byte[] bytes, ref IAsset asset) { }
-        public void OnPostprocessPrefab(ref GameObject prefab, ref GameObjectWithId[] meta) { }
+        public void OnPostprocessPrefab(ref GameObject prefab) { }
         public void OnPostprocessAllAssets(string outputDirectoryPath, Object[] importAssets) { }
-        public Component SetOrCreateComponentValue(GameObject gameObject, TargetComponentGetter componentGetter, IComponent component,
-            GameObject[] children, IAssetLoader assetLoader) => null;
+        public Component CreateComponent(GameObject gameObject, IComponent component, IAssetLoader assetLoader) => null;
         public void OnPostprocessComponent(GameObject gameObject, IComponent component) { }
     }
 }

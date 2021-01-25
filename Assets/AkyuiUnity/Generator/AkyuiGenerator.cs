@@ -1,28 +1,20 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using AkyuiUnity.Generator.InternalTrigger;
-using JetBrains.Annotations;
 using UnityEngine;
 
 namespace AkyuiUnity.Generator
 {
     public static class AkyuiGenerator
     {
-        public static (GameObject, AkyuiPrefabMeta) GenerateGameObject(IAssetLoader assetLoader, LayoutInfo layoutInfo, IAkyuiGenerateTrigger[] triggers)
+        public static (GameObject, long Hash) GenerateGameObject(IAssetLoader assetLoader, LayoutInfo layoutInfo, IAkyuiGenerateTrigger[] triggers)
         {
-            var metaList = new List<GameObjectWithId>();
             var triggersWithDefault = triggers.Concat(new[] { new DefaultGenerateTrigger() }).ToArray();
-            var gameObject = CreateGameObject(assetLoader, layoutInfo, layoutInfo.Root, null, triggersWithDefault, ref metaList);
-            var meta = new AkyuiPrefabMeta
-            {
-                hash = layoutInfo.Hash,
-                root = gameObject,
-                idAndGameObjects = metaList.ToArray()
-            };
-            return (gameObject, meta);
+            var gameObject = CreateGameObject(assetLoader, layoutInfo, layoutInfo.Root, null, triggersWithDefault);
+            return (gameObject, layoutInfo.Hash);
         }
 
-        private static GameObject CreateGameObject(IAssetLoader assetLoader, LayoutInfo layoutInfo, int eid, Transform parent, IAkyuiGenerateTrigger[] triggers, ref List<GameObjectWithId> meta)
+        private static GameObject CreateGameObject(IAssetLoader assetLoader, LayoutInfo layoutInfo, int eid, Transform parent, IAkyuiGenerateTrigger[] triggers)
         {
             (Vector2 Min, Vector2 Max) CalcAnchor(AnchorXType x, AnchorYType y)
             {
@@ -90,155 +82,29 @@ namespace AkyuiUnity.Generator
                 rectTransform.localPosition = p;
                 rectTransform.SetSize(objectElement.Size);
 
-                var children = new List<GameObject>();
                 foreach (var child in objectElement.Children)
                 {
-                    children.Add(CreateGameObject(assetLoader, layoutInfo, child, rectTransform, triggers, ref meta));
+                    CreateGameObject(assetLoader, layoutInfo, child, rectTransform, triggers);
                 }
 
-                var createdComponents = new List<ComponentWithId>();
+                var createdComponents = new List<Component>();
                 foreach (var component in objectElement.Components)
                 {
-                    createdComponents.Add(CreateComponent(assetLoader, gameObject, component, triggers, children.ToArray()));
+                    createdComponents.Add(CreateComponent(assetLoader, gameObject, component, triggers));
                 }
-
-                meta.Add(new GameObjectWithId
-                {
-                    eid = new[] { objectElement.Eid },
-                    gameObject = gameObject,
-                    idAndComponents = createdComponents.ToArray(),
-                });
 
                 return gameObject;
-            }
-
-            if (element is PrefabElement prefabElement)
-            {
-                var (prefabGameObject, referenceMeta) = assetLoader.LoadPrefab(parent, prefabElement.Reference);
-
-                if (prefabElement.Hash != referenceMeta.hash)
-                {
-                    Debug.LogWarning($"Reference {prefabElement.Reference} hash mismatch {prefabElement.Hash} != {referenceMeta.hash}");
-                }
-
-                {
-                    var rectTransform = prefabGameObject.GetComponent<RectTransform>();
-                    var (anchorMin, anchorMax) = CalcAnchor(prefabElement.AnchorX, prefabElement.AnchorY);
-                    prefabGameObject.SetActive(prefabElement.Visible);
-                    rectTransform.anchoredPosition = new Vector2(prefabElement.Position.x, -prefabElement.Position.y);
-                    rectTransform.rotation = Quaternion.AngleAxis(prefabElement.Rotation, Vector3.back);
-                    var p = rectTransform.localPosition;
-                    rectTransform.anchorMin = anchorMin;
-                    rectTransform.anchorMax = anchorMax;
-                    rectTransform.localPosition = p;
-                    rectTransform.SetSize(prefabElement.Size);
-                }
-
-                foreach (var @override in prefabElement.Overrides)
-                {
-                    var targetObject = referenceMeta.Find(@override.Eid);
-                    var rectTransform = targetObject.gameObject.GetComponent<RectTransform>();
-
-                    if (@override.Name != null) targetObject.gameObject.name = @override.Name;
-                    if (@override.Position != null) rectTransform.anchoredPosition = @override.Position.Value;
-                    if (@override.Size != null) rectTransform.sizeDelta = @override.Size.Value;
-                    if (@override.Rotation != null) rectTransform.rotation = Quaternion.AngleAxis(@override.Rotation.Value, Vector3.back);
-
-                    var anchorMin = rectTransform.anchorMin;
-                    var anchorMax = rectTransform.anchorMax;
-
-                    if (@override.AnchorX != null)
-                    {
-                        switch (@override.AnchorX.Value)
-                        {
-                            case AnchorXType.Left:
-                                anchorMin.x = 0.0f;
-                                anchorMax.x = 0.0f;
-                                break;
-                            case AnchorXType.Center:
-                                anchorMin.x = 0.5f;
-                                anchorMax.x = 0.5f;
-                                break;
-                            case AnchorXType.Right:
-                                anchorMin.x = 1.0f;
-                                anchorMax.x = 1.0f;
-                                break;
-                            case AnchorXType.Stretch:
-                                anchorMin.x = 0.0f;
-                                anchorMax.x = 1.0f;
-                                break;
-                        }
-                    }
-
-                    if (@override.AnchorY != null)
-                    {
-                        switch (@override.AnchorY.Value)
-                        {
-                            case AnchorYType.Top:
-                                anchorMin.y = 1.0f;
-                                anchorMax.y = 1.0f;
-                                break;
-                            case AnchorYType.Middle:
-                                anchorMin.y = 0.5f;
-                                anchorMax.y = 0.5f;
-                                break;
-                            case AnchorYType.Bottom:
-                                anchorMin.y = 0.0f;
-                                anchorMax.y = 0.0f;
-                                break;
-                            case AnchorYType.Stretch:
-                                anchorMin.y = 0.0f;
-                                anchorMax.y = 1.0f;
-                                break;
-                        }
-                    }
-
-                    rectTransform.anchorMin = anchorMin;
-                    rectTransform.anchorMax = anchorMax;
-
-                    if (@override.Components != null)
-                    {
-                        foreach (var component in @override.Components)
-                        {
-                            var targetComponent = targetObject.idAndComponents.Single(x => x.cid == component.Cid);
-                            var children = new List<GameObject>();
-                            foreach (Transform c in targetObject.gameObject.transform)
-                            {
-                                children.Add(c.gameObject);
-                            }
-                            SetOrCreateComponentValue(targetComponent.component, assetLoader, targetObject.gameObject, component, triggers, children.ToArray());
-                        }
-                    }
-                }
-
-                foreach (var idAndGameObject in referenceMeta.idAndGameObjects)
-                {
-                    meta.Add(new GameObjectWithId
-                    {
-                        eid = new[] { prefabElement.Eid }.Concat(idAndGameObject.eid).ToArray(),
-                        gameObject = idAndGameObject.gameObject,
-                        idAndComponents = idAndGameObject.idAndComponents
-                    });
-                }
-
-                return prefabGameObject;
             }
 
             Debug.LogError($"Unknown element type {element}");
             return null;
         }
 
-        private static ComponentWithId CreateComponent(IAssetLoader assetLoader, GameObject gameObject, IComponent component, IAkyuiGenerateTrigger[] triggers, GameObject[] children)
+        private static Component CreateComponent(IAssetLoader assetLoader, GameObject gameObject, IComponent component, IAkyuiGenerateTrigger[] triggers)
         {
-            return new ComponentWithId { cid = component.Cid, component = SetOrCreateComponentValue(null, assetLoader, gameObject, component, triggers, children) };
-        }
-
-        private static Component SetOrCreateComponentValue([CanBeNull] Component target, IAssetLoader assetLoader, GameObject gameObject, IComponent component, IAkyuiGenerateTrigger[] triggers, GameObject[] children)
-        {
-            var targetComponentGetter = new TargetComponentGetter(gameObject, target);
             foreach (var trigger in triggers)
             {
-                var result = trigger.SetOrCreateComponentValue(gameObject, targetComponentGetter, component, children, assetLoader);
+                var result = trigger.CreateComponent(gameObject, component, assetLoader);
                 if (result != null)
                 {
                     foreach (var postprocessTrigger in triggers) postprocessTrigger.OnPostprocessComponent(gameObject, component);
@@ -257,23 +123,6 @@ namespace AkyuiUnity.Generator
         {
             rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, size.x);
             rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, size.y);
-        }
-    }
-
-    public class TargetComponentGetter
-    {
-        private readonly GameObject _gameObject;
-        private readonly Component _target;
-
-        public TargetComponentGetter(GameObject gameObject, Component target)
-        {
-            _gameObject = gameObject;
-            _target = target;
-        }
-
-        public T GetComponent<T>() where T : Component
-        {
-            return _target == null ? _gameObject.AddComponent<T>() : (T) _target;
         }
     }
 }

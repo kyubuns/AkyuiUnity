@@ -19,7 +19,7 @@ namespace AkyuiUnity.Xd
         {
             return (new IComponent[]
             {
-                new ButtonComponent(0)
+                new ButtonComponent()
             }, new IAsset[] { });
         }
     }

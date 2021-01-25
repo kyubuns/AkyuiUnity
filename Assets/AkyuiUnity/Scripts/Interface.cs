@@ -105,78 +105,20 @@ namespace AkyuiUnity
         }
     }
 
-    public class PrefabElement : IElement
-    {
-        public const string TypeString = "prefab";
-
-        public int Eid { get; }
-
-        [NotNull] public readonly string Reference;
-        public Vector2 Position { get; }
-        public Vector2 Size { get; }
-        public AnchorXType AnchorX { get; }
-        public AnchorYType AnchorY { get; }
-        public float Rotation { get; }
-        public bool Visible { get; }
-        public readonly long Hash;
-        [NotNull] public readonly Override[] Overrides;
-
-        public PrefabElement(int eid, Vector2 position, Vector2 size, AnchorXType anchorX, AnchorYType anchorY, float rotation, bool visible, [NotNull] string reference, long hash, [NotNull] Override[] overrides)
-        {
-            Eid = eid;
-            Position = position;
-            Size = size;
-            AnchorX = anchorX;
-            AnchorY = anchorY;
-            Rotation = rotation;
-            Visible = visible;
-            Reference = reference;
-            Hash = hash;
-            Overrides = overrides;
-        }
-    }
-
-    public class Override
-    {
-        [NotNull] public int[] Eid { get; }
-        [CanBeNull] public readonly string Name;
-        [CanBeNull] public readonly Vector2? Position;
-        [CanBeNull] public readonly Vector2? Size;
-        [CanBeNull] public readonly AnchorXType? AnchorX;
-        [CanBeNull] public readonly AnchorYType? AnchorY;
-        [CanBeNull] public readonly float? Rotation;
-        [CanBeNull] public readonly IComponent[] Components;
-
-        public Override([NotNull] int[] eid, [CanBeNull] string name, [CanBeNull] Vector2? position, [CanBeNull] Vector2? size, [CanBeNull] AnchorXType? anchorX, [CanBeNull] AnchorYType? anchorY, [CanBeNull] float? rotation, [CanBeNull] IComponent[] components)
-        {
-            Eid = eid;
-            Name = name;
-            Position = position;
-            Size = size;
-            AnchorX = anchorX;
-            AnchorY = anchorY;
-            Rotation = rotation;
-            Components = components;
-        }
-    }
-
     public interface IComponent
     {
-        int Cid { get; }
     }
 
     public class ImageComponent : IComponent
     {
         public const string TypeString = "image";
 
-        public int Cid { get; }
         [CanBeNull] public readonly string Sprite;
         [CanBeNull] public readonly Color? Color;
         [CanBeNull] public readonly Vector2Int? Direction;
 
-        public ImageComponent(int cid, [CanBeNull] string sprite, [CanBeNull] Color? color, [CanBeNull] Vector2Int? direction)
+        public ImageComponent([CanBeNull] string sprite, [CanBeNull] Color? color, [CanBeNull] Vector2Int? direction)
         {
-            Cid = cid;
             Sprite = sprite;
             Color = color;
             Direction = direction;
@@ -187,12 +129,10 @@ namespace AkyuiUnity
     {
         public const string TypeString = "alpha";
 
-        public int Cid { get; }
         [CanBeNull] public readonly float? Alpha;
 
-        public AlphaComponent(int cid, float? alpha)
+        public AlphaComponent(float? alpha)
         {
-            Cid = cid;
             Alpha = alpha;
         }
     }
@@ -201,7 +141,6 @@ namespace AkyuiUnity
     {
         public const string TypeString = "text";
 
-        public int Cid { get; }
         [CanBeNull] public readonly string Text;
         [CanBeNull] public readonly float? Size;
         [CanBeNull] public readonly Color? Color;
@@ -222,9 +161,8 @@ namespace AkyuiUnity
             LowerRight,
         }
 
-        public TextComponent(int cid, [CanBeNull] string text, [CanBeNull] float? size, [CanBeNull] Color? color, [CanBeNull] TextAlign? align, [CanBeNull] string font, [CanBeNull] bool? wrap)
+        public TextComponent([CanBeNull] string text, [CanBeNull] float? size, [CanBeNull] Color? color, [CanBeNull] TextAlign? align, [CanBeNull] string font, [CanBeNull] bool? wrap)
         {
-            Cid = cid;
             Text = text;
             Size = size;
             Color = color;
@@ -238,11 +176,8 @@ namespace AkyuiUnity
     {
         public const string TypeString = "button";
 
-        public int Cid { get; }
-
-        public ButtonComponent(int cid)
+        public ButtonComponent()
         {
-            Cid = cid;
         }
     }
 
@@ -250,12 +185,10 @@ namespace AkyuiUnity
     {
         public const string TypeString = "vertical_scrollbar";
 
-        public int Cid { get; }
         [CanBeNull] public readonly ImageComponent Image;
 
-        public VerticalScrollbarComponent(int cid, ImageComponent image)
+        public VerticalScrollbarComponent(ImageComponent image)
         {
-            Cid = cid;
             Image = image;
         }
     }
@@ -264,15 +197,13 @@ namespace AkyuiUnity
     {
         public const string TypeString = "vertical_layout";
 
-        public int Cid { get; }
         [CanBeNull] public readonly float? Spacing;
         [CanBeNull] public readonly float? PaddingTop;
         [CanBeNull] public readonly float? PaddingBottom;
         [CanBeNull] public readonly SpecialSpacing[] SpacialSpacings;
 
-        public VerticalListComponent(int cid, [CanBeNull] float? spacing, [CanBeNull] float? paddingTop, [CanBeNull] float? paddingBottom, [CanBeNull] SpecialSpacing[] spacialSpacings)
+        public VerticalListComponent([CanBeNull] float? spacing, [CanBeNull] float? paddingTop, [CanBeNull] float? paddingBottom, [CanBeNull] SpecialSpacing[] spacialSpacings)
         {
-            Cid = cid;
             Spacing = spacing;
             PaddingTop = paddingTop;
             PaddingBottom = paddingBottom;
@@ -298,12 +229,10 @@ namespace AkyuiUnity
     {
         public const string TypeString = "horizontal_layout";
 
-        public int Cid { get; }
         [CanBeNull] public readonly float? Spacing;
 
-        public HorizontalLayoutComponent(int cid, [CanBeNull] float? spacing)
+        public HorizontalLayoutComponent([CanBeNull] float? spacing)
         {
-            Cid = cid;
             Spacing = spacing;
         }
     }
@@ -312,12 +241,10 @@ namespace AkyuiUnity
     {
         public const string TypeString = "vertical_layout";
 
-        public int Cid { get; }
         [CanBeNull] public readonly float? Spacing;
 
-        public VerticalLayoutComponent(int cid, [CanBeNull] float? spacing)
+        public VerticalLayoutComponent([CanBeNull] float? spacing)
         {
-            Cid = cid;
             Spacing = spacing;
         }
     }
@@ -326,13 +253,11 @@ namespace AkyuiUnity
     {
         public const string TypeString = "grid_layout";
 
-        public int Cid { get; }
         [CanBeNull] public readonly float? SpacingX;
         [CanBeNull] public readonly float? SpacingY;
 
-        public GridLayoutComponent(int cid, [CanBeNull] float? spacingX, [CanBeNull] float? spacingY)
+        public GridLayoutComponent([CanBeNull] float? spacingX, [CanBeNull] float? spacingY)
         {
-            Cid = cid;
             SpacingX = spacingX;
             SpacingY = spacingY;
         }
@@ -358,11 +283,8 @@ namespace AkyuiUnity
     {
         public const string TypeString = "inputfield";
 
-        public int Cid { get; }
-
-        public InputFieldComponent(int cid)
+        public InputFieldComponent()
         {
-            Cid = cid;
         }
     }
 }

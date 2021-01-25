@@ -96,7 +96,6 @@ namespace AkyuiUnity.Xd
                 spriteUid = $"{xdObject.GetSimpleName()}_{spriteUid.Substring(0, 8)}.png";
                 assets.Add(new SpriteAsset(spriteUid, xdObject.Style.Fill.Pattern.Meta.Ux.HrefLastModifiedDate, null));
                 components.Add(new ImageComponent(
-                    0,
                     spriteUid,
                     color,
                     direction
@@ -110,7 +109,6 @@ namespace AkyuiUnity.Xd
                 var userData = new SvgImportTrigger.SvgImportUserData { Width = Mathf.RoundToInt(size.x), Height = Mathf.RoundToInt(size.y) };
                 assets.Add(new SpriteAsset(spriteUid, FastHash.CalculateHash(svg), JsonConvert.SerializeObject(userData)));
                 components.Add(new ImageComponent(
-                    0,
                     spriteUid,
                     new Color(1f, 1f, 1f, color.a),
                     direction

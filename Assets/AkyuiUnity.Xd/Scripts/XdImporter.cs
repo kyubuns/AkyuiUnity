@@ -181,7 +181,7 @@ namespace AkyuiUnity.Xd
                 if (rootArtboard.Style?.Fill != null && rootArtboard.Style.Fill.Type == "solid")
                 {
                     var color = rootArtboard.GetFillUnityColor();
-                    rootComponents.Add(new ImageComponent(0, null, color, Vector2Int.one));
+                    rootComponents.Add(new ImageComponent(null, color, Vector2Int.one));
                 }
 
                 var root = new ObjectElement(

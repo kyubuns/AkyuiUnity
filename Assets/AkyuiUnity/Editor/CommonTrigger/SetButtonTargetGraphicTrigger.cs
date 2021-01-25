@@ -8,7 +8,7 @@ namespace AkyuiUnity.CommonTrigger
     [CreateAssetMenu(menuName = "Akyui/Triggers/SetButtonTargetGraphic", fileName = nameof(SetButtonTargetGraphicTrigger))]
     public class SetButtonTargetGraphicTrigger : AkyuiImportTrigger
     {
-        public override void OnPostprocessPrefab(ref GameObject prefab, ref GameObjectWithId[] idAndGameObjects)
+        public override void OnPostprocessPrefab(ref GameObject prefab)
         {
             foreach (var button in prefab.GetComponentsInChildren<Button>())
             {

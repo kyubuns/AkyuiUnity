@@ -152,55 +152,6 @@ namespace AkyuiUnity.Loader
                 );
             }
 
-            if (elementType == PrefabElement.TypeString)
-            {
-                var overrides = new List<Override>();
-                var rootAnchorX = (AnchorXType) Enum.Parse(typeof(AnchorXType), elementJson["anchor_x"].JsonString(), true);
-                var rootAnchorY = (AnchorYType) Enum.Parse(typeof(AnchorYType), elementJson["anchor_y"].JsonString(), true);
-                foreach (var overrideJson in elementJson["overrides"].JsonDictionaryArray())
-                {
-                    List<IComponent> overrideComponents = null;
-                    if (overrideJson.ContainsKey("components"))
-                    {
-                        overrideComponents = new List<IComponent>();
-                        foreach (var overrideComponentJson in overrideJson["components"].JsonDictionaryArray())
-                        {
-                            overrideComponents.Add(ParseComponent(overrideComponentJson));
-                        }
-                    }
-
-                    AnchorXType? anchorX = null;
-                    if (overrideJson.ContainsKey("anchor_x")) anchorX = (AnchorXType) Enum.Parse(typeof(AnchorXType), overrideJson["anchor_x"].JsonString(), true);
-
-                    AnchorYType? anchorY = null;
-                    if (overrideJson.ContainsKey("anchor_y")) anchorY = (AnchorYType) Enum.Parse(typeof(AnchorYType), overrideJson["anchor_y"].JsonString(), true);
-
-                    overrides.Add(new Override(
-                        overrideJson["eid"].JsonIntArray(),
-                        overrideJson.ContainsKey("name") ? overrideJson["name"].JsonString() : null,
-                        overrideJson.ContainsKey("position") ? overrideJson["position"].JsonVector2() : (Vector2?) null,
-                        overrideJson.ContainsKey("size") ? overrideJson["size"].JsonVector2() : (Vector2?) null,
-                        anchorX,
-                        anchorY,
-                        overrideJson.ContainsKey("rotation") ? overrideJson["rotation"].JsonFloat() : (float?) null,
-                        overrideComponents?.ToArray()
-                    ));
-                }
-
-                return new PrefabElement(
-                    elementJson["eid"].JsonInt(),
-                    elementJson["position"].JsonVector2(),
-                    elementJson["size"].JsonVector2(),
-                    rootAnchorX,
-                    rootAnchorY,
-                    elementJson["rotation"].JsonFloat(),
-                    elementJson["visible"].JsonBool(),
-                    elementJson["reference"].JsonString(),
-                    elementJson["hash"].JsonLong(),
-                    overrides.ToArray()
-                );
-            }
-
             throw new NotSupportedException($"Element type {elementType} is not supported");
         }
 
@@ -225,14 +176,12 @@ namespace AkyuiUnity.Loader
         private static InputFieldComponent ParseInputField(Dictionary<string, object> componentJson)
         {
             return new InputFieldComponent(
-                componentJson["cid"].JsonInt()
             );
         }
 
         private static GridLayoutComponent ParseGridLayout(Dictionary<string, object> componentJson)
         {
             return new GridLayoutComponent(
-                componentJson["cid"].JsonInt(),
                 componentJson.ContainsKey("spacing_x") ? componentJson["spacing_x"].JsonFloat() : (float?) null,
                 componentJson.ContainsKey("spacing_y") ? componentJson["spacing_y"].JsonFloat() : (float?) null
             );
@@ -241,7 +190,6 @@ namespace AkyuiUnity.Loader
         private static VerticalLayoutComponent ParseVerticalLayout(Dictionary<string, object> componentJson)
         {
             return new VerticalLayoutComponent(
-                componentJson["cid"].JsonInt(),
                 componentJson.ContainsKey("spacing") ? componentJson["spacing"].JsonFloat() : (float?) null
             );
         }
@@ -249,7 +197,6 @@ namespace AkyuiUnity.Loader
         private static HorizontalLayoutComponent ParseHorizontalLayout(Dictionary<string, object> componentJson)
         {
             return new HorizontalLayoutComponent(
-                componentJson["cid"].JsonInt(),
                 componentJson.ContainsKey("spacing") ? componentJson["spacing"].JsonFloat() : (float?) null
             );
         }
@@ -257,7 +204,6 @@ namespace AkyuiUnity.Loader
         private static VerticalListComponent ParseVerticalList(Dictionary<string, object> componentJson)
         {
             return new VerticalListComponent(
-                componentJson["cid"].JsonInt(),
                 componentJson.ContainsKey("spacing") ? componentJson["spacing"].JsonFloat() : (float?) null,
                 componentJson.ContainsKey("padding_top") ? componentJson["padding_top"].JsonFloat() : (float?) null,
                 componentJson.ContainsKey("padding_bottom") ? componentJson["padding_bottom"].JsonFloat() : (float?) null,
@@ -276,7 +222,6 @@ namespace AkyuiUnity.Loader
         private static VerticalScrollbarComponent ParseScrollbar(Dictionary<string, object> componentJson)
         {
             return new VerticalScrollbarComponent(
-                componentJson["cid"].JsonInt(),
                 componentJson.ContainsKey("image") ? ParseImage(componentJson["image"].JsonDictionary()) : null
             );
         }
@@ -284,7 +229,6 @@ namespace AkyuiUnity.Loader
         private static ButtonComponent ParseButton(Dictionary<string, object> componentJson)
         {
             return new ButtonComponent(
-                componentJson["cid"].JsonInt()
             );
         }
 
@@ -298,7 +242,6 @@ namespace AkyuiUnity.Loader
             }
 
             return new TextComponent(
-                componentJson["cid"].JsonInt(),
                 componentJson.ContainsKey("text") ? componentJson["text"].JsonString() : null,
                 componentJson.ContainsKey("size") ? componentJson["size"].JsonFloat() : (float?) null,
                 componentJson.ContainsKey("color") ? componentJson["color"].JsonColor() : (Color?) null,
@@ -311,7 +254,6 @@ namespace AkyuiUnity.Loader
         private static AlphaComponent ParseAlpha(Dictionary<string, object> componentJson)
         {
             return new AlphaComponent(
-                componentJson["cid"].JsonInt(),
                 componentJson.ContainsKey("alpha") ? componentJson["alpha"].JsonFloat() : (float?) null
             );
         }
@@ -319,7 +261,6 @@ namespace AkyuiUnity.Loader
         private static ImageComponent ParseImage(Dictionary<string, object> componentJson)
         {
             return new ImageComponent(
-                componentJson["cid"].JsonInt(),
                 componentJson.ContainsKey("sprite") ? componentJson["sprite"].JsonString() : null,
                 componentJson.ContainsKey("color") ? componentJson["color"].JsonColor() : (Color?) null,
                 componentJson.ContainsKey("direction") ? componentJson["direction"].JsonVector2Int() : (Vector2Int?) null
