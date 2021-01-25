@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using AkyuiUnity.Loader;
 using AkyuiUnity.Xd.Libraries;
+using JetBrains.Annotations;
 using Newtonsoft.Json;
 using UnityEngine;
 using XdParser;
@@ -112,7 +113,7 @@ namespace AkyuiUnity.Xd
                 var convertedXdObjectJsons = ConvertRefObject(xdObjectJsons, triggers);
                 var childrenObbs = CalcPosition(convertedXdObjectJsons, rootObb);
                 foreach (var childObb in childrenObbs) childObb.LocalLeftTopPosition -= new Vector2(xdResourcesArtboardsJson.X, xdResourcesArtboardsJson.Y);
-                var children = Render(convertedXdObjectJsons);
+                var children = Render(convertedXdObjectJsons, rootObb);
 
                 var rootComponents = new List<IComponent>();
                 if (rootArtboard.Style?.Fill != null && rootArtboard.Style.Fill.Type == "solid")
@@ -286,14 +287,14 @@ namespace AkyuiUnity.Xd
                 throw new Exception($"Unknown object type {xdObject.Type}");
             }
 
-            private IElement[] Render(XdObjectJson[] xdObjects)
+            private IElement[] Render(XdObjectJson[] xdObjects, [CanBeNull] Obb parent)
             {
                 var children = new List<IElement>();
                 foreach (var xdObject in xdObjects)
                 {
                     try
                     {
-                        children.AddRange(Render(xdObject));
+                        children.AddRange(Render(xdObject, parent));
                     }
                     catch (Exception)
                     {
@@ -306,13 +307,14 @@ namespace AkyuiUnity.Xd
             }
 
             // Renderは親から子供の順番
-            private IElement[] Render(XdObjectJson xdObject)
+            private IElement[] Render(XdObjectJson xdObject, [CanBeNull] Obb parent)
             {
                 var eid = _nextEid;
                 _nextEid++;
 
-                var obb = _obbHolder.Get(xdObject);
-                var position = obb.CalcParentLocalCenterPosition();
+                var originalObb = _obbHolder.Get(xdObject);
+                var obb = originalObb.CalcObbInWorld(parent);
+                var position = obb.CalcLocalRect().center - (parent?.Size ?? Vector2.zero) / 2f;
                 var size = obb.Size;
                 var anchorX = AnchorXType.Center;
                 var anchorY = AnchorYType.Middle;
@@ -336,7 +338,7 @@ namespace AkyuiUnity.Xd
                     var (components, assets) = parser.Render(xdObject, obb, _xdAssetHolder);
 
                     var children = new IElement[] { };
-                    if (xdObject.Group != null) children = Render(xdObject.Group.Children);
+                    if (xdObject.Group != null) children = Render(xdObject.Group.Children, originalObb);
 
                     var element = new ObjectElement(
                         eid,
@@ -380,7 +382,7 @@ namespace AkyuiUnity.Xd
                     }
 
                     var generatedChildren = new IElement[] { };
-                    if (xdObject.Group != null) generatedChildren = Render(xdObject.Group.Children);
+                    if (xdObject.Group != null) generatedChildren = Render(xdObject.Group.Children, originalObb);
 
                     var group = new ObjectElement(
                         eid,

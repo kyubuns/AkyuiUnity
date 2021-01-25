@@ -45,15 +45,11 @@ namespace AkyuiUnity.Xd
                 XdObjectJson[] newChildren;
                 (newChildren, spacing) = ExpandRepeatGridGroup(xdObject, repeatGrid, scrollingType, obbGetter, ref specialSpacings);
 
-                foreach (var newChild in newChildren)
-                {
-                    obbGetter.ChangeParent(newChild, xdObject);
-                }
-
                 xdObject.Group.Children = xdObject.Group.Children.Where(x => x != repeatGrid).Concat(newChildren).ToArray();
 
                 var rootObb = obbGetter.Get(xdObject);
-                paddingTop = Mathf.Max(newChildren.Select(x => rootObb.Size.y / 2f + obbGetter.Get(x).LocalLeftTopPosition.y).Min(), 0f);
+                paddingTop = newChildren.Select(x => obbGetter.Get(x).CalcObbInWorld(rootObb).CalcLocalRect().yMin).Min();
+                if (paddingTop < 0f) paddingTop = 0f;
             }
 
             return (new IComponent[]
@@ -124,10 +120,12 @@ namespace AkyuiUnity.Xd
                 }
             }
 
-            var orderedSize = size.OrderBy(x => x.Obb.CalcGlobalRect().yMin).ToArray();
+            var rootObb = obbGetter.Get(listItemRoot);
+            var cache = size.ToDictionary(x => x.Obb, x => x.Obb.CalcObbInWorld(rootObb).CalcLocalRect());
+            var orderedSize = size.OrderBy(x => cache[x.Obb].yMin).ToArray();
             foreach (var ((name1, obb1), (name2, obb2)) in orderedSize.Zip(orderedSize.Skip(1), (x, y) => (x, y)))
             {
-                specialSpacings.Add(new SpecialSpacing(name1, name2, obb2.CalcGlobalRect().yMax - obb1.CalcGlobalRect().yMin));
+                specialSpacings.Add(new SpecialSpacing(name1, name2, cache[obb1].yMax - cache[obb2].yMin));
             }
 
             return listItems.ToArray();
