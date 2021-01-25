@@ -6,7 +6,7 @@ AkyuiUnity is a Unity implementation of [Akyui](https://github.com/kyubuns/Akyui
 
 **under development**  
 **開発中です。ぜひWatch/Starして頂き、もうしばらくお待ち下さい。**  
-詳細は[Discussions](https://github.com/kyubuns/AkyuiUnity/discussions)をご覧ください。
+詳細は[wiki](https://github.com/kyubuns/AkyuiUnity/wiki)をご覧ください。
 
 ---
 
