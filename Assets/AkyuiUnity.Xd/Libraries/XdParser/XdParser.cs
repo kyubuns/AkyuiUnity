@@ -97,6 +97,9 @@ namespace XdParser.Internal
 
         [JsonProperty("value")]
         public XdColorValueJson Value { get; set; }
+
+        [JsonProperty("alpha")]
+        public float? Alpha { get; set; }
     }
 
     public class XdColorValueJson

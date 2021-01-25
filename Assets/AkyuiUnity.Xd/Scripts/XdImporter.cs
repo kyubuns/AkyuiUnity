@@ -170,10 +170,20 @@ namespace AkyuiUnity.Xd
                 var xdResourcesArtboardsJson = resources.Artboards[xdArtboard.Manifest.Path.Replace("artboard-", "")];
                 var rootSize = new Vector2(xdResourcesArtboardsJson.Width, xdResourcesArtboardsJson.Height);
                 var rootOffset = rootSize / -2f - new Vector2(xdResourcesArtboardsJson.X, xdResourcesArtboardsJson.Y);
-                var xdObjectJsons = xdArtboard.Artboard.Children.SelectMany(x => x.Artboard.Children).ToArray();
+
+                var rootArtboard = xdArtboard.Artboard.Children[0];
+                var xdObjectJsons = rootArtboard.Artboard.Children;
                 var convertedXdObjectJsons = ConvertRefObject(xdObjectJsons, triggers);
                 CalcPosition(convertedXdObjectJsons, rootOffset, Vector2.zero);
                 var children = Render(convertedXdObjectJsons);
+
+                var rootComponents = new List<IComponent>();
+                if (rootArtboard.Style?.Fill != null && rootArtboard.Style.Fill.Type == "solid")
+                {
+                    var color = rootArtboard.GetFillUnityColor();
+                    rootComponents.Add(new ImageComponent(0, null, color, Vector2Int.one));
+                }
+
                 var root = new ObjectElement(
                     0,
                     xdArtboard.Name,
@@ -183,7 +193,7 @@ namespace AkyuiUnity.Xd
                     AnchorYType.Middle,
                     0f,
                     true,
-                    new IComponent[] { },
+                    rootComponents.ToArray(),
                     children.Select(x => x.Eid).ToArray()
                 );
                 Elements.Add(root);

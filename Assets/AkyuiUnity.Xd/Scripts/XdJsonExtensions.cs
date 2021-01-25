@@ -67,5 +67,13 @@ namespace AkyuiUnity.Xd
             color.a = xdObjectJson.Style?.Opacity ?? 1f;
             return color;
         }
+
+        public static Color GetFillUnityColor(this XdArtboardChildJson xdArtboardChildJson)
+        {
+            var colorJson = xdArtboardChildJson.Style.GetFillColor();
+            Color color = new Color32((byte) colorJson.R, (byte) colorJson.G, (byte) colorJson.B, 255);
+            color.a = xdArtboardChildJson.Style.Fill.Color.Alpha ?? 1f;
+            return color;
+        }
     }
 }
