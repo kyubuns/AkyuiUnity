@@ -78,11 +78,11 @@ namespace XdParser
             {
                 var color = xdObject.GetFillColor();
                 parameter.Fill = color;
-            }
 
-            if (!string.IsNullOrWhiteSpace(shape.Winding))
-            {
-                parameter.FillRule = shape.Winding;
+                if (!string.IsNullOrWhiteSpace(shape.Winding))
+                {
+                    parameter.FillRule = shape.Winding;
+                }
             }
 
             if (shape.R != null)
