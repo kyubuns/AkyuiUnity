@@ -147,6 +147,7 @@ namespace AkyuiUnity
         [CanBeNull] public readonly TextAlign? Align;
         [CanBeNull] public readonly string Font;
         [CanBeNull] public readonly bool? Wrap;
+        [CanBeNull] public readonly float? LineHeight;
 
         public enum TextAlign
         {
@@ -161,7 +162,7 @@ namespace AkyuiUnity
             LowerRight,
         }
 
-        public TextComponent([CanBeNull] string text, [CanBeNull] float? size, [CanBeNull] Color? color, [CanBeNull] TextAlign? align, [CanBeNull] string font, [CanBeNull] bool? wrap)
+        public TextComponent([CanBeNull] string text, [CanBeNull] float? size, [CanBeNull] Color? color, [CanBeNull] TextAlign? align, [CanBeNull] string font, [CanBeNull] bool? wrap, [CanBeNull] float? lineHeight)
         {
             Text = text;
             Size = size;
@@ -169,6 +170,7 @@ namespace AkyuiUnity
             Align = align;
             Font = font;
             Wrap = wrap;
+            LineHeight = lineHeight;
         }
     }
 

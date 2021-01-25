@@ -223,6 +223,9 @@ namespace XdParser.Internal
     {
         [JsonProperty("paragraphAlign")]
         public string ParagraphAlign { get; set; } // default = left
+
+        [JsonProperty("lineHeight")]
+        public float? LineHeight { get; set; }
     }
 
     public class XdStyleFillPatternJson

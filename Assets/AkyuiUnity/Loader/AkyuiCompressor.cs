@@ -149,6 +149,7 @@ namespace AkyuiUnity.Loader
                 if (textComponent.Align != null) dict["align"] = ToSerializable(textComponent.Align.Value);
                 if (textComponent.Font != null) dict["font"] = ToSerializable(textComponent.Font);
                 if (textComponent.Wrap != null) dict["wrap"] = ToSerializable(textComponent.Wrap.Value);
+                if (textComponent.LineHeight != null) dict["line_height"] = ToSerializable(textComponent.LineHeight.Value);
             }
             else if (source is ButtonComponent)
             {

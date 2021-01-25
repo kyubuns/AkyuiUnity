@@ -140,7 +140,9 @@ namespace AkyuiUnity.Xd
                 if (paragraphAlign == "right") textAlign = TextComponent.TextAlign.UpperRight;
             }
 
-            components.Add(new TextComponent(rawText, fontSize, color, textAlign, font.PostscriptName, wrap));
+            var lineHeight = xdObject.Style?.TextAttributes?.LineHeight;
+
+            components.Add(new TextComponent(rawText, fontSize, color, textAlign, font.PostscriptName, wrap, lineHeight));
 
             return (components.ToArray(), new IAsset[] { });
         }

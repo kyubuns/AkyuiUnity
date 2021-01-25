@@ -71,13 +71,14 @@ namespace AkyuiUnity.TextMeshProExtension
                 }
             }
 
+            TMP_FontAsset fontAsset = null;
             if (textComponent.Font != null)
             {
                 var fontPath = fontFilePath.Replace("{name}", textComponent.Font) + ".asset";
-                var loadFont = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(fontPath);
-                if (loadFont != null)
+                fontAsset = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(fontPath);
+                if (fontAsset != null)
                 {
-                    text.font = loadFont;
+                    text.font = fontAsset;
                 }
                 else
                 {
@@ -88,6 +89,14 @@ namespace AkyuiUnity.TextMeshProExtension
             if (textComponent.Wrap != null)
             {
                 text.enableWordWrapping = textComponent.Wrap.Value;
+            }
+
+            if (textComponent.LineHeight != null && fontAsset != null)
+            {
+                var fontLineHeight = fontAsset.faceInfo.lineHeight * text.fontSize / fontAsset.faceInfo.pointSize; // 66
+                var targetLineHeight = textComponent.LineHeight.Value; // 50
+                var em100 = (targetLineHeight - fontLineHeight) / text.fontSize;
+                text.lineSpacing = em100 * 100.0f;
             }
 
             return text;
