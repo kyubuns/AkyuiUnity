@@ -10,6 +10,7 @@ namespace AkyuiUnity.Generator.InternalTrigger
         public Component CreateComponent(GameObject gameObject, IComponent component, IAssetLoader assetLoader)
         {
             if (component is ImageComponent imageComponent) return CreateImage(gameObject, assetLoader, imageComponent);
+            if (component is MaskComponent maskComponent) return CreateMask(gameObject, assetLoader, maskComponent);
             if (component is TextComponent textComponent) return CreateText(gameObject, assetLoader, textComponent);
             if (component is AlphaComponent alphaComponent) return CreateAlpha(gameObject, assetLoader, alphaComponent);
             if (component is ButtonComponent) return CreateButton(gameObject, assetLoader);
@@ -261,6 +262,19 @@ namespace AkyuiUnity.Generator.InternalTrigger
             }
 
             return text;
+        }
+
+        private static Mask CreateMask(GameObject gameObject, IAssetLoader assetLoader, MaskComponent maskComponent)
+        {
+            var image = gameObject.AddComponent<Image>();
+            image.raycastTarget = false;
+
+            var mask = gameObject.AddComponent<Mask>();
+            mask.showMaskGraphic = false;
+
+            if (maskComponent.Sprite != null) image.sprite = assetLoader.LoadSprite(maskComponent.Sprite);
+
+            return mask;
         }
 
         private static Image CreateImage(GameObject gameObject, IAssetLoader assetLoader, ImageComponent imageComponent)

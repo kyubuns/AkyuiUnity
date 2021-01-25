@@ -160,6 +160,7 @@ namespace AkyuiUnity.Loader
             var componentType = componentJson["type"].JsonString();
 
             if (componentType == ImageComponent.TypeString) return ParseImage(componentJson);
+            if (componentType == MaskComponent.TypeString) return ParseMask(componentJson);
             if (componentType == AlphaComponent.TypeString) return ParseAlpha(componentJson);
             if (componentType == TextComponent.TypeString) return ParseText(componentJson);
             if (componentType == ButtonComponent.TypeString) return ParseButton(componentJson);
@@ -265,6 +266,13 @@ namespace AkyuiUnity.Loader
                 componentJson.ContainsKey("sprite") ? componentJson["sprite"].JsonString() : null,
                 componentJson.ContainsKey("color") ? componentJson["color"].JsonColor() : (Color?) null,
                 componentJson.ContainsKey("direction") ? componentJson["direction"].JsonVector2Int() : (Vector2Int?) null
+            );
+        }
+
+        private static MaskComponent ParseMask(Dictionary<string, object> componentJson)
+        {
+            return new MaskComponent(
+                componentJson.ContainsKey("sprite") ? componentJson["sprite"].JsonString() : null
             );
         }
     }

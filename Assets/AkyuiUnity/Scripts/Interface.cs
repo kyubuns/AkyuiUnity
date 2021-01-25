@@ -125,6 +125,18 @@ namespace AkyuiUnity
         }
     }
 
+    public class MaskComponent : IComponent
+    {
+        public const string TypeString = "mask";
+
+        [CanBeNull] public readonly string Sprite;
+
+        public MaskComponent([CanBeNull] string sprite)
+        {
+            Sprite = sprite;
+        }
+    }
+
     public class AlphaComponent : IComponent
     {
         public const string TypeString = "alpha";

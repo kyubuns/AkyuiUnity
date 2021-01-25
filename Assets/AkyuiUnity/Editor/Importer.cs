@@ -88,6 +88,7 @@ namespace AkyuiUnity.Editor
         {
             foreach (var prevAsset in prevAssets)
             {
+                if (prevAsset == null) continue;
                 if (newAssets.Any(x => x.name == prevAsset.name)) continue;
 
                 var prevAssetPath = AssetDatabase.GetAssetPath(prevAsset);
