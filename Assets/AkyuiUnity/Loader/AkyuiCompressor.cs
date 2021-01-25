@@ -168,6 +168,7 @@ namespace AkyuiUnity.Loader
                 dict["type"] = ImageComponent.TypeString;
                 if (imageComponent.Sprite != null) dict["sprite"] = ToSerializable(imageComponent.Sprite);
                 if (imageComponent.Color != null) dict["color"] = ToSerializable(imageComponent.Color.Value);
+                if (imageComponent.Direction != null) dict["direction"] = ToSerializable(imageComponent.Direction.Value);
             }
             else if (source is AlphaComponent alphaComponent)
             {
@@ -254,6 +255,11 @@ namespace AkyuiUnity.Loader
         {
             var c = (Color32)color;
             return new int[] { c.r, c.g, c.b, c.a };
+        }
+
+        private static int[] ToSerializable(Vector2Int v)
+        {
+            return new[] { v.x, v.y };
         }
 
         private static string ToSerializable(AnchorXType x) => x.ToString().ToLower();

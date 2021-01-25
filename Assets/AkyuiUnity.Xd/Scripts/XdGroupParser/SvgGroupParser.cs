@@ -35,7 +35,8 @@ namespace AkyuiUnity.Xd
             components.Add(new ImageComponent(
                 0,
                 spriteUid,
-                new Color(1f, 1f, 1f, color.a)
+                new Color(1f, 1f, 1f, color.a),
+                Vector2Int.one
             ));
 
             assetHolder.Save(spriteUid, System.Text.Encoding.UTF8.GetBytes(svg));

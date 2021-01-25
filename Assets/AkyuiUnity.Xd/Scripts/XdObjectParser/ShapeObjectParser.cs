@@ -84,7 +84,11 @@ namespace AkyuiUnity.Xd
             var assets = new List<IAsset>();
 
             var color = xdObject.GetFillUnityColor();
-            var spriteUid = xdObject.Style?.Fill?.Pattern?.Meta?.Ux?.Uid;
+            var ux = xdObject.Style?.Fill?.Pattern?.Meta?.Ux;
+            var spriteUid = ux?.Uid;
+            var flipX = ux?.FlipX ?? false;
+            var flipY = ux?.FlipY ?? false;
+            var direction = new Vector2Int(flipX ? -1 : 1, flipY ? -1 : 1);
             var shapeType = xdObject.Shape?.Type;
 
             if (!string.IsNullOrWhiteSpace(spriteUid))
@@ -94,7 +98,8 @@ namespace AkyuiUnity.Xd
                 components.Add(new ImageComponent(
                     0,
                     spriteUid,
-                    color
+                    color,
+                    direction
                 ));
                 assetHolder.Save(spriteUid, xdObject.Style.Fill.Pattern.Meta);
             }
@@ -107,7 +112,8 @@ namespace AkyuiUnity.Xd
                 components.Add(new ImageComponent(
                     0,
                     spriteUid,
-                    new Color(1f, 1f, 1f, color.a)
+                    new Color(1f, 1f, 1f, color.a),
+                    direction
                 ));
 
                 assetHolder.Save(spriteUid, System.Text.Encoding.UTF8.GetBytes(svg));

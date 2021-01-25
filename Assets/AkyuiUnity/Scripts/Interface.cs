@@ -165,12 +165,14 @@ namespace AkyuiUnity
         public int Cid { get; }
         [CanBeNull] public readonly string Sprite;
         [CanBeNull] public readonly Color? Color;
+        [CanBeNull] public readonly Vector2Int? Direction;
 
-        public ImageComponent(int cid, [CanBeNull] string sprite, [CanBeNull] Color? color)
+        public ImageComponent(int cid, [CanBeNull] string sprite, [CanBeNull] Color? color, [CanBeNull] Vector2Int? direction)
         {
             Cid = cid;
             Sprite = sprite;
             Color = color;
+            Direction = direction;
         }
     }
 

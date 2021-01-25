@@ -318,7 +318,8 @@ namespace AkyuiUnity.Loader
             return new ImageComponent(
                 componentJson["cid"].JsonInt(),
                 componentJson.ContainsKey("sprite") ? componentJson["sprite"].JsonString() : null,
-                componentJson.ContainsKey("color") ? componentJson["color"].JsonColor() : (Color?) null
+                componentJson.ContainsKey("color") ? componentJson["color"].JsonColor() : (Color?) null,
+                componentJson.ContainsKey("direction") ? componentJson["direction"].JsonVector2Int() : (Vector2Int?) null
             );
         }
     }

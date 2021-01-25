@@ -62,6 +62,12 @@ namespace AkyuiUnity.Loader.Internal
             return new Color32(b[0], b[1], b[2], b[3]);
         }
 
+        public static Vector2Int JsonVector2Int(this object o)
+        {
+            var a = o.JsonIntArray();
+            return new Vector2Int(a[0], a[1]);
+        }
+
         public static Vector2 JsonVector2(this object o)
         {
             var a = (List<object>) o;

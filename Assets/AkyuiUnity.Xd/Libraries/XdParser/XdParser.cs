@@ -253,6 +253,12 @@ namespace XdParser.Internal
 
         [JsonProperty("hrefLastModifiedDate")]
         public uint HrefLastModifiedDate { get; set; }
+
+        [JsonProperty("flipX")]
+        public bool FlipX { get; set; }
+
+        [JsonProperty("flipY")]
+        public bool FlipY { get; set; }
     }
 
     public class XdShapeJson

@@ -9,7 +9,7 @@ namespace AkyuiUnity.Generator.InternalTrigger
     {
         public Component SetOrCreateComponentValue(GameObject gameObject, TargetComponentGetter componentGetter, IComponent component, GameObject[] children, IAssetLoader assetLoader)
         {
-            if (component is ImageComponent imageComponent) return CreateImage(componentGetter, assetLoader, imageComponent);
+            if (component is ImageComponent imageComponent) return CreateImage(gameObject, componentGetter, assetLoader, imageComponent);
             if (component is TextComponent textComponent) return CreateText(componentGetter, assetLoader, textComponent);
             if (component is AlphaComponent alphaComponent) return CreateAlpha(componentGetter, alphaComponent);
             if (component is ButtonComponent) return CreateButton(gameObject, componentGetter);
@@ -187,7 +187,7 @@ namespace AkyuiUnity.Generator.InternalTrigger
             if (verticalScrollbarComponent.Image != null)
             {
                 var image = scrollbar.handleRect.GetComponent<Image>();
-                UpdateImage(image, verticalScrollbarComponent.Image, assetLoader);
+                UpdateImage(gameObject, image, verticalScrollbarComponent.Image, assetLoader);
             }
 
             return scrollbar;
@@ -270,17 +270,23 @@ namespace AkyuiUnity.Generator.InternalTrigger
             return text;
         }
 
-        private static Image CreateImage(TargetComponentGetter componentGetter, IAssetLoader assetLoader, ImageComponent imageComponent)
+        private static Image CreateImage(GameObject gameObject, TargetComponentGetter componentGetter, IAssetLoader assetLoader, ImageComponent imageComponent)
         {
             var image = componentGetter.GetComponent<Image>();
-            UpdateImage(image, imageComponent, assetLoader);
+            UpdateImage(gameObject, image, imageComponent, assetLoader);
             return image;
         }
 
-        private static void UpdateImage(Image image, ImageComponent imageComponent, IAssetLoader assetLoader)
+        private static void UpdateImage(GameObject gameObject, Image image, ImageComponent imageComponent, IAssetLoader assetLoader)
         {
+            var rectTransform = gameObject.GetComponent<RectTransform>();
             if (imageComponent.Sprite != null) image.sprite = assetLoader.LoadSprite(imageComponent.Sprite);
             if (imageComponent.Color != null) image.color = imageComponent.Color.Value;
+
+            if (imageComponent.Direction != null)
+            {
+                rectTransform.localScale = new Vector3(imageComponent.Direction.Value.x, imageComponent.Direction.Value.y, 1f);
+            }
         }
 
         public void OnPostprocessComponent(GameObject gameObject, IComponent component)
