@@ -87,8 +87,15 @@ namespace XdParser
 
             if (shape.R != null)
             {
-                if (shape.R is float floatR) parameter.Rx = floatR;
-                if (shape.R is float[] floatArrayR) parameter.Rx = floatArrayR[0];
+                if (shape.R is Newtonsoft.Json.Linq.JValue jValue)
+                {
+                    parameter.Rx = (float) jValue;
+                }
+
+                if (shape.R is Newtonsoft.Json.Linq.JArray jArray)
+                {
+                    parameter.Rx = (float) jArray[0];
+                }
 
                 if (parameter.Rx > shape.Width / 2f) parameter.Rx = shape.Width / 2f;
                 if (parameter.Rx > shape.Height / 2f) parameter.Rx = shape.Height / 2f;
