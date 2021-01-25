@@ -348,7 +348,7 @@ namespace AkyuiUnity.Xd
                 _nextEid++;
 
                 var rect = _sizeHolder.Get(xdObject);
-                var position = new Vector2(rect.center.x, -rect.center.y);
+                var position = new Vector2(rect.center.x, rect.center.y);
                 var size = rect.size;
                 var anchorX = AnchorXType.Center;
                 var anchorY = AnchorYType.Middle;

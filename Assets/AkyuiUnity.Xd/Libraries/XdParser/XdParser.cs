@@ -607,6 +607,9 @@ namespace XdParser.Internal
 
         [JsonProperty("clipPathResources")]
         public XdClipPathResourcesJson ClipPathResources { get; set; }
+
+        [JsonProperty("rotation")]
+        public float Rotation { get; set; }
     }
 
     public class XdClipPathResourcesJson
