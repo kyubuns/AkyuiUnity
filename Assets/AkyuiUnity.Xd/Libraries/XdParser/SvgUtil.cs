@@ -124,74 +124,144 @@ namespace XdParser
                     parameter.StrokeDasharray = stroke.Dash;
                 }
 
-                if (shape.Type != "rect" || stroke.Align == null)
+                if (stroke.Align == null)
                 {
                 }
-                else if (shape.Type == "rect" && stroke.Align == "outside")
+                else if (stroke.Align == "outside")
                 {
-                    var rx = parameter.Rx;
-                    parameter.Rx = null;
-                    return new GroupElement
+                    if (shape.Type == "rect")
                     {
-                        Parameter = parameter, Children = new IElement[]
+                        var rx = parameter.Rx;
+                        parameter.Rx = null;
+                        return new GroupElement
                         {
-                            new RectElement
+                            Parameter = parameter, Children = new IElement[]
                             {
-                                Parameter = new ElementParameter
+                                new RectElement
                                 {
-                                    EnableStroke = true,
-                                    Rx = rx,
+                                    Parameter = new ElementParameter
+                                    {
+                                        EnableStroke = true,
+                                        Rx = rx,
+                                    },
+                                    Width = shape.Width,
+                                    Height = shape.Height,
                                 },
-                                Width = shape.Width,
-                                Height = shape.Height,
-                            },
-                            new RectElement
+                                new RectElement
+                                {
+                                    Parameter = new ElementParameter
+                                    {
+                                        X = -parameter.StrokeWidth.Value / 2f,
+                                        Y = -parameter.StrokeWidth.Value / 2f,
+                                        EnableFill = true,
+                                        Rx = rx + parameter.StrokeWidth.Value / 2f,
+                                    },
+                                    Width = shape.Width + parameter.StrokeWidth.Value,
+                                    Height = shape.Height + parameter.StrokeWidth.Value,
+                                },
+                            }
+                        };
+                    }
+
+                    if (shape.Type == "ellipse")
+                    {
+                        return new GroupElement
+                        {
+                            Parameter = parameter, Children = new IElement[]
                             {
-                                Parameter = new ElementParameter
+                                new EllipseElement
                                 {
-                                    X = -parameter.StrokeWidth.Value / 2f,
-                                    Y = -parameter.StrokeWidth.Value / 2f,
-                                    EnableFill = true,
-                                    Rx = rx + parameter.StrokeWidth.Value / 2f,
+                                    Parameter = new ElementParameter
+                                    {
+                                        EnableStroke = true,
+                                    },
+                                    Cx = shape.Cx,
+                                    Cy = shape.Cy,
+                                    Rx = shape.Rx,
+                                    Ry = shape.Ry,
                                 },
-                                Width = shape.Width + parameter.StrokeWidth.Value,
-                                Height = shape.Height + parameter.StrokeWidth.Value,
-                            },
-                        }
-                    };
+                                new EllipseElement
+                                {
+                                    Parameter = new ElementParameter
+                                    {
+                                        EnableFill = true,
+                                    },
+                                    Cx = shape.Cx,
+                                    Cy = shape.Cy,
+                                    Rx = shape.Rx + parameter.StrokeWidth.Value / 2f,
+                                    Ry = shape.Ry + parameter.StrokeWidth.Value / 2f,
+                                },
+                            }
+                        };
+                    }
                 }
-                else if (shape.Type == "rect" && stroke.Align == "inside")
+                else if (stroke.Align == "inside")
                 {
-                    var rx = parameter.Rx;
-                    parameter.Rx = null;
-                    return new GroupElement
+                    if (shape.Type == "rect")
                     {
-                        Parameter = parameter, Children = new IElement[]
+                        var rx = parameter.Rx;
+                        parameter.Rx = null;
+                        return new GroupElement
                         {
-                            new RectElement
+                            Parameter = parameter, Children = new IElement[]
                             {
-                                Parameter = new ElementParameter
+                                new RectElement
                                 {
-                                    EnableStroke = true,
-                                    Rx = rx,
+                                    Parameter = new ElementParameter
+                                    {
+                                        EnableStroke = true,
+                                        Rx = rx,
+                                    },
+                                    Width = shape.Width,
+                                    Height = shape.Height,
                                 },
-                                Width = shape.Width,
-                                Height = shape.Height,
-                            },
-                            new RectElement
+                                new RectElement
+                                {
+                                    Parameter = new ElementParameter
+                                    {
+                                        X = parameter.StrokeWidth.Value / 2f,
+                                        Y = parameter.StrokeWidth.Value / 2f,
+                                        EnableFill = true,
+                                        Rx = rx - parameter.StrokeWidth.Value / 2f,
+                                    },
+                                    Width = shape.Width - parameter.StrokeWidth.Value,
+                                    Height = shape.Height - parameter.StrokeWidth.Value,
+                                },
+                            }
+                        };
+                    }
+
+                    if (shape.Type == "ellipse")
+                    {
+                        return new GroupElement
+                        {
+                            Parameter = parameter, Children = new IElement[]
                             {
-                                Parameter = new ElementParameter
+                                new EllipseElement
                                 {
-                                    X = parameter.StrokeWidth.Value / 2f,
-                                    Y = parameter.StrokeWidth.Value / 2f,
-                                    EnableFill = true,
-                                    Rx = rx - parameter.StrokeWidth.Value / 2f,
+                                    Parameter = new ElementParameter
+                                    {
+                                        EnableStroke = true,
+                                    },
+                                    Cx = shape.Cx,
+                                    Cy = shape.Cy,
+                                    Rx = shape.Rx,
+                                    Ry = shape.Ry,
                                 },
-                                Width = shape.Width - parameter.StrokeWidth.Value,
-                                Height = shape.Height - parameter.StrokeWidth.Value,
-                            },
-                        }
-                    };
+                                new EllipseElement
+                                {
+                                    Parameter = new ElementParameter
+                                    {
+                                        EnableFill = true,
+                                    },
+                                    Cx = shape.Cx,
+                                    Cy = shape.Cy,
+                                    Rx = shape.Rx - parameter.StrokeWidth.Value / 2f,
+                                    Ry = shape.Ry - parameter.StrokeWidth.Value / 2f,
+                                },
+                            }
+                        };
+                    }
                 }
                 else
                 {
