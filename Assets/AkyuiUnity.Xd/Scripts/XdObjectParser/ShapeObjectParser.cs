@@ -65,7 +65,6 @@ namespace AkyuiUnity.Xd
 
                 if (imageAspect > instanceAspect)
                 {
-                    Debug.Log(1);
                     var prev = size.x;
                     size.x = size.y * (imageSize.x / imageSize.y);
                     position.x -= (size.x - prev) / 2f;
@@ -75,7 +74,6 @@ namespace AkyuiUnity.Xd
                 }
                 else
                 {
-                    Debug.Log(2);
                     var prev = size.y;
                     size.y = size.x * (imageSize.y / imageSize.x);
                     position.y -= (size.y - prev) / 2f;
