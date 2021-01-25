@@ -54,29 +54,45 @@ namespace AkyuiUnity.Xd
 
             if (scaleBehavior == "cover")
             {
-                var originalWidth = xdObject.Style?.Fill?.Pattern?.Width ?? 0f;
-                var originalHeight = xdObject.Style?.Fill?.Pattern?.Height ?? 0f;
-                var originalSize = new Vector2(originalWidth, originalHeight);
-                var originalAspect = originalSize.x / originalSize.y;
+                var imageWidth = xdObject.Style?.Fill?.Pattern?.Width ?? 0f;
+                var imageHeight = xdObject.Style?.Fill?.Pattern?.Height ?? 0f;
+                var imageSize = new Vector2(imageWidth, imageHeight);
+                var imageAspect = imageSize.x / imageSize.y;
                 var instanceAspect = size.x / size.y;
+                var offsetX = xdObject.Style?.Fill?.Pattern?.Meta?.Ux?.OffsetX ?? 0f;
+                var offsetY = xdObject.Style?.Fill?.Pattern?.Meta?.Ux?.OffsetY ?? 0f;
+                var scale = xdObject.Style?.Fill?.Pattern?.Meta?.Ux?.Scale ?? 1.0f;
 
-                if (originalAspect > instanceAspect)
+                if (imageAspect > instanceAspect)
                 {
-                    // 縦はそのまま
+                    Debug.Log(1);
                     var prev = size.x;
-                    size.x = size.y * (originalSize.x / originalSize.y);
+                    size.x = size.y * (imageSize.x / imageSize.y);
                     position.x -= (size.x - prev) / 2f;
+
+                    position.x += offsetX * xdObject.Shape.Width * imageAspect / instanceAspect;
+                    position.y += offsetY * xdObject.Shape.Height;
                 }
                 else
                 {
-                    // 横はそのまま
+                    Debug.Log(2);
                     var prev = size.y;
-                    size.y = size.x * (originalSize.y / originalSize.x);
+                    size.y = size.x * (imageSize.y / imageSize.x);
                     position.y -= (size.y - prev) / 2f;
+
+                    position.x += offsetX * xdObject.Shape.Width;
+                    position.y += offsetY * xdObject.Shape.Height * imageAspect / instanceAspect;
+                }
+
+                {
+                    var prev = size;
+                    size *= scale;
+                    position -= (size - prev) / 2f;
                 }
             }
 
             return new Rect(position, size);
+
         }
 
         public (IComponent[], IAsset[]) Render(XdObjectJson xdObject, Obb obb, XdAssetHolder assetHolder)

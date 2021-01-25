@@ -262,6 +262,15 @@ namespace XdParser.Internal
 
         [JsonProperty("flipY")]
         public bool FlipY { get; set; }
+
+        [JsonProperty("offsetX")]
+        public float OffsetX { get; set; }
+
+        [JsonProperty("offsetY")]
+        public float OffsetY { get; set; }
+
+        [JsonProperty("scale")]
+        public float? Scale { get; set; }
     }
 
     public class XdShapeJson
