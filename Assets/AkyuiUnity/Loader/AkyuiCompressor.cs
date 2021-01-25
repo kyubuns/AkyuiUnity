@@ -82,6 +82,7 @@ namespace AkyuiUnity.Loader
                         { "size", ToSerializable(objectElement.Size) },
                         { "anchor_x", ToSerializable(objectElement.AnchorX) },
                         { "anchor_y", ToSerializable(objectElement.AnchorY) },
+                        { "rotation", ToSerializable(objectElement.Rotation) },
                         { "visible", ToSerializable(objectElement.Visible) },
                         { "components", objectElement.Components.Select(ToSerializable).ToArray() },
                         { "children", ToSerializable(objectElement.Children) },
@@ -97,6 +98,7 @@ namespace AkyuiUnity.Loader
                         { "size", ToSerializable(prefabElement.Size) },
                         { "anchor_x", ToSerializable(prefabElement.AnchorX) },
                         { "anchor_y", ToSerializable(prefabElement.AnchorY) },
+                        { "rotation", ToSerializable(prefabElement.Rotation) },
                         { "visible", ToSerializable(prefabElement.Visible) },
                         { "reference", ToSerializable(prefabElement.Reference) },
                         { "hash", ToSerializable(prefabElement.Hash) },
@@ -124,6 +126,7 @@ namespace AkyuiUnity.Loader
             if (source.Size != null) dict["size"] = ToSerializable(source.Size.Value);
             if (source.AnchorX != null) dict["anchor_x"] = ToSerializable(source.AnchorX.Value);
             if (source.AnchorY != null) dict["anchor_y"] = ToSerializable(source.AnchorY.Value);
+            if (source.Rotation != null) dict["rotation"] = ToSerializable(source.Rotation.Value);
             if (source.Components != null) dict["components"] = source.Components.Select(ToSerializable).ToArray();
 
             return dict;

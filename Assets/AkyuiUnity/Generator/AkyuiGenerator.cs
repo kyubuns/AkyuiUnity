@@ -83,6 +83,7 @@ namespace AkyuiUnity.Generator
                 var (anchorMin, anchorMax) = CalcAnchor(objectElement.AnchorX, objectElement.AnchorY);
                 gameObject.SetActive(objectElement.Visible);
                 rectTransform.anchoredPosition = new Vector2(objectElement.Position.x, -objectElement.Position.y);
+                rectTransform.rotation = Quaternion.AngleAxis(objectElement.Rotation, Vector3.back);
                 var p = rectTransform.localPosition;
                 rectTransform.anchorMin = anchorMin;
                 rectTransform.anchorMax = anchorMax;
@@ -125,6 +126,7 @@ namespace AkyuiUnity.Generator
                     var (anchorMin, anchorMax) = CalcAnchor(prefabElement.AnchorX, prefabElement.AnchorY);
                     prefabGameObject.SetActive(prefabElement.Visible);
                     rectTransform.anchoredPosition = new Vector2(prefabElement.Position.x, -prefabElement.Position.y);
+                    rectTransform.rotation = Quaternion.AngleAxis(prefabElement.Rotation, Vector3.back);
                     var p = rectTransform.localPosition;
                     rectTransform.anchorMin = anchorMin;
                     rectTransform.anchorMax = anchorMax;
@@ -140,6 +142,7 @@ namespace AkyuiUnity.Generator
                     if (@override.Name != null) targetObject.gameObject.name = @override.Name;
                     if (@override.Position != null) rectTransform.anchoredPosition = @override.Position.Value;
                     if (@override.Size != null) rectTransform.sizeDelta = @override.Size.Value;
+                    if (@override.Rotation != null) rectTransform.rotation = Quaternion.AngleAxis(@override.Rotation.Value, Vector3.back);
 
                     var anchorMin = rectTransform.anchorMin;
                     var anchorMax = rectTransform.anchorMax;

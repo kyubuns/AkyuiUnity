@@ -145,6 +145,7 @@ namespace AkyuiUnity.Loader
                     elementJson["size"].JsonVector2(),
                     anchorX,
                     anchorY,
+                    elementJson["rotation"].JsonFloat(),
                     elementJson["visible"].JsonBool(),
                     components.ToArray(),
                     elementJson["children"].JsonIntArray()
@@ -181,6 +182,7 @@ namespace AkyuiUnity.Loader
                         overrideJson.ContainsKey("size") ? overrideJson["size"].JsonVector2() : (Vector2?) null,
                         anchorX,
                         anchorY,
+                        overrideJson.ContainsKey("rotation") ? overrideJson["rotation"].JsonFloat() : (float?) null,
                         overrideComponents?.ToArray()
                     ));
                 }
@@ -191,6 +193,7 @@ namespace AkyuiUnity.Loader
                     elementJson["size"].JsonVector2(),
                     rootAnchorX,
                     rootAnchorY,
+                    elementJson["rotation"].JsonFloat(),
                     elementJson["visible"].JsonBool(),
                     elementJson["reference"].JsonString(),
                     elementJson["hash"].JsonLong(),
