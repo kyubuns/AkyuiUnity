@@ -7,7 +7,15 @@ namespace XdParser
 {
     public static class SvgUtil
     {
-        public static readonly string[] Types = { PathElement.Name, RectElement.Name, EllipseElement.Name, LineElement.Name, CircleElement.Name };
+        public static readonly string[] Types =
+        {
+            PathElement.Name,
+            RectElement.Name,
+            EllipseElement.Name,
+            LineElement.Name,
+            CircleElement.Name,
+            CompoundElement.Name,
+        };
 
         public static string CreateSvg(XdObjectJson xdObject)
         {
@@ -133,6 +141,8 @@ namespace XdParser
             }
 
             if (shape.Type == PathElement.Name) return new PathElement { Parameter = parameter, D = shape.Path };
+
+            if (shape.Type == CompoundElement.Name) return new CompoundElement { Parameter = parameter, D = shape.Path };
 
             if (shape.Type == LineElement.Name) return new LineElement { Parameter = parameter, X1 = shape.X1, Y1 = shape.Y1, X2 = shape.X2, Y2 = shape.Y2 };
 
@@ -379,6 +389,19 @@ namespace XdParser
             public string ToSvg()
             {
                 return $@"<{Name} d=""{D}"" {Parameter.GetString()} />";
+            }
+        }
+
+        private class CompoundElement : IElement
+        {
+            public const string Name = "compound";
+            public ElementParameter Parameter { get; set; } = new ElementParameter();
+
+            public string D { get; set; } = "";
+
+            public string ToSvg()
+            {
+                return $@"<{PathElement.Name} d=""{D}"" {Parameter.GetString()} />";
             }
         }
 

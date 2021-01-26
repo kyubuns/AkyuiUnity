@@ -325,6 +325,9 @@ namespace XdParser.Internal
 
         [JsonProperty("R")]
         public object R { get; set; }
+
+        [JsonProperty("operation")]
+        public string Operation { get; set; }
     }
 
     public class XdTextJson
