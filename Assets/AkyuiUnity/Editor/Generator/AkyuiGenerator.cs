@@ -87,10 +87,9 @@ namespace AkyuiUnity.Generator
                     CreateGameObject(assetLoader, layoutInfo, child, rectTransform, triggers);
                 }
 
-                var createdComponents = new List<Component>();
                 foreach (var component in objectElement.Components)
                 {
-                    createdComponents.Add(CreateComponent(assetLoader, gameObject, component, triggers));
+                    CreateComponent(assetLoader, gameObject, component, triggers);
                 }
 
                 return gameObject;
@@ -100,7 +99,7 @@ namespace AkyuiUnity.Generator
             return null;
         }
 
-        private static Component CreateComponent(IAssetLoader assetLoader, GameObject gameObject, IComponent component, IAkyuiGenerateTrigger[] triggers)
+        private static void CreateComponent(IAssetLoader assetLoader, GameObject gameObject, IComponent component, IAkyuiGenerateTrigger[] triggers)
         {
             foreach (var trigger in triggers)
             {
@@ -108,12 +107,11 @@ namespace AkyuiUnity.Generator
                 if (result != null)
                 {
                     foreach (var postprocessTrigger in triggers) postprocessTrigger.OnPostprocessComponent(gameObject, component);
-                    return result;
+                    return;
                 }
             }
 
             Debug.LogError($"Unknown component type {component}");
-            return null;
         }
     }
 
