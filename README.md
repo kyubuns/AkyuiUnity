@@ -1,7 +1,7 @@
 # AkyuiUnity
 
 AkyuiUnity is a Unity implementation of [Akyui](https://github.com/kyubuns/Akyui).  
-AkyuiUnity.Xd allows you to generate Unity Prefab from [Adobe XD](https://www.adobe.com/products/xd.html).
+AKyuiUnity.Xd, you can easily generate Unity's Prefab from [Adobe XD](https://www.adobe.com/products/xd.html).
 
 ![EsmUbo6UcAE2HsN](https://user-images.githubusercontent.com/961165/105800564-5d6f0c00-5fda-11eb-9a05-b42132ae66cd.jpg)
 
