@@ -3,9 +3,8 @@
 AkyuiUnity is a Unity implementation of [Akyui](https://github.com/kyubuns/Akyui).  
 AKyuiUnity.Xd, you can easily generate Unity's Prefab from [Adobe XD](https://www.adobe.com/products/xd.html).
 
-![EsmUbo6UcAE2HsN](https://user-images.githubusercontent.com/961165/105800564-5d6f0c00-5fda-11eb-9a05-b42132ae66cd.jpg)
-
-<img width="1468" alt="Screen Shot 2021-01-26 at 14 05 34" src="https://user-images.githubusercontent.com/961165/105802939-a4133500-5fdf-11eb-851e-d068a53945d8.png">
+<img width="640" src="https://user-images.githubusercontent.com/961165/105800564-5d6f0c00-5fda-11eb-9a05-b42132ae66cd.jpg">
+<img width="640" src="https://user-images.githubusercontent.com/961165/105802939-a4133500-5fdf-11eb-851e-d068a53945d8.png">
 
 **under development**  
 **開発中です。ぜひWatch/Starして頂き、もうしばらくお待ち下さい。**  
