@@ -1,14 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
 using XdParser.Internal;
 
 namespace XdParser
 {
     public static class SvgUtil
     {
-        public static readonly string[] Types = { "path", "rect", "ellipse", "line", "circle" };
+        public static readonly string[] Types = { PathElement.Name, RectElement.Name, EllipseElement.Name, LineElement.Name, CircleElement.Name };
 
         public static string CreateSvg(XdObjectJson xdObject)
         {
@@ -96,7 +95,7 @@ namespace XdParser
                 else throw new NotSupportedException($"Unknown shape.r type {shape.R.GetType()}");
             }
 
-            if (shapeR != null && shape.Type != "circle")
+            if (shapeR != null && shape.Type != CircleElement.Name)
             {
                 parameter.Rx = shapeR;
                 if (parameter.Rx > shape.Width / 2f) parameter.Rx = shape.Width / 2f;
@@ -104,6 +103,7 @@ namespace XdParser
             }
 
             var stroke = xdObject.Style?.Stroke;
+            string strokeAlign = null;
             if (stroke != null && stroke.Type != "none")
             {
                 parameter.EnableStroke = true;
@@ -126,221 +126,37 @@ namespace XdParser
                     parameter.StrokeDasharray = stroke.Dash;
                 }
 
-                if (stroke.Align == null)
-                {
-                }
-                else if (stroke.Align == "outside")
-                {
-                    if (shape.Type == "rect")
-                    {
-                        var rx = parameter.Rx;
-                        parameter.Rx = null;
-                        return new GroupElement
-                        {
-                            Parameter = parameter, Children = new IElement[]
-                            {
-                                new RectElement
-                                {
-                                    Parameter = new ElementParameter
-                                    {
-                                        EnableStroke = true,
-                                        Rx = rx,
-                                    },
-                                    Width = shape.Width,
-                                    Height = shape.Height,
-                                },
-                                new RectElement
-                                {
-                                    Parameter = new ElementParameter
-                                    {
-                                        X = -parameter.StrokeWidth.Value / 2f,
-                                        Y = -parameter.StrokeWidth.Value / 2f,
-                                        EnableFill = true,
-                                        Rx = rx + parameter.StrokeWidth.Value / 2f,
-                                    },
-                                    Width = shape.Width + parameter.StrokeWidth.Value,
-                                    Height = shape.Height + parameter.StrokeWidth.Value,
-                                },
-                            }
-                        };
-                    }
-
-                    if (shape.Type == "circle")
-                    {
-                        return new GroupElement
-                        {
-                            Parameter = parameter, Children = new IElement[]
-                            {
-                                new CircleElement
-                                {
-                                    Parameter = new ElementParameter
-                                    {
-                                        EnableStroke = true,
-                                    },
-                                    Cx = shape.Cx,
-                                    Cy = shape.Cy,
-                                    R = shapeR ?? 1f,
-                                },
-                                new CircleElement
-                                {
-                                    Parameter = new ElementParameter
-                                    {
-                                        EnableFill = true,
-                                    },
-                                    Cx = shape.Cx,
-                                    Cy = shape.Cy,
-                                    R = (shapeR ?? 1f) + parameter.StrokeWidth.Value / 2f,
-                                },
-                            }
-                        };
-                    }
-
-                    if (shape.Type == "ellipse")
-                    {
-                        return new GroupElement
-                        {
-                            Parameter = parameter, Children = new IElement[]
-                            {
-                                new EllipseElement
-                                {
-                                    Parameter = new ElementParameter
-                                    {
-                                        EnableStroke = true,
-                                    },
-                                    Cx = shape.Cx,
-                                    Cy = shape.Cy,
-                                    Rx = shape.Rx,
-                                    Ry = shape.Ry,
-                                },
-                                new EllipseElement
-                                {
-                                    Parameter = new ElementParameter
-                                    {
-                                        EnableFill = true,
-                                    },
-                                    Cx = shape.Cx,
-                                    Cy = shape.Cy,
-                                    Rx = shape.Rx + parameter.StrokeWidth.Value / 2f,
-                                    Ry = shape.Ry + parameter.StrokeWidth.Value / 2f,
-                                },
-                            }
-                        };
-                    }
-                }
-                else if (stroke.Align == "inside")
-                {
-                    if (shape.Type == "rect")
-                    {
-                        var rx = parameter.Rx;
-                        parameter.Rx = null;
-                        return new GroupElement
-                        {
-                            Parameter = parameter, Children = new IElement[]
-                            {
-                                new RectElement
-                                {
-                                    Parameter = new ElementParameter
-                                    {
-                                        EnableStroke = true,
-                                        Rx = rx,
-                                    },
-                                    Width = shape.Width,
-                                    Height = shape.Height,
-                                },
-                                new RectElement
-                                {
-                                    Parameter = new ElementParameter
-                                    {
-                                        X = parameter.StrokeWidth.Value / 2f,
-                                        Y = parameter.StrokeWidth.Value / 2f,
-                                        EnableFill = true,
-                                        Rx = rx - parameter.StrokeWidth.Value / 2f,
-                                    },
-                                    Width = shape.Width - parameter.StrokeWidth.Value,
-                                    Height = shape.Height - parameter.StrokeWidth.Value,
-                                },
-                            }
-                        };
-                    }
-
-                    if (shape.Type == "circle")
-                    {
-                        return new GroupElement
-                        {
-                            Parameter = parameter, Children = new IElement[]
-                            {
-                                new CircleElement
-                                {
-                                    Parameter = new ElementParameter
-                                    {
-                                        EnableStroke = true,
-                                    },
-                                    Cx = shape.Cx,
-                                    Cy = shape.Cy,
-                                    R = shapeR ?? 1f,
-                                },
-                                new CircleElement
-                                {
-                                    Parameter = new ElementParameter
-                                    {
-                                        EnableFill = true,
-                                    },
-                                    Cx = shape.Cx,
-                                    Cy = shape.Cy,
-                                    R = (shapeR ?? 1f) - parameter.StrokeWidth.Value / 2f,
-                                },
-                            }
-                        };
-                    }
-
-                    if (shape.Type == "ellipse")
-                    {
-                        return new GroupElement
-                        {
-                            Parameter = parameter, Children = new IElement[]
-                            {
-                                new EllipseElement
-                                {
-                                    Parameter = new ElementParameter
-                                    {
-                                        EnableStroke = true,
-                                    },
-                                    Cx = shape.Cx,
-                                    Cy = shape.Cy,
-                                    Rx = shape.Rx,
-                                    Ry = shape.Ry,
-                                },
-                                new EllipseElement
-                                {
-                                    Parameter = new ElementParameter
-                                    {
-                                        EnableFill = true,
-                                    },
-                                    Cx = shape.Cx,
-                                    Cy = shape.Cy,
-                                    Rx = shape.Rx - parameter.StrokeWidth.Value / 2f,
-                                    Ry = shape.Ry - parameter.StrokeWidth.Value / 2f,
-                                },
-                            }
-                        };
-                    }
-                }
-                else
-                {
-                    throw new NotSupportedException($"{xdObject} has unknown align type {stroke.Align}");
-                }
-
-                if (stroke.Type != "solid")
-                {
-                    throw new NotSupportedException($"{xdObject} has unknown stroke type {stroke.Type}");
-                }
+                if (stroke.Align == null) strokeAlign = null;
+                else if (stroke.Align == "outside") strokeAlign = "outside";
+                else if (stroke.Align == "inside") strokeAlign = "inside";
+                else throw new NotSupportedException($"{xdObject} has unknown align type {stroke.Align}");
             }
 
-            if (shape.Type == "path") return new PathElement { Parameter = parameter, D = shape.Path };
-            if (shape.Type == "rect") return new RectElement { Parameter = parameter, Width = shape.Width, Height = shape.Height };
-            if (shape.Type == "circle") return new CircleElement { Parameter = parameter, Cx = shape.Cx, Cy = shape.Cy, R = shapeR.Value };
-            if (shape.Type == "ellipse") return new EllipseElement { Parameter = parameter, Cx = shape.Cx, Cy = shape.Cy, Rx = shape.Rx, Ry = shape.Ry };
-            if (shape.Type == "line") return new LineElement { Parameter = parameter, X1 = shape.X1, Y1 = shape.Y1, X2 = shape.X2, Y2 = shape.Y2 };
+            if (shape.Type == PathElement.Name) return new PathElement { Parameter = parameter, D = shape.Path };
+
+            if (shape.Type == LineElement.Name) return new LineElement { Parameter = parameter, X1 = shape.X1, Y1 = shape.Y1, X2 = shape.X2, Y2 = shape.Y2 };
+
+            if (shape.Type == RectElement.Name)
+            {
+                if (strokeAlign == "outside") return RectElement.Outside(shape, parameter);
+                if (strokeAlign == "inside") return RectElement.Inside(shape, parameter);
+                return new RectElement { Parameter = parameter, Width = shape.Width, Height = shape.Height };
+            }
+
+            if (shape.Type == CircleElement.Name)
+            {
+                if (strokeAlign == "outside") return CircleElement.Outside(shape, parameter, shapeR);
+                if (strokeAlign == "inside") return CircleElement.Inside(shape, parameter, shapeR);
+                return new CircleElement { Parameter = parameter, Cx = shape.Cx, Cy = shape.Cy, R = shapeR.Value };
+            }
+
+            if (shape.Type == EllipseElement.Name)
+            {
+                if (strokeAlign == "outside") return EllipseElement.Outside(shape, parameter);
+                if (strokeAlign == "inside") return EllipseElement.Inside(shape, parameter);
+                return new EllipseElement { Parameter = parameter, Cx = shape.Cx, Cy = shape.Cy, Rx = shape.Rx, Ry = shape.Ry };
+            }
+
             throw new NotSupportedException($"Unknown type {shape.Type}");
         }
 
@@ -555,18 +371,20 @@ namespace XdParser
 
         private class PathElement : IElement
         {
+            public const string Name = "path";
             public ElementParameter Parameter { get; set; } = new ElementParameter();
 
             public string D { get; set; } = "";
 
             public string ToSvg()
             {
-                return $@"<path d=""{D}"" {Parameter.GetString()} />";
+                return $@"<{Name} d=""{D}"" {Parameter.GetString()} />";
             }
         }
 
         private class RectElement : IElement
         {
+            public const string Name = "rect";
             public ElementParameter Parameter { get; set; } = new ElementParameter();
 
             public float Width { get; set; }
@@ -574,12 +392,83 @@ namespace XdParser
 
             public string ToSvg()
             {
-                return $@"<rect width=""{Width:0.###}"" height=""{Height:0.###}"" {Parameter.GetString()} />";
+                return $@"<{Name} width=""{Width:0.###}"" height=""{Height:0.###}"" {Parameter.GetString()} />";
+            }
+
+            public static IElement Outside(XdShapeJson shape, ElementParameter parameter)
+            {
+                var strokeWidth = parameter.StrokeWidth ?? 1f;
+                var rx = parameter.Rx;
+                parameter.Rx = null;
+                return new GroupElement
+                {
+                    Parameter = parameter, Children = new IElement[]
+                    {
+                        new RectElement
+                        {
+                            Parameter = new ElementParameter
+                            {
+                                EnableStroke = true,
+                                Rx = rx,
+                            },
+                            Width = shape.Width,
+                            Height = shape.Height,
+                        },
+                        new RectElement
+                        {
+                            Parameter = new ElementParameter
+                            {
+                                X = -strokeWidth / 2f,
+                                Y = -strokeWidth / 2f,
+                                EnableFill = true,
+                                Rx = rx + strokeWidth / 2f,
+                            },
+                            Width = shape.Width + strokeWidth,
+                            Height = shape.Height + strokeWidth,
+                        },
+                    }
+                };
+            }
+
+            public static IElement Inside(XdShapeJson shape, ElementParameter parameter)
+            {
+                var strokeWidth = parameter.StrokeWidth ?? 1f;
+                var rx = parameter.Rx;
+                parameter.Rx = null;
+                return new GroupElement
+                {
+                    Parameter = parameter, Children = new IElement[]
+                    {
+                        new RectElement
+                        {
+                            Parameter = new ElementParameter
+                            {
+                                EnableStroke = true,
+                                Rx = rx,
+                            },
+                            Width = shape.Width,
+                            Height = shape.Height,
+                        },
+                        new RectElement
+                        {
+                            Parameter = new ElementParameter
+                            {
+                                X = strokeWidth / 2f,
+                                Y = strokeWidth / 2f,
+                                EnableFill = true,
+                                Rx = rx - strokeWidth / 2f,
+                            },
+                            Width = shape.Width - strokeWidth,
+                            Height = shape.Height - strokeWidth,
+                        },
+                    }
+                };
             }
         }
 
         private class CircleElement : IElement
         {
+            public const string Name = "circle";
             public ElementParameter Parameter { get; set; } = new ElementParameter();
 
             public float Cx { get; set; }
@@ -588,12 +477,75 @@ namespace XdParser
 
             public string ToSvg()
             {
-                return $@"<circle cx=""{Cx:0.###}"" cy=""{Cy:0.###}"" r=""{R:0.###}"" {Parameter.GetString()} />";
+                return $@"<{Name} cx=""{Cx:0.###}"" cy=""{Cy:0.###}"" r=""{R:0.###}"" {Parameter.GetString()} />";
+            }
+
+            public static IElement Outside(XdShapeJson shape, ElementParameter parameter, float? shapeR)
+            {
+                var strokeWidth = parameter.StrokeWidth ?? 1f;
+                return new GroupElement
+                {
+                    Parameter = parameter, Children = new IElement[]
+                    {
+                        new CircleElement
+                        {
+                            Parameter = new ElementParameter
+                            {
+                                EnableStroke = true,
+                            },
+                            Cx = shape.Cx,
+                            Cy = shape.Cy,
+                            R = shapeR ?? 1f,
+                        },
+                        new CircleElement
+                        {
+                            Parameter = new ElementParameter
+                            {
+                                EnableFill = true,
+                            },
+                            Cx = shape.Cx,
+                            Cy = shape.Cy,
+                            R = (shapeR ?? 1f) + strokeWidth / 2f,
+                        },
+                    }
+                };
+            }
+
+            public static IElement Inside(XdShapeJson shape, ElementParameter parameter, float? shapeR)
+            {
+                var strokeWidth = parameter.StrokeWidth ?? 1f;
+                return new GroupElement
+                {
+                    Parameter = parameter, Children = new IElement[]
+                    {
+                        new CircleElement
+                        {
+                            Parameter = new ElementParameter
+                            {
+                                EnableStroke = true,
+                            },
+                            Cx = shape.Cx,
+                            Cy = shape.Cy,
+                            R = shapeR ?? 1f,
+                        },
+                        new CircleElement
+                        {
+                            Parameter = new ElementParameter
+                            {
+                                EnableFill = true,
+                            },
+                            Cx = shape.Cx,
+                            Cy = shape.Cy,
+                            R = (shapeR ?? 1f) - strokeWidth / 2f,
+                        },
+                    }
+                };
             }
         }
 
         private class EllipseElement : IElement
         {
+            public const string Name = "ellipse";
             public ElementParameter Parameter { get; set; } = new ElementParameter();
 
             public float Cx { get; set; }
@@ -603,12 +555,79 @@ namespace XdParser
 
             public string ToSvg()
             {
-                return $@"<ellipse cx=""{Cx:0.###}"" cy=""{Cy:0.###}"" rx=""{Rx:0.###}"" ry=""{Ry:0.###}"" {Parameter.GetString()} />";
+                return $@"<{Name} cx=""{Cx:0.###}"" cy=""{Cy:0.###}"" rx=""{Rx:0.###}"" ry=""{Ry:0.###}"" {Parameter.GetString()} />";
+            }
+
+            public static IElement Outside(XdShapeJson shape, ElementParameter parameter)
+            {
+                var strokeWidth = parameter.StrokeWidth ?? 1f;
+                return new GroupElement
+                {
+                    Parameter = parameter, Children = new IElement[]
+                    {
+                        new EllipseElement
+                        {
+                            Parameter = new ElementParameter
+                            {
+                                EnableStroke = true,
+                            },
+                            Cx = shape.Cx,
+                            Cy = shape.Cy,
+                            Rx = shape.Rx,
+                            Ry = shape.Ry,
+                        },
+                        new EllipseElement
+                        {
+                            Parameter = new ElementParameter
+                            {
+                                EnableFill = true,
+                            },
+                            Cx = shape.Cx,
+                            Cy = shape.Cy,
+                            Rx = shape.Rx + strokeWidth / 2f,
+                            Ry = shape.Ry + strokeWidth / 2f,
+                        },
+                    }
+                };
+            }
+
+            public static IElement Inside(XdShapeJson shape, ElementParameter parameter)
+            {
+                var strokeWidth = parameter.StrokeWidth ?? 1f;
+                return new GroupElement
+                {
+                    Parameter = parameter, Children = new IElement[]
+                    {
+                        new EllipseElement
+                        {
+                            Parameter = new ElementParameter
+                            {
+                                EnableStroke = true,
+                            },
+                            Cx = shape.Cx,
+                            Cy = shape.Cy,
+                            Rx = shape.Rx,
+                            Ry = shape.Ry,
+                        },
+                        new EllipseElement
+                        {
+                            Parameter = new ElementParameter
+                            {
+                                EnableFill = true,
+                            },
+                            Cx = shape.Cx,
+                            Cy = shape.Cy,
+                            Rx = shape.Rx - strokeWidth / 2f,
+                            Ry = shape.Ry - strokeWidth / 2f,
+                        },
+                    }
+                };
             }
         }
 
         private class LineElement : IElement
         {
+            public const string Name = "line";
             public ElementParameter Parameter { get; set; } = new ElementParameter();
 
             public float X1 { get; set; }
@@ -618,7 +637,7 @@ namespace XdParser
 
             public string ToSvg()
             {
-                return $@"<line x1=""{X1:0.###}"" y1=""{Y1:0.###}"" x2=""{X2:0.###}"" y2=""{Y2:0.###}"" {Parameter.GetString()} />";
+                return $@"<{Name} x1=""{X1:0.###}"" y1=""{Y1:0.###}"" x2=""{X2:0.###}"" y2=""{Y2:0.###}"" {Parameter.GetString()} />";
             }
         }
     }
