@@ -1,13 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 using XdParser.Internal;
 
 namespace XdParser
 {
     public static class SvgUtil
     {
-        public static readonly string[] Types = { "path", "rect", "ellipse", "line" };
+        public static readonly string[] Types = { "path", "rect", "ellipse", "line", "circle" };
 
         public static string CreateSvg(XdObjectJson xdObject)
         {
@@ -85,18 +86,19 @@ namespace XdParser
                 }
             }
 
+            float? shapeR = null;
             if (shape.R != null)
             {
-                if (shape.R is Newtonsoft.Json.Linq.JValue jValue)
-                {
-                    parameter.Rx = (float) jValue;
-                }
+                if (shape.R is Newtonsoft.Json.Linq.JValue jValue) shapeR = (float) jValue;
+                else if (shape.R is Newtonsoft.Json.Linq.JArray jArray) shapeR = (float) jArray[0];
+                else if (shape.R is long l) shapeR = l;
+                else if (shape.R is double d) shapeR = (float) d;
+                else throw new NotSupportedException($"Unknown shape.r type {shape.R.GetType()}");
+            }
 
-                if (shape.R is Newtonsoft.Json.Linq.JArray jArray)
-                {
-                    parameter.Rx = (float) jArray[0];
-                }
-
+            if (shapeR != null && shape.Type != "circle")
+            {
+                parameter.Rx = shapeR;
                 if (parameter.Rx > shape.Width / 2f) parameter.Rx = shape.Width / 2f;
                 if (parameter.Rx > shape.Height / 2f) parameter.Rx = shape.Height / 2f;
             }
@@ -158,6 +160,36 @@ namespace XdParser
                                     },
                                     Width = shape.Width + parameter.StrokeWidth.Value,
                                     Height = shape.Height + parameter.StrokeWidth.Value,
+                                },
+                            }
+                        };
+                    }
+
+                    if (shape.Type == "circle")
+                    {
+                        return new GroupElement
+                        {
+                            Parameter = parameter, Children = new IElement[]
+                            {
+                                new CircleElement
+                                {
+                                    Parameter = new ElementParameter
+                                    {
+                                        EnableStroke = true,
+                                    },
+                                    Cx = shape.Cx,
+                                    Cy = shape.Cy,
+                                    R = shapeR ?? 1f,
+                                },
+                                new CircleElement
+                                {
+                                    Parameter = new ElementParameter
+                                    {
+                                        EnableFill = true,
+                                    },
+                                    Cx = shape.Cx,
+                                    Cy = shape.Cy,
+                                    R = (shapeR ?? 1f) + parameter.StrokeWidth.Value / 2f,
                                 },
                             }
                         };
@@ -231,6 +263,36 @@ namespace XdParser
                         };
                     }
 
+                    if (shape.Type == "circle")
+                    {
+                        return new GroupElement
+                        {
+                            Parameter = parameter, Children = new IElement[]
+                            {
+                                new CircleElement
+                                {
+                                    Parameter = new ElementParameter
+                                    {
+                                        EnableStroke = true,
+                                    },
+                                    Cx = shape.Cx,
+                                    Cy = shape.Cy,
+                                    R = shapeR ?? 1f,
+                                },
+                                new CircleElement
+                                {
+                                    Parameter = new ElementParameter
+                                    {
+                                        EnableFill = true,
+                                    },
+                                    Cx = shape.Cx,
+                                    Cy = shape.Cy,
+                                    R = (shapeR ?? 1f) - parameter.StrokeWidth.Value / 2f,
+                                },
+                            }
+                        };
+                    }
+
                     if (shape.Type == "ellipse")
                     {
                         return new GroupElement
@@ -276,6 +338,7 @@ namespace XdParser
 
             if (shape.Type == "path") return new PathElement { Parameter = parameter, D = shape.Path };
             if (shape.Type == "rect") return new RectElement { Parameter = parameter, Width = shape.Width, Height = shape.Height };
+            if (shape.Type == "circle") return new CircleElement { Parameter = parameter, Cx = shape.Cx, Cy = shape.Cy, R = shapeR.Value };
             if (shape.Type == "ellipse") return new EllipseElement { Parameter = parameter, Cx = shape.Cx, Cy = shape.Cy, Rx = shape.Rx, Ry = shape.Ry };
             if (shape.Type == "line") return new LineElement { Parameter = parameter, X1 = shape.X1, Y1 = shape.Y1, X2 = shape.X2, Y2 = shape.Y2 };
             throw new NotSupportedException($"Unknown type {shape.Type}");
@@ -512,6 +575,20 @@ namespace XdParser
             public string ToSvg()
             {
                 return $@"<rect width=""{Width:0.###}"" height=""{Height:0.###}"" {Parameter.GetString()} />";
+            }
+        }
+
+        private class CircleElement : IElement
+        {
+            public ElementParameter Parameter { get; set; } = new ElementParameter();
+
+            public float Cx { get; set; }
+            public float Cy { get; set; }
+            public float R { get; set; }
+
+            public string ToSvg()
+            {
+                return $@"<circle cx=""{Cx:0.###}"" cy=""{Cy:0.###}"" r=""{R:0.###}"" {Parameter.GetString()} />";
             }
         }
 
