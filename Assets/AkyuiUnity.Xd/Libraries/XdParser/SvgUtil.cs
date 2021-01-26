@@ -304,7 +304,7 @@ namespace XdParser
             {
                 if (!EnableStroke) return null;
                 if (StrokeDasharray == null) return null;
-                return $@"stroke-dasharray=""{StrokeDasharray[0]:0.###} {StrokeDasharray[1]:0.###}""";
+                return $@"stroke-dasharray=""{string.Join(" ", StrokeDasharray.Select(x => $"{x:0.###}"))}""";
             }
 
             private string RxToSvg()
