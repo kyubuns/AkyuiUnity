@@ -276,26 +276,14 @@ namespace AkyuiUnity.Editor
         public string MetaSavePath { get; }
         public string FontDirectoryPath { get; }
 
-        public string GetMetaPath(string fileName) => _settings.MetaOutputPath.Replace("{name}", fileName) + ".prefab";
-
-        public string GetMetaFullPath(string fileName)
-        {
-            var assetsParentPath = Path.GetDirectoryName(Application.dataPath) ?? "";
-            return Path.Combine(assetsParentPath, GetMetaPath(fileName));
-        }
-
-        private readonly IAkyuiImportSettings _settings;
-
         public PathGetter(IAkyuiImportSettings settings, string fileName)
         {
-            _settings = settings;
-
             var assetOutputDirectoryPath = settings.AssetOutputDirectoryPath.Replace("{name}", fileName);
             if (!assetOutputDirectoryPath.EndsWith("/")) assetOutputDirectoryPath += "/";
             AssetOutputDirectoryPath = assetOutputDirectoryPath;
 
             PrefabSavePath = settings.PrefabOutputPath.Replace("{name}", fileName) + ".prefab";
-            MetaSavePath = GetMetaPath(fileName);
+            MetaSavePath = settings.MetaOutputPath.Replace("{name}", fileName) + ".prefab";
             FontDirectoryPath = settings.FontDirectoryPath;
         }
     }

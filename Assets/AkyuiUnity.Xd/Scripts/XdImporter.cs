@@ -99,7 +99,7 @@ namespace AkyuiUnity.Xd
         {
             get
             {
-                return new IAkyuiImportTrigger[] { new SvgImportTrigger(_settings.SvgSaveScale) }.Concat(_settings.Triggers).ToArray();
+                return new IAkyuiImportTrigger[] { new SvgImportTrigger(_settings.SpriteSaveScale) }.Concat(_settings.Triggers).ToArray();
             }
         }
     }

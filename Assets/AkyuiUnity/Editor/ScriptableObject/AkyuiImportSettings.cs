@@ -23,6 +23,9 @@ namespace AkyuiUnity.Editor.ScriptableObject
 
         public IAkyuiImportTrigger[] Triggers => triggers?.Cast<IAkyuiImportTrigger>().ToArray() ?? new IAkyuiImportTrigger[] { };
         [SerializeField] private AkyuiImportTrigger[] triggers = default;
+
+        public float SpriteSaveScale => spriteSaveScale;
+        [SerializeField] private float spriteSaveScale = 1.0f;
     }
 
     public interface IAkyuiImportSettings
