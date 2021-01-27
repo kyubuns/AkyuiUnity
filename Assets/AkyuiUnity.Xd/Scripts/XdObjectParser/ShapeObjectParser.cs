@@ -102,7 +102,7 @@ namespace AkyuiUnity.Xd
         public static (ImageComponent, IAsset[]) RenderImage(XdObjectJson xdObject, Obb obb, XdAssetHolder assetHolder)
         {
             ImageComponent imageComponent = null;
-            var assets = new List<IAsset>();
+            SpriteAsset asset = null;
 
             var color = xdObject.GetFillUnityColor();
             var ux = xdObject.Style?.Fill?.Pattern?.Meta?.Ux;
@@ -115,7 +115,7 @@ namespace AkyuiUnity.Xd
             if (!string.IsNullOrWhiteSpace(spriteUid))
             {
                 spriteUid = $"{xdObject.GetSimpleName()}_{spriteUid.Substring(0, 8)}.png";
-                assets.Add(new SpriteAsset(spriteUid, xdObject.Style.Fill.Pattern.Meta.Ux.HrefLastModifiedDate, null));
+                asset = new SpriteAsset(spriteUid, xdObject.Style.Fill.Pattern.Meta.Ux.HrefLastModifiedDate, null);
                 imageComponent = new ImageComponent(
                     spriteUid,
                     color,
@@ -128,7 +128,7 @@ namespace AkyuiUnity.Xd
                 spriteUid = $"{xdObject.GetSimpleName()}_{xdObject.Id.Substring(0, 8)}.svg";
                 var svg = SvgUtil.CreateSvg(xdObject);
                 var userData = new SvgImportTrigger.SvgImportUserData { Width = Mathf.RoundToInt(obb.Size.x), Height = Mathf.RoundToInt(obb.Size.y) };
-                assets.Add(new SpriteAsset(spriteUid, FastHash.CalculateHash(svg), JsonConvert.SerializeObject(userData)));
+                asset = new SpriteAsset(spriteUid, FastHash.CalculateHash(svg), JsonConvert.SerializeObject(userData));
                 imageComponent = new ImageComponent(
                     spriteUid,
                     new Color(1f, 1f, 1f, color.a),
@@ -142,6 +142,8 @@ namespace AkyuiUnity.Xd
                 Debug.LogError($"Unknown shape type {shapeType}");
             }
 
+            var assets = new List<IAsset>();
+            if (!xdObject.HasParameter("placeholder") && asset != null) assets.Add(asset);
             return (imageComponent, assets.ToArray());
         }
     }
