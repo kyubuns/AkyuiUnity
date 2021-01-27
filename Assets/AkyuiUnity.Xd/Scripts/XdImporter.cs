@@ -16,30 +16,46 @@ namespace AkyuiUnity.Xd
             var logger = new AkyuiLogger("Akyui.Xd");
             var settings = new XdImportSettingsWrapper(xdSettings);
             var loaders = new List<IAkyuiLoader>();
-            foreach (var xdFilePath in xdFilePaths)
+            using (var progressBar = new AkyuiProgressBar("Akyui.Xd"))
             {
-                using (logger.SetCategory(Path.GetFileName(xdFilePath)))
+                progressBar.SetTotal(xdFilePaths.Length);
+                foreach (var xdFilePath in xdFilePaths)
                 {
-                    logger.Log($"Xd Import Start");
-                    var file = new XdFile(xdFilePath);
-                    var importedArtboards = 0;
-                    foreach (var artwork in file.Artworks)
+                    using (var progress = progressBar.TaskStart(Path.GetFileName(xdFilePath)))
+                    using (logger.SetCategory(Path.GetFileName(xdFilePath)))
                     {
-                        if (artwork.Artboard.Children.Length == 0) continue;
-                        var markForExport = artwork.Artboard.Children[0].Meta?.Ux?.MarkedForExport ?? false;
-                        if (!markForExport) continue;
-                        var akyuiXdObjectParsers = xdSettings.ObjectParsers ?? new AkyuiXdObjectParser[] { };
-                        var akyuiXdGroupParsers = xdSettings.GroupParsers ?? new AkyuiXdGroupParser[] { };
-                        var triggers = xdSettings.XdTriggers ?? new AkyuiXdImportTrigger[] { };
-                        loaders.Add(new XdAkyuiLoader(file, artwork, akyuiXdObjectParsers, akyuiXdGroupParsers, triggers));
-                        importedArtboards++;
-                    }
+                        logger.Log($"Xd Import Start");
+                        var file = new XdFile(xdFilePath);
+                        var importedArtboards = 0;
 
-                    logger.Log($"Xd Import Finish", ("artboards", importedArtboards));
+                        var targets = new List<XdArtboard>();
+                        foreach (var artwork in file.Artworks)
+                        {
+                            if (artwork.Artboard.Children.Length == 0) continue;
+                            var markForExport = artwork.Artboard.Children[0].Meta?.Ux?.MarkedForExport ?? false;
+                            if (!markForExport) continue;
+                            targets.Add(artwork);
+                        }
 
-                    if (importedArtboards == 0)
-                    {
-                        logger.Warning($"The artboard to be imported was not found. Please set Mark for Export.");
+                        progress.SetTotal(targets.Count);
+                        foreach (var artwork in targets)
+                        {
+                            using (progress.TaskStart(artwork.Name))
+                            {
+                                var akyuiXdObjectParsers = xdSettings.ObjectParsers ?? new AkyuiXdObjectParser[] { };
+                                var akyuiXdGroupParsers = xdSettings.GroupParsers ?? new AkyuiXdGroupParser[] { };
+                                var triggers = xdSettings.XdTriggers ?? new AkyuiXdImportTrigger[] { };
+                                loaders.Add(new XdAkyuiLoader(file, artwork, akyuiXdObjectParsers, akyuiXdGroupParsers, triggers));
+                                importedArtboards++;
+                            }
+                        }
+
+                        logger.Log($"Xd Import Finish", ("artboards", importedArtboards));
+
+                        if (importedArtboards == 0)
+                        {
+                            logger.Warning($"The artboard to be imported was not found. Please set Mark for Export.");
+                        }
                     }
                 }
             }

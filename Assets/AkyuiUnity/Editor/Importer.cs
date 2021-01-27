@@ -29,19 +29,23 @@ namespace AkyuiUnity.Editor
         public static void Import(IAkyuiImportSettings settings, IAkyuiLoader[] loaders)
         {
             var logger = new AkyuiLogger("Akyui");
-
-            foreach (var loader in loaders)
+            using (var progressBar = new AkyuiProgressBar("Akyui"))
             {
-                using (logger.SetCategory(loader.LayoutInfo.Name))
+                progressBar.SetTotal(loaders.Length);
+                foreach (var loader in loaders)
                 {
-                    logger.Log($"Import Start");
-                    Import(settings, loader, logger);
-                    logger.Log($"Import Finish");
+                    using (logger.SetCategory(loader.LayoutInfo.Name))
+                    using (var progress = progressBar.TaskStart($"Importing {loader.LayoutInfo.Name}"))
+                    {
+                        logger.Log($"Import Start");
+                        Import(settings, loader, logger, progress);
+                        logger.Log($"Import Finish");
+                    }
                 }
-            }
 
-            AssetDatabase.SaveAssets();
-            AssetDatabase.Refresh();
+                AssetDatabase.SaveAssets();
+                AssetDatabase.Refresh();
+            }
         }
 
         public static void Save(IAkyuiLoader loader, string filePath)
@@ -63,12 +67,12 @@ namespace AkyuiUnity.Editor
             throw new Exception($"Cannot load version {loaderVersionFull} file. (Importer version is {Const.AkyuiVersion})");
         }
 
-        private static void Import(IAkyuiImportSettings settings, IAkyuiLoader akyuiLoader, AkyuiLogger logger)
+        private static void Import(IAkyuiImportSettings settings, IAkyuiLoader akyuiLoader, AkyuiLogger logger, IAkyuiProgress progress)
         {
             CheckVersion(akyuiLoader);
 
             var pathGetter = new PathGetter(settings, akyuiLoader.LayoutInfo.Name);
-            var assets = ImportAssets(settings, akyuiLoader, pathGetter, logger);
+            var assets = ImportAssets(settings, akyuiLoader, pathGetter, logger, progress);
             var (gameObject, hash) = ImportLayout(settings, akyuiLoader, pathGetter, logger);
 
             var prevMetaGameObject = AssetDatabase.LoadAssetAtPath<GameObject>(pathGetter.MetaSavePath);
@@ -120,7 +124,7 @@ namespace AkyuiUnity.Editor
             }
         }
 
-        private static Object[] ImportAssets(IAkyuiImportSettings settings, IAkyuiLoader akyuiLoader, PathGetter pathGetter, AkyuiLogger logger)
+        private static Object[] ImportAssets(IAkyuiImportSettings settings, IAkyuiLoader akyuiLoader, PathGetter pathGetter, AkyuiLogger logger, IAkyuiProgress progress)
         {
             using (logger.SetCategory("Assets"))
             {
@@ -135,31 +139,35 @@ namespace AkyuiUnity.Editor
                 var importAssetNames = new List<string>();
                 var skipAssetNames = new List<string>();
 
+                progress.SetTotal(akyuiLoader.AssetsInfo.Assets.Length);
                 foreach (var t in akyuiLoader.AssetsInfo.Assets)
                 {
                     var asset = t;
-                    var savePath = Path.Combine(pathGetter.AssetOutputDirectoryPath, asset.FileName);
-                    var saveFullPath = Path.Combine(unityAssetsParentPath, savePath);
-                    var bytes = akyuiLoader.LoadAsset(asset.FileName);
-
-                    if (settings.CheckAssetHash)
+                    using (progress.TaskStart(asset.FileName))
                     {
-                        if (File.Exists(saveFullPath))
+                        var savePath = Path.Combine(pathGetter.AssetOutputDirectoryPath, asset.FileName);
+                        var saveFullPath = Path.Combine(unityAssetsParentPath, savePath);
+                        var bytes = akyuiLoader.LoadAsset(asset.FileName);
+
+                        if (settings.CheckAssetHash)
                         {
-                            var import = AssetImporter.GetAtPath(savePath);
-                            if (import.userData == t.Hash.ToString())
+                            if (File.Exists(saveFullPath))
                             {
-                                skipAssetNames.Add(asset.FileName);
-                                assets.Add(AssetDatabase.LoadAssetAtPath<Object>(import.assetPath));
-                                continue;
+                                var import = AssetImporter.GetAtPath(savePath);
+                                if (import.userData == t.Hash.ToString())
+                                {
+                                    skipAssetNames.Add(asset.FileName);
+                                    assets.Add(AssetDatabase.LoadAssetAtPath<Object>(import.assetPath));
+                                    continue;
+                                }
                             }
                         }
-                    }
-                    importAssetNames.Add(asset.FileName);
+                        importAssetNames.Add(asset.FileName);
 
-                    foreach (var trigger in settings.Triggers) trigger.OnPreprocessAsset(ref bytes, ref asset);
-                    ImportAsset(asset, savePath, saveFullPath, bytes, settings, logger);
-                    assets.Add(AssetDatabase.LoadAssetAtPath<Object>(savePath));
+                        foreach (var trigger in settings.Triggers) trigger.OnPreprocessAsset(ref bytes, ref asset);
+                        ImportAsset(asset, savePath, saveFullPath, bytes, settings, logger);
+                        assets.Add(AssetDatabase.LoadAssetAtPath<Object>(savePath));
+                    }
                 }
 
                 var importAssets = assets.ToArray();
