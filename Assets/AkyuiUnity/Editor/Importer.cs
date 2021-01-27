@@ -28,11 +28,16 @@ namespace AkyuiUnity.Editor
 
         public static void Import(IAkyuiImportSettings settings, IAkyuiLoader[] loaders)
         {
+            var logger = new AkyuiLogger("Akyui");
+
             foreach (var loader in loaders)
             {
-                Debug.Log($"Import Start: {loader.LayoutInfo.Name}");
-                Import(settings, loader);
-                Debug.Log($"Import Finish: {loader.LayoutInfo.Name}");
+                using (logger.SetCategory(loader.LayoutInfo.Name))
+                {
+                    logger.Log($"Import Start");
+                    Import(settings, loader, logger);
+                    logger.Log($"Import Finish");
+                }
             }
 
             AssetDatabase.SaveAssets();
@@ -58,18 +63,18 @@ namespace AkyuiUnity.Editor
             throw new Exception($"Cannot load version {loaderVersionFull} file. (Importer version is {Const.AkyuiVersion})");
         }
 
-        private static void Import(IAkyuiImportSettings settings, IAkyuiLoader akyuiLoader)
+        private static void Import(IAkyuiImportSettings settings, IAkyuiLoader akyuiLoader, AkyuiLogger logger)
         {
             CheckVersion(akyuiLoader);
 
             var pathGetter = new PathGetter(settings, akyuiLoader.LayoutInfo.Name);
-            var assets = ImportAssets(settings, akyuiLoader, pathGetter);
-            var (gameObject, hash) = ImportLayout(settings, akyuiLoader, pathGetter);
+            var assets = ImportAssets(settings, akyuiLoader, pathGetter, logger);
+            var (gameObject, hash) = ImportLayout(settings, akyuiLoader, pathGetter, logger);
 
             var prevMetaGameObject = AssetDatabase.LoadAssetAtPath<GameObject>(pathGetter.MetaSavePath);
             var prevAssets = prevMetaGameObject != null ? prevMetaGameObject.GetComponent<AkyuiMeta>().assets : new Object[] { };
 
-            DeleteUnusedAssets(prevAssets, assets);
+            DeleteUnusedAssets(prevAssets, assets, logger);
 
             var metaGameObject = new GameObject(akyuiLoader.LayoutInfo.Name);
             gameObject.transform.SetParent(metaGameObject.transform);
@@ -78,8 +83,8 @@ namespace AkyuiUnity.Editor
             akyuiMeta.root = gameObject;
             akyuiMeta.assets = assets;
 
-            CreateDirectory(Path.GetDirectoryName(pathGetter.PrefabSavePath));
-            CreateDirectory(Path.GetDirectoryName(pathGetter.MetaSavePath));
+            CreateDirectory(Path.GetDirectoryName(pathGetter.PrefabSavePath), logger);
+            CreateDirectory(Path.GetDirectoryName(pathGetter.MetaSavePath), logger);
 
             PrefabUtility.SaveAsPrefabAssetAndConnect(gameObject, pathGetter.PrefabSavePath, InteractionMode.AutomatedAction);
             PrefabUtility.SaveAsPrefabAsset(metaGameObject, pathGetter.MetaSavePath);
@@ -87,78 +92,86 @@ namespace AkyuiUnity.Editor
             Object.DestroyImmediate(metaGameObject);
         }
 
-        private static void CreateDirectory(string path)
+        private static void CreateDirectory(string path, AkyuiLogger logger)
         {
             if (AssetDatabase.IsValidFolder(path)) return;
             var parent = Path.GetDirectoryName(path);
-            CreateDirectory(parent);
-            Debug.Log($"CreateDirectory {path}");
+            CreateDirectory(parent, logger);
+            logger.Log($"CreateDirectory {path}");
             AssetDatabase.CreateFolder(parent, Path.GetFileName(path));
         }
 
-        private static void DeleteUnusedAssets(Object[] prevAssets, Object[] newAssets)
+        private static void DeleteUnusedAssets(Object[] prevAssets, Object[] newAssets, AkyuiLogger logger)
         {
+            var deletedUnusedAssets = new List<string>();
             foreach (var prevAsset in prevAssets)
             {
                 if (prevAsset == null) continue;
                 if (newAssets.Any(x => x.name == prevAsset.name)) continue;
 
                 var prevAssetPath = AssetDatabase.GetAssetPath(prevAsset);
-                Debug.Log($"Delete unused asset {prevAssetPath}");
+                deletedUnusedAssets.Add(Path.GetFileName(prevAssetPath));
                 AssetDatabase.DeleteAsset(prevAssetPath);
             }
+
+            if (deletedUnusedAssets.Count > 0)
+            {
+                logger.Log($"Delete unused asset", ("assets", string.Join(", ", deletedUnusedAssets)));
+            }
         }
 
-        private static Object[] ImportAssets(IAkyuiImportSettings settings, IAkyuiLoader akyuiLoader, PathGetter pathGetter)
+        private static Object[] ImportAssets(IAkyuiImportSettings settings, IAkyuiLoader akyuiLoader, PathGetter pathGetter, AkyuiLogger logger)
         {
-            var assets = new List<Object>();
-            var unityAssetsParentPath = Path.GetDirectoryName(Application.dataPath) ?? "";
-
-            var assetOutputDirectoryFullPath = Path.Combine(unityAssetsParentPath, pathGetter.AssetOutputDirectoryPath);
-            if (!Directory.Exists(assetOutputDirectoryFullPath)) Directory.CreateDirectory(assetOutputDirectoryFullPath);
-
-            var importAssetNames = new List<string>();
-            var skipAssetNames = new List<string>();
-
-            foreach (var t in akyuiLoader.AssetsInfo.Assets)
+            using (logger.SetCategory("Assets"))
             {
-                var asset = t;
-                var savePath = Path.Combine(pathGetter.AssetOutputDirectoryPath, asset.FileName);
-                var saveFullPath = Path.Combine(unityAssetsParentPath, savePath);
-                var bytes = akyuiLoader.LoadAsset(asset.FileName);
+                logger.Log($"Import Start");
 
-                if (settings.CheckAssetHash)
+                var assets = new List<Object>();
+                var unityAssetsParentPath = Path.GetDirectoryName(Application.dataPath) ?? "";
+
+                var assetOutputDirectoryFullPath = Path.Combine(unityAssetsParentPath, pathGetter.AssetOutputDirectoryPath);
+                if (!Directory.Exists(assetOutputDirectoryFullPath)) Directory.CreateDirectory(assetOutputDirectoryFullPath);
+
+                var importAssetNames = new List<string>();
+                var skipAssetNames = new List<string>();
+
+                foreach (var t in akyuiLoader.AssetsInfo.Assets)
                 {
-                    if (File.Exists(saveFullPath))
+                    var asset = t;
+                    var savePath = Path.Combine(pathGetter.AssetOutputDirectoryPath, asset.FileName);
+                    var saveFullPath = Path.Combine(unityAssetsParentPath, savePath);
+                    var bytes = akyuiLoader.LoadAsset(asset.FileName);
+
+                    if (settings.CheckAssetHash)
                     {
-                        var import = AssetImporter.GetAtPath(savePath);
-                        if (import.userData == t.Hash.ToString())
+                        if (File.Exists(saveFullPath))
                         {
-                            skipAssetNames.Add(asset.FileName);
-                            assets.Add(AssetDatabase.LoadAssetAtPath<Object>(import.assetPath));
-                            continue;
+                            var import = AssetImporter.GetAtPath(savePath);
+                            if (import.userData == t.Hash.ToString())
+                            {
+                                skipAssetNames.Add(asset.FileName);
+                                assets.Add(AssetDatabase.LoadAssetAtPath<Object>(import.assetPath));
+                                continue;
+                            }
                         }
                     }
+                    importAssetNames.Add(asset.FileName);
+
+                    foreach (var trigger in settings.Triggers) trigger.OnPreprocessAsset(ref bytes, ref asset);
+                    ImportAsset(asset, savePath, saveFullPath, bytes, settings, logger);
+                    assets.Add(AssetDatabase.LoadAssetAtPath<Object>(savePath));
                 }
-                importAssetNames.Add(asset.FileName);
 
-                foreach (var trigger in settings.Triggers) trigger.OnPreprocessAsset(ref bytes, ref asset);
-                ImportAsset(asset, savePath, saveFullPath, bytes, settings);
-                assets.Add(AssetDatabase.LoadAssetAtPath<Object>(savePath));
+                var importAssets = assets.ToArray();
+                foreach (var trigger in settings.Triggers) trigger.OnPostprocessAllAssets(pathGetter.AssetOutputDirectoryPath, importAssets);
+
+                logger.Log($"Import Finish", ("import", importAssetNames.Count), ("skip", skipAssetNames.Count));
+
+                return importAssets;
             }
-
-            var importAssets = assets.ToArray();
-            foreach (var trigger in settings.Triggers) trigger.OnPostprocessAllAssets(pathGetter.AssetOutputDirectoryPath, importAssets);
-
-            var body = $"{akyuiLoader.LayoutInfo.Name} assets, {importAssetNames.Count} were imported and {skipAssetNames.Count} were skipped";
-            var importedText = $"Imported: {string.Join(", ", importAssetNames)}";
-            var skippedText = $"Skipped: {string.Join(", ", skipAssetNames)}";
-            Debug.Log($"{body}\n{importedText}\n{skippedText}");
-
-            return importAssets;
         }
 
-        private static void ImportAsset(IAsset asset, string savePath, string saveFullPath, byte[] bytes, IAkyuiImportSettings importSettings)
+        private static void ImportAsset(IAsset asset, string savePath, string saveFullPath, byte[] bytes, IAkyuiImportSettings importSettings, AkyuiLogger logger)
         {
             PostProcessImportAsset.ProcessingFile = savePath;
             PostProcessImportAsset.Asset = asset;
@@ -179,19 +192,21 @@ namespace AkyuiUnity.Editor
                 }
             }
 
-            Debug.LogError($"Unknown asset type {asset}");
+            logger.Error($"Unknown asset type {asset}");
         }
 
-        private static (GameObject, long Hash) ImportLayout(IAkyuiImportSettings settings, IAkyuiLoader akyuiLoader, PathGetter pathGetter)
+        private static (GameObject, long Hash) ImportLayout(IAkyuiImportSettings settings, IAkyuiLoader akyuiLoader, PathGetter pathGetter, AkyuiLogger logger)
         {
-            var layoutInfo = akyuiLoader.LayoutInfo;
-            Debug.Log($"Layout {layoutInfo.Name} / Import");
-
-            var triggers = settings.Triggers.Select(x => (IAkyuiGenerateTrigger) x).ToArray();
-            var (gameObject, hash) = AkyuiGenerator.GenerateGameObject(new EditorAssetLoader(pathGetter), layoutInfo, triggers);
-            foreach (var trigger in settings.Triggers) trigger.OnPostprocessPrefab(ref gameObject);
-
-            return (gameObject, hash);
+            using (logger.SetCategory("Layout"))
+            {
+                logger.Log($"Import Start");
+                var layoutInfo = akyuiLoader.LayoutInfo;
+                var triggers = settings.Triggers.Select(x => (IAkyuiGenerateTrigger) x).ToArray();
+                var (gameObject, hash) = AkyuiGenerator.GenerateGameObject(new EditorAssetLoader(pathGetter, logger), layoutInfo, triggers);
+                foreach (var trigger in settings.Triggers) trigger.OnPostprocessPrefab(ref gameObject);
+                logger.Log($"Import Finish");
+                return (gameObject, hash);
+            }
         }
     }
 
@@ -218,10 +233,12 @@ namespace AkyuiUnity.Editor
     public class EditorAssetLoader : IAssetLoader
     {
         private readonly PathGetter _pathGetter;
+        private readonly AkyuiLogger _logger;
 
-        public EditorAssetLoader(PathGetter pathGetter)
+        public EditorAssetLoader(PathGetter pathGetter, AkyuiLogger logger)
         {
             _pathGetter = pathGetter;
+            _logger = logger;
         }
 
         public Sprite LoadSprite(string name)
@@ -239,7 +256,7 @@ namespace AkyuiUnity.Editor
             var otf = AssetDatabase.LoadAssetAtPath<Font>(pathWithoutExtension + ".otf");
             if (otf != null) return otf;
 
-            Debug.LogWarning($"Font {pathWithoutExtension} is not found");
+            _logger.Warning($"Font {pathWithoutExtension} is not found");
             return null;
         }
     }
