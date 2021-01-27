@@ -22,18 +22,15 @@ namespace AkyuiUnity.Xd
             var parent = Parent;
             while (parent != world)
             {
-                if (Mathf.Abs(leftTopPosition.x) > 0.0001f || Mathf.Abs(leftTopPosition.y) > 0.0001f)
-                {
-                    var rad = parent.Rotation * Mathf.Deg2Rad;
-                    var atan = Mathf.Atan2(leftTopPosition.y, leftTopPosition.x);
-                    var radCos = Mathf.Cos(rad + atan);
-                    var radSin = Mathf.Sin(rad + atan);
-                    var r = Mathf.Sqrt(leftTopPosition.x * leftTopPosition.x + leftTopPosition.y * leftTopPosition.y);
-                    leftTopPosition = new Vector2(
-                        parent.LocalLeftTopPosition.x + r * radCos,
-                        parent.LocalLeftTopPosition.y + r * radSin
-                    );
-                }
+                var rad = parent.Rotation * Mathf.Deg2Rad;
+                var atan = Mathf.Atan2(leftTopPosition.y, leftTopPosition.x);
+                var radCos = Mathf.Cos(rad + atan);
+                var radSin = Mathf.Sin(rad + atan);
+                var r = Mathf.Sqrt(leftTopPosition.x * leftTopPosition.x + leftTopPosition.y * leftTopPosition.y);
+                leftTopPosition = new Vector2(
+                    parent.LocalLeftTopPosition.x + r * radCos,
+                    parent.LocalLeftTopPosition.y + r * radSin
+                );
                 rotation += parent.Rotation;
 
                 parent = parent.Parent;

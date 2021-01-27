@@ -51,7 +51,7 @@ namespace AkyuiUnity.Xd
                 }
             }
 
-            if (scaleBehavior == "cover")
+            if (scaleBehavior == "cover" && size.x > 0.0001f && size.y > 0.0001f)
             {
                 var imageWidth = xdObject.Style?.Fill?.Pattern?.Width ?? 0f;
                 var imageHeight = xdObject.Style?.Fill?.Pattern?.Height ?? 0f;
