@@ -133,14 +133,14 @@ namespace AkyuiUnity.Xd
 
         public void Set(XdObjectJson xdObject, Obb obb)
         {
-            var key = xdObject.Id ?? xdObject.Guid;
+            var key = xdObject.Guid ?? xdObject.Id;
             if (_obb.ContainsKey(key)) throw new Exception($"{key} already exists");
             _obb[key] = obb;
         }
 
         public Obb Get(XdObjectJson xdObject)
         {
-            var key = xdObject.Id ?? xdObject.Guid;
+            var key = xdObject.Guid ?? xdObject.Id;
             return _obb[key];
         }
     }
