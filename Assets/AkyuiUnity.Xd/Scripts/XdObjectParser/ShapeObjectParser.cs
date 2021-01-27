@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using AkyuiUnity.Xd.Libraries;
-using Newtonsoft.Json;
 using Unity.VectorGraphics;
 using UnityEngine;
 using XdParser;
@@ -115,7 +114,7 @@ namespace AkyuiUnity.Xd
             if (!string.IsNullOrWhiteSpace(spriteUid))
             {
                 spriteUid = $"{xdObject.GetSimpleName()}_{spriteUid.Substring(0, 8)}.png";
-                asset = new SpriteAsset(spriteUid, xdObject.Style.Fill.Pattern.Meta.Ux.HrefLastModifiedDate, null);
+                asset = new SpriteAsset(spriteUid, xdObject.Style.Fill.Pattern.Meta.Ux.HrefLastModifiedDate, obb.Size, null);
                 imageComponent = new ImageComponent(
                     spriteUid,
                     color,
@@ -127,8 +126,7 @@ namespace AkyuiUnity.Xd
             {
                 spriteUid = $"{xdObject.GetSimpleName()}_{xdObject.Id.Substring(0, 8)}.svg";
                 var svg = SvgUtil.CreateSvg(xdObject);
-                var userData = new SvgImportTrigger.SvgImportUserData { Width = Mathf.RoundToInt(obb.Size.x), Height = Mathf.RoundToInt(obb.Size.y) };
-                asset = new SpriteAsset(spriteUid, FastHash.CalculateHash(svg), JsonConvert.SerializeObject(userData));
+                asset = new SpriteAsset(spriteUid, FastHash.CalculateHash(svg), obb.Size, null);
                 imageComponent = new ImageComponent(
                     spriteUid,
                     new Color(1f, 1f, 1f, color.a),

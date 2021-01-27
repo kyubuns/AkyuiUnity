@@ -22,17 +22,11 @@ namespace AkyuiUnity.Xd
         {
             if (!(assetImporter is SVGImporter svgImporter)) return;
 
-            var userData = JsonConvert.DeserializeObject<SvgImportUserData>(PostProcessImportAsset.Asset.UserData ?? string.Empty);
+            var spriteAsset = (SpriteAsset) PostProcessImportAsset.Asset;
             svgImporter.SvgType = SVGType.TexturedSprite;
             svgImporter.KeepTextureAspectRatio = false;
-            svgImporter.TextureWidth = Mathf.RoundToInt(userData.Width * _saveScale);
-            svgImporter.TextureHeight = Mathf.RoundToInt(userData.Height * _saveScale);
-        }
-
-        public class SvgImportUserData
-        {
-            public int Width { get; set; }
-            public int Height { get; set; }
+            svgImporter.TextureWidth = Mathf.RoundToInt(spriteAsset.Size.x * _saveScale);
+            svgImporter.TextureHeight = Mathf.RoundToInt(spriteAsset.Size.y * _saveScale);
         }
 
         public void OnPreprocessAsset(IAkyuiLoader loader, ref byte[] bytes, ref IAsset asset) { }

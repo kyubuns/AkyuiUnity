@@ -30,8 +30,7 @@ namespace AkyuiUnity.Xd
             xdObject.Group.Children = new XdObjectJson[] { };
 
             var size = obbGetter.Get(xdObject).Size;
-            var userData = new SvgImportTrigger.SvgImportUserData { Width = Mathf.RoundToInt(size.x), Height = Mathf.RoundToInt(size.y) };
-            assets.Add(new SpriteAsset(spriteUid, FastHash.CalculateHash(svg), JsonConvert.SerializeObject(userData)));
+            assets.Add(new SpriteAsset(spriteUid, FastHash.CalculateHash(svg), size, null));
             components.Add(new ImageComponent(
                 spriteUid,
                 new Color(1f, 1f, 1f, color.a),

@@ -54,12 +54,14 @@ namespace AkyuiUnity
 
         public string FileName { get; }
         public long Hash { get; }
+        public Vector2 Size { get; }
         [CanBeNull] public string UserData { get; }
 
-        public SpriteAsset([NotNull] string fileName, long hash, [CanBeNull] string userData)
+        public SpriteAsset([NotNull] string fileName, long hash, Vector2 size, [CanBeNull] string userData)
         {
             FileName = fileName;
             Hash = hash;
+            Size = size;
             UserData = userData;
         }
     }
