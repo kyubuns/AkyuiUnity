@@ -1,10 +1,7 @@
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using AkyuiUnity.Editor;
-using AkyuiUnity.Editor.ScriptableObject;
 using AkyuiUnity.Loader;
-using UnityEngine;
 using XdParser;
 
 namespace AkyuiUnity.Xd
@@ -14,7 +11,6 @@ namespace AkyuiUnity.Xd
         public static void Import(XdImportSettings xdSettings, string[] xdFilePaths)
         {
             var logger = new AkyuiLogger("Akyui.Xd");
-            var settings = new XdImportSettingsWrapper(xdSettings);
             var loaders = new List<IAkyuiLoader>();
             using (var progressBar = new AkyuiProgressBar("Akyui.Xd"))
             {
@@ -60,7 +56,7 @@ namespace AkyuiUnity.Xd
                 }
             }
 
-            Importer.Import(settings, loaders.ToArray());
+            Importer.Import(xdSettings, loaders.ToArray());
 
             if (!string.IsNullOrWhiteSpace(xdSettings.AkyuiOutputPath))
             {
@@ -77,31 +73,6 @@ namespace AkyuiUnity.Xd
             }
 
             foreach (var loader in loaders) loader.Dispose();
-        }
-    }
-
-    public class XdImportSettingsWrapper : IAkyuiImportSettings
-    {
-        private readonly XdImportSettings _settings;
-
-        public XdImportSettingsWrapper(XdImportSettings settings)
-        {
-            _settings = settings;
-        }
-
-        public string PrefabOutputPath => _settings.PrefabOutputPath;
-        public string AssetOutputDirectoryPath => _settings.AssetOutputDirectoryPath;
-        public string MetaOutputPath => _settings.MetaOutputPath;
-        public string FontDirectoryPath => _settings.FontDirectoryPath;
-        public bool CheckAssetHash => _settings.CheckAssetHash;
-        public float SpriteSaveScale => _settings.SpriteSaveScale;
-
-        public IAkyuiImportTrigger[] Triggers
-        {
-            get
-            {
-                return new IAkyuiImportTrigger[] { new SvgImportTrigger(_settings.SpriteSaveScale) }.Concat(_settings.Triggers).ToArray();
-            }
         }
     }
 }

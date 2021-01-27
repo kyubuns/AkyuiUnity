@@ -124,7 +124,7 @@ namespace AkyuiUnity.Xd
             }
             else if (SvgUtil.Types.Contains(shapeType))
             {
-                spriteUid = $"{xdObject.GetSimpleName()}_{xdObject.Id.Substring(0, 8)}.svg";
+                spriteUid = $"{xdObject.GetSimpleName()}_{xdObject.Id.Substring(0, 8)}.png";
                 var svg = SvgUtil.CreateSvg(xdObject);
                 asset = new SpriteAsset(spriteUid, FastHash.CalculateHash(svg), obb.Size, null, null);
                 imageComponent = new ImageComponent(
@@ -133,7 +133,7 @@ namespace AkyuiUnity.Xd
                     direction
                 );
 
-                assetHolder.Save(spriteUid, System.Text.Encoding.UTF8.GetBytes(svg));
+                assetHolder.Save(spriteUid, SvgToPng.Convert(svg, new Vector2Int(Mathf.RoundToInt(obb.Size.x), Mathf.RoundToInt(obb.Size.y))));
             }
             else
             {

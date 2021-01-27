@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using AkyuiUnity.Xd.Libraries;
-using Newtonsoft.Json;
 using UnityEngine;
 using XdParser;
 using XdParser.Internal;
@@ -24,7 +23,7 @@ namespace AkyuiUnity.Xd
             var components = new List<IComponent>();
             var assets = new List<IAsset>();
 
-            var spriteUid = $"{xdObject.GetSimpleName()}_{xdObject.Id.Substring(0, 8)}.svg";
+            var spriteUid = $"{xdObject.GetSimpleName()}_{xdObject.Id.Substring(0, 8)}.png";
             var color = xdObject.GetFillUnityColor();
             var svg = SvgUtil.CreateSvg(xdObject);
             xdObject.Group.Children = new XdObjectJson[] { };
@@ -37,7 +36,7 @@ namespace AkyuiUnity.Xd
                 Vector2Int.one
             ));
 
-            assetHolder.Save(spriteUid, System.Text.Encoding.UTF8.GetBytes(svg));
+            assetHolder.Save(spriteUid, SvgToPng.Convert(svg, new Vector2Int(Mathf.RoundToInt(size.x), Mathf.RoundToInt(size.y))));
             return (components.ToArray(), assets.ToArray());
         }
     }
