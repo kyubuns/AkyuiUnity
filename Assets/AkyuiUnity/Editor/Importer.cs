@@ -117,6 +117,9 @@ namespace AkyuiUnity.Editor
             var assetOutputDirectoryFullPath = Path.Combine(unityAssetsParentPath, pathGetter.AssetOutputDirectoryPath);
             if (!Directory.Exists(assetOutputDirectoryFullPath)) Directory.CreateDirectory(assetOutputDirectoryFullPath);
 
+            var importAssetNames = new List<string>();
+            var skipAssetNames = new List<string>();
+
             foreach (var t in akyuiLoader.AssetsInfo.Assets)
             {
                 var asset = t;
@@ -131,13 +134,13 @@ namespace AkyuiUnity.Editor
                         var import = AssetImporter.GetAtPath(savePath);
                         if (import.userData == t.Hash.ToString())
                         {
-                            Debug.Log($"Asset {asset.FileName} / Skip (same hash)");
+                            skipAssetNames.Add(asset.FileName);
                             assets.Add(AssetDatabase.LoadAssetAtPath<Object>(import.assetPath));
                             continue;
                         }
                     }
                 }
-                Debug.Log($"Asset {asset.FileName} / Import");
+                importAssetNames.Add(asset.FileName);
 
                 foreach (var trigger in settings.Triggers) trigger.OnPreprocessAsset(ref bytes, ref asset);
                 ImportAsset(asset, savePath, saveFullPath, bytes, settings);
@@ -146,6 +149,11 @@ namespace AkyuiUnity.Editor
 
             var importAssets = assets.ToArray();
             foreach (var trigger in settings.Triggers) trigger.OnPostprocessAllAssets(pathGetter.AssetOutputDirectoryPath, importAssets);
+
+            var body = $"{akyuiLoader.LayoutInfo.Name} assets, {importAssetNames.Count} were imported and {skipAssetNames.Count} were skipped";
+            var importedText = $"Imported: {string.Join(", ", importAssetNames)}";
+            var skippedText = $"Skipped: {string.Join(", ", skipAssetNames)}";
+            Debug.Log($"{body}\n{importedText}\n{skippedText}");
 
             return importAssets;
         }
