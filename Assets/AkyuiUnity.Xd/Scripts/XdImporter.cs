@@ -94,6 +94,7 @@ namespace AkyuiUnity.Xd
         public string MetaOutputPath => _settings.MetaOutputPath;
         public string FontDirectoryPath => _settings.FontDirectoryPath;
         public bool CheckAssetHash => _settings.CheckAssetHash;
+        public float SpriteSaveScale => _settings.SpriteSaveScale;
 
         public IAkyuiImportTrigger[] Triggers
         {

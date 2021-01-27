@@ -36,5 +36,6 @@ namespace AkyuiUnity.Editor.ScriptableObject
         string FontDirectoryPath { get; }
         bool CheckAssetHash { get; }
         IAkyuiImportTrigger[] Triggers { get; }
+        float SpriteSaveScale { get; }
     }
 }

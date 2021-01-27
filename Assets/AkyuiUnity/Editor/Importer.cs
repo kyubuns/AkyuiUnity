@@ -165,7 +165,7 @@ namespace AkyuiUnity.Editor
                         importAssetNames.Add(asset.FileName);
 
                         foreach (var trigger in settings.Triggers) trigger.OnPreprocessAsset(akyuiLoader, ref bytes, ref asset);
-                        ImportAsset(asset, savePath, saveFullPath, bytes, settings, logger);
+                        ImportAsset(settings, asset, savePath, saveFullPath, bytes, settings, logger);
                         assets.Add(AssetDatabase.LoadAssetAtPath<Object>(savePath));
                     }
                 }
@@ -179,11 +179,13 @@ namespace AkyuiUnity.Editor
             }
         }
 
-        private static void ImportAsset(IAsset asset, string savePath, string saveFullPath, byte[] bytes, IAkyuiImportSettings importSettings, AkyuiLogger logger)
+        private static void ImportAsset(IAkyuiImportSettings settings, IAsset asset, string savePath, string saveFullPath, byte[] bytes, IAkyuiImportSettings importSettings, AkyuiLogger logger)
         {
             PostProcessImportAsset.ProcessingFile = savePath;
             PostProcessImportAsset.Asset = asset;
-            PostProcessImportAsset.Triggers = importSettings.Triggers;
+            PostProcessImportAsset.Triggers = new IAkyuiImportTrigger[] { new SpriteImportTrigger(settings.SpriteSaveScale) }
+                .Concat(importSettings.Triggers)
+                .ToArray();
 
             using (Disposable.Create(() =>
             {
@@ -236,6 +238,30 @@ namespace AkyuiUnity.Editor
             assetImporter.userData = Asset.Hash.ToString();
             foreach (var trigger in Triggers) trigger.OnUnityPreprocessAsset(assetImporter, Asset);
         }
+    }
+
+    public class SpriteImportTrigger : IAkyuiImportTrigger
+    {
+        private readonly float _saveScale;
+
+        public SpriteImportTrigger(float saveScale)
+        {
+            _saveScale = saveScale;
+        }
+
+        public void OnUnityPreprocessAsset(AssetImporter assetImporter, IAsset asset)
+        {
+            if (!(assetImporter is TextureImporter textureImporter)) return;
+
+            var spriteAsset = (SpriteAsset) PostProcessImportAsset.Asset;
+            textureImporter.maxTextureSize = Mathf.RoundToInt(Mathf.Max(spriteAsset.Size.x, spriteAsset.Size.y) * _saveScale);
+        }
+
+        public void OnPreprocessAsset(IAkyuiLoader loader, ref byte[] bytes, ref IAsset asset) { }
+        public void OnPostprocessPrefab(IAkyuiLoader loader, ref GameObject prefab) { }
+        public void OnPostprocessAllAssets(IAkyuiLoader loader, string outputDirectoryPath, Object[] importAssets) { }
+        public Component CreateComponent(GameObject gameObject, IComponent component, IAssetLoader assetLoader) => null;
+        public void OnPostprocessComponent(GameObject gameObject, IComponent component) { }
     }
 
     public class EditorAssetLoader : IAssetLoader
