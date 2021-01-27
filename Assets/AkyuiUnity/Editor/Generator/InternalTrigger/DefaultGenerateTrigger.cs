@@ -287,7 +287,11 @@ namespace AkyuiUnity.Generator.InternalTrigger
         private static void UpdateImage(GameObject gameObject, Image image, ImageComponent imageComponent, IAssetLoader assetLoader)
         {
             var rectTransform = gameObject.GetComponent<RectTransform>();
-            if (imageComponent.Sprite != null) image.sprite = assetLoader.LoadSprite(imageComponent.Sprite);
+            if (imageComponent.Sprite != null)
+            {
+                image.sprite = assetLoader.LoadSprite(imageComponent.Sprite);
+                if (image.hasBorder) image.type = Image.Type.Sliced;
+            }
             if (imageComponent.Color != null) image.color = imageComponent.Color.Value;
 
             if (imageComponent.Direction != null)

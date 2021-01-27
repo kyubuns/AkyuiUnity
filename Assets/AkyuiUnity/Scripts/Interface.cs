@@ -52,17 +52,40 @@ namespace AkyuiUnity
     {
         public const string TypeString = "sprite";
 
-        public string FileName { get; }
-        public long Hash { get; }
-        public Vector2 Size { get; }
-        [CanBeNull] public string UserData { get; }
+        public string FileName { get; set; }
+        public long Hash { get; set; }
+        public Vector2 Size { get; set; }
+        [CanBeNull] public string UserData { get; set; }
+        [CanBeNull] public Border Border { get; set; }
 
-        public SpriteAsset([NotNull] string fileName, long hash, Vector2 size, [CanBeNull] string userData)
+        public SpriteAsset([NotNull] string fileName, long hash, Vector2 size, [CanBeNull] string userData, [CanBeNull] Border border)
         {
             FileName = fileName;
             Hash = hash;
             Size = size;
             UserData = userData;
+            Border = border;
+        }
+    }
+
+    public class Border
+    {
+        public Border(int top, int right, int bottom, int left)
+        {
+            Top = top;
+            Right = right;
+            Bottom = bottom;
+            Left = left;
+        }
+
+        public int Top { get; }
+        public int Right { get; }
+        public int Bottom { get; }
+        public int Left { get; }
+
+        public Vector4 ToVector4()
+        {
+            return new Vector4(Left, Bottom, Right, Top);
         }
     }
 

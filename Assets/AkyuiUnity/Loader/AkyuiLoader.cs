@@ -112,11 +112,25 @@ namespace AkyuiUnity.Loader
 
             if (assetType == SpriteAsset.TypeString)
             {
+                Border border = null;
+
+                if (assetJson.ContainsKey("border"))
+                {
+                    var borderDict = assetJson["border"].JsonDictionary();
+                    border = new Border(
+                        borderDict["top"].JsonInt(),
+                        borderDict["right"].JsonInt(),
+                        borderDict["bottom"].JsonInt(),
+                        borderDict["left"].JsonInt()
+                    );
+                }
+
                 return new SpriteAsset(
                     assetJson["file"].JsonString(),
                     assetJson["hash"].JsonLong(),
                     assetJson["size"].JsonVector2(),
-                    assetJson.ContainsKey("userdata") ? assetJson["userdata"].JsonString() : null
+                    assetJson.ContainsKey("userdata") ? assetJson["userdata"].JsonString() : null,
+                    border
                 );
             }
 

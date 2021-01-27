@@ -114,7 +114,7 @@ namespace AkyuiUnity.Xd
             if (!string.IsNullOrWhiteSpace(spriteUid))
             {
                 spriteUid = $"{xdObject.GetSimpleName()}_{spriteUid.Substring(0, 8)}.png";
-                asset = new SpriteAsset(spriteUid, xdObject.Style.Fill.Pattern.Meta.Ux.HrefLastModifiedDate, obb.Size, null);
+                asset = new SpriteAsset(spriteUid, xdObject.Style.Fill.Pattern.Meta.Ux.HrefLastModifiedDate, obb.Size, null, null);
                 imageComponent = new ImageComponent(
                     spriteUid,
                     color,
@@ -126,7 +126,7 @@ namespace AkyuiUnity.Xd
             {
                 spriteUid = $"{xdObject.GetSimpleName()}_{xdObject.Id.Substring(0, 8)}.svg";
                 var svg = SvgUtil.CreateSvg(xdObject);
-                asset = new SpriteAsset(spriteUid, FastHash.CalculateHash(svg), obb.Size, null);
+                asset = new SpriteAsset(spriteUid, FastHash.CalculateHash(svg), obb.Size, null, null);
                 imageComponent = new ImageComponent(
                     spriteUid,
                     new Color(1f, 1f, 1f, color.a),

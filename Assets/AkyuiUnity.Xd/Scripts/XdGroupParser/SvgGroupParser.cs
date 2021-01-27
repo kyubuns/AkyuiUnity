@@ -30,7 +30,7 @@ namespace AkyuiUnity.Xd
             xdObject.Group.Children = new XdObjectJson[] { };
 
             var size = obbGetter.Get(xdObject).Size;
-            assets.Add(new SpriteAsset(spriteUid, FastHash.CalculateHash(svg), size, null));
+            assets.Add(new SpriteAsset(spriteUid, FastHash.CalculateHash(svg), size, null, null));
             components.Add(new ImageComponent(
                 spriteUid,
                 new Color(1f, 1f, 1f, color.a),

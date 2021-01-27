@@ -233,6 +233,11 @@ namespace AkyuiUnity.Editor
             if (assetImporter is TextureImporter textureImporter)
             {
                 textureImporter.textureType = TextureImporterType.Sprite;
+
+                if (Asset is SpriteAsset spriteAsset)
+                {
+                    if (spriteAsset.Border != null) textureImporter.spriteBorder = spriteAsset.Border.ToVector4();
+                }
             }
 
             assetImporter.userData = Asset.Hash.ToString();
