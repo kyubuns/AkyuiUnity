@@ -16,9 +16,8 @@ namespace AkyuiUnity.CommonTrigger
         public override void OnPostprocessAllAssets(IAkyuiLoader loader, string outputDirectoryPath, Object[] importAssets)
         {
             var tmpPath = outputDirectoryPath.TrimEnd('/');
-            var fileName = Path.GetFileName(tmpPath);
 
-            var spriteAtlasPath = spriteAtlasOutputPath.Replace("{name}", fileName) + ".spriteatlas";
+            var spriteAtlasPath = spriteAtlasOutputPath.Replace("{name}", loader.LayoutInfo.Name) + ".spriteatlas";
             var spriteAtlas = AssetDatabase.LoadAssetAtPath<SpriteAtlas>(spriteAtlasPath);
             if (spriteAtlas == null)
             {
