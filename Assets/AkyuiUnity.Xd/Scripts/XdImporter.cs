@@ -19,16 +19,25 @@ namespace AkyuiUnity.Xd
             {
                 Debug.Log($"Xd Import Start: {xdFilePath}");
                 var file = new XdFile(xdFilePath);
+                var importedArtboards = 0;
                 foreach (var artwork in file.Artworks)
                 {
                     if (artwork.Artboard.Children.Length == 0) continue;
-                    if (!(artwork.Artboard.Children[0].Meta?.Ux?.MarkedForExport ?? false)) continue;
+                    var markForExport = artwork.Artboard.Children[0].Meta?.Ux?.MarkedForExport ?? false;
+                    if (!markForExport) continue;
                     var akyuiXdObjectParsers = xdSettings.ObjectParsers ?? new AkyuiXdObjectParser[] { };
                     var akyuiXdGroupParsers = xdSettings.GroupParsers ?? new AkyuiXdGroupParser[] { };
                     var triggers = xdSettings.XdTriggers ?? new AkyuiXdImportTrigger[] { };
                     loaders.Add(new XdAkyuiLoader(file, artwork, akyuiXdObjectParsers, akyuiXdGroupParsers, triggers));
+                    importedArtboards++;
                 }
-                Debug.Log($"Xd Import Finish: {xdFilePath}");
+
+                Debug.Log($"Xd Import Finish: {xdFilePath} ({importedArtboards} artboards)");
+
+                if (importedArtboards == 0)
+                {
+                    Debug.LogWarning($"The artboard to be imported was not found. Please set Mark for Export.");
+                }
             }
 
             Importer.Import(settings, loaders.ToArray());
