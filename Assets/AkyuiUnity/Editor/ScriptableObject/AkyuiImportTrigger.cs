@@ -1,5 +1,6 @@
 using AkyuiUnity.Generator;
 using AkyuiUnity.Generator.InternalTrigger;
+using AkyuiUnity.Loader;
 using UnityEditor;
 using UnityEngine;
 
@@ -7,15 +8,15 @@ namespace AkyuiUnity.Editor.ScriptableObject
 {
     public interface IAkyuiImportTrigger : IAkyuiGenerateTrigger
     {
-        void OnPreprocessAsset(ref byte[] bytes, ref IAsset asset);
+        void OnPreprocessAsset(IAkyuiLoader loader, ref byte[] bytes, ref IAsset asset);
         void OnUnityPreprocessAsset(AssetImporter assetImporter, IAsset asset);
-        void OnPostprocessPrefab(ref GameObject prefab);
-        void OnPostprocessAllAssets(string outputDirectoryPath, Object[] importAssets);
+        void OnPostprocessPrefab(IAkyuiLoader loader, ref GameObject prefab);
+        void OnPostprocessAllAssets(IAkyuiLoader loader, string outputDirectoryPath, Object[] importAssets);
     }
 
     public abstract class AkyuiImportTrigger : UnityEngine.ScriptableObject, IAkyuiImportTrigger
     {
-        public virtual void OnPreprocessAsset(ref byte[] bytes, ref IAsset asset)
+        public virtual void OnPreprocessAsset(IAkyuiLoader loader, ref byte[] bytes, ref IAsset asset)
         {
         }
 
@@ -23,11 +24,11 @@ namespace AkyuiUnity.Editor.ScriptableObject
         {
         }
 
-        public virtual void OnPostprocessPrefab(ref GameObject prefab)
+        public virtual void OnPostprocessPrefab(IAkyuiLoader loader, ref GameObject prefab)
         {
         }
 
-        public virtual void OnPostprocessAllAssets(string outputDirectoryPath, Object[] importAssets)
+        public virtual void OnPostprocessAllAssets(IAkyuiLoader loader, string outputDirectoryPath, Object[] importAssets)
         {
         }
 

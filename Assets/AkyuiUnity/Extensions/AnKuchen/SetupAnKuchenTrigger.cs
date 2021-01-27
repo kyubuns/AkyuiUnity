@@ -1,6 +1,7 @@
 ﻿#if AKYUIUNITY_ANKUCHEN_SUPPORT
 using System.Collections.Generic;
 using AkyuiUnity.Editor.ScriptableObject;
+using AkyuiUnity.Loader;
 using AnKuchen.AdditionalInfo;
 using AnKuchen.Map;
 using UnityEngine;
@@ -10,7 +11,7 @@ namespace AkyuiUnity.AnKuchenExtension
     [CreateAssetMenu(menuName = "Akyui/Triggers/SetupAnKuchen", fileName = nameof(SetupAnKuchenTrigger))]
     public class SetupAnKuchenTrigger : AkyuiImportTrigger
     {
-        public override void OnPostprocessPrefab(ref GameObject prefab)
+        public override void OnPostprocessPrefab(IAkyuiLoader loader, ref GameObject prefab)
         {
             var uiCache = prefab.AddComponent<UICache>();
             uiCache.CreateCache();

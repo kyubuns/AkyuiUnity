@@ -1,5 +1,6 @@
 using System.IO;
 using AkyuiUnity.Editor.ScriptableObject;
+using AkyuiUnity.Loader;
 using UnityEditor;
 using UnityEditor.U2D;
 using UnityEngine;
@@ -12,7 +13,7 @@ namespace AkyuiUnity.CommonTrigger
     {
         [SerializeField] private string spriteAtlasOutputPath = "Assets/{name}SpriteAtlas";
 
-        public override void OnPostprocessAllAssets(string outputDirectoryPath, Object[] importAssets)
+        public override void OnPostprocessAllAssets(IAkyuiLoader loader, string outputDirectoryPath, Object[] importAssets)
         {
             var tmpPath = outputDirectoryPath.TrimEnd('/');
             var fileName = Path.GetFileName(tmpPath);

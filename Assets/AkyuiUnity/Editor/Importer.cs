@@ -164,14 +164,14 @@ namespace AkyuiUnity.Editor
                         }
                         importAssetNames.Add(asset.FileName);
 
-                        foreach (var trigger in settings.Triggers) trigger.OnPreprocessAsset(ref bytes, ref asset);
+                        foreach (var trigger in settings.Triggers) trigger.OnPreprocessAsset(akyuiLoader, ref bytes, ref asset);
                         ImportAsset(asset, savePath, saveFullPath, bytes, settings, logger);
                         assets.Add(AssetDatabase.LoadAssetAtPath<Object>(savePath));
                     }
                 }
 
                 var importAssets = assets.ToArray();
-                foreach (var trigger in settings.Triggers) trigger.OnPostprocessAllAssets(pathGetter.AssetOutputDirectoryPath, importAssets);
+                foreach (var trigger in settings.Triggers) trigger.OnPostprocessAllAssets(akyuiLoader, pathGetter.AssetOutputDirectoryPath, importAssets);
 
                 logger.Log($"Import Finish", ("import", importAssetNames.Count), ("skip", skipAssetNames.Count));
 
@@ -211,7 +211,7 @@ namespace AkyuiUnity.Editor
                 var layoutInfo = akyuiLoader.LayoutInfo;
                 var triggers = settings.Triggers.Select(x => (IAkyuiGenerateTrigger) x).ToArray();
                 var (gameObject, hash) = AkyuiGenerator.GenerateGameObject(new EditorAssetLoader(pathGetter, logger), layoutInfo, triggers);
-                foreach (var trigger in settings.Triggers) trigger.OnPostprocessPrefab(ref gameObject);
+                foreach (var trigger in settings.Triggers) trigger.OnPostprocessPrefab(akyuiLoader, ref gameObject);
                 logger.Log($"Import Finish");
                 return (gameObject, hash);
             }

@@ -1,6 +1,7 @@
 using AkyuiUnity.Editor;
 using AkyuiUnity.Editor.ScriptableObject;
 using AkyuiUnity.Generator;
+using AkyuiUnity.Loader;
 using Newtonsoft.Json;
 using Unity.VectorGraphics.Editor;
 using UnityEditor;
@@ -34,9 +35,9 @@ namespace AkyuiUnity.Xd
             public int Height { get; set; }
         }
 
-        public void OnPreprocessAsset(ref byte[] bytes, ref IAsset asset) { }
-        public void OnPostprocessPrefab(ref GameObject prefab) { }
-        public void OnPostprocessAllAssets(string outputDirectoryPath, Object[] importAssets) { }
+        public void OnPreprocessAsset(IAkyuiLoader loader, ref byte[] bytes, ref IAsset asset) { }
+        public void OnPostprocessPrefab(IAkyuiLoader loader, ref GameObject prefab) { }
+        public void OnPostprocessAllAssets(IAkyuiLoader loader, string outputDirectoryPath, Object[] importAssets) { }
         public Component CreateComponent(GameObject gameObject, IComponent component, IAssetLoader assetLoader) => null;
         public void OnPostprocessComponent(GameObject gameObject, IComponent component) { }
     }

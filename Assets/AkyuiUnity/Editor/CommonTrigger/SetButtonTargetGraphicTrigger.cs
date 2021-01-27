@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using AkyuiUnity.Editor.ScriptableObject;
+using AkyuiUnity.Loader;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -8,7 +9,7 @@ namespace AkyuiUnity.CommonTrigger
     [CreateAssetMenu(menuName = "Akyui/Triggers/SetButtonTargetGraphic", fileName = nameof(SetButtonTargetGraphicTrigger))]
     public class SetButtonTargetGraphicTrigger : AkyuiImportTrigger
     {
-        public override void OnPostprocessPrefab(ref GameObject prefab)
+        public override void OnPostprocessPrefab(IAkyuiLoader loader, ref GameObject prefab)
         {
             foreach (var button in prefab.GetComponentsInChildren<Button>())
             {
