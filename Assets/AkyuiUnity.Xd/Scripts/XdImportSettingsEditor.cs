@@ -9,7 +9,7 @@ namespace AkyuiUnity.Xd
     [CustomEditor(typeof(XdImportSettings))]
     public class XdImportSettingsEditor : UnityEditor.Editor
     {
-        private readonly HistoryHolder _historyHolder = new HistoryHolder("AkyuiXd.History");
+        private readonly HistoryHolder _historyHolder = new HistoryHolder("AkyuiXd.History.{name}");
 
         public override void OnInspectorGUI()
         {

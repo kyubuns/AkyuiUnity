@@ -9,7 +9,7 @@ namespace AkyuiUnity.Editor.ScriptableObject
     [CustomEditor(typeof(AkyuiImportSettings))]
     public class AkyuiImportSettingsEditor : UnityEditor.Editor
     {
-        private readonly HistoryHolder _historyHolder = new HistoryHolder("Akyui.History");
+        private readonly HistoryHolder _historyHolder = new HistoryHolder("Akyui.History.{name}");
 
         public override void OnInspectorGUI()
         {
@@ -53,6 +53,7 @@ namespace AkyuiUnity.Editor.ScriptableObject
     public class HistoryHolder
     {
         private readonly string _playerPrefsKey;
+        private string PlayerPrefsKey => _playerPrefsKey.Replace("{name}", PlayerSettings.productName);
 
         public HistoryHolder(string playerPrefsKey)
         {
@@ -67,7 +68,7 @@ namespace AkyuiUnity.Editor.ScriptableObject
             {
                 if (_histories == null)
                 {
-                    _histories = EditorPrefs.GetString(_playerPrefsKey, string.Empty)
+                    _histories = EditorPrefs.GetString(PlayerPrefsKey, string.Empty)
                         .Split(',')
                         .Where(x => !string.IsNullOrWhiteSpace(x))
                         .ToArray();
@@ -78,7 +79,7 @@ namespace AkyuiUnity.Editor.ScriptableObject
             set
             {
                 _histories = value;
-                EditorPrefs.SetString(_playerPrefsKey, string.Join(",", _histories));
+                EditorPrefs.SetString(PlayerPrefsKey, string.Join(",", _histories));
             }
         }
 
