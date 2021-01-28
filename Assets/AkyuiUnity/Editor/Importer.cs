@@ -78,12 +78,18 @@ namespace AkyuiUnity.Editor
             using (Disposable.Create(() => Settings = null))
             {
                 var pathGetter = new PathGetter(settings, akyuiLoader.LayoutInfo.Name);
+                var prevMetaGameObject = AssetDatabase.LoadAssetAtPath<GameObject>(pathGetter.MetaSavePath);
+                var prevMeta = prevMetaGameObject != null ? prevMetaGameObject.GetComponent<AkyuiMeta>() : null;
+
+                if (prevMeta != null && prevMeta.hash == akyuiLoader.LayoutInfo.Hash)
+                {
+                    logger.Log("Skip", ("hash", akyuiLoader.LayoutInfo.Hash));
+                    return;
+                }
+
                 var assets = ImportAssets(settings, akyuiLoader, pathGetter, logger, progress);
                 var (gameObject, hash) = ImportLayout(settings, akyuiLoader, pathGetter, logger);
-
-                var prevMetaGameObject = AssetDatabase.LoadAssetAtPath<GameObject>(pathGetter.MetaSavePath);
-                var prevAssets = prevMetaGameObject != null ? prevMetaGameObject.GetComponent<AkyuiMeta>().assets : new Object[] { };
-
+                var prevAssets = prevMeta != null ? prevMeta.assets : new Object[] { };
                 DeleteUnusedAssets(prevAssets, assets, logger);
 
                 var metaGameObject = new GameObject(akyuiLoader.LayoutInfo.Name);
