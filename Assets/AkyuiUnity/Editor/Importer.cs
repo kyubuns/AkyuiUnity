@@ -2,11 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using AkyuiUnity.Editor.Extensions;
 using AkyuiUnity.Editor.ScriptableObject;
 using AkyuiUnity.Generator;
 using AkyuiUnity.Generator.InternalTrigger;
 using AkyuiUnity.Loader;
+using AkyuiUnity.Loader.Internal;
 using UnityEngine;
 using UnityEditor;
 using Object = UnityEngine.Object;
@@ -146,33 +148,43 @@ namespace AkyuiUnity.Editor
                 var skipAssetNames = new List<string>();
 
                 progress.SetTotal(akyuiLoader.AssetsInfo.Assets.Length);
-                foreach (var t in akyuiLoader.AssetsInfo.Assets)
+                foreach (var tmp in akyuiLoader.AssetsInfo.Assets)
                 {
-                    var asset = t;
+                    var asset = tmp;
                     using (progress.TaskStart(asset.FileName))
                     {
                         var savePath = Path.Combine(pathGetter.AssetOutputDirectoryPath, asset.FileName);
                         var saveFullPath = Path.Combine(unityAssetsParentPath, savePath);
                         var bytes = akyuiLoader.LoadAsset(asset.FileName);
 
-                        if (settings.CheckAssetHash)
+                        if (settings.CheckAssetHash && File.Exists(saveFullPath))
                         {
-                            if (File.Exists(saveFullPath))
+                            var import = AssetImporter.GetAtPath(savePath);
+                            var prevUserData = MiniJSON.Json.Deserialize(import.userData).JsonDictionary();
+                            if (prevUserData["hash"].JsonLong() == asset.Hash)
                             {
-                                var import = AssetImporter.GetAtPath(savePath);
-                                if (import.userData == t.Hash.ToString())
-                                {
-                                    skipAssetNames.Add(asset.FileName);
-                                    assets.Add(AssetDatabase.LoadAssetAtPath<Object>(import.assetPath));
-                                    continue;
-                                }
+                                skipAssetNames.Add(asset.FileName);
+                                assets.Add(AssetDatabase.LoadAssetAtPath<Object>(import.assetPath));
+                                continue;
                             }
                         }
-                        importAssetNames.Add(asset.FileName);
 
-                        foreach (var trigger in settings.Triggers) trigger.OnPreprocessAsset(akyuiLoader, ref bytes, ref asset);
-                        ImportAsset(asset, savePath, saveFullPath, bytes, settings, logger);
+                        var userData = new Dictionary<string, object>();
+                        userData["hash"] = asset.Hash;
+
+                        if (asset is SpriteAsset)
+                        {
+                            var texture = new Texture2D(2, 2);
+                            texture.LoadImage(bytes);
+
+                            userData["source_width"] = texture.width;
+                            userData["source_height"] = texture.height;
+                        }
+
+                        foreach (var trigger in settings.Triggers) trigger.OnPreprocessAsset(akyuiLoader, ref bytes, ref asset, ref userData);
+                        ImportAsset(asset, savePath, saveFullPath, bytes, userData, settings, logger);
                         assets.Add(AssetDatabase.LoadAssetAtPath<Object>(savePath));
+                        importAssetNames.Add(asset.FileName);
                     }
                 }
 
@@ -185,16 +197,18 @@ namespace AkyuiUnity.Editor
             }
         }
 
-        private static void ImportAsset(IAsset asset, string savePath, string saveFullPath, byte[] bytes, IAkyuiImportSettings importSettings, AkyuiLogger logger)
+        private static void ImportAsset(IAsset asset, string savePath, string saveFullPath, byte[] bytes, Dictionary<string, object> userData, IAkyuiImportSettings importSettings, AkyuiLogger logger)
         {
             PostProcessImportAsset.ProcessingFile = savePath;
             PostProcessImportAsset.Asset = asset;
+            PostProcessImportAsset.UserData = userData;
             PostProcessImportAsset.Triggers = importSettings.Triggers;
 
             using (Disposable.Create(() =>
             {
                 PostProcessImportAsset.ProcessingFile = null;
                 PostProcessImportAsset.Asset = null;
+                PostProcessImportAsset.UserData = null;
                 PostProcessImportAsset.Triggers = null;
             }))
             {
@@ -228,11 +242,14 @@ namespace AkyuiUnity.Editor
     {
         public static string ProcessingFile { get; set; }
         public static IAsset Asset { get; set; }
+        public static Dictionary<string, object> UserData { get; set; }
         public static IAkyuiImportTrigger[] Triggers { get; set; }
 
         public void OnPreprocessAsset()
         {
             if (ProcessingFile != assetPath) return;
+
+            var userData = UserData;
 
             if (assetImporter is TextureImporter textureImporter)
             {
@@ -245,8 +262,8 @@ namespace AkyuiUnity.Editor
                 }
             }
 
-            assetImporter.userData = Asset.Hash.ToString();
-            foreach (var trigger in Triggers) trigger.OnUnityPreprocessAsset(assetImporter, Asset);
+            foreach (var trigger in Triggers) trigger.OnUnityPreprocessAsset(assetImporter, Asset, ref userData);
+            assetImporter.userData = MiniJSON.Json.Serialize(userData);
         }
     }
 

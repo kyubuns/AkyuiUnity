@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using AkyuiUnity.Generator;
 using AkyuiUnity.Generator.InternalTrigger;
 using AkyuiUnity.Loader;
@@ -8,19 +9,19 @@ namespace AkyuiUnity.Editor.ScriptableObject
 {
     public interface IAkyuiImportTrigger : IAkyuiGenerateTrigger
     {
-        void OnPreprocessAsset(IAkyuiLoader loader, ref byte[] bytes, ref IAsset asset);
-        void OnUnityPreprocessAsset(AssetImporter assetImporter, IAsset asset);
+        void OnPreprocessAsset(IAkyuiLoader loader, ref byte[] bytes, ref IAsset asset, ref Dictionary<string, object> userData);
+        void OnUnityPreprocessAsset(AssetImporter assetImporter, IAsset asset, ref Dictionary<string, object> userData);
         void OnPostprocessPrefab(IAkyuiLoader loader, ref GameObject prefab);
         void OnPostprocessAllAssets(IAkyuiLoader loader, string outputDirectoryPath, Object[] importAssets);
     }
 
     public abstract class AkyuiImportTrigger : UnityEngine.ScriptableObject, IAkyuiImportTrigger
     {
-        public virtual void OnPreprocessAsset(IAkyuiLoader loader, ref byte[] bytes, ref IAsset asset)
+        public virtual void OnPreprocessAsset(IAkyuiLoader loader, ref byte[] bytes, ref IAsset asset, ref Dictionary<string, object> userData)
         {
         }
 
-        public virtual void OnUnityPreprocessAsset(AssetImporter assetImporter, IAsset asset)
+        public virtual void OnUnityPreprocessAsset(AssetImporter assetImporter, IAsset asset, ref Dictionary<string, object> userData)
         {
         }
 

@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using AkyuiUnity.CommonTrigger.Library.OnionRing;
 using AkyuiUnity.Editor.ScriptableObject;
 using AkyuiUnity.Loader;
@@ -9,7 +10,7 @@ namespace AkyuiUnity.CommonTrigger
     [CreateAssetMenu(menuName = "Akyui/Triggers/AutoNineSlice", fileName = nameof(AutoNineSliceTrigger))]
     public class AutoNineSliceTrigger : AkyuiImportTrigger
     {
-        public override void OnPreprocessAsset(IAkyuiLoader loader, ref byte[] bytes, ref IAsset asset)
+        public override void OnPreprocessAsset(IAkyuiLoader loader, ref byte[] bytes, ref IAsset asset, ref Dictionary<string, object> userData)
         {
             if (!(asset is SpriteAsset spriteAsset)) return;
 
