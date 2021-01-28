@@ -44,7 +44,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e9b41a0cf8b347838cc3df031dda1163, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hash: 1570776066
+  hash: 3146032519
   root: {fileID: 1663173975806523656}
   assets:
   - {fileID: 2800000, guid: bf19d134b09084571bd39399d4a45dcd, type: 3}
@@ -70,6 +70,9 @@ MonoBehaviour:
   - {fileID: 2800000, guid: 9c3befd7b1f524b6195183c6c3f15a66, type: 3}
   - {fileID: 2800000, guid: d038a6a94f89d4e55ac6739334ebdabb, type: 3}
   - {fileID: 2800000, guid: d572953c58dd544ab96fba21dd47a60d, type: 3}
+  userData:
+  - key: xd_hash
+    value: 2390047148
 --- !u!1001 &2335372178334530261
 PrefabInstance:
   m_ObjectHideFlags: 0
