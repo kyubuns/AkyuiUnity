@@ -64,6 +64,8 @@ namespace AkyuiUnity.Editor
             {
                 _parent = parent;
                 _message = message;
+
+                _parent.Update(_message, 0f);
             }
 
             public void Dispose()
