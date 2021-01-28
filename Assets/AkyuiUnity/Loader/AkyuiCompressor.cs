@@ -54,7 +54,7 @@ namespace AkyuiUnity.Loader
             }
         }
 
-        private static Dictionary<string, object> ToSerializable(LayoutInfo source)
+        public static Dictionary<string, object> ToSerializable(LayoutInfo source)
         {
             var dict = new Dictionary<string, object>();
             var elements = new List<object>();
@@ -66,6 +66,7 @@ namespace AkyuiUnity.Loader
                 { "akyui_version", ToSerializable(source.Meta.AkyuiVersion) },
                 { "app_version", ToSerializable(source.Meta.AppVersion) },
             };
+            dict["userdata"] = ToSerializable(source.UserData);
             dict["root"] = ToSerializable(source.Root);
             dict["elements"] = elements;
 
@@ -221,6 +222,7 @@ namespace AkyuiUnity.Loader
         private static int[] ToSerializable(int[] numbers) => numbers;
         private static float[] ToSerializable(float[] numbers) => numbers;
         private static float[] ToSerializable(Vector2 v) => new[] { v[0], v[1] };
+        private static Dictionary<string, string> ToSerializable(Dictionary<string, string> dict) => dict;
 
         private static int[] ToSerializable(Color color)
         {

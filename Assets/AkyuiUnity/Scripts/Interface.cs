@@ -14,14 +14,16 @@ namespace AkyuiUnity
         [NotNull] public string Name;
         public readonly long Hash;
         [NotNull] public readonly Meta Meta;
+        [NotNull] public readonly Dictionary<string, string> UserData;
         public readonly int Root;
         [NotNull] public readonly IElement[] Elements;
 
-        public LayoutInfo([NotNull] string name, long hash, [NotNull] Meta meta, int root, [NotNull] IElement[] elements)
+        public LayoutInfo([NotNull] string name, long hash, [NotNull] Meta meta, Dictionary<string, string> userData, int root, [NotNull] IElement[] elements)
         {
             Name = name;
             Hash = hash;
             Meta = meta;
+            UserData = userData;
             Root = root;
             Elements = elements;
         }

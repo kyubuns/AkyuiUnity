@@ -97,6 +97,7 @@ namespace AkyuiUnity.Editor
                 akyuiMeta.hash = hash;
                 akyuiMeta.root = gameObject;
                 akyuiMeta.assets = assets;
+                akyuiMeta.userData = akyuiLoader.LayoutInfo.UserData.Select(x => new AkyuiMetaUserData { key = x.Key, value = x.Value }).ToArray();
 
                 CreateDirectory(Path.GetDirectoryName(pathGetter.PrefabSavePath), logger);
                 CreateDirectory(Path.GetDirectoryName(pathGetter.MetaSavePath), logger);

@@ -73,6 +73,7 @@ namespace AkyuiUnity.Loader
                 layoutJson["name"].JsonString(),
                 layoutJson["hash"].JsonLong(),
                 meta,
+                layoutJson["userdata"].JsonStringDictionary(),
                 layoutJson["root"].JsonInt(),
                 elements.ToArray()
             );
