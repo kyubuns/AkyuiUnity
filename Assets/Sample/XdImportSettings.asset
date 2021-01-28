@@ -22,7 +22,6 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 7a40d86aba0244ab98bcb9126ab0b167, type: 2}
   - {fileID: 11400000, guid: 926bf0136d8a1412d958f5924c81c093, type: 2}
   - {fileID: 11400000, guid: 4e9af532bee9945eba20b738c71b314d, type: 2}
-  - {fileID: 11400000, guid: 6aca86f2b54bd4d3e85a947697fe3582, type: 2}
   spriteSaveScale: 2
   objectParsers:
   - {fileID: 11400000, guid: d62fb04b11a7b412b834e0b33fda755a, type: 2}
