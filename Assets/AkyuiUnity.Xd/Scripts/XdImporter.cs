@@ -85,7 +85,7 @@ namespace AkyuiUnity.Xd
                     var triggers = xdSettings.XdTriggers ?? new AkyuiXdImportTrigger[] { };
 
                     var name = artwork.Name;
-                    var hash = FastHash.CalculateHash(JsonConvert.SerializeObject(artwork.Artboard));
+                    var hash = FastHash.CalculateHash(JsonConvert.SerializeObject(artwork.Artboard) + JsonConvert.SerializeObject(artwork.Resources));
 
                     var pathGetter = new PathGetter(xdSettings, name);
                     var prevMetaGameObject = AssetDatabase.LoadAssetAtPath<GameObject>(pathGetter.MetaSavePath);
