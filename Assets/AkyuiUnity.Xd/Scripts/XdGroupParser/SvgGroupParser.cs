@@ -36,7 +36,7 @@ namespace AkyuiUnity.Xd
                 Vector2Int.one
             ));
 
-            assetHolder.Save(spriteUid, SvgToPng.Convert(svg, new Vector2Int(Mathf.RoundToInt(size.x), Mathf.RoundToInt(size.y))));
+            assetHolder.Save(spriteUid, SvgToPng.Convert(svg, size));
             return (components.ToArray(), assets.ToArray());
         }
     }

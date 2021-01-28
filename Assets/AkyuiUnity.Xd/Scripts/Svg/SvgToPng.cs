@@ -23,7 +23,7 @@ namespace AkyuiUnity.Xd
             SamplingStepSize = 0.01f
         };
 
-        public static byte[] Convert(string svg, Vector2Int size)
+        public static byte[] Convert(string svg, Vector2 size)
         {
             using (var reader = new StringReader(svg))
             {
@@ -36,7 +36,8 @@ namespace AkyuiUnity.Xd
                 var method = typeof(SVGImporter).GetMethod("MaterialForSVGSprite", BindingFlags.Instance | BindingFlags.NonPublic);
                 var mat = (Material) method.Invoke(svgImporter, new object[] { sprite });
 
-                var tex = VectorUtils.RenderSpriteToTexture2D(sprite, size.x, size.y, mat);
+                var textureSize = new Vector2Int(Mathf.RoundToInt(size.x * XdImporter.Settings.SpriteSaveScale), Mathf.RoundToInt(size.y * XdImporter.Settings.SpriteSaveScale));
+                var tex = VectorUtils.RenderSpriteToTexture2D(sprite, textureSize.x, textureSize.y, mat);
                 return tex.EncodeToPNG();
             }
         }

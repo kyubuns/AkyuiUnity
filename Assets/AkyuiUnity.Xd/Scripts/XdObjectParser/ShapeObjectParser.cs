@@ -128,7 +128,7 @@ namespace AkyuiUnity.Xd
                     direction
                 );
 
-                assetHolder.Save(spriteUid, SvgToPng.Convert(svg, new Vector2Int(Mathf.RoundToInt(obb.Size.x), Mathf.RoundToInt(obb.Size.y))));
+                assetHolder.Save(spriteUid, SvgToPng.Convert(svg, obb.Size));
             }
             else
             {
