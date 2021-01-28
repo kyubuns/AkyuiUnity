@@ -296,6 +296,12 @@ namespace AkyuiUnity.Editor
             _logger.Warning($"Font {pathWithoutExtension} is not found");
             return null;
         }
+
+        public Dictionary<string, object> LoadMeta(string name)
+        {
+            var importer = AssetImporter.GetAtPath(Path.Combine(_pathGetter.AssetOutputDirectoryPath, name));
+            return MiniJSON.Json.Deserialize(importer.userData).JsonDictionary();
+        }
     }
 
     public class PathGetter

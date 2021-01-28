@@ -1,4 +1,5 @@
 using System;
+using AkyuiUnity.Loader.Internal;
 using UnityEngine;
 using UnityEngine.UI;
 using Object = UnityEngine.Object;
@@ -290,7 +291,13 @@ namespace AkyuiUnity.Generator.InternalTrigger
             if (imageComponent.Sprite != null)
             {
                 image.sprite = assetLoader.LoadSprite(imageComponent.Sprite);
-                if (image.hasBorder) image.type = Image.Type.Sliced;
+
+                if (image.hasBorder)
+                {
+                    var meta = assetLoader.LoadMeta(imageComponent.Sprite);
+                    image.type = Image.Type.Sliced;
+                    image.pixelsPerUnitMultiplier = meta["source_width"].JsonFloat() / rectTransform.rect.width;
+                }
             }
             if (imageComponent.Color != null) image.color = imageComponent.Color.Value;
 
