@@ -183,15 +183,15 @@ namespace AkyuiUnity.Editor
         {
             PostProcessImportAsset.ProcessingFile = savePath;
             PostProcessImportAsset.Asset = asset;
-            PostProcessImportAsset.Triggers = new IAkyuiImportTrigger[] { new SpriteImportTrigger(settings.SpriteSaveScale) }
-                .Concat(importSettings.Triggers)
-                .ToArray();
+            PostProcessImportAsset.Triggers = importSettings.Triggers;
+            PostProcessImportAsset.Settings = settings;
 
             using (Disposable.Create(() =>
             {
                 PostProcessImportAsset.ProcessingFile = null;
                 PostProcessImportAsset.Asset = null;
                 PostProcessImportAsset.Triggers = null;
+                PostProcessImportAsset.Settings = null;
             }))
             {
                 if (asset is SpriteAsset)
@@ -225,6 +225,7 @@ namespace AkyuiUnity.Editor
         public static string ProcessingFile { get; set; }
         public static IAsset Asset { get; set; }
         public static IAkyuiImportTrigger[] Triggers { get; set; }
+        public static IAkyuiImportSettings Settings { get; set; }
 
         public void OnPreprocessAsset()
         {
@@ -237,36 +238,13 @@ namespace AkyuiUnity.Editor
                 if (Asset is SpriteAsset spriteAsset)
                 {
                     if (spriteAsset.Border != null) textureImporter.spriteBorder = spriteAsset.Border.ToVector4();
+                    textureImporter.maxTextureSize = Mathf.RoundToInt(Mathf.Max(spriteAsset.Size.x, spriteAsset.Size.y) * Settings.SpriteSaveScale);
                 }
             }
 
             assetImporter.userData = Asset.Hash.ToString();
             foreach (var trigger in Triggers) trigger.OnUnityPreprocessAsset(assetImporter, Asset);
         }
-    }
-
-    public class SpriteImportTrigger : IAkyuiImportTrigger
-    {
-        private readonly float _saveScale;
-
-        public SpriteImportTrigger(float saveScale)
-        {
-            _saveScale = saveScale;
-        }
-
-        public void OnUnityPreprocessAsset(AssetImporter assetImporter, IAsset asset)
-        {
-            if (!(assetImporter is TextureImporter textureImporter)) return;
-
-            var spriteAsset = (SpriteAsset) PostProcessImportAsset.Asset;
-            textureImporter.maxTextureSize = Mathf.RoundToInt(Mathf.Max(spriteAsset.Size.x, spriteAsset.Size.y) * _saveScale);
-        }
-
-        public void OnPreprocessAsset(IAkyuiLoader loader, ref byte[] bytes, ref IAsset asset) { }
-        public void OnPostprocessPrefab(IAkyuiLoader loader, ref GameObject prefab) { }
-        public void OnPostprocessAllAssets(IAkyuiLoader loader, string outputDirectoryPath, Object[] importAssets) { }
-        public Component CreateComponent(GameObject gameObject, IComponent component, IAssetLoader assetLoader) => null;
-        public void OnPostprocessComponent(GameObject gameObject, IComponent component) { }
     }
 
     public class EditorAssetLoader : IAssetLoader
