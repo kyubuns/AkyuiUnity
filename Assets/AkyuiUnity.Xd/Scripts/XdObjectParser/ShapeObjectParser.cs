@@ -34,12 +34,7 @@ namespace AkyuiUnity.Xd
                 using (var reader = new StringReader(svg))
                 {
                     var sceneInfo = SVGParser.ImportSVG(reader, ViewportOptions.DontPreserve);
-                    var tessOptions = new VectorUtils.TessellationOptions {
-                        StepDistance = 100.0f,
-                        MaxCordDeviation = 0.5f,
-                        MaxTanAngleDeviation = 0.1f,
-                        SamplingStepSize = 0.01f
-                    };
+                    var tessOptions = SvgToPng.TessellationOptions;
                     var geometry = VectorUtils.TessellateScene(sceneInfo.Scene, tessOptions, sceneInfo.NodeOpacity);
                     var vertices = geometry.SelectMany(geom => geom.Vertices.Select(x => (geom.WorldTransform * x))).ToArray();
                     var bounds = VectorUtils.Bounds(vertices);
