@@ -37,7 +37,7 @@ namespace AkyuiUnity.Xd
                 var mat = (Material) method.Invoke(svgImporter, new object[] { sprite });
 
                 var textureSize = new Vector2Int(Mathf.RoundToInt(size.x * XdImporter.Settings.SpriteSaveScale), Mathf.RoundToInt(size.y * XdImporter.Settings.SpriteSaveScale));
-                var tex = VectorUtils.RenderSpriteToTexture2D(sprite, textureSize.x, textureSize.y, mat);
+                var tex = VectorUtils.RenderSpriteToTexture2D(sprite, textureSize.x, textureSize.y, mat, 4, true);
                 return tex.EncodeToPNG();
             }
         }
