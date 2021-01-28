@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using AkyuiUnity.Loader;
 using JetBrains.Annotations;
-using Newtonsoft.Json;
 using UnityEngine;
 using XdParser;
 using XdParser.Internal;
@@ -36,7 +35,7 @@ namespace AkyuiUnity.Xd
             new MaskGroupParser(),
         };
 
-        public XdAkyuiLoader(XdFile xdFile, XdArtboard xdArtboard, AkyuiXdObjectParser[] objectParsers, AkyuiXdGroupParser[] groupParsers,
+        public XdAkyuiLoader(XdFile xdFile, XdArtboard xdArtboard, string name, long hash, AkyuiXdObjectParser[] objectParsers, AkyuiXdGroupParser[] groupParsers,
             AkyuiXdImportTrigger[] triggers)
         {
             _xdFile = xdFile;
@@ -44,7 +43,7 @@ namespace AkyuiUnity.Xd
             _groupParsers = groupParsers.Concat(DefaultGroupParsers).ToArray();
             _triggers = triggers;
             _assetHolder = new XdAssetHolder(_xdFile);
-            (LayoutInfo, AssetsInfo) = Create(xdArtboard, _assetHolder);
+            (LayoutInfo, AssetsInfo) = Create(xdArtboard, _assetHolder, name, hash);
         }
 
         public void Dispose()
@@ -61,12 +60,12 @@ namespace AkyuiUnity.Xd
             return _assetHolder.Load(fileName);
         }
 
-        private (LayoutInfo, AssetsInfo) Create(XdArtboard xdArtboard, XdAssetHolder assetHolder)
+        private (LayoutInfo, AssetsInfo) Create(XdArtboard xdArtboard, XdAssetHolder assetHolder, string name, long hash)
         {
             var renderer = new XdRenderer(xdArtboard, assetHolder, _objectParsers, _groupParsers, _triggers);
             var layoutInfo = new LayoutInfo(
-                renderer.Name,
-                FastHash.CalculateHash(JsonConvert.SerializeObject(xdArtboard.Artboard)),
+                name,
+                hash,
                 renderer.Meta,
                 renderer.Root,
                 renderer.Elements.ToArray()
@@ -79,7 +78,6 @@ namespace AkyuiUnity.Xd
 
         private class XdRenderer
         {
-            public string Name { get; }
             public Meta Meta => new Meta(Const.AkyuiVersion, "AkyuiUnity.Xd", "0.0.0");
             public int Root => 0;
             public List<IElement> Elements { get; }
@@ -100,7 +98,6 @@ namespace AkyuiUnity.Xd
                 _groupParsers = groupParsers;
                 Elements = new List<IElement>();
                 Assets = new List<IAsset>();
-                Name = xdArtboard.Name;
                 _obbHolder = new ObbHolder();
 
                 CreateRefObjectMap(resources.Resources);
