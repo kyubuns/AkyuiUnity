@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using AkyuiUnity.Editor.Extensions;
 using AkyuiUnity.Editor.ScriptableObject;
 using AkyuiUnity.Generator;
@@ -147,8 +146,11 @@ namespace AkyuiUnity.Editor
                 var importAssetNames = new List<string>();
                 var skipAssetNames = new List<string>();
 
-                progress.SetTotal(akyuiLoader.AssetsInfo.Assets.Length);
-                foreach (var tmp in akyuiLoader.AssetsInfo.Assets)
+                var allAssets = akyuiLoader.AssetsInfo.Assets.ToList();
+                foreach (var trigger in settings.Triggers) trigger.OnPreprocessAllAssets(akyuiLoader, ref allAssets);
+
+                progress.SetTotal(allAssets.Count);
+                foreach (var tmp in allAssets)
                 {
                     var asset = tmp;
                     using (progress.TaskStart(asset.FileName))
@@ -230,7 +232,7 @@ namespace AkyuiUnity.Editor
                 logger.Log($"Import Start");
                 var layoutInfo = akyuiLoader.LayoutInfo;
                 var triggers = settings.Triggers.Select(x => (IAkyuiGenerateTrigger) x).ToArray();
-                var (gameObject, hash) = AkyuiGenerator.GenerateGameObject(new EditorAssetLoader(pathGetter, logger), layoutInfo, triggers);
+                var (gameObject, hash) = AkyuiGenerator.GenerateGameObject(new EditorAssetLoader(pathGetter, logger, settings.Triggers), layoutInfo, triggers);
                 foreach (var trigger in settings.Triggers) trigger.OnPostprocessPrefab(akyuiLoader, ref gameObject);
                 logger.Log($"Import Finish");
                 return (gameObject, hash);
@@ -271,16 +273,28 @@ namespace AkyuiUnity.Editor
     {
         private readonly PathGetter _pathGetter;
         private readonly AkyuiLogger _logger;
+        private readonly IAkyuiImportTrigger[] _triggers;
 
-        public EditorAssetLoader(PathGetter pathGetter, AkyuiLogger logger)
+        public EditorAssetLoader(PathGetter pathGetter, AkyuiLogger logger, IAkyuiImportTrigger[] triggers)
         {
             _pathGetter = pathGetter;
             _logger = logger;
+            _triggers = triggers;
+        }
+
+        private string ConvertName(string fileName)
+        {
+            foreach (var trigger in _triggers)
+            {
+                var newName = trigger.OnLoadAsset(fileName);
+                if (!string.IsNullOrWhiteSpace(newName)) fileName = newName;
+            }
+            return fileName;
         }
 
         public Sprite LoadSprite(string name)
         {
-            return AssetDatabase.LoadAssetAtPath<Sprite>(Path.Combine(_pathGetter.AssetOutputDirectoryPath, name));
+            return AssetDatabase.LoadAssetAtPath<Sprite>(Path.Combine(_pathGetter.AssetOutputDirectoryPath, ConvertName(name)));
         }
 
         public Font LoadFont(string name)
@@ -299,7 +313,7 @@ namespace AkyuiUnity.Editor
 
         public Dictionary<string, object> LoadMeta(string name)
         {
-            var importer = AssetImporter.GetAtPath(Path.Combine(_pathGetter.AssetOutputDirectoryPath, name));
+            var importer = AssetImporter.GetAtPath(Path.Combine(_pathGetter.AssetOutputDirectoryPath, ConvertName(name)));
             return MiniJSON.Json.Deserialize(importer.userData).JsonDictionary();
         }
     }

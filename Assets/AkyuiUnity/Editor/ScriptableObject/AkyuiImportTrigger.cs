@@ -9,14 +9,20 @@ namespace AkyuiUnity.Editor.ScriptableObject
 {
     public interface IAkyuiImportTrigger : IAkyuiGenerateTrigger
     {
+        void OnPreprocessAllAssets(IAkyuiLoader loader, ref List<IAsset> assets);
         void OnPreprocessAsset(IAkyuiLoader loader, ref byte[] bytes, ref IAsset asset, ref Dictionary<string, object> userData);
         void OnUnityPreprocessAsset(AssetImporter assetImporter, IAsset asset, ref Dictionary<string, object> userData);
         void OnPostprocessPrefab(IAkyuiLoader loader, ref GameObject prefab);
         void OnPostprocessAllAssets(IAkyuiLoader loader, string outputDirectoryPath, Object[] importAssets);
+        string OnLoadAsset(string fileName);
     }
 
     public abstract class AkyuiImportTrigger : UnityEngine.ScriptableObject, IAkyuiImportTrigger
     {
+        public virtual void OnPreprocessAllAssets(IAkyuiLoader loader, ref List<IAsset> assets)
+        {
+        }
+
         public virtual void OnPreprocessAsset(IAkyuiLoader loader, ref byte[] bytes, ref IAsset asset, ref Dictionary<string, object> userData)
         {
         }
@@ -40,6 +46,11 @@ namespace AkyuiUnity.Editor.ScriptableObject
 
         public virtual void OnPostprocessComponent(GameObject gameObject, IComponent component)
         {
+        }
+
+        public virtual string OnLoadAsset(string fileName)
+        {
+            return null;
         }
     }
 }
