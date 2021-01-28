@@ -114,17 +114,19 @@ namespace AkyuiUnity.Editor.ScriptableObject
                 foreach (var history in histories)
                 {
                     EditorGUILayout.BeginHorizontal();
+
+                    if (GUILayout.Button("x", GUILayout.Width(20)))
+                    {
+                        Remove(new[] { history });
+                        break;
+                    }
+
                     if (GUILayout.Button(history))
                     {
                         onClick(history);
                         break;
                     }
 
-                    if (GUILayout.Button("x", GUILayout.Width(30)))
-                    {
-                        Remove(new[] { history });
-                        break;
-                    }
                     EditorGUILayout.EndHorizontal();
                 }
             }
