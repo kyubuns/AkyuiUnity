@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.IO;
 using AkyuiUnity.Editor;
+using AkyuiUnity.Editor.Extensions;
 using AkyuiUnity.Loader;
 using XdParser;
 
@@ -8,10 +9,14 @@ namespace AkyuiUnity.Xd
 {
     public static class XdImporter
     {
+        public static XdImportSettings Settings { get; private set; }
+
         public static void Import(XdImportSettings xdSettings, string[] xdFilePaths)
         {
             var logger = new AkyuiLogger("Akyui.Xd");
             var loaders = new List<IAkyuiLoader>();
+            Settings = xdSettings;
+            using (Disposable.Create(() => Settings = null))
             using (var progressBar = new AkyuiProgressBar("Akyui.Xd"))
             {
                 progressBar.SetTotal(xdFilePaths.Length);

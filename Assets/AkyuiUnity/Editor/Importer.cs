@@ -15,6 +15,8 @@ namespace AkyuiUnity.Editor
 {
     public static class Importer
     {
+        public static IAkyuiImportSettings Settings { get; private set; }
+
         public static void Import(IAkyuiImportSettings settings, string[] filePaths)
         {
             var akyuiLoaders = filePaths
@@ -71,29 +73,33 @@ namespace AkyuiUnity.Editor
         {
             CheckVersion(akyuiLoader);
 
-            var pathGetter = new PathGetter(settings, akyuiLoader.LayoutInfo.Name);
-            var assets = ImportAssets(settings, akyuiLoader, pathGetter, logger, progress);
-            var (gameObject, hash) = ImportLayout(settings, akyuiLoader, pathGetter, logger);
+            Settings = settings;
+            using (Disposable.Create(() => Settings = null))
+            {
+                var pathGetter = new PathGetter(settings, akyuiLoader.LayoutInfo.Name);
+                var assets = ImportAssets(settings, akyuiLoader, pathGetter, logger, progress);
+                var (gameObject, hash) = ImportLayout(settings, akyuiLoader, pathGetter, logger);
 
-            var prevMetaGameObject = AssetDatabase.LoadAssetAtPath<GameObject>(pathGetter.MetaSavePath);
-            var prevAssets = prevMetaGameObject != null ? prevMetaGameObject.GetComponent<AkyuiMeta>().assets : new Object[] { };
+                var prevMetaGameObject = AssetDatabase.LoadAssetAtPath<GameObject>(pathGetter.MetaSavePath);
+                var prevAssets = prevMetaGameObject != null ? prevMetaGameObject.GetComponent<AkyuiMeta>().assets : new Object[] { };
 
-            DeleteUnusedAssets(prevAssets, assets, logger);
+                DeleteUnusedAssets(prevAssets, assets, logger);
 
-            var metaGameObject = new GameObject(akyuiLoader.LayoutInfo.Name);
-            gameObject.transform.SetParent(metaGameObject.transform);
-            var akyuiMeta = metaGameObject.AddComponent<AkyuiMeta>();
-            akyuiMeta.hash = hash;
-            akyuiMeta.root = gameObject;
-            akyuiMeta.assets = assets;
+                var metaGameObject = new GameObject(akyuiLoader.LayoutInfo.Name);
+                gameObject.transform.SetParent(metaGameObject.transform);
+                var akyuiMeta = metaGameObject.AddComponent<AkyuiMeta>();
+                akyuiMeta.hash = hash;
+                akyuiMeta.root = gameObject;
+                akyuiMeta.assets = assets;
 
-            CreateDirectory(Path.GetDirectoryName(pathGetter.PrefabSavePath), logger);
-            CreateDirectory(Path.GetDirectoryName(pathGetter.MetaSavePath), logger);
+                CreateDirectory(Path.GetDirectoryName(pathGetter.PrefabSavePath), logger);
+                CreateDirectory(Path.GetDirectoryName(pathGetter.MetaSavePath), logger);
 
-            PrefabUtility.SaveAsPrefabAssetAndConnect(gameObject, pathGetter.PrefabSavePath, InteractionMode.AutomatedAction);
-            PrefabUtility.SaveAsPrefabAsset(metaGameObject, pathGetter.MetaSavePath);
+                PrefabUtility.SaveAsPrefabAssetAndConnect(gameObject, pathGetter.PrefabSavePath, InteractionMode.AutomatedAction);
+                PrefabUtility.SaveAsPrefabAsset(metaGameObject, pathGetter.MetaSavePath);
 
-            Object.DestroyImmediate(metaGameObject);
+                Object.DestroyImmediate(metaGameObject);
+            }
         }
 
         private static void CreateDirectory(string path, AkyuiLogger logger)
@@ -165,7 +171,7 @@ namespace AkyuiUnity.Editor
                         importAssetNames.Add(asset.FileName);
 
                         foreach (var trigger in settings.Triggers) trigger.OnPreprocessAsset(akyuiLoader, ref bytes, ref asset);
-                        ImportAsset(settings, asset, savePath, saveFullPath, bytes, settings, logger);
+                        ImportAsset(asset, savePath, saveFullPath, bytes, settings, logger);
                         assets.Add(AssetDatabase.LoadAssetAtPath<Object>(savePath));
                     }
                 }
@@ -179,19 +185,17 @@ namespace AkyuiUnity.Editor
             }
         }
 
-        private static void ImportAsset(IAkyuiImportSettings settings, IAsset asset, string savePath, string saveFullPath, byte[] bytes, IAkyuiImportSettings importSettings, AkyuiLogger logger)
+        private static void ImportAsset(IAsset asset, string savePath, string saveFullPath, byte[] bytes, IAkyuiImportSettings importSettings, AkyuiLogger logger)
         {
             PostProcessImportAsset.ProcessingFile = savePath;
             PostProcessImportAsset.Asset = asset;
             PostProcessImportAsset.Triggers = importSettings.Triggers;
-            PostProcessImportAsset.Settings = settings;
 
             using (Disposable.Create(() =>
             {
                 PostProcessImportAsset.ProcessingFile = null;
                 PostProcessImportAsset.Asset = null;
                 PostProcessImportAsset.Triggers = null;
-                PostProcessImportAsset.Settings = null;
             }))
             {
                 if (asset is SpriteAsset)
@@ -225,7 +229,6 @@ namespace AkyuiUnity.Editor
         public static string ProcessingFile { get; set; }
         public static IAsset Asset { get; set; }
         public static IAkyuiImportTrigger[] Triggers { get; set; }
-        public static IAkyuiImportSettings Settings { get; set; }
 
         public void OnPreprocessAsset()
         {
@@ -238,7 +241,7 @@ namespace AkyuiUnity.Editor
                 if (Asset is SpriteAsset spriteAsset)
                 {
                     if (spriteAsset.Border != null) textureImporter.spriteBorder = spriteAsset.Border.ToVector4();
-                    textureImporter.maxTextureSize = Mathf.RoundToInt(Mathf.Max(spriteAsset.Size.x, spriteAsset.Size.y) * Settings.SpriteSaveScale);
+                    textureImporter.maxTextureSize = Mathf.RoundToInt(Mathf.Max(spriteAsset.Size.x, spriteAsset.Size.y) * Importer.Settings.SpriteSaveScale);
                 }
             }
 
