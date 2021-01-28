@@ -1,4 +1,4 @@
-namespace AkyuiUnity.Xd.Libraries
+namespace AkyuiUnity.Loader
 {
     public static class FastHash
     {

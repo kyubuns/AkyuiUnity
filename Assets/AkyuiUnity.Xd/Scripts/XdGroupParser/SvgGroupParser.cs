@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using AkyuiUnity.Xd.Libraries;
+using AkyuiUnity.Loader;
 using UnityEngine;
 using XdParser;
 using XdParser.Internal;

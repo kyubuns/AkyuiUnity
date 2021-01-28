@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using AkyuiUnity.Loader;
-using AkyuiUnity.Xd.Libraries;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
 using UnityEngine;
