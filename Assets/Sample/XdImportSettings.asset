@@ -16,7 +16,7 @@ MonoBehaviour:
   assetOutputDirectoryPath: Assets/Sample/GeneratedAssets/{name}/
   metaOutputPath: Assets/Sample/GeneratedMetas/{name}Meta
   fontDirectoryPath: Assets/Sample/Fonts/
-  checkAssetHash: 1
+  checkHash: 1
   triggers:
   - {fileID: 11400000, guid: d056efc8b5c4540d79d0f2319b88b0e7, type: 2}
   - {fileID: 11400000, guid: 7a40d86aba0244ab98bcb9126ab0b167, type: 2}

@@ -18,8 +18,8 @@ namespace AkyuiUnity.Editor.ScriptableObject
         public string FontDirectoryPath => fontDirectoryPath;
         [SerializeField] private string fontDirectoryPath = "Assets/Fonts/";
 
-        public bool CheckAssetHash => checkAssetHash;
-        [SerializeField] private bool checkAssetHash = true;
+        public bool CheckHash => checkHash;
+        [SerializeField] private bool checkHash = true;
 
         public IAkyuiImportTrigger[] Triggers => triggers?.Cast<IAkyuiImportTrigger>().ToArray() ?? new IAkyuiImportTrigger[] { };
         [SerializeField] private AkyuiImportTrigger[] triggers = default;
@@ -34,7 +34,7 @@ namespace AkyuiUnity.Editor.ScriptableObject
         string AssetOutputDirectoryPath { get; }
         string MetaOutputPath { get; }
         string FontDirectoryPath { get; }
-        bool CheckAssetHash { get; }
+        bool CheckHash { get; }
         IAkyuiImportTrigger[] Triggers { get; }
         float SpriteSaveScale { get; }
     }

@@ -40,9 +40,7 @@ namespace AkyuiUnity.Editor
                     using (logger.SetCategory(loader.LayoutInfo.Name))
                     using (var progress = progressBar.TaskStart($"Importing {loader.LayoutInfo.Name}"))
                     {
-                        logger.Log($"Import Start");
                         Import(settings, loader, logger, progress);
-                        logger.Log($"Import Finish");
                     }
                 }
 
@@ -81,12 +79,13 @@ namespace AkyuiUnity.Editor
                 var prevMetaGameObject = AssetDatabase.LoadAssetAtPath<GameObject>(pathGetter.MetaSavePath);
                 var prevMeta = prevMetaGameObject != null ? prevMetaGameObject.GetComponent<AkyuiMeta>() : null;
 
-                if (prevMeta != null && prevMeta.hash == akyuiLoader.LayoutInfo.Hash)
+                if (settings.CheckHash && prevMeta != null && prevMeta.hash == akyuiLoader.LayoutInfo.Hash)
                 {
                     logger.Log("Skip", ("hash", akyuiLoader.LayoutInfo.Hash));
                     return;
                 }
 
+                logger.Log($"Import Start");
                 var assets = ImportAssets(settings, akyuiLoader, pathGetter, logger, progress);
                 var (gameObject, hash) = ImportLayout(settings, akyuiLoader, pathGetter, logger);
                 var prevAssets = prevMeta != null ? prevMeta.assets : new Object[] { };
@@ -106,6 +105,7 @@ namespace AkyuiUnity.Editor
                 PrefabUtility.SaveAsPrefabAsset(metaGameObject, pathGetter.MetaSavePath);
 
                 Object.DestroyImmediate(metaGameObject);
+                logger.Log($"Import Finish");
             }
         }
 
@@ -165,7 +165,7 @@ namespace AkyuiUnity.Editor
                         var saveFullPath = Path.Combine(unityAssetsParentPath, savePath);
                         var bytes = akyuiLoader.LoadAsset(asset.FileName);
 
-                        if (settings.CheckAssetHash && File.Exists(saveFullPath))
+                        if (settings.CheckHash && File.Exists(saveFullPath))
                         {
                             var import = AssetImporter.GetAtPath(savePath);
                             var prevUserData = MiniJSON.Json.Deserialize(import.userData).JsonDictionary();
