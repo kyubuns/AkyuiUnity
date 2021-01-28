@@ -23,20 +23,31 @@ namespace AkyuiUnity.Xd
             var components = new List<IComponent>();
             var assets = new List<IAsset>();
 
-            var spriteUid = $"{xdObject.GetSimpleName()}_{xdObject.Id.Substring(0, 8)}.png";
             var color = xdObject.GetFillUnityColor();
             var svg = SvgUtil.CreateSvg(xdObject);
             xdObject.Group.Children = new XdObjectJson[] { };
 
             var size = obbGetter.Get(xdObject).Size;
-            assets.Add(new SpriteAsset(spriteUid, FastHash.CalculateHash(svg), size, null, null));
+            var spriteUid = $"{xdObject.GetSimpleName()}_{xdObject.Id.Substring(0, 8)}.png";
+            var svgHash = FastHash.CalculateHash(svg);
+
+            var cachedSvg = assetHolder.GetCachedSvg(svgHash);
+            if (cachedSvg != null)
+            {
+                spriteUid = cachedSvg.SpriteUid;
+            }
+            else
+            {
+                assets.Add(new SpriteAsset(spriteUid, svgHash, size, null, null));
+                assetHolder.Save(spriteUid, SvgToPng.Convert(svg, size));
+                assetHolder.SaveCacheSvg(spriteUid, svgHash);
+            }
             components.Add(new ImageComponent(
                 spriteUid,
                 new Color(1f, 1f, 1f, color.a),
                 Vector2Int.one
             ));
 
-            assetHolder.Save(spriteUid, SvgToPng.Convert(svg, size));
             return (components.ToArray(), assets.ToArray());
         }
     }

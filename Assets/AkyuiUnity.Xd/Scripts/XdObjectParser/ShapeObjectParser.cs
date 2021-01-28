@@ -100,15 +100,14 @@ namespace AkyuiUnity.Xd
 
             var color = xdObject.GetFillUnityColor();
             var ux = xdObject.Style?.Fill?.Pattern?.Meta?.Ux;
-            var spriteUid = ux?.Uid;
             var flipX = ux?.FlipX ?? false;
             var flipY = ux?.FlipY ?? false;
             var direction = new Vector2Int(flipX ? -1 : 1, flipY ? -1 : 1);
             var shapeType = xdObject.Shape?.Type;
 
-            if (!string.IsNullOrWhiteSpace(spriteUid))
+            if (!string.IsNullOrWhiteSpace(ux?.Uid))
             {
-                spriteUid = $"{xdObject.GetSimpleName()}_{spriteUid.Substring(0, 8)}.png";
+                var spriteUid = $"{xdObject.GetSimpleName()}_{ux?.Uid.Substring(0, 8)}.png";
                 asset = new SpriteAsset(spriteUid, xdObject.Style.Fill.Pattern.Meta.Ux.HrefLastModifiedDate, obb.Size, null, null);
                 imageComponent = new ImageComponent(
                     spriteUid,
@@ -119,16 +118,27 @@ namespace AkyuiUnity.Xd
             }
             else if (SvgUtil.Types.Contains(shapeType))
             {
-                spriteUid = $"{xdObject.GetSimpleName()}_{xdObject.Id.Substring(0, 8)}.png";
+                var spriteUid = $"{xdObject.GetSimpleName()}_{xdObject.Id.Substring(0, 8)}.png";
                 var svg = SvgUtil.CreateSvg(xdObject);
-                asset = new SpriteAsset(spriteUid, FastHash.CalculateHash(svg), obb.Size, null, null);
+                var svgHash = FastHash.CalculateHash(svg);
+
+                var cachedSvg = assetHolder.GetCachedSvg(svgHash);
+                if (cachedSvg != null)
+                {
+                    spriteUid = cachedSvg.SpriteUid;
+                }
+                else
+                {
+                    asset = new SpriteAsset(spriteUid, svgHash, obb.Size, null, null);
+                    assetHolder.Save(spriteUid, SvgToPng.Convert(svg, obb.Size));
+                    assetHolder.SaveCacheSvg(spriteUid, svgHash);
+                }
+
                 imageComponent = new ImageComponent(
                     spriteUid,
                     new Color(1f, 1f, 1f, color.a),
                     direction
                 );
-
-                assetHolder.Save(spriteUid, SvgToPng.Convert(svg, obb.Size));
             }
             else
             {
