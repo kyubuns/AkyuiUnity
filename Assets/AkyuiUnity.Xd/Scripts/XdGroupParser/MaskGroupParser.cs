@@ -1,4 +1,5 @@
 using UnityEngine;
+using XdParser;
 using XdParser.Internal;
 
 namespace AkyuiUnity.Xd
@@ -23,6 +24,8 @@ namespace AkyuiUnity.Xd
         {
             var obb = obbGetter.Get(xdObject);
             var clipPath = xdObject.Meta.Ux.ClipPathResources.Children[0];
+            if (SvgUtil.IsAlphaOnly(clipPath)) return (new IComponent[] { }, new IAsset[] { });
+
             var (imageComponent, assets) = ShapeObjectParser.RenderImage(clipPath, obb, assetHolder);
             return (new IComponent[] { new MaskComponent(imageComponent.Sprite) }, assets);
         }

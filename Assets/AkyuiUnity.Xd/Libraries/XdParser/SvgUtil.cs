@@ -17,6 +17,23 @@ namespace XdParser
             CompoundElement.Name,
         };
 
+
+        public static bool IsAlphaOnly(XdObjectJson xdObject)
+        {
+            if (xdObject.Group != null)
+            {
+                if (xdObject.Group.Children.Any(x => !IsAlphaOnly(x))) return false;
+            }
+
+            var stroke = xdObject.Style?.Stroke;
+            if (stroke != null && stroke.Type != "none") return false;
+
+            var fill = xdObject.Style?.Fill;
+            if (fill != null && fill.Type != "none") return false;
+
+            return true;
+        }
+
         public static string CreateSvg(XdObjectJson xdObject)
         {
             var defs = new List<IDefElement>();
