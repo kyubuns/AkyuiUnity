@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using AkyuiUnity.Loader;
 using JetBrains.Annotations;
+using Newtonsoft.Json;
 using UnityEngine;
 using XdParser;
 using XdParser.Internal;
@@ -35,7 +36,7 @@ namespace AkyuiUnity.Xd
             new MaskGroupParser(),
         };
 
-        public XdAkyuiLoader(XdFile xdFile, XdArtboard xdArtboard, string name, long hash, AkyuiXdObjectParser[] objectParsers, AkyuiXdGroupParser[] groupParsers,
+        public XdAkyuiLoader(XdFile xdFile, XdArtboard xdArtboard, string name, Dictionary<string, string> userData, AkyuiXdObjectParser[] objectParsers, AkyuiXdGroupParser[] groupParsers,
             AkyuiXdImportTrigger[] triggers)
         {
             _xdFile = xdFile;
@@ -43,7 +44,7 @@ namespace AkyuiUnity.Xd
             _groupParsers = groupParsers.Concat(DefaultGroupParsers).ToArray();
             _triggers = triggers;
             _assetHolder = new XdAssetHolder(_xdFile);
-            (LayoutInfo, AssetsInfo) = Create(xdArtboard, _assetHolder, name, hash);
+            (LayoutInfo, AssetsInfo) = Create(xdArtboard, _assetHolder, name, userData);
         }
 
         public void Dispose()
@@ -60,16 +61,29 @@ namespace AkyuiUnity.Xd
             return _assetHolder.Load(fileName);
         }
 
-        private (LayoutInfo, AssetsInfo) Create(XdArtboard xdArtboard, XdAssetHolder assetHolder, string name, long hash)
+        private (LayoutInfo, AssetsInfo) Create(XdArtboard xdArtboard, XdAssetHolder assetHolder, string name, Dictionary<string, string> userData)
         {
             var renderer = new XdRenderer(xdArtboard, assetHolder, _objectParsers, _groupParsers, _triggers);
+
+            var layoutInfoForCalcHash = new LayoutInfo(
+                name,
+                0,
+                renderer.Meta,
+                new Dictionary<string, string>(),
+                renderer.Root,
+                renderer.Elements.ToArray()
+            );
+            var hash = FastHash.CalculateHash(JsonConvert.SerializeObject(AkyuiCompressor.ToSerializable(layoutInfoForCalcHash)));
+
             var layoutInfo = new LayoutInfo(
                 name,
                 hash,
                 renderer.Meta,
+                userData,
                 renderer.Root,
                 renderer.Elements.ToArray()
             );
+
             var assetsInfo = new AssetsInfo(
                 renderer.Assets.ToArray()
             );

@@ -85,19 +85,25 @@ namespace AkyuiUnity.Xd
                     var triggers = xdSettings.XdTriggers ?? new AkyuiXdImportTrigger[] { };
 
                     var name = artwork.Name;
-                    var hash = FastHash.CalculateHash(JsonConvert.SerializeObject(artwork.Artboard) + JsonConvert.SerializeObject(artwork.Resources));
+                    var xdHash = FastHash.CalculateHash(JsonConvert.SerializeObject(artwork.Artboard) + JsonConvert.SerializeObject(artwork.Resources));
+                    var userData = new Dictionary<string, string>
+                    {
+                        { "xd_hash", xdHash.ToString() }
+                    };
 
                     var pathGetter = new PathGetter(xdSettings, name);
                     var prevMetaGameObject = AssetDatabase.LoadAssetAtPath<GameObject>(pathGetter.MetaSavePath);
                     var prevMeta = prevMetaGameObject != null ? prevMetaGameObject.GetComponent<AkyuiMeta>() : null;
-                    if (xdSettings.CheckHash && prevMeta != null && prevMeta.hash == hash)
+                    var prevMetaUserData = prevMeta != null ? prevMeta.FindUserData("xd_hash") : null;
+
+                    if (xdSettings.CheckHash && prevMetaUserData != null && prevMetaUserData.value == xdHash.ToString())
                     {
-                        logger.Log("Skip", ("hash", hash));
+                        logger.Log("Skip", ("hash", xdHash));
                         skipped++;
                         continue;
                     }
 
-                    loaders.Add(new XdAkyuiLoader(file, artwork, name, hash, akyuiXdObjectParsers, akyuiXdGroupParsers, triggers));
+                    loaders.Add(new XdAkyuiLoader(file, artwork, name, userData, akyuiXdObjectParsers, akyuiXdGroupParsers, triggers));
                     imported++;
                 }
             }
