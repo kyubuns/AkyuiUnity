@@ -198,7 +198,7 @@ namespace AkyuiUnity.Editor
                 }
 
                 var importAssets = assets.ToArray();
-                foreach (var trigger in settings.Triggers) trigger.OnPostprocessAllAssets(akyuiLoader, pathGetter.AssetOutputDirectoryPath, importAssets);
+                foreach (var trigger in settings.Triggers) trigger.OnPostprocessAllAssets(akyuiLoader, importAssets);
 
                 logger.Log($"Import Finish", ("import", importAssetNames.Count), ("skip", skipAssetNames.Count));
 

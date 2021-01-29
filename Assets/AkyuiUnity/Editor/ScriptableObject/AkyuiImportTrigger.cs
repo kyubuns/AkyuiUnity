@@ -13,7 +13,7 @@ namespace AkyuiUnity.Editor.ScriptableObject
         void OnPreprocessAsset(IAkyuiLoader loader, ref byte[] bytes, ref IAsset asset, ref Dictionary<string, object> userData);
         void OnUnityPreprocessAsset(AssetImporter assetImporter, IAsset asset, ref Dictionary<string, object> userData);
         void OnPostprocessPrefab(IAkyuiLoader loader, ref GameObject prefab);
-        void OnPostprocessAllAssets(IAkyuiLoader loader, string outputDirectoryPath, Object[] importAssets);
+        void OnPostprocessAllAssets(IAkyuiLoader loader, Object[] importAssets);
         string OnLoadAsset(string fileName);
     }
 
@@ -35,7 +35,7 @@ namespace AkyuiUnity.Editor.ScriptableObject
         {
         }
 
-        public virtual void OnPostprocessAllAssets(IAkyuiLoader loader, string outputDirectoryPath, Object[] importAssets)
+        public virtual void OnPostprocessAllAssets(IAkyuiLoader loader, Object[] importAssets)
         {
         }
 
