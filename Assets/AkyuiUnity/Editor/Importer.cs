@@ -105,6 +105,8 @@ namespace AkyuiUnity.Editor
                 PrefabUtility.SaveAsPrefabAssetAndConnect(gameObject, pathGetter.PrefabSavePath, InteractionMode.AutomatedAction);
                 PrefabUtility.SaveAsPrefabAsset(metaGameObject, pathGetter.MetaSavePath);
 
+                foreach (var trigger in settings.Triggers) trigger.OnPostprocessFile(pathGetter);
+
                 Object.DestroyImmediate(metaGameObject);
                 logger.Log($"Import Finish");
             }
@@ -325,7 +327,15 @@ namespace AkyuiUnity.Editor
         }
     }
 
-    public class PathGetter
+    public interface IPathGetter
+    {
+        string AssetOutputDirectoryPath { get; }
+        string PrefabSavePath { get; }
+        string MetaSavePath { get; }
+        string FontDirectoryPath { get; }
+    }
+
+    public class PathGetter : IPathGetter
     {
         public string AssetOutputDirectoryPath { get; }
         public string PrefabSavePath { get; }

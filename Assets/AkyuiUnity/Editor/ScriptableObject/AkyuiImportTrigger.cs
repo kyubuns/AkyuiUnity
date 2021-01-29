@@ -17,6 +17,7 @@ namespace AkyuiUnity.Editor.ScriptableObject
         string OnLoadAsset(string fileName);
 
         void OnPostprocessPrefab(IAkyuiLoader loader, ref GameObject prefab);
+        void OnPostprocessFile(IPathGetter pathGetter);
     }
 
     public abstract class AkyuiImportTrigger : UnityEngine.ScriptableObject, IAkyuiImportTrigger
@@ -32,5 +33,6 @@ namespace AkyuiUnity.Editor.ScriptableObject
         public virtual string OnLoadAsset(string fileName) => null;
 
         public virtual void OnPostprocessPrefab(IAkyuiLoader loader, ref GameObject prefab) { }
+        public virtual void OnPostprocessFile(IPathGetter pathGetter) { }
     }
 }
