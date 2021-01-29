@@ -105,7 +105,7 @@ namespace AkyuiUnity.Editor
                 PrefabUtility.SaveAsPrefabAssetAndConnect(gameObject, pathGetter.PrefabSavePath, InteractionMode.AutomatedAction);
                 PrefabUtility.SaveAsPrefabAsset(metaGameObject, pathGetter.MetaSavePath);
 
-                foreach (var trigger in settings.Triggers) trigger.OnPostprocessFile(pathGetter);
+                foreach (var trigger in settings.Triggers) trigger.OnPostprocessFile(akyuiLoader, pathGetter);
 
                 Object.DestroyImmediate(metaGameObject);
                 logger.Log($"Import Finish");
