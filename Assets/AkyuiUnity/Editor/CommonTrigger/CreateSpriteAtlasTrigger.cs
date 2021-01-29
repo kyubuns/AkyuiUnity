@@ -1,4 +1,4 @@
-using System.IO;
+using AkyuiUnity.CommonTrigger.Library;
 using AkyuiUnity.Editor.ScriptableObject;
 using AkyuiUnity.Loader;
 using UnityEditor;
@@ -12,6 +12,7 @@ namespace AkyuiUnity.CommonTrigger
     public class CreateSpriteAtlasTrigger : AkyuiImportTrigger
     {
         [SerializeField] private string spriteAtlasOutputPath = "Assets/{name}SpriteAtlas";
+        [SerializeField] private SpriteAtlas source = default;
 
         public override void OnPostprocessAllAssets(IAkyuiLoader loader, string outputDirectoryPath, Object[] importAssets)
         {
@@ -26,6 +27,8 @@ namespace AkyuiUnity.CommonTrigger
                 spriteAtlas = new SpriteAtlas();
                 AssetDatabase.CreateAsset(spriteAtlas, spriteAtlasPath);
             }
+
+            EditorUtility.CopySerialized(source, spriteAtlas);
 
             var spriteDirectory = AssetDatabase.LoadAssetAtPath<Object>(tmpPath);
             spriteAtlas.Remove(new[] { spriteDirectory });
