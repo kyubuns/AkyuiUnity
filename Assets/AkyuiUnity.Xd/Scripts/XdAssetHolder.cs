@@ -11,6 +11,7 @@ namespace AkyuiUnity.Xd
         private readonly XdFile _xdFile;
         private readonly Dictionary<string, XdStyleFillPatternMetaJson> _fileNameToMeta;
         private readonly Dictionary<string, byte[]> _fileNameToBytes;
+        private readonly Dictionary<string, Func<byte[]>> _fileNameToGenerators;
         private readonly Dictionary<uint, CachedSvg> _svgHash;
 
         public XdAssetHolder(XdFile xdFile)
@@ -18,6 +19,7 @@ namespace AkyuiUnity.Xd
             _xdFile = xdFile;
             _fileNameToMeta = new Dictionary<string, XdStyleFillPatternMetaJson>();
             _fileNameToBytes = new Dictionary<string, byte[]>();
+            _fileNameToGenerators = new Dictionary<string, Func<byte[]>>();
             _svgHash = new Dictionary<uint, CachedSvg>();
         }
 
@@ -34,6 +36,14 @@ namespace AkyuiUnity.Xd
                 return _fileNameToBytes[fileName];
             }
 
+            if (_fileNameToGenerators.ContainsKey(fileName))
+            {
+                var bytes = _fileNameToGenerators[fileName].Invoke();
+                _fileNameToBytes[fileName] = bytes;
+                _fileNameToGenerators.Remove(fileName);
+                return bytes;
+            }
+
             throw new Exception($"Unknown asset {fileName}");
         }
 
@@ -42,9 +52,9 @@ namespace AkyuiUnity.Xd
             _fileNameToMeta[key] = meta;
         }
 
-        public void Save(string key, byte[] value)
+        public void Save(string key, Func<byte[]> generator)
         {
-            _fileNameToBytes[key] = value;
+            _fileNameToGenerators[key] = generator;
         }
 
         public CachedSvg GetCachedSvg(uint svgHash)

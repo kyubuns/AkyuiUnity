@@ -130,7 +130,8 @@ namespace AkyuiUnity.Xd
                 else
                 {
                     asset = new SpriteAsset(spriteUid, svgHash, obb.Size, null, null);
-                    assetHolder.Save(spriteUid, SvgToPng.Convert(svg, obb.Size));
+                    var xdImportSettings = XdImporter.Settings;
+                    assetHolder.Save(spriteUid, () => SvgToPng.Convert(svg, obb.Size, xdImportSettings));
                     assetHolder.SaveCacheSvg(spriteUid, svgHash);
                 }
 

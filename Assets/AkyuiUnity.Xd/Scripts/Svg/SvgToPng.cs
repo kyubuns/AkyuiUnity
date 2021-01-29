@@ -1,4 +1,5 @@
 using System.IO;
+using AkyuiUnity.Editor;
 using AkyuiUnity.Editor.Extensions;
 using Unity.VectorGraphics;
 using Unity.VectorGraphics.Editor;
@@ -17,15 +18,14 @@ namespace AkyuiUnity.Xd
             SamplingStepSize = 0.01f
         };
 
-        public static byte[] Convert(string svg, Vector2 size)
+        public static byte[] Convert(string svg, Vector2 size, XdImportSettings xdImportSettings)
         {
             var unityAssetsParentPath = Path.GetDirectoryName(Application.dataPath) ?? "";
             var savePath = Path.Combine("Assets", "Temp.svg");
             var saveFullPath = Path.Combine(unityAssetsParentPath, savePath);
 
             SvgImportTrigger.ProcessingFile = savePath;
-            var spriteSaveScale = XdImporter.Settings.SpriteSaveScale;
-            SvgImportTrigger.Size = new Vector2Int(Mathf.RoundToInt(size.x * spriteSaveScale), Mathf.RoundToInt(size.y * spriteSaveScale));
+            SvgImportTrigger.Size = new Vector2Int(Mathf.RoundToInt(size.x * xdImportSettings.SpriteSaveScale), Mathf.RoundToInt(size.y * xdImportSettings.SpriteSaveScale));
 
             using (Disposable.Create(() =>
             {

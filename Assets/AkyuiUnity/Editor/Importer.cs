@@ -164,7 +164,6 @@ namespace AkyuiUnity.Editor
                     {
                         var savePath = Path.Combine(pathGetter.AssetOutputDirectoryPath, asset.FileName);
                         var saveFullPath = Path.Combine(unityAssetsParentPath, savePath);
-                        var bytes = akyuiLoader.LoadAsset(asset.FileName);
 
                         if (settings.CheckHash && File.Exists(saveFullPath))
                         {
@@ -178,6 +177,7 @@ namespace AkyuiUnity.Editor
                             }
                         }
 
+                        var bytes = akyuiLoader.LoadAsset(asset.FileName); // Hashチェック後に初めて呼ぶ
                         var userData = new Dictionary<string, object>();
                         userData["hash"] = asset.Hash;
 
