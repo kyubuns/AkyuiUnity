@@ -14,10 +14,8 @@ namespace AkyuiUnity.CommonTrigger
         [SerializeField] private string spriteAtlasOutputPath = "Assets/{name}SpriteAtlas";
         [SerializeField] private SpriteAtlas source = default;
 
-        public override void OnPostprocessAllAssets(IAkyuiLoader loader, string outputDirectoryPath, Object[] importAssets)
+        public override void OnPostprocessAllAssets(IAkyuiLoader loader, Object[] importAssets)
         {
-            var tmpPath = outputDirectoryPath.TrimEnd('/');
-
             var spriteAtlasPath = spriteAtlasOutputPath.Replace("{name}", loader.LayoutInfo.Name) + ".spriteatlas";
             var spriteAtlas = AssetDatabase.LoadAssetAtPath<SpriteAtlas>(spriteAtlasPath);
             if (spriteAtlas == null)
@@ -28,11 +26,13 @@ namespace AkyuiUnity.CommonTrigger
                 AssetDatabase.CreateAsset(spriteAtlas, spriteAtlasPath);
             }
 
-            EditorUtility.CopySerialized(source, spriteAtlas);
+            if (source != null)
+            {
+                EditorUtility.CopySerialized(source, spriteAtlas);
+            }
 
-            var spriteDirectory = AssetDatabase.LoadAssetAtPath<Object>(tmpPath);
-            spriteAtlas.Remove(new[] { spriteDirectory });
-            spriteAtlas.Add(new[] { spriteDirectory });
+            spriteAtlas.Remove(spriteAtlas.GetPackables());
+            spriteAtlas.Add(importAssets);
         }
     }
 }
