@@ -13,3 +13,4 @@ MonoBehaviour:
   m_Name: CreateSpriteAtlasTrigger
   m_EditorClassIdentifier: 
   spriteAtlasOutputPath: Assets/Sample/GeneratedSpriteAtlases/{name}
+  source: {fileID: 4343727234628468602, guid: 0caab11c6f3364a27a6d745b07fd85d2, type: 2}
