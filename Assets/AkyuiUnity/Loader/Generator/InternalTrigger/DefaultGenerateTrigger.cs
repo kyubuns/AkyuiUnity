@@ -270,10 +270,10 @@ namespace AkyuiUnity.Generator.InternalTrigger
             var image = gameObject.AddComponent<Image>();
             image.raycastTarget = false;
 
+            if (maskComponent.Sprite != null) UpdateImageSprite(gameObject, image, maskComponent.Sprite, assetLoader);
+
             var mask = gameObject.AddComponent<Mask>();
             mask.showMaskGraphic = false;
-
-            if (maskComponent.Sprite != null) image.sprite = assetLoader.LoadSprite(maskComponent.Sprite);
 
             return mask;
         }
@@ -288,22 +288,25 @@ namespace AkyuiUnity.Generator.InternalTrigger
         private static void UpdateImage(GameObject gameObject, Image image, ImageComponent imageComponent, IAssetLoader assetLoader)
         {
             var rectTransform = gameObject.GetComponent<RectTransform>();
-            if (imageComponent.Sprite != null)
-            {
-                image.sprite = assetLoader.LoadSprite(imageComponent.Sprite);
-
-                if (image.hasBorder)
-                {
-                    var meta = assetLoader.LoadMeta(imageComponent.Sprite);
-                    image.type = Image.Type.Sliced;
-                    image.pixelsPerUnitMultiplier = meta["source_width"].JsonFloat() / rectTransform.rect.width;
-                }
-            }
+            if (imageComponent.Sprite != null) UpdateImageSprite(gameObject, image, imageComponent.Sprite, assetLoader);
             if (imageComponent.Color != null) image.color = imageComponent.Color.Value;
 
             if (imageComponent.Direction != null)
             {
                 rectTransform.localScale = new Vector3(imageComponent.Direction.Value.x, imageComponent.Direction.Value.y, 1f);
+            }
+        }
+
+        private static void UpdateImageSprite(GameObject gameObject, Image image, string sprite, IAssetLoader assetLoader)
+        {
+            var rectTransform = gameObject.GetComponent<RectTransform>();
+            image.sprite = assetLoader.LoadSprite(sprite);
+
+            if (image.hasBorder)
+            {
+                var meta = assetLoader.LoadMeta(sprite);
+                image.type = Image.Type.Sliced;
+                image.pixelsPerUnitMultiplier = meta["source_width"].JsonFloat() / rectTransform.rect.width;
             }
         }
 
