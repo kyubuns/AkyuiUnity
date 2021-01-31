@@ -1,4 +1,5 @@
 using System.IO;
+using System.Linq;
 using UnityEditor;
 
 namespace AkyuiUnity.Editor
@@ -16,6 +17,11 @@ namespace AkyuiUnity.Editor
             var parent = Path.GetDirectoryName(path);
             CreateDirectory(parent);
             AssetDatabase.CreateFolder(parent, Path.GetFileName(path));
+        }
+
+        public static string ValidFileName(string s)
+        {
+            return Path.GetInvalidFileNameChars().Aggregate(s, (current, c) => current.Replace(c, '_'));
         }
     }
 }

@@ -1,4 +1,5 @@
 using System.Linq;
+using AkyuiUnity.Editor;
 using UnityEngine;
 using XdParser;
 using XdParser.Internal;
@@ -10,7 +11,7 @@ namespace AkyuiUnity.Xd
         public static string GetSimpleName(this XdObjectJson xdObjectJson)
         {
             if (xdObjectJson.Name == null) return string.Empty;
-            return xdObjectJson.Name.Split('@')[0];
+            return AkyuiEditorUtil.ValidFileName(xdObjectJson.Name.Split('@')[0]);
         }
 
         public static bool NameEndsWith(this XdObjectJson xdObjectJson, string name)
