@@ -9,6 +9,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dec225be91fde47f49a9f56da9412ee4, type: 3}
-  m_Name: AutoNineSliceTrigger
+  m_Script: {fileID: 11500000, guid: 3b2d3a268f47e422f92dd48eedb58199, type: 3}
+  m_Name: SetupAuto9SlicerTrigger
   m_EditorClassIdentifier: 
+  options:
+    Tolerate: 0
+    CenterSize: 2
+    Margin: 2
