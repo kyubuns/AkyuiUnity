@@ -210,7 +210,7 @@ namespace AkyuiUnity.Editor
 
         private static void ImportAsset(IAsset asset, string savePath, string saveFullPath, byte[] bytes, Dictionary<string, object> userData, IAkyuiImportSettings importSettings, AkyuiLogger logger)
         {
-            PostProcessImportAsset.ProcessingFile = savePath;
+            PostProcessImportAsset.ProcessingFile = savePath.Replace(Path.DirectorySeparatorChar.ToString(), "/");
             PostProcessImportAsset.Asset = asset;
             PostProcessImportAsset.UserData = userData;
             PostProcessImportAsset.Triggers = importSettings.Triggers;
