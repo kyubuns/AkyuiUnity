@@ -143,7 +143,7 @@ namespace AkyuiUnity.Xd
             }
             else
             {
-                Debug.LogError($"Unknown shape type {shapeType}");
+                Debug.LogError($"Unknown shape type {shapeType} in {xdObject.Name}({xdObject.Id}, {xdObject.Guid})");
             }
 
             var assets = new List<IAsset>();
