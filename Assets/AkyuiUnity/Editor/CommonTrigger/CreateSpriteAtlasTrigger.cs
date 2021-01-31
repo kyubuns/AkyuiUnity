@@ -1,3 +1,5 @@
+using System.IO;
+using AkyuiUnity.Editor;
 using AkyuiUnity.Editor.ScriptableObject;
 using AkyuiUnity.Loader;
 using UnityEditor;
@@ -21,6 +23,7 @@ namespace AkyuiUnity.CommonTrigger
             {
                 Debug.Log($"Create SpriteAtlas: {spriteAtlasPath}");
 
+                AkyuiEditorUtil.CreateDirectory(Path.GetDirectoryName(spriteAtlasPath));
                 spriteAtlas = new SpriteAtlas();
                 AssetDatabase.CreateAsset(spriteAtlas, spriteAtlasPath);
             }
