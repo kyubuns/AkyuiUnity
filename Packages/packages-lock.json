@@ -89,6 +89,13 @@
       "dependencies": {},
       "hash": "a9f24a764a1550e6e2dd4921e8e243c22314a006"
     },
+    "dev.kyubuns.auto9slicer": {
+      "version": "https://github.com/kyubuns/Auto9Slicer.git?path=Assets/Auto9Slicer",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "f9d999b39a2cd9f9280f2eedd7ed017b8d4d2b64"
+    },
     "com.unity.modules.ai": {
       "version": "1.0.0",
       "depth": 0,

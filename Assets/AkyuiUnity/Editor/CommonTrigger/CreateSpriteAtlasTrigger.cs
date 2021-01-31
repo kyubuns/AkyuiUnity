@@ -1,4 +1,3 @@
-using AkyuiUnity.CommonTrigger.Library;
 using AkyuiUnity.Editor.ScriptableObject;
 using AkyuiUnity.Loader;
 using UnityEditor;

@@ -30,9 +30,9 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ```
 
 
-## OnionRingUnity
+## Auto9Slicer
 
-https://github.com/kyubuns/OnionRingUnity/blob/master/LICENSE
+https://github.com/kyubuns/Auto9Slicer/blob/main/LICENSE
 
 
 ## SharpZipLib
