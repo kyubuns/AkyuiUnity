@@ -99,8 +99,8 @@ namespace AkyuiUnity.Editor
                 akyuiMeta.assets = assets;
                 akyuiMeta.userData = akyuiLoader.LayoutInfo.UserData.Select(x => new AkyuiMetaUserData { key = x.Key, value = x.Value }).ToArray();
 
-                CreateDirectory(Path.GetDirectoryName(pathGetter.PrefabSavePath), logger);
-                CreateDirectory(Path.GetDirectoryName(pathGetter.MetaSavePath), logger);
+                AkyuiEditorUtil.CreateDirectory(Path.GetDirectoryName(pathGetter.PrefabSavePath));
+                AkyuiEditorUtil.CreateDirectory(Path.GetDirectoryName(pathGetter.MetaSavePath));
 
                 PrefabUtility.SaveAsPrefabAssetAndConnect(gameObject, pathGetter.PrefabSavePath, InteractionMode.AutomatedAction);
                 PrefabUtility.SaveAsPrefabAsset(metaGameObject, pathGetter.MetaSavePath);
@@ -110,15 +110,6 @@ namespace AkyuiUnity.Editor
                 Object.DestroyImmediate(metaGameObject);
                 logger.Log($"Import Finish");
             }
-        }
-
-        private static void CreateDirectory(string path, AkyuiLogger logger)
-        {
-            if (AssetDatabase.IsValidFolder(path)) return;
-            var parent = Path.GetDirectoryName(path);
-            CreateDirectory(parent, logger);
-            logger.Log($"CreateDirectory {path}");
-            AssetDatabase.CreateFolder(parent, Path.GetFileName(path));
         }
 
         private static void DeleteUnusedAssets(Object[] prevAssets, Object[] newAssets, AkyuiLogger logger)
@@ -210,7 +201,7 @@ namespace AkyuiUnity.Editor
 
         private static void ImportAsset(IAsset asset, string savePath, string saveFullPath, byte[] bytes, Dictionary<string, object> userData, IAkyuiImportSettings importSettings, AkyuiLogger logger)
         {
-            PostProcessImportAsset.ProcessingFile = savePath.Replace(Path.DirectorySeparatorChar.ToString(), "/");
+            PostProcessImportAsset.ProcessingFile = savePath.ToUniversalPath();
             PostProcessImportAsset.Asset = asset;
             PostProcessImportAsset.UserData = userData;
             PostProcessImportAsset.Triggers = importSettings.Triggers;

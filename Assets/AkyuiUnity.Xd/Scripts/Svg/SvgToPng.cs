@@ -24,7 +24,7 @@ namespace AkyuiUnity.Xd
             var savePath = Path.Combine("Assets", "Temp.svg");
             var saveFullPath = Path.Combine(unityAssetsParentPath, savePath);
 
-            SvgImportTrigger.ProcessingFile = savePath.Replace(Path.DirectorySeparatorChar.ToString(), "/");
+            SvgImportTrigger.ProcessingFile = savePath.ToUniversalPath();
             SvgImportTrigger.Size = new Vector2Int(Mathf.RoundToInt(size.x * xdImportSettings.SpriteSaveScale), Mathf.RoundToInt(size.y * xdImportSettings.SpriteSaveScale));
 
             using (Disposable.Create(() =>
