@@ -222,6 +222,7 @@ namespace AkyuiUnity.Xd
 
                     newXdObjectJson.Name = source.Name;
                     newXdObjectJson.Type = source.Type;
+                    newXdObjectJson.Shape = source.Shape; // compoundのchildrenだけ上書きされるケースがあるが計算出来ないので戻す
                 }
 
                 foreach (var trigger in triggers)
