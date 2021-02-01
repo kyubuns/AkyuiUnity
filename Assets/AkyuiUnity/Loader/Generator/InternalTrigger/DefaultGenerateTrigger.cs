@@ -18,6 +18,7 @@ namespace AkyuiUnity.Generator.InternalTrigger
             if (component is VerticalScrollbarComponent verticalScrollbarComponent) return CreateVerticalScrollbar(gameObject, assetLoader, verticalScrollbarComponent);
             if (component is HorizontalScrollbarComponent horizontalScrollbarComponent) return CreateHorizontalScrollbar(gameObject, assetLoader, horizontalScrollbarComponent);
             if (component is VerticalListComponent verticalListComponent) return CreateVerticalList(gameObject, assetLoader, verticalListComponent);
+            if (component is HorizontalListComponent horizontalListComponent) return CreateHorizontalList(gameObject, assetLoader, horizontalListComponent);
             if (component is HorizontalLayoutComponent horizontalLayoutComponent) return CreateHorizontalLayout(gameObject, assetLoader, horizontalLayoutComponent);
             if (component is VerticalLayoutComponent verticalLayoutComponent) return CreateVerticalLayout(gameObject, assetLoader, verticalLayoutComponent);
             if (component is GridLayoutComponent gridLayoutComponent) return CreateGridLayout(gameObject, assetLoader, gridLayoutComponent);
@@ -135,6 +136,48 @@ namespace AkyuiUnity.Generator.InternalTrigger
             {
                 var scrollbar = scrollbars[0];
                 scrollRect.verticalScrollbar = scrollbar;
+            }
+
+            return scrollRect;
+        }
+
+        private static Component CreateHorizontalList(GameObject gameObject, IAssetLoader assetLoader, HorizontalListComponent horizontalListComponent)
+        {
+            var scrollRect = gameObject.AddComponent<ScrollRect>();
+            scrollRect.horizontal = true;
+            scrollRect.vertical = false;
+
+            gameObject.AddComponent<RectMask2D>();
+
+            var content = new GameObject("Content");
+            content.transform.SetParent(gameObject.transform);
+
+            var contentRectTransform = content.AddComponent<RectTransform>();
+            contentRectTransform.pivot = new Vector2(0f, 0.5f);
+            contentRectTransform.sizeDelta = gameObject.GetComponent<RectTransform>().sizeDelta;
+            contentRectTransform.anchoredPosition = new Vector2(contentRectTransform.sizeDelta.x / 2f, 0f);
+
+            var image = content.AddComponent<Image>();
+            image.color = Color.clear;
+
+            var horizontalLayoutGroup = content.AddComponent<HorizontalLayoutGroup>();
+            horizontalLayoutGroup.childForceExpandWidth = false;
+            horizontalLayoutGroup.childForceExpandHeight = false;
+            if (horizontalListComponent.Spacing != null) horizontalLayoutGroup.spacing = horizontalListComponent.Spacing.Value;
+            if (horizontalListComponent.PaddingLeft != null) horizontalLayoutGroup.padding.left = Mathf.RoundToInt(horizontalListComponent.PaddingLeft.Value);
+            if (horizontalListComponent.PaddingRight != null) horizontalLayoutGroup.padding.right = Mathf.RoundToInt(horizontalListComponent.PaddingRight.Value);
+
+            var contentSizeFitter = content.AddComponent<ContentSizeFitter>();
+            contentSizeFitter.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
+            contentSizeFitter.verticalFit = ContentSizeFitter.FitMode.Unconstrained;
+
+            scrollRect.content = contentRectTransform;
+
+            var scrollbars = gameObject.GetComponentsInDirectChildren<Scrollbar>();
+            if (scrollbars.Length > 0)
+            {
+                var scrollbar = scrollbars[0];
+                scrollRect.horizontalScrollbar = scrollbar;
             }
 
             return scrollRect;

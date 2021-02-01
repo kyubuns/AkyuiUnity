@@ -19,16 +19,16 @@ namespace AkyuiUnity.AnKuchenExtension
 
         public override void OnPostprocessComponent(GameObject gameObject, IComponent component)
         {
-            if (component is VerticalListComponent verticalListComponent)
+            if (component is IListComponent listComponent)
             {
                 if (gameObject.GetComponent<ListAdditionalInfo>() != null) return;
 
                 var additionalInfo = gameObject.AddComponent<ListAdditionalInfo>();
 
                 var spacialSpacings = new List<AnKuchen.AdditionalInfo.SpecialSpacing>();
-                if (verticalListComponent.SpacialSpacings != null)
+                if (listComponent.SpacialSpacings != null)
                 {
-                    foreach (var a in verticalListComponent.SpacialSpacings)
+                    foreach (var a in listComponent.SpacialSpacings)
                     {
                         spacialSpacings.Add(new AnKuchen.AdditionalInfo.SpecialSpacing
                         {

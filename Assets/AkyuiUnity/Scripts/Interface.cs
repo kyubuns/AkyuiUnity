@@ -222,11 +222,16 @@ namespace AkyuiUnity
         }
     }
 
-    public class VerticalScrollbarComponent : IComponent
+    public interface IScrollbarComponent : IComponent
+    {
+        [CanBeNull] ImageComponent Image { get; }
+    }
+
+    public class VerticalScrollbarComponent : IScrollbarComponent
     {
         public const string TypeString = "vertical_scrollbar";
 
-        [CanBeNull] public readonly ImageComponent Image;
+        public ImageComponent Image { get; }
 
         public VerticalScrollbarComponent(ImageComponent image)
         {
@@ -234,11 +239,11 @@ namespace AkyuiUnity
         }
     }
 
-    public class HorizontalScrollbarComponent : IComponent
+    public class HorizontalScrollbarComponent : IScrollbarComponent
     {
         public const string TypeString = "horizontal_scrollbar";
 
-        [CanBeNull] public readonly ImageComponent Image;
+        public ImageComponent Image { get; }
 
         public HorizontalScrollbarComponent(ImageComponent image)
         {
@@ -246,20 +251,44 @@ namespace AkyuiUnity
         }
     }
 
-    public class VerticalListComponent : IComponent
+    public interface IListComponent : IComponent
     {
-        public const string TypeString = "vertical_layout";
+        [CanBeNull] float? Spacing { get; }
+        [CanBeNull] SpecialSpacing[] SpacialSpacings { get; }
+    }
 
-        [CanBeNull] public readonly float? Spacing;
+    public class VerticalListComponent : IListComponent
+    {
+        public const string TypeString = "vertical_list";
+
+        [CanBeNull] public float? Spacing { get; }
         [CanBeNull] public readonly float? PaddingTop;
         [CanBeNull] public readonly float? PaddingBottom;
-        [CanBeNull] public readonly SpecialSpacing[] SpacialSpacings;
+        [CanBeNull] public SpecialSpacing[] SpacialSpacings { get; }
 
         public VerticalListComponent([CanBeNull] float? spacing, [CanBeNull] float? paddingTop, [CanBeNull] float? paddingBottom, [CanBeNull] SpecialSpacing[] spacialSpacings)
         {
             Spacing = spacing;
             PaddingTop = paddingTop;
             PaddingBottom = paddingBottom;
+            SpacialSpacings = spacialSpacings;
+        }
+    }
+
+    public class HorizontalListComponent : IListComponent
+    {
+        public const string TypeString = "horizontal_list";
+
+        [CanBeNull] public float? Spacing { get; }
+        [CanBeNull] public readonly float? PaddingLeft;
+        [CanBeNull] public readonly float? PaddingRight;
+        [CanBeNull] public SpecialSpacing[] SpacialSpacings { get; }
+
+        public HorizontalListComponent([CanBeNull] float? spacing, [CanBeNull] float? paddingLeft, [CanBeNull] float? paddingRight, [CanBeNull] SpecialSpacing[] spacialSpacings)
+        {
+            Spacing = spacing;
+            PaddingLeft = paddingLeft;
+            PaddingRight = paddingRight;
             SpacialSpacings = spacialSpacings;
         }
     }

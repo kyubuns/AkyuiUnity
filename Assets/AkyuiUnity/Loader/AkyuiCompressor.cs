@@ -192,6 +192,27 @@ namespace AkyuiUnity.Loader
                     dict["spacial_spacings"] = inner;
                 }
             }
+            else if (source is HorizontalListComponent horizontalListComponent)
+            {
+                dict["type"] = HorizontalListComponent.TypeString;
+                if (horizontalListComponent.Spacing != null) dict["spacing"] = ToSerializable(horizontalListComponent.Spacing.Value);
+                if (horizontalListComponent.PaddingLeft != null) dict["padding_left"] = ToSerializable(horizontalListComponent.PaddingLeft.Value);
+                if (horizontalListComponent.PaddingRight != null) dict["padding_right"] = ToSerializable(horizontalListComponent.PaddingRight.Value);
+                if (horizontalListComponent.SpacialSpacings != null)
+                {
+                    var inner = new List<Dictionary<string, object>>();
+                    foreach (var a in horizontalListComponent.SpacialSpacings)
+                    {
+                        inner.Add(new Dictionary<string, object>
+                        {
+                            { "item1", a.Item1 },
+                            { "item2", a.Item2 },
+                            { "spacing", a.Spacing },
+                        });
+                    }
+                    dict["spacial_spacings"] = inner;
+                }
+            }
             else if (source is HorizontalLayoutComponent horizontalLayoutComponent)
             {
                 dict["type"] = HorizontalLayoutComponent.TypeString;

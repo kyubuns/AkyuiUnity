@@ -35,41 +35,65 @@ namespace AkyuiUnity.Xd
         {
             var spacing = 0f;
             var scrollingType = xdObject.Meta?.Ux?.ScrollingType;
-
-            var (paddingTop, paddingBottom) = CalcPadding(xdObject, obbGetter);
-
             var specialSpacings = new List<SpecialSpacing>();
             var repeatGrid = xdObject.Group?.Children?.FirstOrDefault(x => RepeatGridGroupParser.Is(x));
-            if (repeatGrid != null)
+
+            if (scrollingType == "vertical")
             {
-                XdObjectJson[] newChildren;
-                (newChildren, spacing) = ExpandRepeatGridGroup(xdObject, repeatGrid, scrollingType, obbGetter, ref specialSpacings);
+                var paddingTop = 0f;
+                var paddingBottom = GetSpacerSize(xdObject, obbGetter);
 
-                xdObject.Group.Children = xdObject.Group.Children.Where(x => x != repeatGrid).Concat(newChildren).ToArray();
+                if (repeatGrid != null)
+                {
+                    XdObjectJson[] newChildren;
+                    (newChildren, spacing) = ExpandRepeatGridGroup(xdObject, repeatGrid, scrollingType, obbGetter, ref specialSpacings);
 
-                var rootObb = obbGetter.Get(xdObject);
-                paddingTop = newChildren.Select(x => obbGetter.Get(x).CalcObbInWorld(rootObb).CalcLocalRect().yMin).Min();
-                if (paddingTop < 0f) paddingTop = 0f;
+                    xdObject.Group.Children = xdObject.Group.Children.Where(x => x != repeatGrid).Concat(newChildren).ToArray();
+
+                    var rootObb = obbGetter.Get(xdObject);
+                    paddingTop = newChildren.Select(x => obbGetter.Get(x).CalcObbInWorld(rootObb).CalcLocalRect().yMin).Min();
+                    if (paddingTop < 0f) paddingTop = 0f;
+                }
+
+                return (new IComponent[]
+                {
+                    new VerticalListComponent(spacing, paddingTop, paddingBottom, specialSpacings.ToArray()),
+                }, new IAsset[] { });
             }
-
-            return (new IComponent[]
+            else
             {
-                new VerticalListComponent(spacing, paddingTop, paddingBottom, specialSpacings.ToArray()),
-            }, new IAsset[] { });
+                var paddingLeft = 0f;
+                var paddingRight = GetSpacerSize(xdObject, obbGetter);
+
+                if (repeatGrid != null)
+                {
+                    XdObjectJson[] newChildren;
+                    (newChildren, spacing) = ExpandRepeatGridGroup(xdObject, repeatGrid, scrollingType, obbGetter, ref specialSpacings);
+
+                    xdObject.Group.Children = xdObject.Group.Children.Where(x => x != repeatGrid).Concat(newChildren).ToArray();
+
+                    var rootObb = obbGetter.Get(xdObject);
+                    paddingLeft = newChildren.Select(x => obbGetter.Get(x).CalcObbInWorld(rootObb).CalcLocalRect().xMin).Min();
+                    if (paddingLeft < 0f) paddingLeft = 0f;
+                }
+
+                return (new IComponent[]
+                {
+                    new HorizontalListComponent(spacing, paddingLeft, paddingRight, specialSpacings.ToArray()),
+                }, new IAsset[] { });
+            }
         }
 
-        private static (float Top, float Bottom) CalcPadding(XdObjectJson xdObject, IObbGetter obbGetter)
+        private static float GetSpacerSize(XdObjectJson xdObject, IObbGetter obbGetter)
         {
-            var top = 0f;
-            var bottom = 0f;
+            var spacerSize = 0f;
             var spacer = xdObject.Group?.Children?.FirstOrDefault(x => x.NameEndsWith("spacer"));
             if (spacer != null)
             {
-                bottom = Mathf.Max(obbGetter.Get(spacer).Size.y, 0f);
+                spacerSize = Mathf.Max(obbGetter.Get(spacer).Size.y, 0f);
                 xdObject.Group.Children = xdObject.Group.Children.Where(x => x != spacer).ToArray();
             }
-
-            return (top, bottom);
+            return spacerSize;
         }
 
         private static (XdObjectJson[], float Spacing) ExpandRepeatGridGroup(XdObjectJson xdObject, XdObjectJson repeatGrid, string scrollingType, IObbGetter obbGetter, ref List<SpecialSpacing> specialSpacings)

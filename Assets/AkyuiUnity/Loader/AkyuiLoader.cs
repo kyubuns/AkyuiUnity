@@ -183,6 +183,7 @@ namespace AkyuiUnity.Loader
             if (componentType == VerticalScrollbarComponent.TypeString) return ParseVerticalScrollbar(componentJson);
             if (componentType == HorizontalScrollbarComponent.TypeString) return ParseHorizontalScrollbar(componentJson);
             if (componentType == VerticalListComponent.TypeString) return ParseVerticalList(componentJson);
+            if (componentType == HorizontalListComponent.TypeString) return ParseHorizontalList(componentJson);
             if (componentType == HorizontalLayoutComponent.TypeString) return ParseHorizontalLayout(componentJson);
             if (componentType == VerticalLayoutComponent.TypeString) return ParseVerticalLayout(componentJson);
             if (componentType == GridLayoutComponent.TypeString) return ParseGridLayout(componentJson);
@@ -225,6 +226,24 @@ namespace AkyuiUnity.Loader
                 componentJson.ContainsKey("spacing") ? componentJson["spacing"].JsonFloat() : (float?) null,
                 componentJson.ContainsKey("padding_top") ? componentJson["padding_top"].JsonFloat() : (float?) null,
                 componentJson.ContainsKey("padding_bottom") ? componentJson["padding_bottom"].JsonFloat() : (float?) null,
+                componentJson.ContainsKey("spacial_spacings")
+                    ? componentJson["spacial_spacings"].JsonDictionaryArray().Select(x =>
+                        new SpecialSpacing(
+                            x["item1"].JsonString(),
+                            x["item2"].JsonString(),
+                            x["spacing"].JsonFloat()
+                        )
+                    ).ToArray()
+                    : null
+            );
+        }
+
+        private static HorizontalListComponent ParseHorizontalList(Dictionary<string, object> componentJson)
+        {
+            return new HorizontalListComponent(
+                componentJson.ContainsKey("spacing") ? componentJson["spacing"].JsonFloat() : (float?) null,
+                componentJson.ContainsKey("padding_left") ? componentJson["padding_left"].JsonFloat() : (float?) null,
+                componentJson.ContainsKey("padding_right") ? componentJson["padding_right"].JsonFloat() : (float?) null,
                 componentJson.ContainsKey("spacial_spacings")
                     ? componentJson["spacial_spacings"].JsonDictionaryArray().Select(x =>
                         new SpecialSpacing(
