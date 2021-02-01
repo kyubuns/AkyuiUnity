@@ -79,7 +79,7 @@ namespace AkyuiUnity.Editor
                 var prevMetaGameObject = AssetDatabase.LoadAssetAtPath<GameObject>(pathGetter.MetaSavePath);
                 var prevMeta = prevMetaGameObject != null ? prevMetaGameObject.GetComponent<AkyuiMeta>() : null;
 
-                if (settings.CheckHash && prevMeta != null && prevMeta.hash == akyuiLoader.LayoutInfo.Hash)
+                if (!settings.ReimportLayout && prevMeta != null && prevMeta.hash == akyuiLoader.LayoutInfo.Hash)
                 {
                     logger.Log("Skip", ("hash", akyuiLoader.LayoutInfo.Hash));
                     return;
@@ -158,7 +158,7 @@ namespace AkyuiUnity.Editor
                         var savePath = Path.Combine(pathGetter.AssetOutputDirectoryPath, asset.FileName);
                         var saveFullPath = Path.Combine(unityAssetsParentPath, savePath);
 
-                        if (settings.CheckHash && File.Exists(saveFullPath))
+                        if (!settings.ReimportAsset && File.Exists(saveFullPath))
                         {
                             var import = AssetImporter.GetAtPath(savePath);
                             var prevUserData = MiniJSON.Json.Deserialize(import.userData).JsonDictionary();

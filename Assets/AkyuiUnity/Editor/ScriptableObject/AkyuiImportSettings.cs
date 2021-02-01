@@ -18,14 +18,17 @@ namespace AkyuiUnity.Editor.ScriptableObject
         public string FontDirectoryPath => fontDirectoryPath;
         [SerializeField] private string fontDirectoryPath = "Assets/Fonts/";
 
-        public bool CheckHash => checkHash;
-        [SerializeField] private bool checkHash = true;
-
         public IAkyuiImportTrigger[] Triggers => triggers?.Cast<IAkyuiImportTrigger>().ToArray() ?? new IAkyuiImportTrigger[] { };
         [SerializeField] private AkyuiImportTrigger[] triggers = default;
 
         public float SpriteSaveScale => spriteSaveScale;
         [SerializeField] private float spriteSaveScale = 1.0f;
+
+        public bool ReimportAsset => reimportAsset;
+        [SerializeField] private bool reimportAsset = false;
+
+        public bool ReimportLayout => reimportLayout;
+        [SerializeField] private bool reimportLayout = false;
     }
 
     public interface IAkyuiImportSettings
@@ -34,8 +37,9 @@ namespace AkyuiUnity.Editor.ScriptableObject
         string AssetOutputDirectoryPath { get; }
         string MetaOutputPath { get; }
         string FontDirectoryPath { get; }
-        bool CheckHash { get; }
         IAkyuiImportTrigger[] Triggers { get; }
         float SpriteSaveScale { get; }
+        bool ReimportAsset { get; }
+        bool ReimportLayout { get; }
     }
 }

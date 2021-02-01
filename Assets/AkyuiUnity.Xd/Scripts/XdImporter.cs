@@ -96,7 +96,7 @@ namespace AkyuiUnity.Xd
                     var prevMeta = prevMetaGameObject != null ? prevMetaGameObject.GetComponent<AkyuiMeta>() : null;
                     var prevMetaUserData = prevMeta != null ? prevMeta.FindUserData("xd_hash") : null;
 
-                    if (xdSettings.CheckHash && prevMetaUserData != null && prevMetaUserData.value == xdHash.ToString())
+                    if (!xdSettings.ReimportLayout && !xdSettings.ReimportAsset && prevMetaUserData != null && prevMetaUserData.value == xdHash.ToString())
                     {
                         logger.Log("Skip", ("hash", xdHash));
                         skipped++;
