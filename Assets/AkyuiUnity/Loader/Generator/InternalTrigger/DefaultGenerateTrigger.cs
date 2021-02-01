@@ -15,7 +15,8 @@ namespace AkyuiUnity.Generator.InternalTrigger
             if (component is TextComponent textComponent) return CreateText(gameObject, assetLoader, textComponent);
             if (component is AlphaComponent alphaComponent) return CreateAlpha(gameObject, assetLoader, alphaComponent);
             if (component is ButtonComponent) return CreateButton(gameObject, assetLoader);
-            if (component is VerticalScrollbarComponent scrollbarComponent) return VerticalCreateScrollbar(gameObject, assetLoader, scrollbarComponent);
+            if (component is VerticalScrollbarComponent verticalScrollbarComponent) return CreateVerticalScrollbar(gameObject, assetLoader, verticalScrollbarComponent);
+            if (component is HorizontalScrollbarComponent horizontalScrollbarComponent) return CreateHorizontalScrollbar(gameObject, assetLoader, horizontalScrollbarComponent);
             if (component is VerticalListComponent verticalListComponent) return CreateVerticalList(gameObject, assetLoader, verticalListComponent);
             if (component is HorizontalLayoutComponent horizontalLayoutComponent) return CreateHorizontalLayout(gameObject, assetLoader, horizontalLayoutComponent);
             if (component is VerticalLayoutComponent verticalLayoutComponent) return CreateVerticalLayout(gameObject, assetLoader, verticalLayoutComponent);
@@ -159,7 +160,7 @@ namespace AkyuiUnity.Generator.InternalTrigger
             return button;
         }
 
-        private static Component VerticalCreateScrollbar(GameObject gameObject, IAssetLoader assetLoader, VerticalScrollbarComponent verticalScrollbarComponent)
+        private static Component CreateVerticalScrollbar(GameObject gameObject, IAssetLoader assetLoader, VerticalScrollbarComponent verticalScrollbarComponent)
         {
             var scrollbar = gameObject.AddComponent<Scrollbar>();
             scrollbar.transition = Selectable.Transition.None;
@@ -183,6 +184,35 @@ namespace AkyuiUnity.Generator.InternalTrigger
             {
                 var image = scrollbar.handleRect.GetComponent<Image>();
                 UpdateImage(gameObject, image, verticalScrollbarComponent.Image, assetLoader);
+            }
+
+            return scrollbar;
+        }
+
+        private static Component CreateHorizontalScrollbar(GameObject gameObject, IAssetLoader assetLoader, HorizontalScrollbarComponent horizontalScrollbarComponent)
+        {
+            var scrollbar = gameObject.AddComponent<Scrollbar>();
+            scrollbar.transition = Selectable.Transition.None;
+            scrollbar.direction = Scrollbar.Direction.RightToLeft;
+
+            if (scrollbar.handleRect == null)
+            {
+                var handle = new GameObject("Handle");
+                var handleRect = handle.AddComponent<RectTransform>();
+                handleRect.SetParent(gameObject.transform);
+                handleRect.anchorMin = Vector2.zero;
+                handleRect.anchorMax = Vector2.one;
+                handleRect.anchoredPosition = Vector2.zero;
+                handleRect.sizeDelta = Vector2.zero;
+                scrollbar.handleRect = handleRect;
+
+                handle.AddComponent<Image>();
+            }
+
+            if (horizontalScrollbarComponent.Image != null)
+            {
+                var image = scrollbar.handleRect.GetComponent<Image>();
+                UpdateImage(gameObject, image, horizontalScrollbarComponent.Image, assetLoader);
             }
 
             return scrollbar;

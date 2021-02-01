@@ -181,6 +181,7 @@ namespace AkyuiUnity.Loader
             if (componentType == TextComponent.TypeString) return ParseText(componentJson);
             if (componentType == ButtonComponent.TypeString) return ParseButton(componentJson);
             if (componentType == VerticalScrollbarComponent.TypeString) return ParseVerticalScrollbar(componentJson);
+            if (componentType == HorizontalScrollbarComponent.TypeString) return ParseHorizontalScrollbar(componentJson);
             if (componentType == VerticalListComponent.TypeString) return ParseVerticalList(componentJson);
             if (componentType == HorizontalLayoutComponent.TypeString) return ParseHorizontalLayout(componentJson);
             if (componentType == VerticalLayoutComponent.TypeString) return ParseVerticalLayout(componentJson);
@@ -239,6 +240,13 @@ namespace AkyuiUnity.Loader
         private static VerticalScrollbarComponent ParseVerticalScrollbar(Dictionary<string, object> componentJson)
         {
             return new VerticalScrollbarComponent(
+                componentJson.ContainsKey("image") ? ParseImage(componentJson["image"].JsonDictionary()) : null
+            );
+        }
+
+        private static HorizontalScrollbarComponent ParseHorizontalScrollbar(Dictionary<string, object> componentJson)
+        {
+            return new HorizontalScrollbarComponent(
                 componentJson.ContainsKey("image") ? ParseImage(componentJson["image"].JsonDictionary()) : null
             );
         }

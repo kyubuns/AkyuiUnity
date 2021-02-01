@@ -234,6 +234,18 @@ namespace AkyuiUnity
         }
     }
 
+    public class HorizontalScrollbarComponent : IComponent
+    {
+        public const string TypeString = "horizontal_scrollbar";
+
+        [CanBeNull] public readonly ImageComponent Image;
+
+        public HorizontalScrollbarComponent(ImageComponent image)
+        {
+            Image = image;
+        }
+    }
+
     public class VerticalListComponent : IComponent
     {
         public const string TypeString = "vertical_layout";

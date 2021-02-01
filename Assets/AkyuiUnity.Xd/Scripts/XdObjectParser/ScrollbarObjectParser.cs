@@ -21,8 +21,12 @@ namespace AkyuiUnity.Xd
         {
             var (imageComponent, assets) = ShapeObjectParser.RenderImage(xdObject, obb, assetHolder);
 
-            var scrollbar = new VerticalScrollbarComponent(imageComponent);
-            return (new IComponent[] { scrollbar }, assets);
+            IComponent scrollbar = new VerticalScrollbarComponent(imageComponent);
+            if (xdObject.HasParameter("horizontal"))
+            {
+                scrollbar = new HorizontalScrollbarComponent(imageComponent);
+            }
+            return (new[] { scrollbar }, assets);
         }
     }
 }
