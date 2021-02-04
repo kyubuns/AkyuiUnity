@@ -6,7 +6,7 @@ SpriteAtlas:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: SpriteAtlas
+  m_Name: Main
   m_EditorData:
     serializedVersion: 2
     textureSettings:
@@ -56,7 +56,55 @@ SpriteAtlas:
     - {fileID: 2800000, guid: d572953c58dd544ab96fba21dd47a60d, type: 3}
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
-  m_PackedSprites: []
-  m_PackedSpriteNamesToIndex: []
-  m_Tag: SpriteAtlas
+  m_PackedSprites:
+  - {fileID: 21300000, guid: d844da901f90d4b858f6ac561722e319, type: 3}
+  - {fileID: 21300000, guid: 73017ff0a7a5e4cf6a737e4ee8094d9c, type: 3}
+  - {fileID: 21300000, guid: 4e845472aea3f40c68cddbf064655632, type: 3}
+  - {fileID: 21300000, guid: 07309bf2c049f4365b66cfb26a71f3f2, type: 3}
+  - {fileID: 21300000, guid: 570ada53dc2ab44339af333d6496ae15, type: 3}
+  - {fileID: 21300000, guid: ca306b632b11d4c2e9062ebab143b3c5, type: 3}
+  - {fileID: 21300000, guid: bf19d134b09084571bd39399d4a45dcd, type: 3}
+  - {fileID: 21300000, guid: b7b595e4d7fdf4b468859e889f87f382, type: 3}
+  - {fileID: 21300000, guid: 0d5dc4851d2fc46358418e478d3bac0f, type: 3}
+  - {fileID: 21300000, guid: 4623a036bc7f4438ebcafe43a3e1dc69, type: 3}
+  - {fileID: 21300000, guid: 9c3befd7b1f524b6195183c6c3f15a66, type: 3}
+  - {fileID: 21300000, guid: d0fa85f7e9ed34960b6436f2ea2b8170, type: 3}
+  - {fileID: 21300000, guid: cf89b1a82c7a54c74adff2e088be3d96, type: 3}
+  - {fileID: 21300000, guid: d038a6a94f89d4e55ac6739334ebdabb, type: 3}
+  - {fileID: 21300000, guid: a9ff09a925ccf4020a078c557114f574, type: 3}
+  - {fileID: 21300000, guid: 39af888b7ddd34d84b76a8999b8517e8, type: 3}
+  - {fileID: 21300000, guid: 0b4925ab5ac6948708867e46ffea31d5, type: 3}
+  - {fileID: 21300000, guid: f21191cb6eedf425cb2f353c2b5fc4d7, type: 3}
+  - {fileID: 21300000, guid: 5cfda03c2f15c4a2f9c32be7c3349b1f, type: 3}
+  - {fileID: 21300000, guid: d572953c58dd544ab96fba21dd47a60d, type: 3}
+  - {fileID: 21300000, guid: 5ad6793c777ec4714bdd7c5ef0b8f551, type: 3}
+  - {fileID: 21300000, guid: bb004b5c37b3f41a7b13bf3b4e309080, type: 3}
+  - {fileID: 21300000, guid: 1fe9236e1fc2b4cba9ab0d4b6dd709d5, type: 3}
+  - {fileID: 21300000, guid: c515246f03a6a4ed5ae6ffa5a98b1aa1, type: 3}
+  m_PackedSpriteNamesToIndex:
+  - Icon Equip_acee3e88
+  - Icon Friend_f4200525
+  - Base_a05753e9
+  - Base_8296cc1f
+  - Icon_f31ebcf0
+  - Base_5809002f
+  - Background_09298be1
+  - Notification_10aaf491
+  - Base Free_b1369f24
+  - Player EXP Gauge Fill_009b66d7
+  - Resource Base_cac51823
+  - Player Level Base_17c51f48
+  - Base_15849e3a
+  - Icon Gem_971ebbed
+  - Footer Shadow_3cb8b179
+  - Icon Gold_f31ebcf0
+  - Player EXP Gauge Base_d23bdd87
+  - Icon Home_1e250df4
+  - Icon Player Level_74024310
+  - Menu Button_b982438a
+  - Icon Shop_8b2f588c
+  - Base_600e39be
+  - Base_42b33eef
+  - Image_34393b9f
+  m_Tag: Main
   m_IsVariant: 0

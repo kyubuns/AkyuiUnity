@@ -6,7 +6,7 @@ SpriteAtlas:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: SpriteAtlas
+  m_Name: Alert
   m_EditorData:
     serializedVersion: 2
     textureSettings:
@@ -39,7 +39,21 @@ SpriteAtlas:
     - {fileID: 2800000, guid: 7613e6709fc254344b866417d12c94f1, type: 3}
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
-  m_PackedSprites: []
-  m_PackedSpriteNamesToIndex: []
-  m_Tag: SpriteAtlas
+  m_PackedSprites:
+  - {fileID: 21300000, guid: 7613e6709fc254344b866417d12c94f1, type: 3}
+  - {fileID: 21300000, guid: e37b65f494a084ac3ad2e02bfe0f5397, type: 3}
+  - {fileID: 21300000, guid: 6c3e53f91ab5d43478d03f2d5ea57c1f, type: 3}
+  - {fileID: 21300000, guid: dfe21dab5fc05488babef16918cdc8c8, type: 3}
+  - {fileID: 21300000, guid: f7f37dcb5d56547b8b82c14f89c09766, type: 3}
+  - {fileID: 21300000, guid: 2449d39e5dba24f16947f2251ff4e0e3, type: 3}
+  - {fileID: 21300000, guid: ce8cb90fe6dec4983a7956a94befd1f7, type: 3}
+  m_PackedSpriteNamesToIndex:
+  - Image_34393b9f
+  - Background_5b3ce44b
+  - Alert Base_8f7f98fc
+  - Icon_f31ebcf0
+  - Base_15849e3a
+  - Base_1e532a96
+  - Base_a05753e9
+  m_Tag: Alert
   m_IsVariant: 0
