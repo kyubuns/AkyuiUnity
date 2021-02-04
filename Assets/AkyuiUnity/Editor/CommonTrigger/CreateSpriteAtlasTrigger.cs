@@ -36,6 +36,8 @@ namespace AkyuiUnity.CommonTrigger
 
             spriteAtlas.Remove(spriteAtlas.GetPackables());
             spriteAtlas.Add(importAssets);
+
+            SpriteAtlasUtility.PackAtlases(new[] { spriteAtlas }, EditorUserBuildSettings.activeBuildTarget);
         }
     }
 }
