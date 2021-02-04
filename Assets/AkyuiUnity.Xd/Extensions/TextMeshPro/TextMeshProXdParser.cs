@@ -42,13 +42,21 @@ namespace AkyuiUnity.Xd.TextMeshProExtension
 
         public static Rect CalcSizeFromText(XdObjectJson xdObject, float? width)
         {
+            var rawText = xdObject.Text.RawText;
+
             var font = xdObject.Style.Font;
             var fontAsset = AssetDatabase.FindAssets($"{font.PostscriptName}")
                 .Select(guid => AssetDatabase.GUIDToAssetPath(guid))
                 .Select(path => AssetDatabase.LoadAssetAtPath<Object>(path))
                 .OfType<TMP_FontAsset>()
-                .ToArray()
-                .FirstOrDefault();
+                .Select(x =>
+                {
+                    x.HasCharacters(rawText, out var missingCharacters);
+                    return (missingCharacters.Count, x);
+                })
+                .OrderBy(x => x.Count)
+                .FirstOrDefault()
+                .x;
 
             if (fontAsset == null)
             {
@@ -59,7 +67,6 @@ namespace AkyuiUnity.Xd.TextMeshProExtension
 
             var position = Vector2.zero;
             var fontSize = font.Size;
-            var rawText = xdObject.Text.RawText;
             position.y -= fontAsset.faceInfo.ascentLine * (fontSize / fontAsset.faceInfo.pointSize);
 
             var dummyObject = new GameObject("Dummy");
