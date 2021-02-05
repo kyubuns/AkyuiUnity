@@ -1,5 +1,11 @@
 # AkyuiUnity
 
+まだ開発中ですが、テスト用のバージョンを公開しています。  
+詳しくはDiscussionをご覧ください。  
+https://github.com/kyubuns/AkyuiUnity/discussions/8
+
+---
+
 AkyuiUnity is a Unity implementation of [Akyui](https://github.com/kyubuns/Akyui).  
 AKyuiUnity.Xd, you can easily generate Unity's Prefab from [Adobe XD](https://www.adobe.com/products/xd.html).
 
