@@ -63,7 +63,7 @@ namespace AkyuiUnity.Xd
             var fontAsset = findFont.FirstOrDefault();
             if (fontAsset == null)
             {
-                Debug.LogWarning($"{font.PostscriptName} is not found in project");
+                Debug.LogWarning($"{font.PostscriptName} is not found in project / name: {xdObject.Name}, text: {rawText}");
                 fontAsset = Resources.GetBuiltinResource<Font>("Arial.ttf");
             }
             var settings = new TextGenerationSettings
