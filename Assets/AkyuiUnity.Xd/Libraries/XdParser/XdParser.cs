@@ -14,7 +14,7 @@ namespace XdParser
         private ZipFile _zipFile;
         public XdArtboard[] Artworks { get; }
 
-        public XdFile(string xdFilePath)
+        public XdFile(string xdFilePath, Dictionary<string, object> jsonCache)
         {
             _zipFile = new ZipFile(xdFilePath);
             var manifestJsonString = _zipFile.ReadString("manifest");
@@ -25,8 +25,15 @@ namespace XdParser
             {
                 var artworkJsonString = _zipFile.ReadString($"artwork/{xdManifestArtwork.Path}/graphics/graphicContent.agc");
                 var artworkJson = JsonSerializer.Deserialize<XdArtboardJson>(artworkJsonString);
-                var resourcesJsonString = _zipFile.ReadString(artworkJson.Resources.Href.TrimStart('/'));
-                var resourceJson = JsonSerializer.Deserialize<XdResourcesJson>(resourcesJsonString);
+
+                var resourceJsonFilePath = artworkJson.Resources.Href.TrimStart('/');
+                if (!jsonCache.ContainsKey(resourceJsonFilePath))
+                {
+                    var resourcesJsonString = _zipFile.ReadString(resourceJsonFilePath);
+                    jsonCache.Add(resourceJsonFilePath, JsonSerializer.Deserialize<XdResourcesJson>(resourcesJsonString));
+                }
+
+                var resourceJson = (XdResourcesJson) jsonCache[resourceJsonFilePath];
                 artworks.Add(new XdArtboard(xdManifestArtwork, artworkJson, resourceJson));
             }
             Artworks = artworks.ToArray();
