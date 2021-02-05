@@ -82,7 +82,7 @@ namespace AkyuiUnity.TextMeshProExtension
                 }
                 else
                 {
-                    Debug.LogWarning($"TextMeshPro Font {fontPath} is not found / name: {gameObject.name}, text: {textComponent.Text}");
+                    Debug.LogWarning($"TextMeshPro Font {fontPath} is not found / name: {ExtensionsUtil.GetGameObjectPath(gameObject)}, text: {textComponent.Text}");
                 }
             }
 
