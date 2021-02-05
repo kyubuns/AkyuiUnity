@@ -65,7 +65,10 @@ namespace AkyuiUnity.Xd
         {
             var colorJson = xdObjectJson.GetFillColor();
             Color color = new Color32((byte) colorJson.R, (byte) colorJson.G, (byte) colorJson.B, 255);
-            color.a = xdObjectJson.Style?.Fill?.Color?.Alpha ?? 1f;
+            if (xdObjectJson.Style?.Fill?.Type != "none")
+            {
+                color.a = xdObjectJson.Style?.Fill?.Color?.Alpha ?? 1f;
+            }
             color.a *= xdObjectJson.Style?.Opacity ?? 1f;
             return color;
         }
@@ -74,7 +77,10 @@ namespace AkyuiUnity.Xd
         {
             var colorJson = xdArtboardChildJson.Style.GetFillColor();
             Color color = new Color32((byte) colorJson.R, (byte) colorJson.G, (byte) colorJson.B, 255);
-            color.a = xdArtboardChildJson.Style?.Fill?.Color?.Alpha ?? 1f;
+            if (xdArtboardChildJson.Style?.Fill?.Type != "none")
+            {
+                color.a = xdArtboardChildJson.Style?.Fill?.Color?.Alpha ?? 1f;
+            }
             color.a *= xdArtboardChildJson.Style?.Opacity ?? 1f;
             return color;
         }

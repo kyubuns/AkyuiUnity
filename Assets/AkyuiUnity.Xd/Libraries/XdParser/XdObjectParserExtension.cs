@@ -15,7 +15,7 @@ namespace XdParser
         {
             var color = new XdColorValueJson { R = 255, G = 255, B = 255 };
             var fill = xdStyleJson.Fill;
-            if (fill?.Color?.Value?.R != null)
+            if (fill != null && fill.Type != "none" && fill.Color?.Value?.R != null)
             {
                 color.R = fill.Color.Value.R;
                 color.G = fill.Color.Value.G;
