@@ -18,7 +18,7 @@ namespace AkyuiUnity.Editor.ScriptableObject
         public string FontDirectoryPath => fontDirectoryPath;
         [SerializeField] private string fontDirectoryPath = "Assets/Fonts/";
 
-        public IAkyuiImportTrigger[] Triggers => triggers?.Cast<IAkyuiImportTrigger>().ToArray() ?? new IAkyuiImportTrigger[] { };
+        public IAkyuiImportTrigger[] Triggers => triggers?.Cast<IAkyuiImportTrigger>().Where(x => x != null).ToArray() ?? new IAkyuiImportTrigger[] { };
         [SerializeField] private AkyuiImportTrigger[] triggers = default;
 
         public float SpriteSaveScale => spriteSaveScale;
