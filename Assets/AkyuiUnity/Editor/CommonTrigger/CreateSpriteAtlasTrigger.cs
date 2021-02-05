@@ -25,7 +25,6 @@ namespace AkyuiUnity.CommonTrigger
 
                 AkyuiEditorUtil.CreateDirectory(Path.GetDirectoryName(spriteAtlasPath));
                 spriteAtlas = new SpriteAtlas();
-                spriteAtlas.name = loader.LayoutInfo.Name;
                 AssetDatabase.CreateAsset(spriteAtlas, spriteAtlasPath);
             }
 
@@ -34,6 +33,7 @@ namespace AkyuiUnity.CommonTrigger
                 EditorUtility.CopySerialized(source, spriteAtlas);
             }
 
+            spriteAtlas.name = loader.LayoutInfo.Name;
             spriteAtlas.Remove(spriteAtlas.GetPackables());
             spriteAtlas.Add(importAssets);
 
