@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace AkyuiUnity.Loader.Internal
 {
-    public static class MiniJsonExtensions
+    public static class JsonExtensions
     {
         public static string JsonString(this object o)
         {

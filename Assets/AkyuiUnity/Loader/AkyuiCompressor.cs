@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using AkyuiUnity.Editor.MiniJSON;
 using ICSharpCode.SharpZipLib.Zip;
 using UnityEngine;
+using Utf8Json;
 
 namespace AkyuiUnity.Loader
 {
@@ -19,7 +19,7 @@ namespace AkyuiUnity.Loader
                     var newEntry = new ZipEntry(Path.Combine(loader.LayoutInfo.Name, "layout.json"));
                     zipStream.PutNextEntry(newEntry);
 
-                    var text = Json.Serialize(ToSerializable(loader.LayoutInfo));
+                    var text = JsonSerializer.ToJsonString(ToSerializable(loader.LayoutInfo));
                     var textBytes = System.Text.Encoding.UTF8.GetBytes(text);
                     zipStream.Write(textBytes, 0, textBytes.Length);
 
@@ -30,7 +30,7 @@ namespace AkyuiUnity.Loader
                     var newEntry = new ZipEntry(Path.Combine(loader.LayoutInfo.Name, "assets.json"));
                     zipStream.PutNextEntry(newEntry);
 
-                    var text = Json.Serialize(ToSerializable(loader.AssetsInfo));
+                    var text = JsonSerializer.ToJsonString(ToSerializable(loader.AssetsInfo));
                     var textBytes = System.Text.Encoding.UTF8.GetBytes(text);
                     zipStream.Write(textBytes, 0, textBytes.Length);
 

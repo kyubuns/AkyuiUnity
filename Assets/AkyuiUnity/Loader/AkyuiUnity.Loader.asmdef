@@ -1,7 +1,8 @@
 {
     "name": "AkyuiUnity.Loader",
     "references": [
-        "GUID:a439073e6c93d4a5bbdeebbe28645a3f"
+        "GUID:a439073e6c93d4a5bbdeebbe28645a3f",
+        "GUID:d6721b411d01d4164ab0f01182ab0dfe"
     ],
     "includePlatforms": [
         "Editor"

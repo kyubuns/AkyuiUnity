@@ -11,6 +11,7 @@ using AkyuiUnity.Loader;
 using AkyuiUnity.Loader.Internal;
 using UnityEngine;
 using UnityEditor;
+using Utf8Json;
 using Object = UnityEngine.Object;
 
 namespace AkyuiUnity.Editor
@@ -163,7 +164,7 @@ namespace AkyuiUnity.Editor
                         if (!settings.ReimportAsset && File.Exists(saveFullPath))
                         {
                             var import = AssetImporter.GetAtPath(savePath);
-                            var prevUserData = MiniJSON.Json.Deserialize(import.userData).JsonDictionary();
+                            var prevUserData = JsonSerializer.Deserialize<Dictionary<string, object>>(import.userData);
                             if (prevUserData["hash"].JsonLong() == asset.Hash)
                             {
                                 skipAssetNames.Add(asset.FileName);
@@ -267,7 +268,7 @@ namespace AkyuiUnity.Editor
             }
 
             foreach (var trigger in Triggers) trigger.OnUnityPreprocessAsset(assetImporter, Asset, ref userData);
-            assetImporter.userData = MiniJSON.Json.Serialize(userData);
+            assetImporter.userData = JsonSerializer.ToJsonString(userData);
         }
     }
 
@@ -316,7 +317,7 @@ namespace AkyuiUnity.Editor
         public Dictionary<string, object> LoadMeta(string name)
         {
             var importer = AssetImporter.GetAtPath(Path.Combine(_pathGetter.AssetOutputDirectoryPath, ConvertName(name)));
-            return MiniJSON.Json.Deserialize(importer.userData).JsonDictionary();
+            return JsonSerializer.Deserialize<Dictionary<string, object>>(importer.userData).JsonDictionary();
         }
     }
 

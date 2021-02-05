@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using AkyuiUnity.Editor.MiniJSON;
 using AkyuiUnity.Loader.Internal;
 using ICSharpCode.SharpZipLib.Zip;
 using UnityEngine;
+using Utf8Json;
 
 namespace AkyuiUnity.Loader
 {
@@ -102,7 +102,7 @@ namespace AkyuiUnity.Loader
             using (var reader = new StreamReader(stream))
             {
                 var jsonString = reader.ReadToEnd();
-                var json = (Dictionary<string, object>) Json.Deserialize(jsonString);
+                var json = JsonSerializer.Deserialize<Dictionary<string, object>>(jsonString);
                 return json;
             }
         }
