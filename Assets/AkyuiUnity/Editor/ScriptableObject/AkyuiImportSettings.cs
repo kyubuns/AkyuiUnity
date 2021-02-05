@@ -24,11 +24,11 @@ namespace AkyuiUnity.Editor.ScriptableObject
         public float SpriteSaveScale => spriteSaveScale;
         [SerializeField] private float spriteSaveScale = 1.0f;
 
-        public bool ReimportAsset => reimportAsset;
-        [SerializeField] private bool reimportAsset = false;
-
         public bool ReimportLayout => reimportLayout;
         [SerializeField] private bool reimportLayout = false;
+
+        public bool ReimportAsset => reimportAsset;
+        [SerializeField] private bool reimportAsset = false;
     }
 
     public interface IAkyuiImportSettings
