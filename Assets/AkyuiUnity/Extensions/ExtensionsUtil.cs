@@ -7,7 +7,13 @@ namespace AkyuiUnity
         public static string GetGameObjectPath(GameObject gameObject)
         {
             if (gameObject == null) return "";
-            return $"{GetGameObjectPath(gameObject.transform.parent.gameObject)}/{gameObject.name}";
+            return GetGameObjectPath(gameObject.transform);
+        }
+
+        public static string GetGameObjectPath(Transform transform)
+        {
+            if (transform == null) return "";
+            return $"{GetGameObjectPath(transform.parent)}/{transform.name}";
         }
     }
 }
