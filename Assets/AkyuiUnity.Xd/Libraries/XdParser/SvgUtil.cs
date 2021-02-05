@@ -113,9 +113,7 @@ namespace XdParser
             float? shapeR = null;
             if (shape.R != null)
             {
-                if (shape.R is Newtonsoft.Json.Linq.JValue jValue) shapeR = (float) jValue;
-                else if (shape.R is Newtonsoft.Json.Linq.JArray jArray) shapeR = (float) jArray[0];
-                else if (shape.R is long l) shapeR = l;
+                if (shape.R is List<object> list) shapeR = (float) (double) list[0];
                 else if (shape.R is double d) shapeR = (float) d;
                 else throw new NotSupportedException($"Unknown shape.r type {shape.R.GetType()}");
             }

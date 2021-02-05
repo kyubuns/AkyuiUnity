@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using AkyuiUnity.Loader;
 using JetBrains.Annotations;
-using Newtonsoft.Json;
 using UnityEngine;
+using Utf8Json;
 using XdParser;
 using XdParser.Internal;
 
@@ -73,7 +73,7 @@ namespace AkyuiUnity.Xd
                 renderer.Root,
                 renderer.Elements.ToArray()
             );
-            var hash = FastHash.CalculateHash(JsonConvert.SerializeObject(AkyuiCompressor.ToSerializable(layoutInfoForCalcHash)));
+            var hash = FastHash.CalculateHash(JsonSerializer.Serialize(AkyuiCompressor.ToSerializable(layoutInfoForCalcHash)));
 
             var layoutInfo = new LayoutInfo(
                 name,

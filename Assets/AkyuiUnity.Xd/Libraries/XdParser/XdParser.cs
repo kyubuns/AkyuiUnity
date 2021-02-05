@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.Serialization;
 using ICSharpCode.SharpZipLib.Zip;
+using Utf8Json;
 using XdParser.Internal;
-using Newtonsoft.Json;
 
 namespace XdParser
 {
@@ -17,15 +18,15 @@ namespace XdParser
         {
             _zipFile = new ZipFile(xdFilePath);
             var manifestJsonString = _zipFile.ReadString("manifest");
-            var xdManifestJson = JsonConvert.DeserializeObject<XdManifestJson>(manifestJsonString);
+            var xdManifestJson = JsonSerializer.Deserialize<XdManifestJson>(manifestJsonString);
 
             var artworks = new List<XdArtboard>();
             foreach (var xdManifestArtwork in xdManifestJson.Children.Single(x => x.Path == "artwork").Children)
             {
                 var artworkJsonString = _zipFile.ReadString($"artwork/{xdManifestArtwork.Path}/graphics/graphicContent.agc");
-                var artworkJson = JsonConvert.DeserializeObject<XdArtboardJson>(artworkJsonString);
+                var artworkJson = JsonSerializer.Deserialize<XdArtboardJson>(artworkJsonString);
                 var resourcesJsonString = _zipFile.ReadString(artworkJson.Resources.Href.TrimStart('/'));
-                var resourceJson = JsonConvert.DeserializeObject<XdResourcesJson>(resourcesJsonString);
+                var resourceJson = JsonSerializer.Deserialize<XdResourcesJson>(resourcesJsonString);
                 artworks.Add(new XdArtboard(xdManifestArtwork, artworkJson, resourceJson));
             }
             Artworks = artworks.ToArray();
@@ -92,667 +93,667 @@ namespace XdParser.Internal
 
     public class XdColorJson
     {
-        [JsonProperty("mode")]
+        [DataMember(Name = "mode")]
         public string Mode { get; set; }
 
-        [JsonProperty("value")]
+        [DataMember(Name = "value")]
         public XdColorValueJson Value { get; set; }
 
-        [JsonProperty("alpha")]
+        [DataMember(Name = "alpha")]
         public float? Alpha { get; set; }
     }
 
     public class XdColorValueJson
     {
-        [JsonProperty("r")]
+        [DataMember(Name = "r")]
         public int R { get; set; }
 
-        [JsonProperty("g")]
+        [DataMember(Name = "g")]
         public int G { get; set; }
 
-        [JsonProperty("b")]
+        [DataMember(Name = "b")]
         public int B { get; set; }
     }
 
     public class XdTransformJson
     {
-        [JsonProperty("a")]
+        [DataMember(Name = "a")]
         public float A { get; set; }
 
-        [JsonProperty("b")]
+        [DataMember(Name = "b")]
         public float B { get; set; }
 
-        [JsonProperty("c")]
+        [DataMember(Name = "c")]
         public float C { get; set; }
 
-        [JsonProperty("d")]
+        [DataMember(Name = "d")]
         public float D { get; set; }
 
-        [JsonProperty("tx")]
+        [DataMember(Name = "tx")]
         public float Tx { get; set; }
 
-        [JsonProperty("ty")]
+        [DataMember(Name = "ty")]
         public float Ty { get; set; }
     }
 
     public class XdSizeJson
     {
-        [JsonProperty("width")]
+        [DataMember(Name = "width")]
         public float Width { get; set; }
 
-        [JsonProperty("height")]
+        [DataMember(Name = "height")]
         public float Height { get; set; }
     }
 
     public class XdStyleJson
     {
-        [JsonProperty("fill")]
+        [DataMember(Name = "fill")]
         public XdStyleFillJson Fill { get; set; }
 
-        [JsonProperty("stroke")]
+        [DataMember(Name = "stroke")]
         public XdStyleStrokeJson Stroke { get; set; }
 
-        [JsonProperty("font")]
+        [DataMember(Name = "font")]
         public XdStyleFontJson Font { get; set; }
 
-        [JsonProperty("textAttributes")]
+        [DataMember(Name = "textAttributes")]
         public XdStyleTextAttributesJson TextAttributes { get; set; }
 
-        [JsonProperty("opacity")]
+        [DataMember(Name = "opacity")]
         public float? Opacity { get; set; }
 
-        [JsonProperty("isolation")]
+        [DataMember(Name = "isolation")]
         public string Isolation { get; set; }
     }
 
     public class XdStyleFillJson
     {
-        [JsonProperty("type")]
+        [DataMember(Name = "type")]
         public string Type { get; set; }
 
-        [JsonProperty("color")]
+        [DataMember(Name = "color")]
         public XdColorJson Color { get; set; }
 
-        [JsonProperty("pattern")]
+        [DataMember(Name = "pattern")]
         public XdStyleFillPatternJson Pattern { get; set; }
     }
 
     public class XdStyleStrokeJson
     {
-        [JsonProperty("type")]
+        [DataMember(Name = "type")]
         public string Type { get; set; }
 
-        [JsonProperty("color")]
+        [DataMember(Name = "color")]
         public XdColorJson Color { get; set; }
 
-        [JsonProperty("width")]
+        [DataMember(Name = "width")]
         public float Width { get; set; }
 
-        [JsonProperty("align")]
+        [DataMember(Name = "align")]
         public string Align { get; set; }
 
-        [JsonProperty("cap")]
+        [DataMember(Name = "cap")]
         public string Cap { get; set; }
 
-        [JsonProperty("join")]
+        [DataMember(Name = "join")]
         public string Join { get; set; }
 
-        [JsonProperty("miterLimit")]
+        [DataMember(Name = "miterLimit")]
         public float? MiterLimit { get; set; }
 
-        [JsonProperty("dash")]
+        [DataMember(Name = "dash")]
         public float[] Dash { get; set; }
     }
 
     public class XdStyleFontJson
     {
-        [JsonProperty("family")]
+        [DataMember(Name = "family")]
         public string Family { get; set; }
 
-        [JsonProperty("postscriptName")]
+        [DataMember(Name = "postscriptName")]
         public string PostscriptName { get; set; }
 
-        [JsonProperty("size")]
+        [DataMember(Name = "size")]
         public float Size { get; set; }
 
-        [JsonProperty("style")]
+        [DataMember(Name = "style")]
         public string Style { get; set; }
     }
 
     public class XdStyleTextAttributesJson
     {
-        [JsonProperty("paragraphAlign")]
+        [DataMember(Name = "paragraphAlign")]
         public string ParagraphAlign { get; set; } // default = left
 
-        [JsonProperty("lineHeight")]
+        [DataMember(Name = "lineHeight")]
         public float? LineHeight { get; set; }
     }
 
     public class XdStyleFillPatternJson
     {
-        [JsonProperty("width")]
+        [DataMember(Name = "width")]
         public float Width { get; set; }
 
-        [JsonProperty("height")]
+        [DataMember(Name = "height")]
         public float Height { get; set; }
 
-        [JsonProperty("meta")]
+        [DataMember(Name = "meta")]
         public XdStyleFillPatternMetaJson Meta { get; set; }
 
-        [JsonProperty("href")]
+        [DataMember(Name = "href")]
         public string Href { get; set; }
     }
 
     public class XdStyleFillPatternMetaJson
     {
-        [JsonProperty("ux")]
+        [DataMember(Name = "ux")]
         public XdStyleFillPatternMetaUxJson Ux { get; set; }
     }
 
     public class XdStyleFillPatternMetaUxJson
     {
-        [JsonProperty("scaleBehavior")]
+        [DataMember(Name = "scaleBehavior")]
         public string ScaleBehavior { get; set; }
 
-        [JsonProperty("uid")]
+        [DataMember(Name = "uid")]
         public string Uid { get; set; }
 
-        [JsonProperty("hrefLastModifiedDate")]
+        [DataMember(Name = "hrefLastModifiedDate")]
         public uint HrefLastModifiedDate { get; set; }
 
-        [JsonProperty("flipX")]
+        [DataMember(Name = "flipX")]
         public bool FlipX { get; set; }
 
-        [JsonProperty("flipY")]
+        [DataMember(Name = "flipY")]
         public bool FlipY { get; set; }
 
-        [JsonProperty("offsetX")]
+        [DataMember(Name = "offsetX")]
         public float OffsetX { get; set; }
 
-        [JsonProperty("offsetY")]
+        [DataMember(Name = "offsetY")]
         public float OffsetY { get; set; }
 
-        [JsonProperty("scale")]
+        [DataMember(Name = "scale")]
         public float? Scale { get; set; }
     }
 
     public class XdShapeJson
     {
-        [JsonProperty("type")]
+        [DataMember(Name = "type")]
         public string Type { get; set; }
 
-        [JsonProperty("x")]
+        [DataMember(Name = "x")]
         public float X { get; set; }
 
-        [JsonProperty("y")]
+        [DataMember(Name = "y")]
         public float Y { get; set; }
 
-        [JsonProperty("width")]
+        [DataMember(Name = "width")]
         public float Width { get; set; }
 
-        [JsonProperty("height")]
+        [DataMember(Name = "height")]
         public float Height { get; set; }
 
-        [JsonProperty("path")]
+        [DataMember(Name = "path")]
         public string Path { get; set; }
 
-        [JsonProperty("winding")]
+        [DataMember(Name = "winding")]
         public string Winding { get; set; }
 
-        [JsonProperty("cx")]
+        [DataMember(Name = "cx")]
         public float Cx { get; set; }
 
-        [JsonProperty("cy")]
+        [DataMember(Name = "cy")]
         public float Cy { get; set; }
 
-        [JsonProperty("rx")]
+        [DataMember(Name = "rx")]
         public float Rx { get; set; }
 
-        [JsonProperty("ry")]
+        [DataMember(Name = "ry")]
         public float Ry { get; set; }
 
-        [JsonProperty("x1")]
+        [DataMember(Name = "x1")]
         public float X1 { get; set; }
 
-        [JsonProperty("y1")]
+        [DataMember(Name = "y1")]
         public float Y1 { get; set; }
 
-        [JsonProperty("x2")]
+        [DataMember(Name = "x2")]
         public float X2 { get; set; }
 
-        [JsonProperty("y2")]
+        [DataMember(Name = "y2")]
         public float Y2 { get; set; }
 
-        [JsonProperty("R")]
-        public object R { get; set; }
+        [DataMember(Name = "r")]
+        public dynamic R { get; set; }
 
-        [JsonProperty("operation")]
+        [DataMember(Name = "operation")]
         public string Operation { get; set; }
     }
 
     public class XdTextJson
     {
-        [JsonProperty("frame")]
+        [DataMember(Name = "frame")]
         public XdTextFrameJson Frame { get; set; }
 
-        [JsonProperty("paragraphs")]
+        [DataMember(Name = "paragraphs")]
         public XdTextParagraphJson[] Paragraphs { get; set; }
 
-        [JsonProperty("rawText")]
+        [DataMember(Name = "rawText")]
         public string RawText { get; set; }
     }
 
     public class XdTextFrameJson
     {
-        [JsonProperty("type")]
+        [DataMember(Name = "type")]
         public string Type { get; set; }
 
-        [JsonProperty("width")]
+        [DataMember(Name = "width")]
         public float Width { get; set; }
 
-        [JsonProperty("height")]
+        [DataMember(Name = "height")]
         public float Height { get; set; }
     }
 
     public class XdTextParagraphJson
     {
-        [JsonProperty("lines")]
+        [DataMember(Name = "lines")]
         public XdTextParagraphLineJson[][] Lines { get; set; }
     }
 
     public class XdTextParagraphLineJson
     {
-        [JsonProperty("from")]
+        [DataMember(Name = "from")]
         public float From { get; set; }
 
-        [JsonProperty("to")]
+        [DataMember(Name = "to")]
         public float To { get; set; }
 
-        [JsonProperty("x")]
+        [DataMember(Name = "x")]
         public float X { get; set; }
 
-        [JsonProperty("y")]
+        [DataMember(Name = "y")]
         public float Y { get; set; }
     }
 
     public class XdManifestJson
     {
-        [JsonProperty("id")]
+        [DataMember(Name = "id")]
         public string Id { get; set; }
 
-        [JsonProperty("type")]
+        [DataMember(Name = "type")]
         public string Type { get; set; }
 
-        [JsonProperty("name")]
+        [DataMember(Name = "name")]
         public string Name { get; set; }
 
-        [JsonProperty("manifest-format-version")]
-        public string ManifestFormatVersion { get; set; }
+        [DataMember(Name = "manifest-format-version")]
+        public int ManifestFormatVersion { get; set; }
 
-        [JsonProperty("state")]
+        [DataMember(Name = "state")]
         public string State { get; set; }
 
-        [JsonProperty("components")]
+        [DataMember(Name = "components")]
         public XdManifestComponentJson[] Components { get; set; }
 
-        [JsonProperty("children")]
+        [DataMember(Name = "children")]
         public XdManifestChildJson[] Children { get; set; }
     }
 
     public class XdManifestComponentJson
     {
-        [JsonProperty("id")]
+        [DataMember(Name = "id")]
         public string Id { get; set; }
 
-        [JsonProperty("name")]
+        [DataMember(Name = "name")]
         public string Name { get; set; }
 
-        [JsonProperty("path")]
+        [DataMember(Name = "path")]
         public string Path { get; set; }
 
-        [JsonProperty("type")]
+        [DataMember(Name = "type")]
         public string Type { get; set; }
 
-        [JsonProperty("state")]
+        [DataMember(Name = "state")]
         public string State { get; set; }
 
-        [JsonProperty("rel")]
+        [DataMember(Name = "rel")]
         public string Rel { get; set; }
 
-        [JsonProperty("width")]
+        [DataMember(Name = "width")]
         public float Width { get; set; }
 
-        [JsonProperty("height")]
+        [DataMember(Name = "height")]
         public float Height { get; set; }
     }
 
     public class XdManifestChildJson
     {
-        [JsonProperty("id")]
+        [DataMember(Name = "id")]
         public string Id { get; set; }
 
-        [JsonProperty("name")]
+        [DataMember(Name = "name")]
         public string Name { get; set; }
 
-        [JsonProperty("path")]
+        [DataMember(Name = "path")]
         public string Path { get; set; }
 
-        [JsonProperty("children")]
+        [DataMember(Name = "children")]
         public XdManifestChildJson[] Children { get; set; }
 
-        [JsonProperty("components")]
+        [DataMember(Name = "components")]
         public XdManifestComponentJson[] Components { get; set; }
     }
 
     public class XdObjectJson
     {
-        [JsonProperty("type")]
+        [DataMember(Name = "type")]
         public string Type { get; set; }
 
-        [JsonProperty("name")]
+        [DataMember(Name = "name")]
         public string Name { get; set; }
 
-        [JsonProperty("id")]
+        [DataMember(Name = "id")]
         public string Id { get; set; }
 
-        [JsonProperty("meta")]
+        [DataMember(Name = "meta")]
         public XdObjectMetaJson Meta { get; set; }
 
-        [JsonProperty("transform")]
+        [DataMember(Name = "transform")]
         public XdTransformJson Transform { get; set; }
 
-        [JsonProperty("group")]
+        [DataMember(Name = "group")]
         public XdObjectGroupJson Group { get; set; }
 
-        [JsonProperty("style")]
+        [DataMember(Name = "style")]
         public XdStyleJson Style { get; set; }
 
-        [JsonProperty("shape")]
+        [DataMember(Name = "shape")]
         public XdShapeJson Shape { get; set; }
 
-        [JsonProperty("text")]
+        [DataMember(Name = "text")]
         public XdTextJson Text { get; set; }
 
-        [JsonProperty("guid")]
+        [DataMember(Name = "guid")]
         public string Guid { get; set; }
 
-        [JsonProperty("syncSourceGuid")]
+        [DataMember(Name = "syncSourceGuid")]
         public string SyncSourceGuid { get; set; }
 
-        [JsonProperty("visible")]
+        [DataMember(Name = "visible")]
         public bool? Visible { get; set; }
 
-        [JsonProperty("markedForExport")]
+        [DataMember(Name = "markedForExport")]
         public bool? MarkedForExport { get; set; }
     }
 
     public class XdArtboardJson
     {
-        [JsonProperty("version")]
+        [DataMember(Name = "version")]
         public string Version { get; set; }
 
-        [JsonProperty("children")]
+        [DataMember(Name = "children")]
         public XdArtboardChildJson[] Children { get; set; }
 
-        [JsonProperty("resources")]
+        [DataMember(Name = "resources")]
         public XdArtboardResourcesJson Resources { get; set; }
 
-        [JsonProperty("artboards")]
+        [DataMember(Name = "artboards")]
         public XdArtboardArtboardsJson Artboards { get; set; }
     }
 
     public class XdArtboardChildJson
     {
-        [JsonProperty("type")]
+        [DataMember(Name = "type")]
         public string Type { get; set; }
 
-        [JsonProperty("id")]
+        [DataMember(Name = "id")]
         public string Id { get; set; }
 
-        [JsonProperty("meta")]
+        [DataMember(Name = "meta")]
         public XdObjectMetaJson Meta { get; set; }
 
-        [JsonProperty("style")]
+        [DataMember(Name = "style")]
         public XdStyleJson Style { get; set; }
 
-        [JsonProperty("artboard")]
+        [DataMember(Name = "artboard")]
         public XdArtboardChildArtboardJson Artboard { get; set; }
     }
 
     public class XdArtboardChildArtboardJson
     {
-        [JsonProperty("children")]
+        [DataMember(Name = "children")]
         public XdObjectJson[] Children { get; set; }
 
-        [JsonProperty("meta")]
+        [DataMember(Name = "meta")]
         public XdObjectMetaJson Meta { get; set; }
 
-        [JsonProperty("ref")]
+        [DataMember(Name = "ref")]
         public string Ref { get; set; }
     }
 
     public class XdObjectMetaJson
     {
-        [JsonProperty("ux")]
+        [DataMember(Name = "ux")]
         public XdObjectMetaUxJson Ux { get; set; }
     }
 
     public class XdObjectMetaUxJson
     {
-        [JsonProperty("nameL10N")]
+        [DataMember(Name = "nameL10N")]
         public string NameL10N { get; set; }
 
-        [JsonProperty("symbolId")]
+        [DataMember(Name = "symbolId")]
         public string SymbolId { get; set; }
 
-        [JsonProperty("width")]
+        [DataMember(Name = "width")]
         public float Width { get; set; }
 
-        [JsonProperty("height")]
+        [DataMember(Name = "height")]
         public float Height { get; set; }
 
-        [JsonProperty("componentType")]
+        [DataMember(Name = "componentType")]
         public string ComponentType { get; set; }
 
-        [JsonProperty("isMaster")]
+        [DataMember(Name = "isMaster")]
         public bool IsMaster { get; set; }
 
-        [JsonProperty("syncMap")]
+        [DataMember(Name = "syncMap")]
         public Dictionary<string, string> SyncMap { get; set; }
 
-        [JsonProperty("hasCustomName")]
-        public string HasCustomName { get; set; }
+        [DataMember(Name = "hasCustomName")]
+        public bool HasCustomName { get; set; }
 
-        [JsonProperty("aspectLock")]
+        [DataMember(Name = "aspectLock")]
         public XdSizeJson AspectLock { get; set; }
 
-        [JsonProperty("customConstraints")]
+        [DataMember(Name = "customConstraints")]
         public bool CustomConstraints { get; set; }
 
-        [JsonProperty("constraintWidth")]
+        [DataMember(Name = "constraintWidth")]
         public bool ConstraintWidth { get; set; }
 
-        [JsonProperty("constraintHeight")]
+        [DataMember(Name = "constraintHeight")]
         public bool ConstraintHeight { get; set; }
 
-        [JsonProperty("constraintRight")]
+        [DataMember(Name = "constraintRight")]
         public bool ConstraintRight { get; set; }
 
-        [JsonProperty("constraintLeft")]
+        [DataMember(Name = "constraintLeft")]
         public bool ConstraintLeft { get; set; }
 
-        [JsonProperty("constraintTop")]
+        [DataMember(Name = "constraintTop")]
         public bool ConstraintTop { get; set; }
 
-        [JsonProperty("constraintBottom")]
+        [DataMember(Name = "constraintBottom")]
         public bool ConstraintBottom { get; set; }
 
-        [JsonProperty("localTransform")]
+        [DataMember(Name = "localTransform")]
         public XdTransformJson LocalTransform { get; set; }
 
-        [JsonProperty("modTime")]
+        [DataMember(Name = "modTime")]
         public ulong ModTime { get; set; }
 
-        [JsonProperty("stateId")]
+        [DataMember(Name = "stateId")]
         public string StateId { get; set; }
 
-        [JsonProperty("states")]
+        [DataMember(Name = "states")]
         public XdObjectJson[] States { get; set; }
 
-        [JsonProperty("interactions")]
+        [DataMember(Name = "interactions")]
         public XdInteractionJson[] Interactions { get; set; }
 
-        [JsonProperty("repeatGrid")]
+        [DataMember(Name = "repeatGrid")]
         public XdRepeatGridJson RepeatGrid { get; set; }
 
-        [JsonProperty("scrollingType")]
+        [DataMember(Name = "scrollingType")]
         public string ScrollingType { get; set; }
 
-        [JsonProperty("viewportWidth")]
+        [DataMember(Name = "viewportWidth")]
         public float ViewportWidth { get; set; }
 
-        [JsonProperty("viewportHeight")]
+        [DataMember(Name = "viewportHeight")]
         public float ViewportHeight { get; set; }
 
-        [JsonProperty("offsetX")]
+        [DataMember(Name = "offsetX")]
         public float OffsetX { get; set; }
 
-        [JsonProperty("offsetY")]
+        [DataMember(Name = "offsetY")]
         public float OffsetY { get; set; }
 
-        [JsonProperty("markedForExport")]
+        [DataMember(Name = "markedForExport")]
         public bool MarkedForExport { get; set; }
 
-        [JsonProperty("clipPathResources")]
+        [DataMember(Name = "clipPathResources")]
         public XdClipPathResourcesJson ClipPathResources { get; set; }
 
-        [JsonProperty("rotation")]
+        [DataMember(Name = "rotation")]
         public float Rotation { get; set; }
     }
 
     public class XdClipPathResourcesJson
     {
-        [JsonProperty("type")]
+        [DataMember(Name = "type")]
         public string Type { get; set; }
 
-        [JsonProperty("children")]
+        [DataMember(Name = "children")]
         public XdObjectJson[] Children { get; set; }
     }
 
     public class XdRepeatGridJson
     {
-        [JsonProperty("cellWidth")]
+        [DataMember(Name = "cellWidth")]
         public float? CellWidth { get; set; }
 
-        [JsonProperty("cellHeight")]
+        [DataMember(Name = "cellHeight")]
         public float? CellHeight { get; set; }
 
-        [JsonProperty("width")]
+        [DataMember(Name = "width")]
         public float Width { get; set; }
 
-        [JsonProperty("height")]
+        [DataMember(Name = "height")]
         public float Height { get; set; }
 
-        [JsonProperty("paddingX")]
+        [DataMember(Name = "paddingX")]
         public float PaddingX { get; set; }
 
-        [JsonProperty("paddingY")]
+        [DataMember(Name = "paddingY")]
         public float PaddingY { get; set; }
 
-        [JsonProperty("columns")]
+        [DataMember(Name = "columns")]
         public int Columns { get; set; }
 
-        [JsonProperty("rows")]
+        [DataMember(Name = "rows")]
         public int Rows { get; set; }
     }
 
     public class XdInteractionJson
     {
-        [JsonProperty("data")]
+        [DataMember(Name = "data")]
         public XdInteractionDataJson Data { get; set; }
 
-        [JsonProperty("enabled")]
+        [DataMember(Name = "enabled")]
         public bool Enabled { get; set; }
 
-        [JsonProperty("guid")]
+        [DataMember(Name = "guid")]
         public string Guid { get; set; }
 
-        [JsonProperty("inherited")]
+        [DataMember(Name = "inherited")]
         public bool Inherited { get; set; }
 
-        [JsonProperty("valid")]
+        [DataMember(Name = "valid")]
         public bool Valid { get; set; }
     }
 
     public class XdInteractionDataJson
     {
-        [JsonProperty("interaction")]
+        [DataMember(Name = "interaction")]
         public XdInteractionDataInteractionJson Interaction { get; set; }
 
-        [JsonProperty("version")]
+        [DataMember(Name = "version")]
         public string Version { get; set; }
     }
 
     public class XdInteractionDataInteractionJson
     {
-        [JsonProperty("action")]
+        [DataMember(Name = "action")]
         public string Action { get; set; }
 
-        [JsonProperty("properties")]
+        [DataMember(Name = "properties")]
         public XdInteractionDataInteractionPropertiesJson Properties { get; set; }
 
-        [JsonProperty("triggerEvent")]
+        [DataMember(Name = "triggerEvent")]
         public string TriggerEvent { get; set; }
     }
 
     public class XdInteractionDataInteractionPropertiesJson
     {
-        [JsonProperty("destination")]
+        [DataMember(Name = "destination")]
         public string Destination { get; set; }
 
-        [JsonProperty("duration")]
+        [DataMember(Name = "duration")]
         public float Duration { get; set; }
 
-        [JsonProperty("easing")]
+        [DataMember(Name = "easing")]
         public string Easing { get; set; }
 
-        [JsonProperty("transition")]
+        [DataMember(Name = "transition")]
         public string Transition { get; set; }
 
-        [JsonProperty("voiceLocale")]
+        [DataMember(Name = "voiceLocale")]
         public string VoiceLocale { get; set; }
     }
 
     public class XdObjectGroupJson
     {
-        [JsonProperty("children")]
+        [DataMember(Name = "children")]
         public XdObjectJson[] Children { get; set; }
     }
 
     public class XdArtboardResourcesJson
     {
-        [JsonProperty("href")]
+        [DataMember(Name = "href")]
         public string Href { get; set; }
     }
 
     public class XdArtboardArtboardsJson
     {
-        [JsonProperty("href")]
+        [DataMember(Name = "href")]
         public string Href { get; set; }
     }
 
     public class XdResourcesJson
     {
-        [JsonProperty("version")]
+        [DataMember(Name = "version")]
         public string Version { get; set; }
 
-        [JsonProperty("children")]
+        [DataMember(Name = "children")]
         public XdResourcesChildJson[] Children { get; set; }
 
-        [JsonProperty("resources")]
+        [DataMember(Name = "resources")]
         public XdResourcesResourcesJson Resources { get; set; }
 
-        [JsonProperty("artboards")]
+        [DataMember(Name = "artboards")]
         public Dictionary<string, XdResourcesArtboardsJson> Artboards { get; set; }
     }
 
@@ -762,37 +763,37 @@ namespace XdParser.Internal
 
     public class XdResourcesResourcesJson
     {
-        [JsonProperty("meta")]
+        [DataMember(Name = "meta")]
         public XdResourcesResourcesMetaJson Meta { get; set; }
 
-        [JsonProperty("gradients")]
+        [DataMember(Name = "gradients")]
         public XdResourcesResourcesGradientsJson Gradients { get; set; }
 
-        [JsonProperty("clipPaths")]
+        [DataMember(Name = "clipPaths")]
         public XdResourcesResourcesClipPathsJson ClipPaths { get; set; }
     }
 
     public class XdResourcesResourcesMetaJson
     {
-        [JsonProperty("ux")]
+        [DataMember(Name = "ux")]
         public XdResourcesResourcesMetaUxJson Ux { get; set; }
     }
 
     public class XdResourcesResourcesMetaUxJson
     {
-        [JsonProperty("colorSwatches")]
+        [DataMember(Name = "colorSwatches")]
         public XdResourcesResourcesMetaUxColorSwatcheJson[] ColorSwatches { get; set; }
 
-        [JsonProperty("documentLibrary")]
+        [DataMember(Name = "documentLibrary")]
         public XdResourcesResourcesMetaUxDocumentLibraryJson DocumentLibrary { get; set; }
 
-        [JsonProperty("gridDefaults")]
+        [DataMember(Name = "gridDefaults")]
         public XdResourcesResourcesMetaUxGridDefaultsJson GridDefaults { get; set; }
 
-        [JsonProperty("symbols")]
+        [DataMember(Name = "symbols")]
         public XdObjectJson[] Symbols { get; set; }
 
-        [JsonProperty("symbolsMetadata")]
+        [DataMember(Name = "symbolsMetadata")]
         public XdResourcesResourcesMetaUxSymbolsMetadataJson SymbolsMetadata { get; set; }
     }
 
@@ -802,16 +803,16 @@ namespace XdParser.Internal
 
     public class XdResourcesResourcesMetaUxDocumentLibraryJson
     {
-        [JsonProperty("version")]
-        public string Version { get; set; }
+        [DataMember(Name = "version")]
+        public int Version { get; set; }
 
-        [JsonProperty("isStickerSheet")]
+        [DataMember(Name = "isStickerSheet")]
         public bool IsStickerSheet { get; set; }
 
-        [JsonProperty("hashedMetadata")]
+        [DataMember(Name = "hashedMetadata")]
         public XdResourcesResourcesMetaUxDocumentLibraryHashedMetadataJson HashedMetadata { get; set; }
 
-        [JsonProperty("elements")]
+        [DataMember(Name = "elements")]
         public XdResourcesResourcesMetaUxDocumentLibraryHashedElementJson[] Elements { get; set; }
     }
 
@@ -821,7 +822,7 @@ namespace XdParser.Internal
 
     public class XdResourcesResourcesMetaUxSymbolsMetadataJson
     {
-        [JsonProperty("usingNestedSymbolSyncing")]
+        [DataMember(Name = "usingNestedSymbolSyncing")]
         public bool UsingNestedSymbolSyncing { get; set; }
     }
 
@@ -843,22 +844,22 @@ namespace XdParser.Internal
 
     public class XdResourcesArtboardsJson
     {
-        [JsonProperty("name")]
+        [DataMember(Name = "name")]
         public string Name { get; set; }
 
-        [JsonProperty("x")]
+        [DataMember(Name = "x")]
         public float X { get; set; }
 
-        [JsonProperty("y")]
+        [DataMember(Name = "y")]
         public float Y { get; set; }
 
-        [JsonProperty("width")]
+        [DataMember(Name = "width")]
         public float Width { get; set; }
 
-        [JsonProperty("height")]
+        [DataMember(Name = "height")]
         public float Height { get; set; }
 
-        [JsonProperty("viewportHeight")]
+        [DataMember(Name = "viewportHeight")]
         public float ViewportHeight { get; set; }
     }
 }

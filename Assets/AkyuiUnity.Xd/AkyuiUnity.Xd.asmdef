@@ -5,7 +5,8 @@
         "GUID:451eedbbaf53848bab9ac1df6b41e4cb",
         "GUID:7b86636ae54bf4d0a9e4e5fbb7d99c3f",
         "GUID:68550284b645f4b9894995579f34290a",
-        "GUID:720d33f97ce5b450cbb9c9941462dee9"
+        "GUID:720d33f97ce5b450cbb9c9941462dee9",
+        "GUID:d6721b411d01d4164ab0f01182ab0dfe"
     ],
     "includePlatforms": [
         "Editor"
@@ -14,7 +15,6 @@
     "allowUnsafeCode": false,
     "overrideReferences": true,
     "precompiledReferences": [
-        "Newtonsoft.Json.dll",
         "ICSharpCode.SharpZipLib.dll"
     ],
     "autoReferenced": true,

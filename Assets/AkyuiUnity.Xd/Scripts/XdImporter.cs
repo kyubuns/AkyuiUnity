@@ -1,12 +1,13 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using AkyuiUnity.Editor;
 using AkyuiUnity.Editor.Extensions;
 using AkyuiUnity.Loader;
-using Newtonsoft.Json;
 using UnityEditor;
 using UnityEngine;
+using Utf8Json;
 using XdParser;
 
 namespace AkyuiUnity.Xd
@@ -87,7 +88,7 @@ namespace AkyuiUnity.Xd
                     var triggers = xdSettings.XdTriggers ?? new AkyuiXdImportTrigger[] { };
 
                     var name = artwork.Name;
-                    var xdHash = FastHash.CalculateHash(JsonConvert.SerializeObject(artwork.Artboard) + JsonConvert.SerializeObject(artwork.Resources));
+                    var xdHash = FastHash.CalculateHash(JsonSerializer.Serialize(artwork.Artboard).Concat(JsonSerializer.Serialize(artwork.Resources)));
                     var userData = new Dictionary<string, string>
                     {
                         { "xd_hash", xdHash.ToString() }
