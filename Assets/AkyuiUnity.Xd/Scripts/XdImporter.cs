@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using AkyuiUnity.Editor;
 using AkyuiUnity.Editor.Extensions;
@@ -62,6 +63,7 @@ namespace AkyuiUnity.Xd
         private static (int Imported, int Skipped) ImportedArtboards(XdImportSettings xdSettings, AkyuiLogger logger, string xdFilePath, IAkyuiProgress progress, List<IAkyuiLoader> loaders)
         {
             logger.Log($"Xd Import Start");
+            var stopWatch = Stopwatch.StartNew();
             var file = new XdFile(xdFilePath);
             var imported = 0;
             var skipped = 0;
@@ -108,7 +110,7 @@ namespace AkyuiUnity.Xd
                 }
             }
 
-            logger.Log($"Xd Import Finish", ("imported", imported), ("skipped", skipped));
+            logger.Log($"Xd Import Finish", ("imported", imported), ("skipped", skipped), ("time", $"{stopWatch.Elapsed.TotalSeconds:0.00}s"));
             return (imported, skipped);
         }
     }

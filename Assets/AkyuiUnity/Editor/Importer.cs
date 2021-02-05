@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using AkyuiUnity.Editor.Extensions;
@@ -70,6 +71,7 @@ namespace AkyuiUnity.Editor
 
         private static void Import(IAkyuiImportSettings settings, IAkyuiLoader akyuiLoader, AkyuiLogger logger, IAkyuiProgress progress)
         {
+            var stopWatch = Stopwatch.StartNew();
             CheckVersion(akyuiLoader);
 
             Settings = settings;
@@ -108,7 +110,7 @@ namespace AkyuiUnity.Editor
                 foreach (var trigger in settings.Triggers) trigger.OnPostprocessFile(akyuiLoader, pathGetter);
 
                 Object.DestroyImmediate(metaGameObject);
-                logger.Log($"Import Finish");
+                logger.Log($"Import Finish", ("time", $"{stopWatch.Elapsed.TotalSeconds:0.00}s"));
             }
         }
 
