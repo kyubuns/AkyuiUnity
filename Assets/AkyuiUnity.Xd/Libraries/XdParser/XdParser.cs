@@ -325,7 +325,7 @@ namespace XdParser.Internal
         public float Y2 { get; set; }
 
         [DataMember(Name = "r")]
-        public dynamic R { get; set; }
+        public object R { get; set; }
 
         [DataMember(Name = "operation")]
         public string Operation { get; set; }
