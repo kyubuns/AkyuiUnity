@@ -29,7 +29,7 @@ By combining the two, you can generate UnityPrefab from XD files without being a
 
 ## Features
 
-## Everything done on Unity
+### Everything done on Unity
 
 - There's no need to open Adobe XD to import XD files.
 - Since everything is done in Unity, it can be left to CI and others.
