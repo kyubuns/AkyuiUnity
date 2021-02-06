@@ -1,5 +1,5 @@
 {
-    "name": "AkyuiUnity.Xd.TextMeshProExtension",
+    "name": "AkyuiUnity.Xd.Extensions",
     "references": [
         "GUID:a439073e6c93d4a5bbdeebbe28645a3f",
         "GUID:09bd244455e48452aa7708448209f3ed",

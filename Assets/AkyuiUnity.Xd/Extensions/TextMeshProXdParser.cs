@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using XdParser.Internal;
 
-namespace AkyuiUnity.Xd.TextMeshProExtension
+namespace AkyuiUnity.Xd.Extensions
 {
     [CreateAssetMenu(menuName = "AkyuiXd/ObjectParsers/TextMeshProXdParser", fileName = nameof(TextMeshProXdParser))]
     public class TextMeshProXdParser : AkyuiXdObjectParser
