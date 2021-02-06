@@ -1,10 +1,12 @@
 {
-    "name": "AkyuiUnity.TextMeshProExtension",
+    "name": "AkyuiUnity.Extensions",
     "references": [
         "GUID:a439073e6c93d4a5bbdeebbe28645a3f",
         "GUID:451eedbbaf53848bab9ac1df6b41e4cb",
         "GUID:7b86636ae54bf4d0a9e4e5fbb7d99c3f",
-        "GUID:6055be8ebefd69e48b49212b09b47b2f"
+        "GUID:f48a88687021943959a850c81ac6e5b5",
+        "GUID:6055be8ebefd69e48b49212b09b47b2f",
+        "GUID:fffa68352b993439b8e78493c10bfc25"
     ],
     "includePlatforms": [
         "Editor"
@@ -17,9 +19,19 @@
     "defineConstraints": [],
     "versionDefines": [
         {
+            "name": "dev.kyubuns.ankuchen",
+            "expression": "",
+            "define": "AKYUIUNITY_ANKUCHEN_SUPPORT"
+        },
+        {
             "name": "com.unity.textmeshpro",
             "expression": "",
             "define": "AKYUIUNITY_TEXTMESHPRO_SUPPORT"
+        },
+        {
+            "name": "dev.kyubuns.auto9slicer",
+            "expression": "",
+            "define": "AKYUIUNITY_AUTO9SLICER_SUPPORT"
         }
     ],
     "noEngineReferences": false

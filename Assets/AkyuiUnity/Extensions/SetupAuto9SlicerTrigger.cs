@@ -6,7 +6,7 @@ using AkyuiUnity.Loader;
 using Auto9Slicer;
 using UnityEngine;
 
-namespace AkyuiUnity.AnKuchenExtension
+namespace AkyuiUnity.Extensions
 {
     [CreateAssetMenu(menuName = "Akyui/Triggers/SetupAuto9Slicer", fileName = nameof(SetupAuto9SlicerTrigger))]
     public class SetupAuto9SlicerTrigger : AkyuiImportTrigger

@@ -6,7 +6,7 @@ using AnKuchen.AdditionalInfo;
 using AnKuchen.Map;
 using UnityEngine;
 
-namespace AkyuiUnity.AnKuchenExtension
+namespace AkyuiUnity.Extensions
 {
     [CreateAssetMenu(menuName = "Akyui/Triggers/SetupAnKuchen", fileName = nameof(SetupAnKuchenTrigger))]
     public class SetupAnKuchenTrigger : AkyuiImportTrigger
