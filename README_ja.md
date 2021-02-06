@@ -86,4 +86,6 @@ https://www.buymeacoffee.com/kyubuns
 「このゲームにこのライブラリ使ったよ！」という報告を貰えるとめっちゃ喜びます！  
 メールやtwitterでお気軽にご連絡ください。  
 (MITライセンスのため、報告は義務ではありません。)  
+[メッセージフォーム](https://kyubuns.dev/message.html)
+
 https://kyubuns.dev/
