@@ -3,7 +3,6 @@
 ***Read this document in other languages: [English](https://github.com/kyubuns/AkyuiUnity/blob/main/Manual/Manual_en.md)***
 
 ---
-
 ## 注意！
 
 **AkyuiUnityはまだPreview版のため、今後の更新により挙動が大きく変更される可能性があります。**  
@@ -11,7 +10,6 @@
 https://github.com/kyubuns/AkyuiUnity/discussions/8
 
 ---
-
 ## 使い方
 
 ### 初回セットアップ
@@ -51,7 +49,7 @@ https://github.com/kyubuns/AkyuiUnity/discussions/8
   - Unityさん、なんか良い感じに更新する方法準備してくださいお願いします。
 
 
-
+---
 ## 推奨する使い方
 
 ### Prefabの扱い
@@ -69,7 +67,7 @@ https://github.com/kyubuns/AkyuiUnity/discussions/8
   - 具体的な使い方
 
 
-
+---
 ## XD変換規則
 
 ### ネーミング
@@ -111,7 +109,7 @@ https://github.com/kyubuns/AkyuiUnity/discussions/8
 - 子供が全てベクターデータのとき、そのグループを1画像としてUnityにインポートする。
 
 
-
+---
 ## 未対応項目
 
 ### やりたい
@@ -150,7 +148,7 @@ https://github.com/kyubuns/AkyuiUnity/discussions/8
 - Unity上で汎用的に再現する方法が思いつかないのでやらない。
 
 
-
+---
 ## フィードバック
 
 ぜひフィードバックをお寄せください！
@@ -163,7 +161,7 @@ https://github.com/kyubuns/AkyuiUnity/discussions/8
 - [メッセージフォーム](https://kyubuns.dev/message.html)
 
 
-
+---
 ## 応援する
 
 フィードバックや、右上にあるStarボタンをポチッとお願いします！
