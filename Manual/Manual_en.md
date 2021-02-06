@@ -25,8 +25,8 @@ https://github.com/kyubuns/AkyuiUnity/discussions/8
 ### How to create an XD file
 
 - The Mark for Export flag in Artboard itself determines which Artboard will be exported.
-- Special rules are summarized in [here](https://github.com/kyubuns/AkyuiUnity/blob/main/Manual/Manual_ja.md#).
-- See [here](https://github.com/kyubuns/AkyuiUnity/blob/main/Manual/Manual_ja.md) for functions that cannot be used. for features that are not available.
+- Special rules are summarized in [here](https://github.com/kyubuns/AkyuiUnity/blob/main/Manual/Manual_en.md#xd-conversion-rules).
+- See [here](https://github.com/kyubuns/AkyuiUnity/blob/main/Manual/Manual_en.md#unsupported-item) for functions that cannot be used. for features that are not available.
 
 
 ### How to import
@@ -39,7 +39,7 @@ https://github.com/kyubuns/AkyuiUnity/discussions/8
 
 - This function allows you to customize how XD files are dropped into Prefab.
 - For example, you can set whether to use uGUI's Text or TextMeshPro for text, whether to create a SpriteAtlas, and if so, where to create it.
-- The list of triggers is [here](https://github.com/kyubuns/AkyuiUnity/blob/main/Manual/Manual_ja.md) for a list of triggers.
+- The list of triggers is [here](https://github.com/kyubuns/AkyuiUnity/blob/main/Manual/Manual_en.md#trigger-list) for a list of triggers.
 
 
 ### How to update
@@ -108,7 +108,7 @@ If you put @~ at the end of the object's name, you can get the following effect.
 
 
 ---
-## Unsupported item.
+## Unsupported item
 
 ## Want to do
 
@@ -157,7 +157,7 @@ ToDo
 
 Please send us your feedback!
 
-- [github issue](https://github.com/kyubuns/AkyuiUnity/issues) （BugReport only）
+- [github issue](https://github.com/kyubuns/AkyuiUnity/issues) (BugReport only)
 - [github discussion](https://github.com/kyubuns/AkyuiUnity/discussions)
 - twitter [HashTag #akyui](https://twitter.com/search?q=%23akyui) or reply to [@kyubuns](https://twitter.com/kyubuns)!
 - [MessageForm](https://kyubuns.dev/message.html)
