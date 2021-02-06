@@ -7,8 +7,8 @@ AkyuiUnity.Xdと合わせて使うことで、簡単に[Adobe XD](https://www.ad
 
 <a href="https://www.buymeacoffee.com/kyubuns" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/default-orange.png" alt="Buy Me A Coffee" height="41" width="174"></a>
 
-<img width="640" src="https://user-images.githubusercontent.com/961165/105800564-5d6f0c00-5fda-11eb-9a05-b42132ae66cd.jpg">
-<img width="640" src="https://user-images.githubusercontent.com/961165/105802939-a4133500-5fdf-11eb-851e-d068a53945d8.png">
+<img width="800" src="https://user-images.githubusercontent.com/961165/107123379-93689600-68e0-11eb-9cd0-41759afeb01b.png">  
+<img width="800" src="https://user-images.githubusercontent.com/961165/107123374-8e0b4b80-68e0-11eb-89b6-2549a58deaa2.png">
 
 ---
 
@@ -17,6 +17,37 @@ AkyuiUnity.Xdと合わせて使うことで、簡単に[Adobe XD](https://www.ad
 https://github.com/kyubuns/AkyuiUnity/discussions/8
 
 ---
+
+## AkyuiUnity / AkyuiUnity.Xdとは？
+
+そもそも、[Akyui](https://github.com/kyubuns/Akyui)とは[kyubuns](https://github.com/kyubuns)が作ったUI定義ファイルのフォーマットのことです。  
+AkyuiUnityは、AkyuiからUnityPrefabを生成することが出来、  
+AkyuiUnity.Xdは、XDファイルをAkyuiに変換することが出来ます。  
+この2つを組み合わせることで、Akyuiを意識することなく、XDファイルからUnityPrefabを生成することが出来ます。
+
+## 特徴
+
+### インポートがUnityのみで完結する
+
+- XDファイルをインポートするために、Adobe XDを開く必要はありません。
+- 全てがUnity上で完結するため、CIなどに任せることも出来ます。
+
+### XDファイルの更新に追従できる
+
+- デザイナーはずっとAdobe XD上でUI制作を続けることが出来ます。
+- 差分だけをインポートするので、2回目以降のインポート時間は短縮されます。
+
+### ランタイムに関与しない
+
+- AkyuiUnityが行うのは、あくまでPrefabを作るだけでランタイム時には一切コストはかかりません。
+
+### カスタマイズ性が高い
+
+- あなたのプロジェクトにあったPrefabを生成出来るように、簡単にトリガー(拡張スクリプト)を書くことが出来ます。
+  - 例えば、以下のようなことはパッケージに含まれているトリガーで実現出来ます。
+    - 素材を自動的に9SliceSpriteに変換し、テクスチャを節約する。
+    - uGUIのTextではなく、TextMeshProを使う。
+    - XDファイル上で特定の名前のオブジェクトはUnityに変換しない。
 
 ## ユーザーマニュアル
 

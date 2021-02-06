@@ -18,6 +18,37 @@ https://github.com/kyubuns/AkyuiUnity/discussions/8
 
 ---
 
+## What is AkyuiUnity / AkyuiUnity.Xd?
+
+[Akyui](https://github.com/kyubuns/Akyui) is a UI definition file format created by [kyubuns](https://github.com/kyubuns).  
+AkyuiUnity is able to generate UnityPrefab from Akyui, and  
+AkyuiUnity.Xd can convert XD files to Akyui.  
+By combining the two, you can generate UnityPrefab from XD files without being aware of Akyui.
+
+## Features
+
+## Everything done on Unity
+
+- There's no need to open Adobe XD to import XD files.
+- Since everything is done in Unity, it can be left to CI and others.
+
+### Follow XD file updates
+
+- Designers can continue to work on the UI in Adobe XD.
+- Since only the differences are imported, the import time is reduced after the second import.
+
+### No runtime effect
+
+- AkyuiUnity only creates the prefab, no cost at runtime.
+
+### Highly customizable
+
+- You can easily write your own triggers (extension scripts) to generate a Prefab that fits your project.
+  - For example, you can use the triggers included in the package to do the following
+    - Automatically convert materials to 9SliceSprite to reduce textures.
+    - Use TextMeshPro instead of uGUI's Text.
+    - Do not convert objects with specific names on XD files to Unity.
+
 ## Users' Manual
 
 ToDo
