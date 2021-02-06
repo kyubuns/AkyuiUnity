@@ -1,14 +1,11 @@
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using AkyuiUnity.Editor;
 using AkyuiUnity.Editor.Extensions;
 using AkyuiUnity.Loader;
 using UnityEditor;
 using UnityEngine;
-using Utf8Json;
 using XdParser;
 
 namespace AkyuiUnity.Xd
@@ -28,11 +25,10 @@ namespace AkyuiUnity.Xd
                 progressBar.SetTotal(xdFilePaths.Length);
                 foreach (var xdFilePath in xdFilePaths)
                 {
-                    var jsonCache = new Dictionary<string, object>();
                     using (var progress = progressBar.TaskStart(Path.GetFileName(xdFilePath)))
                     using (logger.SetCategory(Path.GetFileName(xdFilePath)))
                     {
-                        var (imported, skipped) = ImportedArtboards(xdSettings, logger, xdFilePath, progress, loaders, jsonCache);
+                        var (imported, skipped) = ImportedArtboards(xdSettings, logger, xdFilePath, progress, loaders);
                         if (imported == 0 && skipped == 0)
                         {
                             logger.Warning($"The artboard to be imported was not found. Please set Mark for Export.");
@@ -65,12 +61,11 @@ namespace AkyuiUnity.Xd
             }
         }
 
-        private static (int Imported, int Skipped) ImportedArtboards(XdImportSettings xdSettings, AkyuiLogger logger, string xdFilePath,
-            IAkyuiProgress progress, List<IAkyuiLoader> loaders, Dictionary<string, object> jsonCache)
+        private static (int Imported, int Skipped) ImportedArtboards(XdImportSettings xdSettings, AkyuiLogger logger, string xdFilePath, IAkyuiProgress progress, List<IAkyuiLoader> loaders)
         {
             logger.Log($"Xd Import Start");
             var stopWatch = Stopwatch.StartNew();
-            var file = new XdFile(xdFilePath, jsonCache);
+            var file = new XdFile(xdFilePath);
             var imported = 0;
             var skipped = 0;
 
@@ -88,12 +83,12 @@ namespace AkyuiUnity.Xd
             {
                 using (progress.TaskStart(artwork.Name))
                 {
+                    var name = artwork.Name;
+                    var xdHash = artwork.Hash;
                     var akyuiXdObjectParsers = xdSettings.ObjectParsers ?? new AkyuiXdObjectParser[] { };
                     var akyuiXdGroupParsers = xdSettings.GroupParsers ?? new AkyuiXdGroupParser[] { };
                     var triggers = xdSettings.XdTriggers ?? new AkyuiXdImportTrigger[] { };
 
-                    var name = artwork.Name;
-                    var xdHash = FastHash.CalculateHash(JsonSerializer.Serialize(artwork.Artboard).Concat(JsonSerializer.Serialize(artwork.Resources)));
                     var userData = new Dictionary<string, string>
                     {
                         { "xd_hash", xdHash.ToString() }

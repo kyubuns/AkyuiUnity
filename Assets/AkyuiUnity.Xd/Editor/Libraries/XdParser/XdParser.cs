@@ -7,6 +7,7 @@ using XdParser.Internal;
 using System.IO.Compression;
 using System.Text;
 using Akyui.Loader.Internal;
+using AkyuiUnity.Loader;
 
 namespace XdParser
 {
@@ -15,27 +16,31 @@ namespace XdParser
         private ZipArchive _zipFile;
         public XdArtboard[] Artworks { get; }
 
-        public XdFile(string xdFilePath, Dictionary<string, object> jsonCache)
+        public XdFile(string xdFilePath)
         {
             _zipFile = ZipFile.Open(xdFilePath, ZipArchiveMode.Read, Encoding.UTF8);
+            var jsonObjectCache = new Dictionary<string, object>();
+            var jsonTextCache = new Dictionary<string, string>();
             var manifestJsonString = _zipFile.ReadString("manifest");
             var xdManifestJson = JsonSerializer.Deserialize<XdManifestJson>(manifestJsonString);
 
             var artworks = new List<XdArtboard>();
             foreach (var xdManifestArtwork in xdManifestJson.Children.Single(x => x.Path == "artwork").Children)
             {
-                var artworkJsonString = _zipFile.ReadString($"artwork/{xdManifestArtwork.Path}/graphics/graphicContent.agc");
-                var artworkJson = JsonSerializer.Deserialize<XdArtboardJson>(artworkJsonString);
+                var artworkJsonFilePath = $"artwork/{xdManifestArtwork.Path}/graphics/graphicContent.agc";
+                if (!jsonTextCache.ContainsKey(artworkJsonFilePath)) jsonTextCache.Add(artworkJsonFilePath, _zipFile.ReadString(artworkJsonFilePath));
+                var artworkJsonString = jsonTextCache[artworkJsonFilePath];
+                if (!jsonObjectCache.ContainsKey(artworkJsonFilePath)) jsonObjectCache.Add(artworkJsonFilePath, JsonSerializer.Deserialize<XdArtboardJson>(artworkJsonString));
+                var artworkJson = (XdArtboardJson) jsonObjectCache[artworkJsonFilePath];
 
                 var resourceJsonFilePath = artworkJson.Resources.Href.TrimStart('/');
-                if (!jsonCache.ContainsKey(resourceJsonFilePath))
-                {
-                    var resourcesJsonString = _zipFile.ReadString(resourceJsonFilePath);
-                    jsonCache.Add(resourceJsonFilePath, JsonSerializer.Deserialize<XdResourcesJson>(resourcesJsonString));
-                }
+                if (!jsonTextCache.ContainsKey(resourceJsonFilePath)) jsonTextCache.Add(resourceJsonFilePath, _zipFile.ReadString(resourceJsonFilePath));
+                var resourcesJsonString = jsonTextCache[resourceJsonFilePath];
+                if (!jsonObjectCache.ContainsKey(resourceJsonFilePath)) jsonObjectCache.Add(resourceJsonFilePath, JsonSerializer.Deserialize<XdResourcesJson>(resourcesJsonString));
+                var resourceJson = (XdResourcesJson) jsonObjectCache[resourceJsonFilePath];
 
-                var resourceJson = (XdResourcesJson) jsonCache[resourceJsonFilePath];
-                artworks.Add(new XdArtboard(xdManifestArtwork, artworkJson, resourceJson));
+                var xdHash = FastHash.CalculateHash(artworkJsonString + resourcesJsonString);
+                artworks.Add(new XdArtboard(xdManifestArtwork, artworkJson, resourceJson, xdHash));
             }
             Artworks = artworks.ToArray();
         }
@@ -62,12 +67,14 @@ namespace XdParser
         public XdResourcesJson Resources { get; }
 
         public string Name => Manifest.Name;
+        public uint Hash { get; }
 
-        public XdArtboard(XdManifestChildJson manifest, XdArtboardJson artboard, XdResourcesJson resources)
+        public XdArtboard(XdManifestChildJson manifest, XdArtboardJson artboard, XdResourcesJson resources, uint hash)
         {
             Manifest = manifest;
             Artboard = artboard;
             Resources = resources;
+            Hash = hash;
         }
     }
 }
