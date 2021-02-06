@@ -124,6 +124,7 @@ namespace AkyuiUnity.Editor.ScriptableObject
                     if (GUILayout.Button(history))
                     {
                         onClick(history);
+                        Save(new[] { history });
                         break;
                     }
 
