@@ -152,8 +152,6 @@ https://github.com/kyubuns/AkyuiUnity/discussions/8
 ## フィードバック
 
 ぜひフィードバックをお寄せください！
-感想、質問などなど一言でも大歓迎です。
-パースに失敗する、レイアウトが崩れるXDファイルがあれば調査しますのでお送りください。
 
 - [githubのissue](https://github.com/kyubuns/AkyuiUnity/issues) （バグ報告のみ）
 - [githubのdiscussion](https://github.com/kyubuns/AkyuiUnity/discussions)
