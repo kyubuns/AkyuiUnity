@@ -50,6 +50,7 @@ namespace AkyuiUnity.Xd
         {
             if (!string.IsNullOrWhiteSpace(xdSettings.AkyuiOutputPath))
             {
+                var stopWatch = Stopwatch.StartNew();
                 foreach (var loader in loaders)
                 {
                     using (logger.SetCategory(loader.LayoutInfo.Name))
@@ -57,9 +58,10 @@ namespace AkyuiUnity.Xd
                         var bytes = AkyuiCompressor.Compress(loader);
                         var outputPath = Path.Combine(xdSettings.AkyuiOutputPath, loader.LayoutInfo.Name + ".aky");
                         File.WriteAllBytes(outputPath, bytes);
-                        logger.Log($"Export Akyui");
                     }
                 }
+                stopWatch.Stop();
+                logger.Log($"Export Akyui", ("time", $"{stopWatch.Elapsed.TotalSeconds:0.00}s"));
             }
         }
 
@@ -114,6 +116,7 @@ namespace AkyuiUnity.Xd
                 }
             }
 
+            stopWatch.Stop();
             logger.Log($"Xd Import Finish", ("imported", imported), ("skipped", skipped), ("time", $"{stopWatch.Elapsed.TotalSeconds:0.00}s"));
             return (imported, skipped);
         }

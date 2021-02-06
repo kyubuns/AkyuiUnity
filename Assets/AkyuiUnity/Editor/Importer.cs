@@ -111,8 +111,10 @@ namespace AkyuiUnity.Editor
                 foreach (var trigger in settings.Triggers) trigger.OnPostprocessFile(akyuiLoader, pathGetter);
 
                 Object.DestroyImmediate(metaGameObject);
-                logger.Log($"Import Finish", ("time", $"{stopWatch.Elapsed.TotalSeconds:0.00}s"));
             }
+
+            stopWatch.Stop();
+            logger.Log($"Import Finish", ("time", $"{stopWatch.Elapsed.TotalSeconds:0.00}s"));
         }
 
         private static void DeleteUnusedAssets(Object[] prevAssets, Object[] newAssets, AkyuiLogger logger)
