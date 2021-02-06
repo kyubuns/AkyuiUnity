@@ -1,10 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
-using ICSharpCode.SharpZipLib.Zip;
 using UnityEngine;
 using Utf8Json;
+using CompressionLevel = System.IO.Compression.CompressionLevel;
 
 namespace AkyuiUnity.Loader
 {
@@ -12,43 +13,41 @@ namespace AkyuiUnity.Loader
     {
         public static byte[] Compress(IAkyuiLoader loader)
         {
+            const CompressionLevel compressionLevel = CompressionLevel.Fastest;
             using (var memoryStream = new MemoryStream())
-            using (var zipStream = new ZipOutputStream(memoryStream))
             {
+                using (var zipArchive = new ZipArchive(memoryStream, ZipArchiveMode.Create))
                 {
-                    var newEntry = new ZipEntry(Path.Combine(loader.LayoutInfo.Name, "layout.json"));
-                    zipStream.PutNextEntry(newEntry);
+                    {
+                        var newEntry = zipArchive.CreateEntry(Path.Combine(loader.LayoutInfo.Name, "layout.json"), compressionLevel);
+                        using (var stream = new BinaryWriter(newEntry.Open()))
+                        {
+                            var text = JsonSerializer.ToJsonString(ToSerializable(loader.LayoutInfo));
+                            var textBytes = System.Text.Encoding.UTF8.GetBytes(text);
+                            stream.Write(textBytes, 0, textBytes.Length);
+                        }
+                    }
 
-                    var text = JsonSerializer.ToJsonString(ToSerializable(loader.LayoutInfo));
-                    var textBytes = System.Text.Encoding.UTF8.GetBytes(text);
-                    zipStream.Write(textBytes, 0, textBytes.Length);
+                    {
+                        var newEntry = zipArchive.CreateEntry(Path.Combine(loader.LayoutInfo.Name, "assets.json"), compressionLevel);
+                        using (var stream = new BinaryWriter(newEntry.Open()))
+                        {
+                            var text = JsonSerializer.ToJsonString(ToSerializable(loader.AssetsInfo));
+                            var textBytes = System.Text.Encoding.UTF8.GetBytes(text);
+                            stream.Write(textBytes, 0, textBytes.Length);
+                        }
+                    }
 
-                    zipStream.CloseEntry();
+                    foreach (var asset in loader.AssetsInfo.Assets)
+                    {
+                        var newEntry = zipArchive.CreateEntry(Path.Combine(loader.LayoutInfo.Name, "assets", asset.FileName), compressionLevel);
+                        using (var stream = new BinaryWriter(newEntry.Open()))
+                        {
+                            var bytes = loader.LoadAsset(asset.FileName);
+                            stream.Write(bytes, 0, bytes.Length);
+                        }
+                    }
                 }
-
-                {
-                    var newEntry = new ZipEntry(Path.Combine(loader.LayoutInfo.Name, "assets.json"));
-                    zipStream.PutNextEntry(newEntry);
-
-                    var text = JsonSerializer.ToJsonString(ToSerializable(loader.AssetsInfo));
-                    var textBytes = System.Text.Encoding.UTF8.GetBytes(text);
-                    zipStream.Write(textBytes, 0, textBytes.Length);
-
-                    zipStream.CloseEntry();
-                }
-
-                foreach (var asset in loader.AssetsInfo.Assets)
-                {
-                    var newEntry = new ZipEntry(Path.Combine(loader.LayoutInfo.Name, "assets", asset.FileName));
-                    zipStream.PutNextEntry(newEntry);
-
-                    var bytes = loader.LoadAsset(asset.FileName);
-                    zipStream.Write(bytes, 0, bytes.Length);
-
-                    zipStream.CloseEntry();
-                }
-
-                zipStream.Close();
 
                 return memoryStream.ToArray();
             }
@@ -108,13 +107,16 @@ namespace AkyuiUnity.Loader
             {
                 if (asset is SpriteAsset spriteAsset)
                 {
-                    assets.Add(new Dictionary<string, object>
+                    var assetDict = new Dictionary<string, object>
                     {
                         { "type", SpriteAsset.TypeString },
-                        { "hash", ToSerializable(spriteAsset.Hash) },
-                        { "userdata", ToSerializable(spriteAsset.UserData) },
                         { "file", ToSerializable(spriteAsset.FileName) },
-                    });
+                        { "size", ToSerializable(spriteAsset.Size) },
+                        { "hash", ToSerializable(spriteAsset.Hash) },
+                    };
+                    if (spriteAsset.UserData != null) assetDict["userdata"] = ToSerializable(spriteAsset.UserData);
+                    if (spriteAsset.Border != null) assetDict["border"] = ToSerializable(spriteAsset.Border);
+                    assets.Add(assetDict);
                 }
                 else
                 {
@@ -259,6 +261,17 @@ namespace AkyuiUnity.Loader
         private static int[] ToSerializable(Vector2Int v)
         {
             return new[] { v.x, v.y };
+        }
+
+        private static Dictionary<string, object> ToSerializable(Border b)
+        {
+            return new Dictionary<string, object>
+            {
+                { "top", b.Top },
+                { "bottom", b.Bottom },
+                { "right", b.Right },
+                { "left", b.Left },
+            };
         }
 
         private static string ToSerializable(AnchorXType x) => x.ToString().ToLower();

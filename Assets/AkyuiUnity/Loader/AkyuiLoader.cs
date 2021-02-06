@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
+using System.Text;
+using Akyui.Loader.Internal;
 using AkyuiUnity.Loader.Internal;
-using ICSharpCode.SharpZipLib.Zip;
+using Boo.Lang.Runtime;
 using UnityEngine;
 using Utf8Json;
 
@@ -15,18 +18,18 @@ namespace AkyuiUnity.Loader
         public AssetsInfo AssetsInfo { get; }
 
         private readonly string _fileName;
-        private readonly ZipFile _zipFile;
+        private ZipArchive _zipFile;
 
         public AkyuiLoader(string filePath)
         {
-            _zipFile = new ZipFile(filePath);
+            _zipFile = ZipFile.Open(filePath, ZipArchiveMode.Read, Encoding.UTF8);
 
             _fileName = "";
-            foreach (ZipEntry e in _zipFile)
+            foreach (var e in _zipFile.Entries)
             {
                 if (Path.GetFileName(e.Name) == "layout.json")
                 {
-                    _fileName = Directory.GetParent(e.Name).Name;
+                    _fileName = Path.GetDirectoryName(e.FullName);
                 }
             }
 
@@ -36,20 +39,14 @@ namespace AkyuiUnity.Loader
 
         public void Dispose()
         {
-            _zipFile?.Close();
+            _zipFile.Dispose();
+            _zipFile = null;
         }
 
         public byte[] LoadAsset(string assetFileName)
         {
-            var assetEntry = _zipFile.FindEntry(Path.Combine(_fileName, "assets", assetFileName), true);
-            var stream = _zipFile.GetInputStream(assetEntry);
-
-            using (var memoryStream = new MemoryStream())
-            {
-                stream.CopyTo(memoryStream);
-                var bytes = memoryStream.ToArray();
-                return bytes;
-            }
+            var entryPath = Path.Combine(_fileName, "assets", assetFileName);
+            return _zipFile.ReadBytes(entryPath);
         }
 
         private LayoutInfo LoadLayoutInfo()
@@ -82,6 +79,8 @@ namespace AkyuiUnity.Loader
         private AssetsInfo LoadAssetsInfo()
         {
             var assetsJson = GetJson(_zipFile, Path.Combine(_fileName, "assets.json"));
+            Debug.Log(Path.Combine(_fileName, "assets.json"));
+            Debug.Log(string.Join(", ", assetsJson.Keys));
 
             var assets = new List<IAsset>();
             foreach (var assetJson in assetsJson["assets"].JsonDictionaryArray())
@@ -94,17 +93,11 @@ namespace AkyuiUnity.Loader
             );
         }
 
-        private static Dictionary<string, object> GetJson(ZipFile zipFile, string name)
+        private static Dictionary<string, object> GetJson(ZipArchive zipFile, string name)
         {
-            var layoutJson = zipFile.FindEntry(name, true);
-
-            var stream = zipFile.GetInputStream(layoutJson);
-            using (var reader = new StreamReader(stream))
-            {
-                var jsonString = reader.ReadToEnd();
-                var json = JsonSerializer.Deserialize<Dictionary<string, object>>(jsonString);
-                return json;
-            }
+            var jsonString = zipFile.ReadString(name);
+            var json = JsonSerializer.Deserialize<Dictionary<string, object>>(jsonString);
+            return json;
         }
 
         private IAsset ParseAsset(Dictionary<string, object> assetJson)
@@ -317,6 +310,40 @@ namespace AkyuiUnity.Loader
             return new MaskComponent(
                 componentJson.ContainsKey("sprite") ? componentJson["sprite"].JsonString() : null
             );
+        }
+    }
+}
+
+namespace Akyui.Loader.Internal
+{
+    public static class ZipExtensions
+    {
+        public static string ReadString(this ZipArchive self, string filePath)
+        {
+            var manifestZipEntry = self.GetEntry(filePath);
+            if (manifestZipEntry == null) throw new RuntimeException($"manifestZipEntry({filePath}) == null");
+            using (var reader = new StreamReader(manifestZipEntry.Open()))
+            {
+                return reader.ReadToEnd();
+            }
+        }
+
+        public static byte[] ReadBytes(this ZipArchive self, string filePath)
+        {
+            var manifestZipEntry = self.GetEntry(filePath);
+            if (manifestZipEntry == null) throw new RuntimeException($"manifestZipEntry({filePath}) == null");
+            using (var reader = new BinaryReader(manifestZipEntry.Open()))
+            {
+                // https://stackoverflow.com/questions/8613187/an-elegant-way-to-consume-all-bytes-of-a-binaryreader
+                const int bufferSize = 4096;
+                using (var ms = new MemoryStream())
+                {
+                    var buffer = new byte[bufferSize];
+                    int count;
+                    while ((count = reader.Read(buffer, 0, buffer.Length)) != 0) ms.Write(buffer, 0, count);
+                    return ms.ToArray();
+                }
+            }
         }
     }
 }

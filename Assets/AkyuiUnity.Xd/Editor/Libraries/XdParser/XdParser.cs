@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
 using Utf8Json;
 using XdParser.Internal;
 using System.IO.Compression;
 using System.Text;
-using Boo.Lang.Runtime;
+using Akyui.Loader.Internal;
 
 namespace XdParser
 {
@@ -75,38 +74,6 @@ namespace XdParser
 
 namespace XdParser.Internal
 {
-    public static class ZipExtensions
-    {
-        public static string ReadString(this ZipArchive self, string filePath)
-        {
-            var manifestZipEntry = self.GetEntry(filePath);
-            if (manifestZipEntry == null) throw new RuntimeException($"manifestZipEntry({filePath}) == null");
-            using (var reader = new StreamReader(manifestZipEntry.Open()))
-            {
-                return reader.ReadToEnd();
-            }
-        }
-
-
-        public static byte[] ReadBytes(this ZipArchive self, string filePath)
-        {
-            var manifestZipEntry = self.GetEntry(filePath);
-            if (manifestZipEntry == null) throw new RuntimeException($"manifestZipEntry({filePath}) == null");
-            using (var reader = new BinaryReader(manifestZipEntry.Open()))
-            {
-                // https://stackoverflow.com/questions/8613187/an-elegant-way-to-consume-all-bytes-of-a-binaryreader
-                const int bufferSize = 4096;
-                using (var ms = new MemoryStream())
-                {
-                    var buffer = new byte[bufferSize];
-                    int count;
-                    while ((count = reader.Read(buffer, 0, buffer.Length)) != 0) ms.Write(buffer, 0, count);
-                    return ms.ToArray();
-                }
-            }
-        }
-    }
-
     public class XdColorJson
     {
         [DataMember(Name = "mode")]
