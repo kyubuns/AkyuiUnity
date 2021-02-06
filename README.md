@@ -7,8 +7,8 @@ With AkyuiUnity.Xd, you can easily generate Unity Prefab from [Adobe XD](https:/
 
 <a href="https://www.buymeacoffee.com/kyubuns" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/default-orange.png" alt="Buy Me A Coffee" height="41" width="174"></a>
 
-<img width="640" src="https://user-images.githubusercontent.com/961165/105800564-5d6f0c00-5fda-11eb-9a05-b42132ae66cd.jpg">
-<img width="640" src="https://user-images.githubusercontent.com/961165/105802939-a4133500-5fdf-11eb-851e-d068a53945d8.png">
+<img width="800" src="https://user-images.githubusercontent.com/961165/107123379-93689600-68e0-11eb-9cd0-41759afeb01b.png">  
+<img width="800" src="https://user-images.githubusercontent.com/961165/107123374-8e0b4b80-68e0-11eb-89b6-2549a58deaa2.png">
 
 ---
 
