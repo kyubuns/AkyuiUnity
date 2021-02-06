@@ -53,7 +53,8 @@ AkyuiUnity.Xdは、XDファイルをAkyuiに変換することが出来ます。
 
 ## ユーザーマニュアル
 
-ToDo
+- [Manual](https://github.com/kyubuns/AkyuiUnity/blob/main/Manual/Manual_ja.md)
+- [FAQ](https://github.com/kyubuns/AkyuiUnity/blob/main/Manual/FAQ_ja.md)
 
 
 ## インストール方法

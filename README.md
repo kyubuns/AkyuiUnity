@@ -3,7 +3,7 @@
 AkyuiUnity is a Unity implementation of [Akyui](https://github.com/kyubuns/Akyui).  
 With AkyuiUnity.Xd, you can easily generate Unity Prefab from [Adobe XD](https://www.adobe.com/products/xd.html) files.
 
-***Read this document in other languages: [日本語版](https://github.com/kyubuns/AkyuiUnity/blob/main/README_ja.md)***
+***Read this document in other languages: [日本語](https://github.com/kyubuns/AkyuiUnity/blob/main/README_ja.md)***
 
 <a href="https://www.buymeacoffee.com/kyubuns" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/default-orange.png" alt="Buy Me A Coffee" height="41" width="174"></a>
 
@@ -53,7 +53,8 @@ By combining the two, you can generate UnityPrefab from XD files without being a
 
 ## Users' Manual
 
-ToDo
+- [Manual](https://github.com/kyubuns/AkyuiUnity/blob/main/Manual/Manual_en.md)
+- [FAQ](https://github.com/kyubuns/AkyuiUnity/blob/main/Manual/FAQ_en.md)
 
 
 ## Installation
