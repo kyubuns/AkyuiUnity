@@ -6,7 +6,6 @@ using System.Linq;
 using System.Text;
 using Akyui.Loader.Internal;
 using AkyuiUnity.Loader.Internal;
-using Boo.Lang.Runtime;
 using UnityEngine;
 using Utf8Json;
 
@@ -321,7 +320,7 @@ namespace Akyui.Loader.Internal
         public static string ReadString(this ZipArchive self, string filePath)
         {
             var manifestZipEntry = self.GetEntry(filePath);
-            if (manifestZipEntry == null) throw new RuntimeException($"manifestZipEntry({filePath}) == null");
+            if (manifestZipEntry == null) throw new Exception($"manifestZipEntry({filePath}) == null");
             using (var reader = new StreamReader(manifestZipEntry.Open()))
             {
                 return reader.ReadToEnd();
@@ -331,7 +330,7 @@ namespace Akyui.Loader.Internal
         public static byte[] ReadBytes(this ZipArchive self, string filePath)
         {
             var manifestZipEntry = self.GetEntry(filePath);
-            if (manifestZipEntry == null) throw new RuntimeException($"manifestZipEntry({filePath}) == null");
+            if (manifestZipEntry == null) throw new Exception($"manifestZipEntry({filePath}) == null");
             using (var reader = new BinaryReader(manifestZipEntry.Open()))
             {
                 // https://stackoverflow.com/questions/8613187/an-elegant-way-to-consume-all-bytes-of-a-binaryreader
