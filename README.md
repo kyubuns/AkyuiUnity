@@ -10,8 +10,8 @@ With AkyuiUnity.Xd, you can easily generate Unity Prefab from [Adobe XD](https:/
 
 ---
 
-AkyuiUnity is still under development, so its behavior may change significantly with future updates.  
-See discussion for details. (Japanese)
+**AkyuiUnity is still under development, so its behavior may change significantly with future updates.**  
+**See discussion for details. (Japanese)**
 https://github.com/kyubuns/AkyuiUnity/discussions/8
 
 ---
