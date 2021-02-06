@@ -162,6 +162,18 @@ https://github.com/kyubuns/AkyuiUnity/discussions/8
 
 
 ---
-## 応援する
+## Buy me a coffee
 
-フィードバックや、右上にあるStarボタンをポチッとお願いします！
+もしこのプロジェクトが気に入ったなら、ぜひコーヒーを奢ってください！  
+https://www.buymeacoffee.com/kyubuns
+
+
+---
+## 「ゲームに使ったよ！」
+
+「このゲームにこのライブラリ使ったよ！」という報告を貰えるとめっちゃ喜びます！  
+メールやtwitterでお気軽にご連絡ください。  
+(MITライセンスのため、報告は義務ではありません。)  
+[メッセージフォーム](https://kyubuns.dev/message.html)
+
+https://kyubuns.dev/
