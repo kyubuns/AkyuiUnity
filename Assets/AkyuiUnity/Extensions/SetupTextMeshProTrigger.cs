@@ -1,6 +1,7 @@
 ﻿#if AKYUIUNITY_TEXTMESHPRO_SUPPORT
 using System;
 using System.Linq;
+using AkyuiUnity.Editor;
 using AkyuiUnity.Editor.ScriptableObject;
 using AkyuiUnity.Generator;
 using AkyuiUnity.Generator.InternalTrigger;

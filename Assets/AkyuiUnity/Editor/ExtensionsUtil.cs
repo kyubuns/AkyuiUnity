@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace AkyuiUnity
+namespace AkyuiUnity.Editor
 {
     public static class ExtensionsUtil
     {
