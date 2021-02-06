@@ -3,20 +3,22 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
-using ICSharpCode.SharpZipLib.Zip;
 using Utf8Json;
 using XdParser.Internal;
+using System.IO.Compression;
+using System.Text;
+using Boo.Lang.Runtime;
 
 namespace XdParser
 {
     public class XdFile : IDisposable
     {
-        private ZipFile _zipFile;
+        private ZipArchive _zipFile;
         public XdArtboard[] Artworks { get; }
 
         public XdFile(string xdFilePath, Dictionary<string, object> jsonCache)
         {
-            _zipFile = new ZipFile(xdFilePath);
+            _zipFile = ZipFile.Open(xdFilePath, ZipArchiveMode.Read, Encoding.UTF8);
             var manifestJsonString = _zipFile.ReadString("manifest");
             var xdManifestJson = JsonSerializer.Deserialize<XdManifestJson>(manifestJsonString);
 
@@ -49,7 +51,7 @@ namespace XdParser
 
         public void Dispose()
         {
-            _zipFile?.Close();
+            _zipFile?.Dispose();
             _zipFile = null;
         }
     }
@@ -75,25 +77,32 @@ namespace XdParser.Internal
 {
     public static class ZipExtensions
     {
-        public static string ReadString(this ZipFile self, string filePath)
+        public static string ReadString(this ZipArchive self, string filePath)
         {
             var manifestZipEntry = self.GetEntry(filePath);
-            using (var stream = self.GetInputStream(manifestZipEntry))
-            using (var reader = new StreamReader(stream))
+            if (manifestZipEntry == null) throw new RuntimeException($"manifestZipEntry({filePath}) == null");
+            using (var reader = new StreamReader(manifestZipEntry.Open()))
             {
                 return reader.ReadToEnd();
             }
         }
 
 
-        public static byte[] ReadBytes(this ZipFile self, string filePath)
+        public static byte[] ReadBytes(this ZipArchive self, string filePath)
         {
             var manifestZipEntry = self.GetEntry(filePath);
-            using(var stream = self.GetInputStream(manifestZipEntry))
-            using (var memoryStream = new MemoryStream())
+            if (manifestZipEntry == null) throw new RuntimeException($"manifestZipEntry({filePath}) == null");
+            using (var reader = new BinaryReader(manifestZipEntry.Open()))
             {
-                stream.CopyTo(memoryStream);
-                return memoryStream.ToArray();
+                // https://stackoverflow.com/questions/8613187/an-elegant-way-to-consume-all-bytes-of-a-binaryreader
+                const int bufferSize = 4096;
+                using (var ms = new MemoryStream())
+                {
+                    var buffer = new byte[bufferSize];
+                    int count;
+                    while ((count = reader.Read(buffer, 0, buffer.Length)) != 0) ms.Write(buffer, 0, count);
+                    return ms.ToArray();
+                }
             }
         }
     }
