@@ -27,8 +27,8 @@ https://github.com/kyubuns/AkyuiUnity/discussions/8
 ### XDファイルの作り方
 
 - どのArtboardを出力するかは、Artboard自身のMark for Exportフラグで決定します。
-- 特別なルールは[こちら](https://github.com/kyubuns/AkyuiUnity/wiki/Xd%E3%83%AB%E3%83%BC%E3%83%AB)にまとめています。
-- 使用できない機能は[こちら](https://github.com/kyubuns/AkyuiUnity/wiki/Xd%E6%9C%AA%E5%AF%BE%E5%BF%9C%E9%A0%85%E7%9B%AE)を参照してください。
+- 特別なルールは[こちら](https://github.com/kyubuns/AkyuiUnity/blob/main/Manual/Manual_ja.md#xd%E5%A4%89%E6%8F%9B%E8%A6%8F%E5%89%87)にまとめています。
+- 使用できない機能は[こちら](https://github.com/kyubuns/AkyuiUnity/blob/main/Manual/Manual_ja.md#%E6%9C%AA%E5%AF%BE%E5%BF%9C%E9%A0%85%E7%9B%AE)を参照してください。
 
 
 ### インポート方法
