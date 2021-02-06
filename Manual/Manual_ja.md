@@ -39,7 +39,7 @@ https://github.com/kyubuns/AkyuiUnity/discussions/8
 
 - XDファイルをどうPrefabに落とすか、そのカスタマイズが出来る機能です。
 - 例えば「テキストにはuGUIのTextを使うのか、TextMeshProを使うのか」「SpriteAtlasを作るのか、作るならどこに作るのか」などを設定出来ます。
-- トリガー一覧はこちらをご覧ください。 (ToDo)
+- トリガー一覧は[こちら](https://github.com/kyubuns/AkyuiUnity/blob/main/Manual/Manual_ja.md#%E3%83%88%E3%83%AA%E3%82%AC%E3%83%BC%E4%B8%80%E8%A6%A7)をご覧ください。
 
 
 ### アップデート方法
