@@ -12,7 +12,7 @@ AkyuiUnity.Xdと合わせて使うことで、簡単に[Adobe XD](https://www.ad
 
 ---
 
-**AkyuiUnityはまだ開発中のため、今後の更新により挙動が大きく変更される可能性があります。**  
+**AkyuiUnityはまだPreview版のため、今後の更新により挙動が大きく変更される可能性があります。**  
 **詳しくはdiscussionsをご覧ください。(Japanese)**  
 https://github.com/kyubuns/AkyuiUnity/discussions/8
 
