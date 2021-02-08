@@ -18,7 +18,7 @@ namespace AkyuiUnity.Xd
             SamplingStepSize = 0.01f
         };
 
-        public static byte[] Convert(string svg, Vector2 size, XdImportSettings xdImportSettings)
+        public static byte[] Convert(string svg, Vector2 size, ViewportOptions viewportOptions, XdImportSettings xdImportSettings)
         {
             var unityAssetsParentPath = Path.GetDirectoryName(Application.dataPath) ?? "";
             var savePath = Path.Combine("Assets", "Temp.svg");
@@ -26,6 +26,7 @@ namespace AkyuiUnity.Xd
 
             SvgImportTrigger.ProcessingFile = savePath.ToUniversalPath();
             SvgImportTrigger.Size = new Vector2Int(Mathf.RoundToInt(size.x * xdImportSettings.SpriteSaveScale), Mathf.RoundToInt(size.y * xdImportSettings.SpriteSaveScale));
+            SvgImportTrigger.ViewportOptions = viewportOptions;
 
             using (Disposable.Create(() =>
             {
@@ -47,6 +48,7 @@ namespace AkyuiUnity.Xd
     {
         public static string ProcessingFile { get; set; }
         public static Vector2Int Size { get; set; }
+        public static ViewportOptions ViewportOptions { get; set; }
 
         public void OnPreprocessAsset()
         {
@@ -54,6 +56,7 @@ namespace AkyuiUnity.Xd
             if (!(assetImporter is SVGImporter svgImporter)) return;
 
             svgImporter.SvgType = SVGType.TexturedSprite;
+            svgImporter.ViewportOptions = ViewportOptions;
             svgImporter.KeepTextureAspectRatio = false;
             svgImporter.TextureWidth = Size.x;
             svgImporter.TextureHeight = Size.y;

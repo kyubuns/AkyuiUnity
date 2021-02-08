@@ -135,6 +135,15 @@ namespace XdParser.Internal
         public float Height { get; set; }
     }
 
+    public class XdPositionJson
+    {
+        [DataMember(Name = "x")]
+        public float X { get; set; }
+
+        [DataMember(Name = "y")]
+        public float Y { get; set; }
+    }
+
     public class XdStyleJson
     {
         [DataMember(Name = "fill")]
@@ -154,6 +163,9 @@ namespace XdParser.Internal
 
         [DataMember(Name = "isolation")]
         public string Isolation { get; set; }
+
+        [DataMember(Name = "blendMode")]
+        public string BlendMode { get; set; }
     }
 
     public class XdStyleFillJson
@@ -619,6 +631,15 @@ namespace XdParser.Internal
 
         [DataMember(Name = "rotation")]
         public float Rotation { get; set; }
+
+        [DataMember(Name = "linkedContentScale")]
+        public XdPositionJson LinkedContentScale { get; set; }
+
+        [DataMember(Name = "linkedElementRef")]
+        public string LinkedElementRef { get; set; }
+
+        [DataMember(Name = "linkedElementLastModified")]
+        public ulong? LinkedElementLastModified { get; set; }
     }
 
     public class XdClipPathResourcesJson

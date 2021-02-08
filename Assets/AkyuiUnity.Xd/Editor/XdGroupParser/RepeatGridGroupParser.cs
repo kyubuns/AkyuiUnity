@@ -6,7 +6,7 @@ namespace AkyuiUnity.Xd
 {
     public class RepeatGridGroupParser : IXdGroupParser
     {
-        bool IXdGroupParser.Is(XdObjectJson xdObject)
+        bool IXdGroupParser.Is(XdObjectJson xdObject, XdObjectJson[] parents)
         {
             return Is(xdObject);
         }

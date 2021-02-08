@@ -1,5 +1,7 @@
 using System.Collections.Generic;
+using System.Linq;
 using AkyuiUnity.Loader;
+using Unity.VectorGraphics;
 using UnityEngine;
 using XdParser;
 using XdParser.Internal;
@@ -8,9 +10,20 @@ namespace AkyuiUnity.Xd
 {
     public class SvgGroupParser : IXdGroupParser
     {
-        public bool Is(XdObjectJson xdObject)
+        public bool Is(XdObjectJson xdObject, XdObjectJson[] parents)
         {
-            return xdObject.HasParameter("vector");
+            return new[] { xdObject }.Concat(parents).Any(x =>
+            {
+                var hasParameter = x.HasParameter("vector");
+                var isLinkedElementRef = !string.IsNullOrWhiteSpace(x.Meta?.Ux?.LinkedElementRef);
+                return (hasParameter || isLinkedElementRef) && IsShapeOnly(x);
+            });
+        }
+
+        private bool IsShapeOnly(XdObjectJson xdObject)
+        {
+            if (xdObject.Type != "group" && !ShapeObjectParser.Is(xdObject)) return false;
+            return (xdObject.Group?.Children ?? new XdObjectJson[] { }).All(IsShapeOnly);
         }
 
         public Rect CalcSize(XdObjectJson xdObject, Rect rect)
@@ -24,10 +37,11 @@ namespace AkyuiUnity.Xd
             var assets = new List<IAsset>();
 
             var color = xdObject.GetFillUnityColor();
-            var svg = SvgUtil.CreateSvg(xdObject);
+            var obb = obbGetter.Get(xdObject);
+            var size = obb.Size;
+            var svg = SvgUtil.CreateSvg(xdObject, obb);
             xdObject.Group.Children = new XdObjectJson[] { };
 
-            var size = obbGetter.Get(xdObject).Size;
             var spriteUid = $"{xdObject.GetSimpleName()}_{xdObject.Id.Substring(0, 8)}.png";
             var svgHash = FastHash.CalculateHash(svg);
 
@@ -40,7 +54,7 @@ namespace AkyuiUnity.Xd
             {
                 assets.Add(new SpriteAsset(spriteUid, svgHash, size, null, null));
                 var xdImportSettings = XdImporter.Settings;
-                assetHolder.Save(spriteUid, () => SvgToPng.Convert(svg, size, xdImportSettings));
+                assetHolder.Save(spriteUid, () => SvgToPng.Convert(svg, size, ViewportOptions.PreserveViewport, xdImportSettings));
                 assetHolder.SaveCacheSvg(spriteUid, svgHash);
             }
             components.Add(new ImageComponent(

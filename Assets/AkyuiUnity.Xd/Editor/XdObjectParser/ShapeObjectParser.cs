@@ -11,12 +11,22 @@ namespace AkyuiUnity.Xd
 {
     public class ShapeObjectParser : IXdObjectParser
     {
-        public bool Is(XdObjectJson xdObject)
+        bool IXdObjectParser.Is(XdObjectJson xdObject)
+        {
+            return Is(xdObject);
+        }
+
+        public static bool Is(XdObjectJson xdObject)
         {
             return xdObject.Type == "shape";
         }
 
-        public Rect CalcSize(XdObjectJson xdObject)
+        Rect IXdObjectParser.CalcSize(XdObjectJson xdObject)
+        {
+            return CalcSize(xdObject);
+        }
+
+        public static Rect CalcSize(XdObjectJson xdObject)
         {
             var position = Vector2.zero;
             var size = new Vector2(xdObject.Shape.Width, xdObject.Shape.Height);
@@ -30,7 +40,7 @@ namespace AkyuiUnity.Xd
             }
             else if (SvgUtil.Types.Contains(shapeType))
             {
-                var svg = SvgUtil.CreateSvg(xdObject);
+                var svg = SvgUtil.CreateSvg(xdObject, null);
                 using (var reader = new StringReader(svg))
                 {
                     var sceneInfo = SVGParser.ImportSVG(reader, ViewportOptions.DontPreserve);
@@ -119,7 +129,7 @@ namespace AkyuiUnity.Xd
             else if (SvgUtil.Types.Contains(shapeType))
             {
                 var spriteUid = $"{xdObject.GetSimpleName()}_{xdObject.Id.Substring(0, 8)}.png";
-                var svg = SvgUtil.CreateSvg(xdObject);
+                var svg = SvgUtil.CreateSvg(xdObject, null);
                 var svgHash = FastHash.CalculateHash(svg);
 
                 var cachedSvg = assetHolder.GetCachedSvg(svgHash);
@@ -131,7 +141,7 @@ namespace AkyuiUnity.Xd
                 {
                     asset = new SpriteAsset(spriteUid, svgHash, obb.Size, null, null);
                     var xdImportSettings = XdImporter.Settings;
-                    assetHolder.Save(spriteUid, () => SvgToPng.Convert(svg, obb.Size, xdImportSettings));
+                    assetHolder.Save(spriteUid, () => SvgToPng.Convert(svg, obb.Size, ViewportOptions.DontPreserve, xdImportSettings));
                     assetHolder.SaveCacheSvg(spriteUid, svgHash);
                 }
 

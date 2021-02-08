@@ -5,7 +5,7 @@ namespace AkyuiUnity.Xd
 {
     public class AlphaGroupParser : IXdGroupParser
     {
-        public bool Is(XdObjectJson xdObject)
+        public bool Is(XdObjectJson xdObject, XdObjectJson[] parents)
         {
             var opacity = xdObject.Style?.Opacity ?? 1.0f;
             if (Mathf.Abs(opacity - 1.0f) < 0.0001f) return false;

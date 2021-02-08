@@ -5,7 +5,7 @@ namespace AkyuiUnity.Xd
 {
     public class InputFieldGroupParser : IXdGroupParser
     {
-        public bool Is(XdObjectJson xdObject)
+        public bool Is(XdObjectJson xdObject, XdObjectJson[] parents)
         {
             return xdObject.NameEndsWith("inputfield");
         }

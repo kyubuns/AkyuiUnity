@@ -7,7 +7,7 @@ namespace AkyuiUnity.Xd
 {
     public class ScrollGroupParser : IXdGroupParser
     {
-        public bool Is(XdObjectJson xdObject)
+        public bool Is(XdObjectJson xdObject, XdObjectJson[] parents)
         {
             var scrollingType = xdObject?.Meta?.Ux?.ScrollingType;
             return !string.IsNullOrWhiteSpace(scrollingType);

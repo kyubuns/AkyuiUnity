@@ -30,9 +30,10 @@ namespace AkyuiUnity.Xd
             new ButtonGroupParser(),
             new RepeatGridGroupParser(),
             new ScrollGroupParser(),
+            new InputFieldGroupParser(),
+
             new SvgGroupParser(),
             new AlphaGroupParser(), // SvgGroupParserより後
-            new InputFieldGroupParser(),
             new MaskGroupParser(),
         };
 
@@ -122,9 +123,9 @@ namespace AkyuiUnity.Xd
                 var rootArtboard = xdArtboard.Artboard.Children[0];
                 var xdObjectJsons = rootArtboard.Artboard.Children;
                 var convertedXdObjectJsons = ConvertRefObject(xdObjectJsons, triggers);
-                var childrenObbs = CalcPosition(convertedXdObjectJsons, rootObb);
+                var childrenObbs = CalcPosition(convertedXdObjectJsons, rootObb, new XdObjectJson[] { });
                 foreach (var childObb in childrenObbs) childObb.LocalLeftTopPosition -= new Vector2(xdResourcesArtboardsJson.X, xdResourcesArtboardsJson.Y);
-                var children = Render(convertedXdObjectJsons, rootObb);
+                var children = Render(convertedXdObjectJsons, rootObb, new XdObjectJson[] { });
 
                 var rootComponents = new List<IComponent>();
                 if (rootArtboard.Style?.Fill != null && rootArtboard.Style.Fill.Type == "solid")
@@ -235,14 +236,14 @@ namespace AkyuiUnity.Xd
             }
 
             // CalcPositionは子供から確定させていく
-            private Obb[] CalcPosition(XdObjectJson[] xdObjects, Obb parent)
+            private Obb[] CalcPosition(XdObjectJson[] xdObjects, Obb parentObb, XdObjectJson[] parents)
             {
                 var obbList = new List<Obb>();
                 foreach (var xdObject in xdObjects)
                 {
                     try
                     {
-                        obbList.Add(CalcPosition(xdObject, parent));
+                        obbList.Add(CalcPosition(xdObject, parentObb, parents));
                     }
                     catch (Exception)
                     {
@@ -253,11 +254,11 @@ namespace AkyuiUnity.Xd
                 return obbList.ToArray();
             }
 
-            private Obb CalcPosition(XdObjectJson xdObject, Obb parent)
+            private Obb CalcPosition(XdObjectJson xdObject, Obb parentObb, XdObjectJson[] parents)
             {
                 var obb = new Obb
                 {
-                    Parent = parent,
+                    Parent = parentObb,
                     LocalLeftTopPosition = new Vector2(xdObject.Transform?.Tx ?? 0f, xdObject.Transform?.Ty ?? 0f),
                     Rotation = xdObject.Meta?.Ux?.Rotation ?? 0f
                     // サイズは子供のサイズが無いと決まらない
@@ -266,7 +267,7 @@ namespace AkyuiUnity.Xd
                 var children = new Obb[] { };
                 if (xdObject.Group != null)
                 {
-                    children = CalcPosition(xdObject.Group.Children, obb);
+                    children = CalcPosition(xdObject.Group.Children, obb, parents.Concat(new[] { xdObject }).ToArray());
                 }
 
                 foreach (var parser in _objectParsers)
@@ -286,8 +287,9 @@ namespace AkyuiUnity.Xd
 
                     foreach (var parser in _groupParsers)
                     {
-                        if (!parser.Is(xdObject)) continue;
+                        if (!parser.Is(xdObject, parents)) continue;
                         rect = parser.CalcSize(xdObject, rect);
+                        break;
                     }
 
                     obb.ApplyRect(rect);
@@ -299,14 +301,14 @@ namespace AkyuiUnity.Xd
                 throw new Exception($"Unknown object type {xdObject.Type}");
             }
 
-            private IElement[] Render(XdObjectJson[] xdObjects, [CanBeNull] Obb parent)
+            private IElement[] Render(XdObjectJson[] xdObjects, [CanBeNull] Obb parentObb, XdObjectJson[] parents)
             {
                 var children = new List<IElement>();
                 foreach (var xdObject in xdObjects)
                 {
                     try
                     {
-                        children.AddRange(Render(xdObject, parent));
+                        children.AddRange(Render(xdObject, parentObb, parents));
                     }
                     catch (Exception)
                     {
@@ -319,14 +321,14 @@ namespace AkyuiUnity.Xd
             }
 
             // Renderは親から子供の順番
-            private IElement[] Render(XdObjectJson xdObject, [CanBeNull] Obb parent)
+            private IElement[] Render(XdObjectJson xdObject, [CanBeNull] Obb parentObb, XdObjectJson[] parents)
             {
                 var eid = _nextEid;
                 _nextEid++;
 
                 var originalObb = _obbHolder.Get(xdObject);
-                var obb = originalObb.CalcObbInWorld(parent);
-                var position = obb.CalcLocalRect().center - (parent?.Size ?? Vector2.zero) / 2f;
+                var obb = originalObb.CalcObbInWorld(parentObb);
+                var position = obb.CalcLocalRect().center - (parentObb?.Size ?? Vector2.zero) / 2f;
                 var size = obb.Size;
                 var anchorX = AnchorXType.Center;
                 var anchorY = AnchorYType.Middle;
@@ -350,7 +352,7 @@ namespace AkyuiUnity.Xd
                     var (components, assets) = parser.Render(xdObject, obb, _xdAssetHolder);
 
                     var children = new IElement[] { };
-                    if (xdObject.Group != null) children = Render(xdObject.Group.Children, originalObb);
+                    if (xdObject.Group != null) children = Render(xdObject.Group.Children, originalObb, parents.Concat(new[] { xdObject }).ToArray());
 
                     var element = new ObjectElement(
                         eid,
@@ -380,7 +382,7 @@ namespace AkyuiUnity.Xd
                     var components = new List<IComponent>();
                     foreach (var parser in _groupParsers)
                     {
-                        if (!parser.Is(xdObject)) continue;
+                        if (!parser.Is(xdObject, parents)) continue;
                         var (c, assets) = parser.Render(xdObject, _xdAssetHolder, _obbHolder);
                         components.AddRange(c);
 
@@ -394,7 +396,10 @@ namespace AkyuiUnity.Xd
                     }
 
                     var generatedChildren = new IElement[] { };
-                    if (xdObject.Group != null) generatedChildren = Render(xdObject.Group.Children, originalObb);
+                    if (xdObject.Group != null)
+                    {
+                        generatedChildren = Render(xdObject.Group.Children, originalObb, parents.Concat(new[] { xdObject }).ToArray());
+                    }
 
                     var group = new ObjectElement(
                         eid,

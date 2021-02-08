@@ -7,14 +7,12 @@ namespace AkyuiUnity.Xd
     {
         public bool Is(XdObjectJson xdObject)
         {
-            var shapeObjectParser = new ShapeObjectParser();
-            return xdObject.NameEndsWith("scrollbar") && shapeObjectParser.Is(xdObject);
+            return xdObject.NameEndsWith("scrollbar") && ShapeObjectParser.Is(xdObject);
         }
 
         public Rect CalcSize(XdObjectJson xdObject)
         {
-            var shapeObjectParser = new ShapeObjectParser();
-            return shapeObjectParser.CalcSize(xdObject);
+            return ShapeObjectParser.CalcSize(xdObject);
         }
 
         public (IComponent[], IAsset[]) Render(XdObjectJson xdObject, Obb obb, XdAssetHolder assetHolder)

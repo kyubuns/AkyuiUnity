@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using AkyuiUnity.Xd;
+using JetBrains.Annotations;
+using UnityEngine;
 using XdParser.Internal;
 
 namespace XdParser
@@ -16,7 +19,6 @@ namespace XdParser
             CircleElement.Name,
             CompoundElement.Name,
         };
-
 
         public static bool IsAlphaOnly(XdObjectJson xdObject)
         {
@@ -34,25 +36,34 @@ namespace XdParser
             return true;
         }
 
-        public static string CreateSvg(XdObjectJson xdObject)
+        public static string CreateSvg(XdObjectJson xdObject, [CanBeNull] Obb obb)
         {
             var defs = new List<IDefElement>();
             var body = CreateSvgLine(xdObject, defs);
-            body.Parameter.Transform = new Transform();
+            if (obb == null)
+            {
+                body.Parameter.Transform = new Transform();
+            }
+            else
+            {
+                body.Parameter.Transform.X = obb.Size.x / 2f;
+                body.Parameter.Transform.Y = obb.Size.y / 2f;
+            }
             body.Parameter.Opacity = 1.0f;
 
             var root = new RootElement
             {
                 Defs = defs.ToArray(),
                 Body = body,
+                Size = obb?.Size,
             };
             return root.ToSvg();
         }
 
         private static IElement CreateSvgLine(XdObjectJson xdObject, List<IDefElement> defs)
         {
-            var id = xdObject.Name.Replace(" ", "_");
-            var dataName = xdObject.Name;
+            var id = xdObject.GetSimpleName().Replace(" ", "_");
+            var dataName = xdObject.GetSimpleName();
             var shape = xdObject.Shape;
 
             var parameter = new ElementParameter
@@ -70,39 +81,42 @@ namespace XdParser
 
             if (xdObject.Group != null)
             {
-                parameter.DataName = dataName;
-                if (xdObject.Meta?.Ux?.ClipPathResources?.Type == "clipPath")
+                if (MaskGroupParser.Is(xdObject))
                 {
-                    var clipPath = xdObject.Meta.Ux.ClipPathResources.Children[0];
-                    parameter.ClipPath = "url(#clip-path)";
-
-                    var clipPathPath = new PathElement
-                    {
-                        Parameter = new ElementParameter
-                        {
-                            Id = "_Clipping_Path_",
-                            DataName = "Clipping Path",
-                            Transform = new Transform
-                            {
-                                X = clipPath.Transform.Tx,
-                                Y = clipPath.Transform.Ty,
-                            },
-                        },
-                        D = clipPath.Shape.Path,
-                    };
-                    defs.Add(new ClipPathDefElement { Id = "clip-path", Path = clipPathPath });
+                    var clipPathId = $"clip-path_{id}";
+                    parameter.ClipPath = $"url(#{clipPathId})";
+                    var clipPathChildren = xdObject.Meta.Ux.ClipPathResources.Children.Select(x => CreateSvgLine(x, defs));
+                    defs.Add(new ClipPathDefElement { Id = clipPathId, Children = clipPathChildren.ToArray() });
                 }
 
+                parameter.DataName = dataName;
+                var blendMode = xdObject.Style?.BlendMode;
+                var isolation = xdObject.Style?.Isolation;
                 var children = xdObject.Group.Children.Select(x => CreateSvgLine(x, defs)).ToArray();
-                return new GroupElement { Parameter = parameter, Children = children };
+                return new GroupElement { Parameter = parameter, Children = children, BlendMode = blendMode, Isolation = isolation };
             }
 
+            XdStyleFillPatternJson image = null;
             var fill = xdObject.Style?.Fill;
             parameter.EnableFill = true;
             if (fill != null && fill.Type != "none")
             {
                 var color = xdObject.GetFillColor();
                 parameter.Fill = color;
+
+                if (fill.Type == "solid")
+                {
+                    // nothing to do
+                }
+                else if (fill.Type == "pattern")
+                {
+                    image = fill.Pattern;
+                    parameter.Fill = null;
+                }
+                else
+                {
+                    Debug.LogWarning($"Unknown fill type {fill.Type}");
+                }
 
                 if (!string.IsNullOrWhiteSpace(shape.Winding))
                 {
@@ -153,6 +167,12 @@ namespace XdParser
                 else if (stroke.Align == "outside") strokeAlign = "outside";
                 else if (stroke.Align == "inside") strokeAlign = "inside";
                 else throw new NotSupportedException($"{xdObject} has unknown align type {stroke.Align}");
+            }
+
+            if (image != null)
+            {
+                var imageBytes = XdImporter.XdFile.GetResource(fill.Pattern.Meta);
+                return new ImageElement { Parameter = parameter, ImageBytes = imageBytes, Width = shape.Width, Height = shape.Height };
             }
 
             if (shape.Type == PathElement.Name) return new PathElement { Parameter = parameter, D = shape.Path };
@@ -356,11 +376,12 @@ namespace XdParser
         private class ClipPathDefElement : IDefElement
         {
             public string Id { get; set; }
-            public PathElement Path { get; set; }
+            public IElement[] Children { get; set; }
 
             public string ToSvg()
             {
-                return $@"<clipPath id=""{Id}"">{Path.ToSvg()}</clipPath>";
+                var children = string.Join("", Children.Select(x => x.ToSvg()));
+                return $@"<clipPath id=""{Id}"">{children}</clipPath>";
             }
         }
 
@@ -370,13 +391,17 @@ namespace XdParser
 
             public IDefElement[] Defs { get; set; } = { };
             public IElement Body { get; set; }
+            public Vector2? Size { get; set; }
 
             public string ToSvg()
             {
                 var defsString = "";
                 if (Defs.Length > 0) defsString = $@"<defs>{string.Join("", Defs.Select(x => x.ToSvg()))}</defs>";
 
-                var svg = $@"<svg xmlns=""http://www.w3.org/2000/svg"" xmlns:xlink=""http://www.w3.org/1999/xlink"">{defsString}{Body.ToSvg()}</svg>";
+                var sizeString = "";
+                if (Size != null) sizeString = $@"width=""{Size.Value.x}"" height=""{Size.Value.y}"" viewBox=""0 0 {Size.Value.x} {Size.Value.y}""";
+
+                var svg = $@"<svg xmlns=""http://www.w3.org/2000/svg"" xmlns:xlink=""http://www.w3.org/1999/xlink"" {sizeString}>{defsString}{Body.ToSvg()}</svg>";
                 return svg;
             }
         }
@@ -386,11 +411,19 @@ namespace XdParser
             public ElementParameter Parameter { get; set; } = new ElementParameter();
 
             public IElement[] Children { get; set; } = { };
+            public string BlendMode { get; set; }
+            public string Isolation { get; set; }
 
             public string ToSvg()
             {
                 var children = string.Join("", Children.Select(x => x.ToSvg()));
-                return $@"<g {Parameter.GetString()}>{children}</g>";
+
+                var style = new List<string>();
+                if (!string.IsNullOrWhiteSpace(BlendMode)) style.Add($"mix-blend-mode: {BlendMode}");
+                if (!string.IsNullOrWhiteSpace(Isolation)) style.Add($"isolation: {Isolation}");
+                var styleString = style.Count == 0 ? "" : $@"style=""{string.Join("; ", style)}""";
+
+                return $@"<g {styleString} {Parameter.GetString()}>{children}</g>";
             }
         }
 
@@ -676,6 +709,21 @@ namespace XdParser
             public string ToSvg()
             {
                 return $@"<{Name} x1=""{X1:0.###}"" y1=""{Y1:0.###}"" x2=""{X2:0.###}"" y2=""{Y2:0.###}"" {Parameter.GetString()} />";
+            }
+        }
+
+        private class ImageElement : IElement
+        {
+            public const string Name = "image";
+            public ElementParameter Parameter { get; set; } = new ElementParameter();
+
+            public float Width { get; set; }
+            public float Height { get; set; }
+            public byte[] ImageBytes { get; set; }
+
+            public string ToSvg()
+            {
+                return $@"<{Name} width=""{Width}"" height=""{Height}"" xlink:href=""data:image/png;base64,{Convert.ToBase64String(ImageBytes)}"" {Parameter.GetString()} />";
             }
         }
     }

@@ -6,16 +6,20 @@ namespace AkyuiUnity.Xd
 {
     public class MaskGroupParser : IXdGroupParser
     {
-        public bool Is(XdObjectJson xdObject)
+        bool IXdGroupParser.Is(XdObjectJson xdObject, XdObjectJson[] parents)
+        {
+            return Is(xdObject);
+        }
+
+        public static bool Is(XdObjectJson xdObject)
         {
             return xdObject.Meta?.Ux?.ClipPathResources?.Type == "clipPath";
         }
 
         public Rect CalcSize(XdObjectJson xdObject, Rect rect)
         {
-            var shapeObjectParser = new ShapeObjectParser();
             var clipPath = xdObject.Meta.Ux.ClipPathResources.Children[0];
-            var shapeRect = shapeObjectParser.CalcSize(clipPath);
+            var shapeRect = ShapeObjectParser.CalcSize(clipPath);
             shapeRect.position += new Vector2(clipPath.Transform?.Tx ?? 0f, clipPath.Transform?.Ty ?? 0f);
             return shapeRect;
         }
