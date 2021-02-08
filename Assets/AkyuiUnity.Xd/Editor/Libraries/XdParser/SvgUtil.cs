@@ -106,7 +106,7 @@ namespace XdParser
             {
                 if (MaskGroupParser.Is(xdObject))
                 {
-                    var clipPathId = $"clip-path_{id}";
+                    var clipPathId = $"clip-path{defs.Count}";
                     parameter.ClipPath = $"url(#{clipPathId})";
                     var clipPathChildren = xdObject.Meta.Ux.ClipPathResources.Children.Select(x => CreateSvgLine(x, defs));
                     defs.Add(new ClipPathDefElement { Id = clipPathId, Children = clipPathChildren.ToArray() });
