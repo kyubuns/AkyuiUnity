@@ -289,7 +289,6 @@ namespace AkyuiUnity.Xd
                     {
                         if (!parser.Is(xdObject, parents)) continue;
                         rect = parser.CalcSize(xdObject, rect);
-                        if (parser is SvgGroupParser) continue;
                         break;
                     }
 

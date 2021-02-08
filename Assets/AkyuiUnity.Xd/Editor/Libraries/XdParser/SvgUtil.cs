@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using AkyuiUnity.Xd;
 using JetBrains.Annotations;
+using Unity.VectorGraphics;
 using UnityEngine;
 using XdParser.Internal;
 
@@ -40,16 +42,23 @@ namespace XdParser
         {
             var defs = new List<IDefElement>();
             var body = CreateSvgLine(xdObject, defs);
-            if (obb == null)
+
+            body.Parameter.Transform = new Transform();
+            if (obb != null)
             {
-                body.Parameter.Transform = new Transform();
+                var rootForCalc = new RootElement
+                {
+                    Defs = defs.ToArray(),
+                    Body = body,
+                    Size = null,
+                };
+                var bounds = CalcBounds(rootForCalc.ToSvg());
+                if (bounds.width > 0.0001f && bounds.height > 0.0001f)
+                {
+                    body.Parameter.Transform.X = -bounds.x;
+                    body.Parameter.Transform.Y = -bounds.y;
+                }
             }
-            else
-            {
-                body.Parameter.Transform.X = obb.Size.x / 2f;
-                body.Parameter.Transform.Y = obb.Size.y / 2f;
-            }
-            body.Parameter.Opacity = 1.0f;
 
             var root = new RootElement
             {
@@ -57,7 +66,21 @@ namespace XdParser
                 Body = body,
                 Size = obb?.Size,
             };
+            body.Parameter.Opacity = 1.0f;
             return root.ToSvg();
+        }
+
+        public static Rect CalcBounds(string svg)
+        {
+            using (var reader = new StringReader(svg))
+            {
+                var sceneInfo = SVGParser.ImportSVG(reader, ViewportOptions.DontPreserve);
+                var tessOptions = SvgToPng.TessellationOptions;
+                var geometry = VectorUtils.TessellateScene(sceneInfo.Scene, tessOptions, sceneInfo.NodeOpacity);
+                var vertices = geometry.SelectMany(geom => geom.Vertices.Select(x => (geom.WorldTransform * x))).ToArray();
+                var bounds = VectorUtils.Bounds(vertices);
+                return bounds;
+            }
         }
 
         private static IElement CreateSvgLine(XdObjectJson xdObject, List<IDefElement> defs)

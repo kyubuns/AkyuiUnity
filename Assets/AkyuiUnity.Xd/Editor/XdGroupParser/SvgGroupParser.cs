@@ -18,18 +18,21 @@ namespace AkyuiUnity.Xd
                 var isLinkedElementRef = !string.IsNullOrWhiteSpace(x.Meta?.Ux?.LinkedElementRef);
                 return hasParameter || isLinkedElementRef;
             });
-            return isLinkedElement && IsShapeOnly(xdObject);
-        }
 
-        private bool IsShapeOnly(XdObjectJson xdObject)
-        {
-            if (xdObject.Type != "group" && !ShapeObjectParser.Is(xdObject)) return false;
-            return (xdObject.Group?.Children ?? new XdObjectJson[] { }).All(IsShapeOnly);
+            bool IsShapeOnly(XdObjectJson x)
+            {
+                if (x.Type != "group" && !ShapeObjectParser.Is(x)) return false;
+                return (x.Group?.Children ?? new XdObjectJson[] { }).All(IsShapeOnly);
+            }
+
+            return isLinkedElement && IsShapeOnly(xdObject);
         }
 
         public Rect CalcSize(XdObjectJson xdObject, Rect rect)
         {
-            return rect;
+            var svg = SvgUtil.CreateSvg(xdObject, null);
+            var bounds = SvgUtil.CalcBounds(svg);
+            return bounds;
         }
 
         public (IComponent[], IAsset[]) Render(XdObjectJson xdObject, XdAssetHolder assetHolder, IObbGetter obbGetter)

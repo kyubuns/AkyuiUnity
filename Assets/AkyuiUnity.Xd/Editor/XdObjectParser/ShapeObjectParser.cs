@@ -29,7 +29,7 @@ namespace AkyuiUnity.Xd
         public static Rect CalcSize(XdObjectJson xdObject)
         {
             var position = Vector2.zero;
-            var size = new Vector2(xdObject.Shape.Width, xdObject.Shape.Height);
+            var size = new Vector2(xdObject.Shape?.Width ?? 0f, xdObject.Shape?.Height ?? 0f);
             var scaleBehavior = xdObject.Style?.Fill?.Pattern?.Meta?.Ux?.ScaleBehavior ?? "fill";
             var spriteUid = xdObject.Style?.Fill?.Pattern?.Meta?.Ux?.Uid;
 
@@ -41,18 +41,11 @@ namespace AkyuiUnity.Xd
             else if (SvgUtil.Types.Contains(shapeType))
             {
                 var svg = SvgUtil.CreateSvg(xdObject, null);
-                using (var reader = new StringReader(svg))
+                var bounds = SvgUtil.CalcBounds(svg);
+                if (bounds.width > 0.0001f && bounds.height > 0.0001f)
                 {
-                    var sceneInfo = SVGParser.ImportSVG(reader, ViewportOptions.DontPreserve);
-                    var tessOptions = SvgToPng.TessellationOptions;
-                    var geometry = VectorUtils.TessellateScene(sceneInfo.Scene, tessOptions, sceneInfo.NodeOpacity);
-                    var vertices = geometry.SelectMany(geom => geom.Vertices.Select(x => (geom.WorldTransform * x))).ToArray();
-                    var bounds = VectorUtils.Bounds(vertices);
-                    if (bounds.width > 0.0001f && bounds.height > 0.0001f)
-                    {
-                        size = new Vector2(bounds.width, bounds.height);
-                        position = new Vector2(bounds.x, bounds.y);
-                    }
+                    size = new Vector2(bounds.width, bounds.height);
+                    position = new Vector2(bounds.x, bounds.y);
                 }
             }
 
