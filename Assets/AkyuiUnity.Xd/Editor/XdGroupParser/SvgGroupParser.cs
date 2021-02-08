@@ -12,12 +12,13 @@ namespace AkyuiUnity.Xd
     {
         public bool Is(XdObjectJson xdObject, XdObjectJson[] parents)
         {
-            return new[] { xdObject }.Concat(parents).Any(x =>
+            var isLinkedElement = new[] { xdObject }.Concat(parents).Any(x =>
             {
                 var hasParameter = x.HasParameter("vector");
                 var isLinkedElementRef = !string.IsNullOrWhiteSpace(x.Meta?.Ux?.LinkedElementRef);
-                return (hasParameter || isLinkedElementRef) && IsShapeOnly(x);
+                return hasParameter || isLinkedElementRef;
             });
+            return isLinkedElement && IsShapeOnly(xdObject);
         }
 
         private bool IsShapeOnly(XdObjectJson xdObject)
