@@ -127,9 +127,10 @@ namespace XdParser
                 var color = xdObject.GetFillColor();
                 parameter.Fill = color;
 
-                if (fill.Type == "solid")
+                if (fill.Type == "solid" || fill.Type == "gradient")
                 {
                     // nothing to do
+                    // gradientはサポートしていないが、知らないタイプというわけではないのでスルー
                 }
                 else if (fill.Type == "pattern")
                 {
@@ -138,7 +139,7 @@ namespace XdParser
                 }
                 else
                 {
-                    Debug.LogWarning($"Unknown fill type {fill.Type}");
+                    Debug.LogWarning($"Unknown fill type {fill.Type} in {xdObject.Name}");
                 }
 
                 if (!string.IsNullOrWhiteSpace(shape.Winding))
