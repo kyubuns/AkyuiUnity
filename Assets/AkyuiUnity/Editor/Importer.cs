@@ -12,6 +12,7 @@ using AkyuiUnity.Loader.Internal;
 using UnityEngine;
 using UnityEditor;
 using Utf8Json;
+using Debug = UnityEngine.Debug;
 using Object = UnityEngine.Object;
 
 namespace AkyuiUnity.Editor
@@ -81,6 +82,7 @@ namespace AkyuiUnity.Editor
                 var pathGetter = new PathGetter(settings, akyuiLoader.LayoutInfo.Name);
                 var prevMetaGameObject = AssetDatabase.LoadAssetAtPath<GameObject>(pathGetter.MetaSavePath);
                 var prevMeta = prevMetaGameObject != null ? prevMetaGameObject.GetComponent<AkyuiMeta>() : null;
+                var prevAssets = prevMeta != null ? prevMeta.assets : new Object[] { };
 
                 if (!settings.ReimportLayout && prevMeta != null && prevMeta.hash == akyuiLoader.LayoutInfo.Hash)
                 {
@@ -91,7 +93,6 @@ namespace AkyuiUnity.Editor
                 logger.Log($"Import Start");
                 var assets = ImportAssets(settings, akyuiLoader, pathGetter, logger, progress);
                 var (gameObject, hash) = ImportLayout(settings, akyuiLoader, pathGetter, logger);
-                var prevAssets = prevMeta != null ? prevMeta.assets : new Object[] { };
                 DeleteUnusedAssets(prevAssets, assets, logger);
 
                 var metaGameObject = new GameObject(akyuiLoader.LayoutInfo.Name);
