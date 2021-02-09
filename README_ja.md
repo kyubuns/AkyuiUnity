@@ -1,4 +1,4 @@
-# AkyuiUnity (アキュイ ユニティ)
+# AkyuiUnity
 
 AkyuiUnityは、[Akyui](https://github.com/kyubuns/Akyui)のUnity実装です。  
 AkyuiUnity.Xdと合わせて使うことで、簡単に[Adobe XD](https://www.adobe.com/products/xd.html)ファイルからUnityのPrefabを生成することが出来ます。
