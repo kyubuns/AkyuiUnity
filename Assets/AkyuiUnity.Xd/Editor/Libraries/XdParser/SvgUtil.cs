@@ -124,7 +124,7 @@ namespace XdParser
             parameter.EnableFill = true;
             if (fill != null && fill.Type != "none")
             {
-                var color = xdObject.GetFillColor();
+                var color = xdObject.Style.Fill.ToUnityColor();
                 parameter.Fill = color;
 
                 if (fill.Type == "solid" || fill.Type == "gradient")
@@ -168,7 +168,7 @@ namespace XdParser
             if (stroke != null && stroke.Type != "none")
             {
                 parameter.EnableStroke = true;
-                parameter.Stroke = stroke.Color.Value;
+                parameter.Stroke = stroke.ToUnityColor();
                 parameter.StrokeWidth = stroke.Width;
                 parameter.StrokeMiterLimit = stroke.MiterLimit;
 
@@ -244,10 +244,10 @@ namespace XdParser
             public float? Y { get; set; }
             public Transform Transform { get; set; } = new Transform();
             public bool EnableFill { get; set; }
-            public XdColorValueJson Fill { get; set; }
+            public Color? Fill { get; set; }
             public string FillRule { get; set; }
             public bool EnableStroke { get; set; }
-            public XdColorValueJson Stroke { get; set; }
+            public Color? Stroke { get; set; }
             public float? StrokeWidth { get; set; }
             public float? StrokeMiterLimit { get; set; }
             public string StrokeLinejoin { get; set; }
@@ -314,7 +314,7 @@ namespace XdParser
             {
                 if (!EnableFill) return null;
                 if (Fill == null) return @"fill=""none""";
-                return $@"fill=""{Fill.ToColorString()}""";
+                return $@"fill=""{Fill.Value.ToSvgColorString()}""";
             }
 
             private string FillRuleToSvg()
@@ -328,7 +328,7 @@ namespace XdParser
             {
                 if (!EnableStroke) return null;
                 if (Stroke == null) return @"stroke=""none""";
-                return $@"stroke=""{Stroke.ToColorString()}""";
+                return $@"stroke=""{Stroke.Value.ToSvgColorString()}""";
             }
 
             private string StrokeWidthToSvg()

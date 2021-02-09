@@ -40,7 +40,6 @@ namespace AkyuiUnity.Xd
             var components = new List<IComponent>();
             var assets = new List<IAsset>();
 
-            var color = xdObject.GetFillUnityColor();
             var obb = obbGetter.Get(xdObject);
             var size = obb.Size;
             var svg = SvgUtil.CreateSvg(xdObject, obb);
@@ -63,7 +62,7 @@ namespace AkyuiUnity.Xd
             }
             components.Add(new ImageComponent(
                 spriteUid,
-                new Color(1f, 1f, 1f, color.a),
+                Color.white,
                 Vector2Int.one
             ));
 

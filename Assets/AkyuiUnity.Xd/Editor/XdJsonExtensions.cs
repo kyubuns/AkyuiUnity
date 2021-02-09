@@ -61,26 +61,54 @@ namespace AkyuiUnity.Xd
             }
         }
 
+        public static string ToSvgColorString(this Color color)
+        {
+            var color32 = (Color32) color;
+            return $"rgba({color32.r},{color32.g},{color32.b},{color.a})";
+        }
+
+        public static Color ToUnityColor(this XdStyleFillJson xdStyleFillJson)
+        {
+            var color = new Color32 { r = 255, g = 255, b = 255, a = 255 };
+            if (xdStyleFillJson == null || xdStyleFillJson.Type == "none") return color;
+
+            var xdColorJson = xdStyleFillJson.Color;
+            if (xdColorJson?.Value == null) return color;
+
+            color.r = (byte) xdColorJson.Value.R;
+            color.g = (byte) xdColorJson.Value.G;
+            color.b = (byte) xdColorJson.Value.B;
+            color.a = xdColorJson.Alpha == null ? (byte) 255 : (byte) (255 * xdColorJson.Alpha);
+
+            return color;
+        }
+
+        public static Color ToUnityColor(this XdStyleStrokeJson xdStyleStrokeJson)
+        {
+            var color = new Color32 { r = 255, g = 255, b = 255, a = 255 };
+            if (xdStyleStrokeJson == null || xdStyleStrokeJson.Type == "none") return color;
+
+            var xdColorJson = xdStyleStrokeJson.Color;
+            if (xdColorJson?.Value == null) return color;
+
+            color.r = (byte) xdColorJson.Value.R;
+            color.g = (byte) xdColorJson.Value.G;
+            color.b = (byte) xdColorJson.Value.B;
+            color.a = xdColorJson.Alpha == null ? (byte) 255 : (byte) (255 * xdColorJson.Alpha);
+
+            return color;
+        }
+
         public static Color GetFillUnityColor(this XdObjectJson xdObjectJson)
         {
-            var colorJson = xdObjectJson.GetFillColor();
-            Color color = new Color32((byte) colorJson.R, (byte) colorJson.G, (byte) colorJson.B, 255);
-            if (xdObjectJson.Style?.Fill?.Type != "none")
-            {
-                color.a = xdObjectJson.Style?.Fill?.Color?.Alpha ?? 1f;
-            }
+            var color = xdObjectJson.Style.Fill.ToUnityColor();
             color.a *= xdObjectJson.Style?.Opacity ?? 1f;
             return color;
         }
 
         public static Color GetFillUnityColor(this XdArtboardChildJson xdArtboardChildJson)
         {
-            var colorJson = xdArtboardChildJson.Style.GetFillColor();
-            Color color = new Color32((byte) colorJson.R, (byte) colorJson.G, (byte) colorJson.B, 255);
-            if (xdArtboardChildJson.Style?.Fill?.Type != "none")
-            {
-                color.a = xdArtboardChildJson.Style?.Fill?.Color?.Alpha ?? 1f;
-            }
+            var color = xdArtboardChildJson.Style.Fill.ToUnityColor();
             color.a *= xdArtboardChildJson.Style?.Opacity ?? 1f;
             return color;
         }

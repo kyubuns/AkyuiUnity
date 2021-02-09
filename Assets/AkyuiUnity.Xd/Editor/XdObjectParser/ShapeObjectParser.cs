@@ -140,7 +140,7 @@ namespace AkyuiUnity.Xd
 
                 imageComponent = new ImageComponent(
                     spriteUid,
-                    new Color(1f, 1f, 1f, color.a),
+                    Color.white,
                     direction
                 );
             }
