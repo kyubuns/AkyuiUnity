@@ -64,7 +64,7 @@ namespace AkyuiUnity.Xd
         public static string ToSvgColorString(this Color color)
         {
             var color32 = (Color32) color;
-            return $"rgba({color32.r},{color32.g},{color32.b},{color.a})";
+            return $"rgba({color32.r},{color32.g},{color32.b},{color.a:0.###})";
         }
 
         public static Color ToUnityColor(this XdStyleFillJson xdStyleFillJson)

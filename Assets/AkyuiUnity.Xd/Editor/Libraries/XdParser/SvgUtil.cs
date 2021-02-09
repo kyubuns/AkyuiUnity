@@ -55,8 +55,8 @@ namespace XdParser
                 var bounds = CalcBounds(rootForCalc.ToSvg());
                 if (bounds.width > 0.0001f && bounds.height > 0.0001f)
                 {
-                    body.Parameter.Transform.X = -bounds.x;
-                    body.Parameter.Transform.Y = -bounds.y;
+                    body.Parameter.Transform.Value.Tx = -bounds.x;
+                    body.Parameter.Transform.Value.Ty = -bounds.y;
                 }
             }
 
@@ -94,10 +94,7 @@ namespace XdParser
                 Id = id
             };
 
-            var tx = xdObject.Transform?.Tx ?? 0f;
-            var ty = xdObject.Transform?.Ty ?? 0f;
-            parameter.Transform.X = tx;
-            parameter.Transform.Y = ty;
+            parameter.Transform = new Transform { Value = xdObject.Transform };
 
             var opacity = xdObject.Style?.Opacity;
             parameter.Opacity = opacity;
@@ -382,13 +379,32 @@ namespace XdParser
 
         private class Transform
         {
-            public float X { get; set; }
-            public float Y { get; set; }
+            public XdTransformJson Value { get; set; } = new XdTransformJson
+            {
+                A = 1f,
+                B = 0f,
+                C = 0f,
+                D = 1f,
+                Tx = 0f,
+                Ty = 0f,
+            };
 
             public string ToSvg()
             {
-                if (Math.Abs(X) < 0.0001f && Math.Abs(Y) < 0.0001f) return null;
-                return $@"transform=""translate({X:0.###} {Y:0.###})""";
+                if (Value == null) return null;
+
+                if (
+                    Mathf.Abs(Value.A - 1f) < 0.0001f
+                    && Mathf.Abs(Value.B) < 0.0001f
+                    && Mathf.Abs(Value.C) < 0.0001f
+                    && Mathf.Abs(Value.D - 1f) < 0.0001f
+                )
+                {
+                    if (Math.Abs(Value.Tx) < 0.0001f && Math.Abs(Value.Ty) < 0.0001f) return null;
+                    return $@"transform=""translate({Value.Tx:0.###} {Value.Ty:0.###})""";
+                }
+
+                return $@"transform=""matrix({Value.A:0.###}, {Value.B:0.###}, {Value.C:0.###}, {Value.D:0.###}, {Value.Tx:0.###}, {Value.Ty:0.###})""";
             }
         }
 
