@@ -64,7 +64,6 @@ namespace AkyuiUnity.Xd
 
         private static (int Imported, int Skipped) ImportedArtboards(XdImportSettings xdSettings, AkyuiLogger logger, string xdFilePath, IAkyuiProgress progress, List<IAkyuiLoader> loaders)
         {
-            logger.Log($"Xd Import Start");
             var stopWatch = Stopwatch.StartNew();
             var file = new XdFile(xdFilePath);
             XdFile = file;

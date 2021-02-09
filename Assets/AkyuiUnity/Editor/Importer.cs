@@ -90,7 +90,6 @@ namespace AkyuiUnity.Editor
                     return;
                 }
 
-                logger.Log($"Import Start");
                 var assets = ImportAssets(settings, akyuiLoader, pathGetter, logger, progress);
                 var (gameObject, hash) = ImportLayout(settings, akyuiLoader, pathGetter, logger);
                 DeleteUnusedAssets(prevAssets, assets, logger);
@@ -118,7 +117,7 @@ namespace AkyuiUnity.Editor
             logger.Log($"Import Finish", ("time", $"{stopWatch.Elapsed.TotalSeconds:0.00}s"));
         }
 
-        private static void DeleteUnusedAssets(Object[] prevAssets, Object[] newAssets, AkyuiLogger logger)
+        private static string[] DeleteUnusedAssets(Object[] prevAssets, Object[] newAssets, AkyuiLogger logger)
         {
             var deletedUnusedAssets = new List<string>();
             foreach (var prevAsset in prevAssets)
@@ -131,18 +130,14 @@ namespace AkyuiUnity.Editor
                 AssetDatabase.DeleteAsset(prevAssetPath);
             }
 
-            if (deletedUnusedAssets.Count > 0)
-            {
-                logger.Log($"Delete unused asset", ("assets", string.Join(", ", deletedUnusedAssets)));
-            }
+            return deletedUnusedAssets.ToArray();
         }
 
         private static Object[] ImportAssets(IAkyuiImportSettings settings, IAkyuiLoader akyuiLoader, PathGetter pathGetter, AkyuiLogger logger, IAkyuiProgress progress)
         {
+            var stopWatch = Stopwatch.StartNew();
             using (logger.SetCategory("Assets"))
             {
-                logger.Log($"Import Start");
-
                 var assets = new List<Object>();
                 var unityAssetsParentPath = Path.GetDirectoryName(Application.dataPath) ?? "";
 
@@ -199,7 +194,7 @@ namespace AkyuiUnity.Editor
                 var importAssets = assets.ToArray();
                 foreach (var trigger in settings.Triggers) trigger.OnPostprocessAllAssets(akyuiLoader, importAssets);
 
-                logger.Log($"Import Finish", ("import", importAssetNames.Count), ("skip", skipAssetNames.Count));
+                logger.Log($"Import Finish", ("import", importAssetNames.Count), ("skip", skipAssetNames.Count), ("time", $"{stopWatch.Elapsed.TotalSeconds:0.00}s"));
 
                 return importAssets;
             }
@@ -233,14 +228,14 @@ namespace AkyuiUnity.Editor
 
         private static (GameObject, long Hash) ImportLayout(IAkyuiImportSettings settings, IAkyuiLoader akyuiLoader, PathGetter pathGetter, AkyuiLogger logger)
         {
+            var stopWatch = Stopwatch.StartNew();
             using (logger.SetCategory("Layout"))
             {
-                logger.Log($"Import Start");
                 var layoutInfo = akyuiLoader.LayoutInfo;
                 var triggers = settings.Triggers.Select(x => (IAkyuiGenerateTrigger) x).ToArray();
                 var (gameObject, hash) = AkyuiGenerator.GenerateGameObject(new EditorAssetLoader(pathGetter, logger, settings.Triggers), layoutInfo, triggers);
                 foreach (var trigger in settings.Triggers) trigger.OnPostprocessPrefab(akyuiLoader, ref gameObject);
-                logger.Log($"Import Finish");
+                logger.Log($"Import Finish", ("time", $"{stopWatch.Elapsed.TotalSeconds:0.00}s"));
                 return (gameObject, hash);
             }
         }
