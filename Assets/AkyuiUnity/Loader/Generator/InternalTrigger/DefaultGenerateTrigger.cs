@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using AkyuiUnity.Loader.Internal;
 using UnityEngine;
 using UnityEngine.UI;
@@ -187,19 +188,17 @@ namespace AkyuiUnity.Generator.InternalTrigger
         {
             var button = gameObject.AddComponent<Button>();
 
-            Graphic graphic;
-            if (gameObject.GetComponent<Graphic>() == null)
+            button.targetGraphic = gameObject
+                .GetComponentsInChildren<Image>()
+                .FirstOrDefault(x => x.color != Color.clear);
+
+            if (button.targetGraphic == null)
             {
                 var image = gameObject.AddComponent<Image>();
                 image.color = Color.clear;
-                graphic = image;
-            }
-            else
-            {
-                graphic = gameObject.GetComponent<Graphic>();
+                button.targetGraphic = image;
             }
 
-            button.targetGraphic = graphic;
             return button;
         }
 
