@@ -17,14 +17,13 @@ MonoBehaviour:
   metaOutputPath: Assets/Sample/GeneratedMetas/{name}Meta
   fontDirectoryPath: Assets/Sample/Fonts/
   triggers:
-  - {fileID: 11400000, guid: d056efc8b5c4540d79d0f2319b88b0e7, type: 2}
+  - {fileID: 11400000, guid: 353e7213f5b47417bb1531ee41631e84, type: 2}
   - {fileID: 11400000, guid: 7a40d86aba0244ab98bcb9126ab0b167, type: 2}
   - {fileID: 11400000, guid: 926bf0136d8a1412d958f5924c81c093, type: 2}
   - {fileID: 11400000, guid: 4e9af532bee9945eba20b738c71b314d, type: 2}
-  - {fileID: 11400000, guid: 353e7213f5b47417bb1531ee41631e84, type: 2}
   spriteSaveScale: 2
-  reimportAsset: 0
   reimportLayout: 1
+  reimportAsset: 0
   objectParsers:
   - {fileID: 11400000, guid: d62fb04b11a7b412b834e0b33fda755a, type: 2}
   groupParsers: []
