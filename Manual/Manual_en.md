@@ -49,6 +49,58 @@ https://github.com/kyubuns/AkyuiUnity/discussions/8
 
 
 ---
+## Xd Import Settings
+
+### Prefab Output Path
+
+- The path to output the Prefab.
+- `{name}` will be replaced with the Artboard name.
+
+### Asset Output Directory Path
+
+- The path to the directory containing the images used in the Prefab.
+- `{name}` will be replaced with the name of Artboard.
+
+### Meta Output Path
+
+- The path to output Meta files for Prefab.
+  - Meta files do not need to be included in the build, but should be saved in a location visible to UnityEditor so that the information can be used when re-importing.
+- `{name}` will be replaced with the Artboard name.
+
+### Font Directory Path
+
+- Font directory path to use when creating Prefabs.
+
+### Triggers
+
+### Sprite Save Scale
+
+- Specifies how many times the size of the image used for the Prefab should be saved in XD.
+- The larger the size, the larger the Sprite will be and the better it will be saved.
+
+### Reimport Layout
+
+- Reimports the layout of the prefs, even if there are no changes in XD.
+  - This is useful if you have changed the settings in XdImportSettings and want them to be reflected.
+
+### Reimport Asset
+
+- Force to reimport the image to be used for the Prefab even if there are no changes in XD.
+  - This is useful when you have changed the settings in XdImportSettings and want them to be reflected.
+
+### Object Parsers
+
+### Group Parsers
+
+### Xd Triggers
+
+### Akyui Output Path
+
+- The output path of the Akyui (UI structure definition) file.
+- If left blank, it will be invalid.
+
+
+---
 ## Recommended usage
 
 ### Prefab handling
