@@ -17,6 +17,7 @@ namespace AkyuiUnity.Xd
 
         public static void Import(XdImportSettings xdSettings, string[] xdFilePaths)
         {
+            var stopWatch = Stopwatch.StartNew();
             var logger = new AkyuiLogger("Akyui.Xd");
             var loaders = new List<IAkyuiLoader>();
             Settings = xdSettings;
@@ -41,6 +42,8 @@ namespace AkyuiUnity.Xd
             Importer.Import(xdSettings, loaders.ToArray());
             ExportAkyui(xdSettings, loaders, logger);
             foreach (var loader in loaders) loader.Dispose();
+
+            logger.Log($"Xd Import Finish", ("Time", $"{stopWatch.Elapsed.TotalSeconds:0.00}s"));
         }
 
         private static void ExportAkyui(XdImportSettings xdSettings, List<IAkyuiLoader> loaders, AkyuiLogger logger)
@@ -58,7 +61,7 @@ namespace AkyuiUnity.Xd
                     }
                 }
                 stopWatch.Stop();
-                logger.Log($"Export Akyui", ("time", $"{stopWatch.Elapsed.TotalSeconds:0.00}s"));
+                logger.Log($"Export Akyui", ("Time", $"{stopWatch.Elapsed.TotalSeconds:0.00}s"));
             }
         }
 
@@ -104,7 +107,7 @@ namespace AkyuiUnity.Xd
 
                         if (!xdSettings.ReimportLayout && !xdSettings.ReimportAsset && prevMetaUserData != null && prevMetaUserData.value == xdHash.ToString())
                         {
-                            logger.Log("Skip", ("hash", xdHash));
+                            logger.Log("Skip", ("Hash", xdHash));
                             skipped++;
                             continue;
                         }
@@ -115,7 +118,7 @@ namespace AkyuiUnity.Xd
                 }
 
                 stopWatch.Stop();
-                logger.Log($"Xd Import Finish", ("imported", imported), ("skipped", skipped), ("time", $"{stopWatch.Elapsed.TotalSeconds:0.00}s"));
+                logger.Log($"Xd Parse Finish", ("ImportArtboard", imported), ("SkipArtboard", skipped), ("Time", $"{stopWatch.Elapsed.TotalSeconds:0.00}s"));
                 return (imported, skipped);
             }
         }
