@@ -17,19 +17,22 @@ namespace AkyuiUnity.Xd
 
         public Rect CalcSize(XdObjectJson xdObject)
         {
+            // AutoWidth
             if (xdObject.Text?.Frame?.Type == "area")
             {
                 return CalcSizeFromFrame(xdObject);
             }
 
-            if (xdObject.Text?.Frame?.Type == "positioned")
-            {
-                return CalcSizeFromText(xdObject);
-            }
-
+            // AutoHeight
             if (xdObject.Text?.Frame?.Type == "autoHeight")
             {
                 return CalcSizeAutoHeight(xdObject);
+            }
+
+            // FixedSize
+            if (xdObject.Text?.Frame?.Type == "positioned")
+            {
+                return CalcSizeFromText(xdObject);
             }
 
             throw new NotSupportedException($"Unknown Text Type {xdObject.Text?.Frame?.Type}");
@@ -76,7 +79,7 @@ namespace AkyuiUnity.Xd
                 font = fontAsset,
                 pivot = Vector2.zero,
                 richText = false,
-                lineSpacing = 0,
+                lineSpacing = 1.0f,
                 resizeTextForBestFit = false,
                 updateBounds = true,
                 horizontalOverflow = HorizontalWrapMode.Overflow,
@@ -104,9 +107,11 @@ namespace AkyuiUnity.Xd
             var height = preferredHeight * scale;
             var size = new Vector2(width, height);
 
-            var lineJson = xdObject.Text.Paragraphs[0].Lines[0][0];
-            position.x += lineJson.X;
-            position.y += lineJson.Y;
+            var lines = xdObject.Text.Paragraphs.SelectMany(x => x.Lines).ToArray();
+            var lineMinX = lines.Min(x => x[0].X); // xは1要素目にだけ入っている
+            var lineMinY = lines.SelectMany(l => l).Min(x => x.Y);
+            position.x += lineMinX;
+            position.y += lineMinY;
 
             return new Rect(position, size);
         }
