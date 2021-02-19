@@ -82,9 +82,11 @@ namespace AkyuiUnity.Xd.Extensions
             var size = new Vector2(LayoutUtility.GetPreferredSize(dummyRectTransform, 0), LayoutUtility.GetPreferredSize(dummyRectTransform, 1));
             DestroyImmediate(dummyObject);
 
-            var lineJson = xdObject.Text.Paragraphs[0].Lines[0][0];
-            position.x += lineJson.X;
-            position.y += lineJson.Y;
+            var lines = xdObject.Text.Paragraphs.SelectMany(x => x.Lines).ToArray();
+            var lineMinX = lines.Min(x => x[0].X); // xは1要素目にだけ入っている
+            var lineMinY = lines.SelectMany(l => l).Min(x => x.Y);
+            position.x += lineMinX;
+            position.y += lineMinY;
 
             return new Rect(position, size);
         }
