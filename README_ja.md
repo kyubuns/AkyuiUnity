@@ -77,7 +77,7 @@ MIT License (see [LICENSE](LICENSE))
 
 ## スペシャルサンクス
 
-- サンプルに使っているXDファイル (CC0)
+- サンプルに使っているXDファイル
   - https://github.com/beinteractive/Public-Game-UI-XD
 
 ## Buy me a coffee

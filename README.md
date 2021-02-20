@@ -77,7 +77,7 @@ MIT License (see [LICENSE](LICENSE))
 
 ## SpecialThanks
 
-- XD file used in the sample (CC0)
+- XD file used in the sample
   - https://github.com/beinteractive/Public-Game-UI-XD
 
 ## Buy me a coffee
