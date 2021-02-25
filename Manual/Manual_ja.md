@@ -105,7 +105,7 @@ https://github.com/kyubuns/AkyuiUnity/discussions/8
 
 ### Prefabの扱い
 
-- 生成されたPrefabに手動で手を加えることは推奨しません。
+- 生成されたPrefabを手動で変更を加えることは推奨しません。
   - XDを更新し、再度インポートしたときに変更が失われてしまいます。
   - 特定の操作をしたいときはTriggerの使用を検討してください。
 
