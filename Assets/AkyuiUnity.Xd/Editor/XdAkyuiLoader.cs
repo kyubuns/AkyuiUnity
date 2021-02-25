@@ -94,7 +94,7 @@ namespace AkyuiUnity.Xd
         private class XdRenderer
         {
             public Meta Meta => new Meta(Const.AkyuiVersion, "AkyuiUnity.Xd", "0.1.0");
-            public int Root => 0;
+            public uint Root => 0;
             public List<IElement> Elements { get; }
             public List<IAsset> Assets { get; }
 
@@ -102,7 +102,7 @@ namespace AkyuiUnity.Xd
             private readonly IXdObjectParser[] _objectParsers;
             private readonly IXdGroupParser[] _groupParsers;
             private readonly ObbHolder _obbHolder;
-            private int _nextEid = 1;
+            private uint _nextEid = 1;
             private Dictionary<string, XdObjectJson> _sourceGuidToObject;
 
             public XdRenderer(XdArtboard xdArtboard, XdAssetHolder xdAssetHolder, IXdObjectParser[] objectParsers, IXdGroupParser[] groupParsers, AkyuiXdImportTrigger[] triggers)
@@ -323,7 +323,7 @@ namespace AkyuiUnity.Xd
             // Renderは親から子供の順番
             private IElement[] Render(XdObjectJson xdObject, [CanBeNull] Obb parentObb, XdObjectJson[] parents)
             {
-                var eid = _nextEid;
+                uint eid = _nextEid;
                 _nextEid++;
 
                 var originalObb = _obbHolder.Get(xdObject);

@@ -14,7 +14,7 @@ namespace AkyuiUnity.Generator
             return (gameObject, layoutInfo.Hash);
         }
 
-        private static GameObject CreateGameObject(IAssetLoader assetLoader, LayoutInfo layoutInfo, int eid, Transform parent, IAkyuiGenerateTrigger[] triggers)
+        private static GameObject CreateGameObject(IAssetLoader assetLoader, LayoutInfo layoutInfo, long eid, Transform parent, IAkyuiGenerateTrigger[] triggers)
         {
             (Vector2 Min, Vector2 Max) CalcAnchor(AnchorXType x, AnchorYType y)
             {

@@ -67,10 +67,10 @@ namespace AkyuiUnity.Loader
 
             return new LayoutInfo(
                 layoutJson["name"].JsonString(),
-                layoutJson["hash"].JsonLong(),
+                layoutJson["hash"].JsonUint(),
                 meta,
                 layoutJson["userdata"].JsonStringDictionary(),
-                layoutJson["root"].JsonInt(),
+                layoutJson["root"].JsonUint(),
                 elements.ToArray()
             );
         }
@@ -120,7 +120,7 @@ namespace AkyuiUnity.Loader
 
                 return new SpriteAsset(
                     assetJson["file"].JsonString(),
-                    assetJson["hash"].JsonLong(),
+                    assetJson["hash"].JsonUint(),
                     assetJson["size"].JsonVector2(),
                     assetJson.ContainsKey("userdata") ? assetJson["userdata"].JsonString() : null,
                     border
@@ -147,7 +147,7 @@ namespace AkyuiUnity.Loader
                 var anchorY = (AnchorYType) Enum.Parse(typeof(AnchorYType), elementJson["anchor_y"].JsonString(), true);
 
                 return new ObjectElement(
-                    elementJson["eid"].JsonInt(),
+                    elementJson["eid"].JsonUint(),
                     elementJson["name"].JsonString(),
                     elementJson["position"].JsonVector2(),
                     elementJson["size"].JsonVector2(),
@@ -156,7 +156,7 @@ namespace AkyuiUnity.Loader
                     elementJson["rotation"].JsonFloat(),
                     elementJson["visible"].JsonBool(),
                     components.ToArray(),
-                    elementJson["children"].JsonIntArray()
+                    elementJson["children"].JsonUintArray()
                 );
             }
 

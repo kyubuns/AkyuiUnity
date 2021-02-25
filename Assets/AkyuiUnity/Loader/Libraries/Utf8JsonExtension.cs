@@ -25,6 +25,13 @@ namespace AkyuiUnity.Loader.Internal
             throw new Exception($"{o} is {o.GetType()}");
         }
 
+        public static uint JsonUint(this object o)
+        {
+            if (o is long l) return (uint) l;
+            if (o is double d) return (uint) d;
+            throw new Exception($"{o} is {o.GetType()}");
+        }
+
         public static long JsonLong(this object o)
         {
             if (o is long l) return l;
@@ -46,6 +53,28 @@ namespace AkyuiUnity.Loader.Internal
             {
                 if (x is long l) return (int) l;
                 if (x is double d) return (int) d;
+                throw new Exception($"{x} is {x.GetType()}");
+            }).ToArray();
+        }
+
+        public static uint[] JsonUintArray(this object o)
+        {
+            var a = (List<object>) o;
+            return a.Select(x =>
+            {
+                if (x is long l) return (uint) l;
+                if (x is double d) return (uint) d;
+                throw new Exception($"{x} is {x.GetType()}");
+            }).ToArray();
+        }
+
+        public static long[] JsonLongArray(this object o)
+        {
+            var a = (List<object>) o;
+            return a.Select(x =>
+            {
+                if (x is long l) return l;
+                if (x is double d) return (long) d;
                 throw new Exception($"{x} is {x.GetType()}");
             }).ToArray();
         }

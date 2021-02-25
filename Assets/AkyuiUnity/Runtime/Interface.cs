@@ -12,13 +12,13 @@ namespace AkyuiUnity
     public class LayoutInfo
     {
         [NotNull] public string Name;
-        public readonly long Hash;
+        public readonly uint Hash;
         [NotNull] public readonly Meta Meta;
         [NotNull] public readonly Dictionary<string, string> UserData;
-        public readonly int Root;
+        public readonly uint Root;
         [NotNull] public readonly IElement[] Elements;
 
-        public LayoutInfo([NotNull] string name, long hash, [NotNull] Meta meta, Dictionary<string, string> userData, int root, [NotNull] IElement[] elements)
+        public LayoutInfo([NotNull] string name, uint hash, [NotNull] Meta meta, Dictionary<string, string> userData, uint root, [NotNull] IElement[] elements)
         {
             Name = name;
             Hash = hash;
@@ -46,7 +46,7 @@ namespace AkyuiUnity
     public interface IAsset
     {
         [NotNull] string FileName { get; }
-        long Hash { get; }
+        uint Hash { get; }
         [CanBeNull] string UserData { get; }
     }
 
@@ -55,12 +55,12 @@ namespace AkyuiUnity
         public const string TypeString = "sprite";
 
         public string FileName { get; set; }
-        public long Hash { get; set; }
+        public uint Hash { get; set; }
         public Vector2 Size { get; set; }
         [CanBeNull] public string UserData { get; set; }
         [CanBeNull] public Border Border { get; set; }
 
-        public SpriteAsset([NotNull] string fileName, long hash, Vector2 size, [CanBeNull] string userData, [CanBeNull] Border border)
+        public SpriteAsset([NotNull] string fileName, uint hash, Vector2 size, [CanBeNull] string userData, [CanBeNull] Border border)
         {
             FileName = fileName;
             Hash = hash;
@@ -93,7 +93,7 @@ namespace AkyuiUnity
 
     public interface IElement
     {
-        int Eid { get; }
+        uint Eid { get; }
         Vector2 Position { get; }
         Vector2 Size { get; }
         AnchorXType AnchorX { get; }
@@ -105,7 +105,7 @@ namespace AkyuiUnity
     {
         public const string TypeString = "object";
 
-        public int Eid { get; }
+        public uint Eid { get; }
 
         [NotNull] public readonly string Name;
         public Vector2 Position { get; }
@@ -115,9 +115,9 @@ namespace AkyuiUnity
         public float Rotation { get; }
         public bool Visible { get; }
         [NotNull] public readonly IComponent[] Components;
-        [NotNull] public readonly int[] Children;
+        [NotNull] public readonly uint[] Children;
 
-        public ObjectElement(int eid, [NotNull] string name, Vector2 position, Vector2 size, AnchorXType anchorX, AnchorYType anchorY, float rotation, bool visible, [NotNull] IComponent[] components, [NotNull] int[] children)
+        public ObjectElement(uint eid, [NotNull] string name, Vector2 position, Vector2 size, AnchorXType anchorX, AnchorYType anchorY, float rotation, bool visible, [NotNull] IComponent[] components, [NotNull] uint[] children)
         {
             Eid = eid;
             Name = name;
