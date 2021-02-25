@@ -102,7 +102,6 @@ namespace AkyuiUnity.Xd
             private readonly IXdObjectParser[] _objectParsers;
             private readonly IXdGroupParser[] _groupParsers;
             private readonly ObbHolder _obbHolder;
-            private uint _nextEid = 1;
             private Dictionary<string, XdObjectJson> _sourceGuidToObject;
 
             public XdRenderer(XdArtboard xdArtboard, XdAssetHolder xdAssetHolder, IXdObjectParser[] objectParsers, IXdGroupParser[] groupParsers, AkyuiXdImportTrigger[] triggers)
@@ -323,9 +322,7 @@ namespace AkyuiUnity.Xd
             // Renderは親から子供の順番
             private IElement[] Render(XdObjectJson xdObject, [CanBeNull] Obb parentObb, XdObjectJson[] parents)
             {
-                uint eid = _nextEid;
-                _nextEid++;
-
+                var eid = FastHash.CalculateHash(xdObject.Id);
                 var originalObb = _obbHolder.Get(xdObject);
                 var obb = originalObb.CalcObbInWorld(parentObb);
                 var position = obb.CalcLocalRect().center - (parentObb?.Size ?? Vector2.zero) / 2f;
