@@ -322,7 +322,7 @@ namespace AkyuiUnity.Xd
             // Renderは親から子供の順番
             private IElement[] Render(XdObjectJson xdObject, [CanBeNull] Obb parentObb, XdObjectJson[] parents)
             {
-                var eid = FastHash.CalculateHash(xdObject.Id);
+                var eid = FastHash.CalculateHash(xdObject.Guid ?? xdObject.Id);
                 var originalObb = _obbHolder.Get(xdObject);
                 var obb = originalObb.CalcObbInWorld(parentObb);
                 var position = obb.CalcLocalRect().center - (parentObb?.Size ?? Vector2.zero) / 2f;
