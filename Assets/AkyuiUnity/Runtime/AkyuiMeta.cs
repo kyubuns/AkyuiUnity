@@ -8,7 +8,7 @@ namespace AkyuiUnity
 {
     public class AkyuiMeta : MonoBehaviour
     {
-        [SerializeField] public long hash;
+        [SerializeField] public uint hash;
         [SerializeField] public GameObject root;
         [SerializeField] public Object[] assets;
         [SerializeField] public AkyuiMetaUserData[] userData;

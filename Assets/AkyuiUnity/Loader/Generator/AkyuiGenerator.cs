@@ -7,7 +7,7 @@ namespace AkyuiUnity.Generator
 {
     public static class AkyuiGenerator
     {
-        public static (GameObject, long Hash, IDictionary<uint, GameObject> EidMap) GenerateGameObject(IAssetLoader assetLoader, LayoutInfo layoutInfo, IAkyuiGenerateTrigger[] triggers)
+        public static (GameObject, uint Hash, IDictionary<uint, GameObject> EidMap) GenerateGameObject(IAssetLoader assetLoader, LayoutInfo layoutInfo, IAkyuiGenerateTrigger[] triggers)
         {
             var triggersWithDefault = triggers.Concat(new[] { new DefaultGenerateTrigger() }).ToArray();
             var eidMap = new Dictionary<uint, GameObject>();
@@ -15,7 +15,7 @@ namespace AkyuiUnity.Generator
             return (gameObject, layoutInfo.Hash, eidMap);
         }
 
-        private static GameObject CreateGameObject(IAssetLoader assetLoader, LayoutInfo layoutInfo, long eid, Transform parent, IDictionary<uint, GameObject> eidMap, IAkyuiGenerateTrigger[] triggers)
+        private static GameObject CreateGameObject(IAssetLoader assetLoader, LayoutInfo layoutInfo, uint eid, Transform parent, IDictionary<uint, GameObject> eidMap, IAkyuiGenerateTrigger[] triggers)
         {
             (Vector2 Min, Vector2 Max) CalcAnchor(AnchorXType x, AnchorYType y)
             {

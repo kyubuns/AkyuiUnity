@@ -174,7 +174,7 @@ namespace AkyuiUnity.Editor
                     {
                         var import = AssetImporter.GetAtPath(savePath);
                         var prevUserData = JsonSerializer.Deserialize<Dictionary<string, object>>(import.userData);
-                        if (prevUserData["hash"].JsonLong() == asset.Hash)
+                        if (prevUserData["hash"].JsonUint() == asset.Hash)
                         {
                             skipAssetNames.Add(asset.FileName);
                             assets.Add(AssetDatabase.LoadAssetAtPath<Object>(import.assetPath));
@@ -242,7 +242,7 @@ namespace AkyuiUnity.Editor
             public double Time { get; set; }
         }
 
-        private static (GameObject, long Hash, IDictionary<uint, GameObject> EidMap, ImportLayoutLog) ImportLayout(IAkyuiImportSettings settings, IAkyuiLoader akyuiLoader, PathGetter pathGetter, AkyuiLogger logger)
+        private static (GameObject, uint Hash, IDictionary<uint, GameObject> EidMap, ImportLayoutLog) ImportLayout(IAkyuiImportSettings settings, IAkyuiLoader akyuiLoader, PathGetter pathGetter, AkyuiLogger logger)
         {
             var stopWatch = Stopwatch.StartNew();
             var layoutInfo = akyuiLoader.LayoutInfo;

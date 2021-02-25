@@ -247,11 +247,9 @@ namespace AkyuiUnity.Loader
         private static string ToSerializable(string text) => text;
         private static int ToSerializable(int number) => number;
         private static uint ToSerializable(uint number) => number;
-        private static long ToSerializable(long number) => number;
         private static float ToSerializable(float number) => number;
         private static int[] ToSerializable(int[] numbers) => numbers;
         private static uint[] ToSerializable(uint[] numbers) => numbers;
-        private static long[] ToSerializable(long[] numbers) => numbers;
         private static float[] ToSerializable(float[] numbers) => numbers;
         private static float[] ToSerializable(Vector2 v) => new[] { v[0], v[1] };
         private static Dictionary<string, string> ToSerializable(Dictionary<string, string> dict) => dict;
