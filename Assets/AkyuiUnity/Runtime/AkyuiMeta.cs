@@ -12,6 +12,7 @@ namespace AkyuiUnity
         [SerializeField] public GameObject root;
         [SerializeField] public Object[] assets;
         [SerializeField] public AkyuiMetaUserData[] userData;
+        [SerializeField] public AkyuiEidToObject[] eidToObjects;
 
         public AkyuiMetaUserData FindUserData(string key)
         {
@@ -24,5 +25,12 @@ namespace AkyuiUnity
     {
         [SerializeField] public string key;
         [SerializeField] public string value;
+    }
+
+    [Serializable]
+    public class AkyuiEidToObject
+    {
+        [SerializeField] public uint eid;
+        [SerializeField] public GameObject gameObject;
     }
 }

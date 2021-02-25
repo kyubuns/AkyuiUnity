@@ -12,7 +12,6 @@ using AkyuiUnity.Loader.Internal;
 using UnityEngine;
 using UnityEditor;
 using Utf8Json;
-using Debug = UnityEngine.Debug;
 using Object = UnityEngine.Object;
 
 namespace AkyuiUnity.Editor
@@ -91,7 +90,7 @@ namespace AkyuiUnity.Editor
                 }
 
                 var (assets, importAssetsLog) = ImportAssets(settings, akyuiLoader, pathGetter, logger, progress);
-                var (gameObject, hash, importLayoutLog) = ImportLayout(settings, akyuiLoader, pathGetter, logger);
+                var (gameObject, hash, eidMap, importLayoutLog) = ImportLayout(settings, akyuiLoader, pathGetter, logger);
                 DeleteUnusedAssets(prevAssets, assets, logger);
 
                 var metaGameObject = new GameObject(akyuiLoader.LayoutInfo.Name);
@@ -101,6 +100,7 @@ namespace AkyuiUnity.Editor
                 akyuiMeta.root = gameObject;
                 akyuiMeta.assets = assets;
                 akyuiMeta.userData = akyuiLoader.LayoutInfo.UserData.Select(x => new AkyuiMetaUserData { key = x.Key, value = x.Value }).ToArray();
+                akyuiMeta.eidToObjects = eidMap.Select(x => new AkyuiEidToObject { eid = x.Key, gameObject = x.Value }).ToArray();
 
                 AkyuiEditorUtil.CreateDirectory(Path.GetDirectoryName(pathGetter.PrefabSavePath));
                 AkyuiEditorUtil.CreateDirectory(Path.GetDirectoryName(pathGetter.MetaSavePath));
@@ -242,14 +242,14 @@ namespace AkyuiUnity.Editor
             public double Time { get; set; }
         }
 
-        private static (GameObject, long Hash, ImportLayoutLog) ImportLayout(IAkyuiImportSettings settings, IAkyuiLoader akyuiLoader, PathGetter pathGetter, AkyuiLogger logger)
+        private static (GameObject, long Hash, IDictionary<uint, GameObject> EidMap, ImportLayoutLog) ImportLayout(IAkyuiImportSettings settings, IAkyuiLoader akyuiLoader, PathGetter pathGetter, AkyuiLogger logger)
         {
             var stopWatch = Stopwatch.StartNew();
             var layoutInfo = akyuiLoader.LayoutInfo;
             var triggers = settings.Triggers.Select(x => (IAkyuiGenerateTrigger) x).ToArray();
-            var (gameObject, hash) = AkyuiGenerator.GenerateGameObject(new EditorAssetLoader(pathGetter, logger, settings.Triggers), layoutInfo, triggers);
+            var (gameObject, hash, eidMap) = AkyuiGenerator.GenerateGameObject(new EditorAssetLoader(pathGetter, logger, settings.Triggers), layoutInfo, triggers);
             foreach (var trigger in settings.Triggers) trigger.OnPostprocessPrefab(akyuiLoader, ref gameObject);
-            return (gameObject, hash, new ImportLayoutLog { Time = stopWatch.Elapsed.TotalSeconds });
+            return (gameObject, hash, eidMap, new ImportLayoutLog { Time = stopWatch.Elapsed.TotalSeconds });
         }
     }
 

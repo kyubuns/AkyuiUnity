@@ -7,14 +7,15 @@ namespace AkyuiUnity.Generator
 {
     public static class AkyuiGenerator
     {
-        public static (GameObject, long Hash) GenerateGameObject(IAssetLoader assetLoader, LayoutInfo layoutInfo, IAkyuiGenerateTrigger[] triggers)
+        public static (GameObject, long Hash, IDictionary<uint, GameObject> EidMap) GenerateGameObject(IAssetLoader assetLoader, LayoutInfo layoutInfo, IAkyuiGenerateTrigger[] triggers)
         {
             var triggersWithDefault = triggers.Concat(new[] { new DefaultGenerateTrigger() }).ToArray();
-            var gameObject = CreateGameObject(assetLoader, layoutInfo, layoutInfo.Root, null, triggersWithDefault);
-            return (gameObject, layoutInfo.Hash);
+            var eidMap = new Dictionary<uint, GameObject>();
+            var gameObject = CreateGameObject(assetLoader, layoutInfo, layoutInfo.Root, null, eidMap, triggersWithDefault);
+            return (gameObject, layoutInfo.Hash, eidMap);
         }
 
-        private static GameObject CreateGameObject(IAssetLoader assetLoader, LayoutInfo layoutInfo, long eid, Transform parent, IAkyuiGenerateTrigger[] triggers)
+        private static GameObject CreateGameObject(IAssetLoader assetLoader, LayoutInfo layoutInfo, long eid, Transform parent, IDictionary<uint, GameObject> eidMap, IAkyuiGenerateTrigger[] triggers)
         {
             (Vector2 Min, Vector2 Max) CalcAnchor(AnchorXType x, AnchorYType y)
             {
@@ -69,6 +70,7 @@ namespace AkyuiUnity.Generator
             if (element is ObjectElement objectElement)
             {
                 var gameObject = new GameObject(objectElement.Name);
+                eidMap.Add(element.Eid, gameObject);
                 gameObject.transform.SetParent(parent);
 
                 var rectTransform = gameObject.AddComponent<RectTransform>();
@@ -84,7 +86,7 @@ namespace AkyuiUnity.Generator
 
                 foreach (var child in objectElement.Children)
                 {
-                    CreateGameObject(assetLoader, layoutInfo, child, rectTransform, triggers);
+                    CreateGameObject(assetLoader, layoutInfo, child, rectTransform, eidMap, triggers);
                 }
 
                 foreach (var component in objectElement.Components)
