@@ -89,7 +89,7 @@ namespace AkyuiUnity.Xd
                 {
                     using (progress.TaskStart(artwork.Name))
                     {
-                        var name = artwork.Name;
+                        var name = artwork.Name.ToSafeString();
                         var xdHash = artwork.Hash;
                         var akyuiXdObjectParsers = xdSettings.ObjectParsers ?? new AkyuiXdObjectParser[] { };
                         var akyuiXdGroupParsers = xdSettings.GroupParsers ?? new AkyuiXdGroupParser[] { };
