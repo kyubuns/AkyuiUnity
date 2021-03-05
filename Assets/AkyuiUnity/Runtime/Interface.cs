@@ -6,7 +6,7 @@ namespace AkyuiUnity
 {
     public static class Const
     {
-        public const string AkyuiVersion = "0.1.0";
+        public const string AkyuiVersion = "1.0.0";
     }
 
     public class LayoutInfo

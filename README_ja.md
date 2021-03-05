@@ -12,14 +12,6 @@ AkyuiUnity.Xdと合わせて使うことで、簡単に[Adobe XD](https://www.ad
 
 ---
 
-## 注意！
-
-**AkyuiUnityはまだPreview版のため、今後の更新により挙動が大きく変更される可能性があります。**  
-**詳しくはdiscussionsをご覧ください。(Japanese)**  
-https://github.com/kyubuns/AkyuiUnity/discussions/8
-
----
-
 ## AkyuiUnity / AkyuiUnity.Xdとは？
 
 そもそも、[Akyui](https://github.com/kyubuns/Akyui)とは[kyubuns](https://github.com/kyubuns)が作ったUI定義ファイルのフォーマットのことです。  
