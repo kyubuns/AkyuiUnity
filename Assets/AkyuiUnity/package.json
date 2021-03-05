@@ -1,7 +1,7 @@
 {
   "name": "dev.kyubuns.akyuiunity",
   "displayName": "AkyuiUnity",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "unity": "2019.4",
   "description": "Akyui for Unity",
   "documentationUrl": "https://github.com/kyubuns/AkyuiUnity",
