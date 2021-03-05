@@ -3,13 +3,6 @@
 ***Read this document in other languages: [日本語](https://github.com/kyubuns/AkyuiUnity/blob/main/Manual/Manual_ja.md)***
 
 ---
-## Caution!
-
-**AkyuiUnity is in preview version, so its behavior may change significantly with future updates.**  
-**See discussion for details. (Japanese)**  
-https://github.com/kyubuns/AkyuiUnity/discussions/8
-
----
 ## How to use
 
 ## Initial setup

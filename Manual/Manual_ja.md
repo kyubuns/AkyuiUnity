@@ -3,13 +3,6 @@
 ***Read this document in other languages: [English](https://github.com/kyubuns/AkyuiUnity/blob/main/Manual/Manual_en.md)***
 
 ---
-## 注意！
-
-**AkyuiUnityはまだPreview版のため、今後の更新により挙動が大きく変更される可能性があります。**  
-**詳しくはdiscussionsをご覧ください。(Japanese)**  
-https://github.com/kyubuns/AkyuiUnity/discussions/8
-
----
 ## 使い方
 
 ### 初回セットアップ
