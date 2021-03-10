@@ -15,6 +15,7 @@ namespace XdParser
         public static readonly string[] Types =
         {
             PathElement.Name,
+            PolygonElement.Name,
             RectElement.Name,
             EllipseElement.Name,
             LineElement.Name,
@@ -201,6 +202,13 @@ namespace XdParser
             if (shape.Type == CompoundElement.Name) return new CompoundElement { Parameter = parameter, D = shape.Path };
 
             if (shape.Type == LineElement.Name) return new LineElement { Parameter = parameter, X1 = shape.X1, Y1 = shape.Y1, X2 = shape.X2, Y2 = shape.Y2 };
+
+            if (shape.Type == PolygonElement.Name)
+            {
+                if (strokeAlign == "outside") return PolygonElement.Outside(shape, parameter);
+                if (strokeAlign == "inside") return PolygonElement.Inside(shape, parameter);
+                return new PolygonElement { Parameter = parameter, Points = shape.Points };
+            }
 
             if (shape.Type == RectElement.Name)
             {
@@ -490,6 +498,52 @@ namespace XdParser
             public string ToSvg()
             {
                 return $@"<{PathElement.Name} d=""{D}"" {Parameter.GetString()} />";
+            }
+        }
+
+        private class PolygonElement : IElement
+        {
+            public const string Name = "polygon";
+            public ElementParameter Parameter { get; set; } = new ElementParameter();
+
+            public XdPositionJson[] Points { get; set; } = {};
+
+            public string ToSvg()
+            {
+                var d = Points.Select(point => $"{point.X:0.###},{point.Y:0.###}");
+                return $@"<path d=""M{string.Join(",", d)}Z"" {Parameter.GetString()} />";
+            }
+
+            public static IElement Outside(XdShapeJson shape, ElementParameter parameter)
+            {
+                parameter.Rx = null;
+                return new GroupElement
+                {
+                    Parameter = parameter, Children = new IElement[]
+                    {
+                        new PolygonElement
+                        {
+                            Parameter = new ElementParameter(),
+                            Points = shape.Points,
+                        },
+                    }
+                };
+            }
+
+            public static IElement Inside(XdShapeJson shape, ElementParameter parameter)
+            {
+                parameter.Rx = null;
+                return new GroupElement
+                {
+                    Parameter = parameter, Children = new IElement[]
+                    {
+                        new PolygonElement
+                        {
+                            Parameter = new ElementParameter(),
+                            Points = shape.Points,
+                        },
+                    }
+                };
             }
         }
 

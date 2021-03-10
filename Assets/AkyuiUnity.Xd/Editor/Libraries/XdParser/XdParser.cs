@@ -331,6 +331,9 @@ namespace XdParser.Internal
 
         [DataMember(Name = "operation")]
         public string Operation { get; set; }
+
+        [DataMember(Name = "points")]
+        public XdPositionJson[] Points { get; set; }
     }
 
     public class XdTextJson
