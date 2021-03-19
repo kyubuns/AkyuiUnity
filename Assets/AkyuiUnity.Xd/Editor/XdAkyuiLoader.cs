@@ -284,6 +284,22 @@ namespace AkyuiUnity.Xd
                 {
                     var rect = Obb.MinMaxRect(children);
 
+                    var pivotObject = xdObject.Group?.Children?.FirstOrDefault(x => x.HasParameter("pivot"));
+                    if (pivotObject != null)
+                    {
+                        var pivotObb = _obbHolder.Get(pivotObject);
+                        var pivotCenter = pivotObb.CalcLocalRect().center;
+
+                        var delta = rect.center - pivotCenter;
+                        var newCenter = pivotCenter;
+                        var newWidth = rect.width + Mathf.Abs(delta.x) * 2f;
+                        var newHeight = rect.height + Mathf.Abs(delta.y) * 2f;
+
+                        rect.width = newWidth;
+                        rect.height = newHeight;
+                        rect.center = newCenter;
+                    }
+
                     foreach (var parser in _groupParsers)
                     {
                         if (!parser.Is(xdObject, parents)) continue;
