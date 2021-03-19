@@ -151,6 +151,10 @@ If you put @~ at the end of the object's name, you can get the following effect.
 
 - When all children are vector data, import the group as one image into Unity.
 
+#### `@Pivot`
+
+- The center of that object becomes the origin of that group.
+
 
 ---
 ## Unsupported item
