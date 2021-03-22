@@ -36,9 +36,30 @@ SpriteAtlas:
     - {fileID: 2800000, guid: 0629d51e45bd141b58c068359f8587f5, type: 3}
     - {fileID: 2800000, guid: 1ef8954fe431f4657b4aaaa314868818, type: 3}
     - {fileID: 2800000, guid: 294c1d3f5858745d48557861254a73a3, type: 3}
+    - {fileID: 2800000, guid: de578bab4d477432082eb267db8fc97a, type: 3}
+    - {fileID: 2800000, guid: 9b5ac999264a44b01967e70008acdaef, type: 3}
+    - {fileID: 2800000, guid: 2e39034f393124a6ca7ae0d5990acd0f, type: 3}
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
-  m_PackedSprites: []
-  m_PackedSpriteNamesToIndex: []
+  m_PackedSprites:
+  - {fileID: 21300000, guid: 3c8d9642d2c1740f89046006b216f3d5, type: 3}
+  - {fileID: 21300000, guid: 9b5ac999264a44b01967e70008acdaef, type: 3}
+  - {fileID: 21300000, guid: de578bab4d477432082eb267db8fc97a, type: 3}
+  - {fileID: 21300000, guid: 93a91afd996cf442290bce9df6a9c4e4, type: 3}
+  - {fileID: 21300000, guid: 0629d51e45bd141b58c068359f8587f5, type: 3}
+  - {fileID: 21300000, guid: b310637eefbf64324b8dd11dc8a014b6, type: 3}
+  - {fileID: 21300000, guid: 294c1d3f5858745d48557861254a73a3, type: 3}
+  - {fileID: 21300000, guid: 2e39034f393124a6ca7ae0d5990acd0f, type: 3}
+  - {fileID: 21300000, guid: 1ef8954fe431f4657b4aaaa314868818, type: 3}
+  m_PackedSpriteNamesToIndex:
+  - Rectangle2_388bbccc
+  - AppearanceAlpha_dfb18e6a
+  - Black_2435f2b2
+  - Rectangle3_ff51b336
+  - Rectangle3_b6aa6397
+  - Rectangle1_11c9bba7
+  - Rectangle1_bbf06b54
+  - ColorAlpha_56b60af2
+  - Rectangle2_c85a84ee
   m_Tag: Pivot
   m_IsVariant: 0

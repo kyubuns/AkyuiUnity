@@ -140,7 +140,7 @@ namespace AkyuiUnity.Xd
 
                 imageComponent = new ImageComponent(
                     spriteUid,
-                    Color.white,
+                    new Color(1f, 1f, 1f, xdObject.Style?.Opacity ?? 1f),
                     direction
                 );
             }
