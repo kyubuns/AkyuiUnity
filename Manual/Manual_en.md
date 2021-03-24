@@ -3,6 +3,15 @@
 ***Read this document in other languages: [日本語](https://github.com/kyubuns/AkyuiUnity/blob/main/Manual/Manual_ja.md)***
 
 ---
+
+## The quickstart on YouTube
+
+[![](https://img.youtube.com/vi/bJC9ueWZp28/0.jpg)](https://www.youtube.com/watch?v=bJC9ueWZp28)8
+
+https://www.youtube.com/watch?v=bJC9ueWZp28
+
+---
+
 ## How to use
 
 ## Initial setup
