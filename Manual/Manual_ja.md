@@ -4,7 +4,7 @@
 
 ---
 
-## YouTubeでクイックスタートを見る
+## 動画で説明を見る
 
 [![](https://img.youtube.com/vi/bJC9ueWZp28/0.jpg)](https://www.youtube.com/watch?v=bJC9ueWZp28)8
 
