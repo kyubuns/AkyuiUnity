@@ -12,12 +12,6 @@ With AkyuiUnity.Xd, you can easily generate Unity Prefab from [Adobe XD](https:/
 
 ---
 
-## The quickstart on YouTube
-
-[![](https://img.youtube.com/vi/bJC9ueWZp28/0.jpg)](https://www.youtube.com/watch?v=bJC9ueWZp28)
-
----
-
 ## What is AkyuiUnity / AkyuiUnity.Xd?
 
 [Akyui](https://github.com/kyubuns/Akyui) is a UI definition file format created by [kyubuns](https://github.com/kyubuns).  
