@@ -107,11 +107,12 @@ namespace AkyuiUnity.Xd
             var flipY = ux?.FlipY ?? false;
             var direction = new Vector2Int(flipX ? -1 : 1, flipY ? -1 : 1);
             var shapeType = xdObject.Shape?.Type;
+            var border = xdObject.HasParameter("NoSlice") ? new Border(0, 0, 0, 0) : null;
 
             if (!string.IsNullOrWhiteSpace(ux?.Uid))
             {
                 var spriteUid = $"{xdObject.GetSimpleName()}_{ux?.Uid.Substring(0, 8)}.png";
-                asset = new SpriteAsset(spriteUid, xdObject.Style.Fill.Pattern.Meta.Ux.HrefLastModifiedDate, obb.Size, null, null);
+                asset = new SpriteAsset(spriteUid, xdObject.Style.Fill.Pattern.Meta.Ux.HrefLastModifiedDate, obb.Size, null, border);
                 imageComponent = new ImageComponent(
                     spriteUid,
                     color,
@@ -132,7 +133,7 @@ namespace AkyuiUnity.Xd
                 }
                 else
                 {
-                    asset = new SpriteAsset(spriteUid, svgHash, obb.Size, null, null);
+                    asset = new SpriteAsset(spriteUid, svgHash, obb.Size, null, border);
                     var xdImportSettings = XdImporter.Settings;
                     assetHolder.Save(spriteUid, () => SvgToPng.Convert(svg, obb.Size, ViewportOptions.DontPreserve, xdImportSettings));
                     assetHolder.SaveCacheSvg(spriteUid, svgHash);
