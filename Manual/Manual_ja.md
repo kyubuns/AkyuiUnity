@@ -165,6 +165,10 @@ https://www.youtube.com/watch?v=bJC9ueWZp28
 
 - そのオブジェクトの中心がそのグループの原点となる。
 
+#### `@NoSlice`
+
+- Auto9Slicerによるスライスを無効化する。
+
 
 ---
 ## 未対応項目
