@@ -164,6 +164,10 @@ If you put @~ at the end of the object's name, you can get the following effect.
 
 - The center of that object becomes the origin of that group.
 
+#### `@NoSlice`
+
+- disable slice by Auto9Slicer
+
 
 ---
 ## Unsupported item
