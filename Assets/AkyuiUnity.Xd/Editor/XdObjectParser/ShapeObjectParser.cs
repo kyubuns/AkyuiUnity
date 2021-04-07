@@ -29,14 +29,13 @@ namespace AkyuiUnity.Xd
         public static Rect CalcSize(XdObjectJson xdObject)
         {
             var position = Vector2.zero;
-            var size = new Vector2(xdObject.Shape?.Width ?? 0f, xdObject.Shape?.Height ?? 0f);
+            var size = Vector2.zero;
             var scaleBehavior = xdObject.Style?.Fill?.Pattern?.Meta?.Ux?.ScaleBehavior ?? "fill";
-            var spriteUid = xdObject.Style?.Fill?.Pattern?.Meta?.Ux?.Uid;
 
             var shapeType = xdObject.Shape?.Type;
-            if (!string.IsNullOrWhiteSpace(spriteUid))
+            if (shapeType == "rect")
             {
-                // nothing
+                size = new Vector2(xdObject.Shape.Width, xdObject.Shape.Height);
             }
             else if (SvgUtil.Types.Contains(shapeType))
             {
