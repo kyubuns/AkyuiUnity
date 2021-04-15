@@ -174,7 +174,7 @@ namespace AkyuiUnity.Editor
                     {
                         var import = AssetImporter.GetAtPath(savePath);
                         var prevUserData = JsonSerializer.Deserialize<Dictionary<string, object>>(import.userData);
-                        if (prevUserData["hash"].JsonUint() == asset.Hash)
+                        if (JsonExtensions.ToUint(prevUserData["hash"]) == asset.Hash)
                         {
                             skipAssetNames.Add(asset.FileName);
                             assets.Add(AssetDatabase.LoadAssetAtPath<Object>(import.assetPath));
@@ -327,7 +327,7 @@ namespace AkyuiUnity.Editor
         public Dictionary<string, object> LoadMeta(string name)
         {
             var importer = AssetImporter.GetAtPath(Path.Combine(_pathGetter.AssetOutputDirectoryPath, ConvertName(name)));
-            return JsonSerializer.Deserialize<Dictionary<string, object>>(importer.userData).JsonDictionary();
+            return JsonSerializer.Deserialize<Dictionary<string, object>>(importer.userData);
         }
     }
 

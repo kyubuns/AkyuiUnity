@@ -52,25 +52,25 @@ namespace AkyuiUnity.Loader
         {
             var layoutJson = GetJson(_zipFile, Path.Combine(_fileName, "layout.json"));
 
-            var metaJson = layoutJson["meta"].JsonStringDictionary();
+            var metaJson = JsonExtensions.ToStringDictionary(layoutJson["meta"]);
             var meta = new Meta(
-                metaJson["akyui_version"].JsonString(),
-                metaJson["app"].JsonString(),
-                metaJson["app_version"].JsonString()
+                JsonExtensions.ToString(metaJson["akyui_version"]),
+                JsonExtensions.ToString(metaJson["app"]),
+                JsonExtensions.ToString(metaJson["app_version"])
             );
 
             var elements = new List<IElement>();
-            foreach (var elementJson in layoutJson["elements"].JsonDictionaryArray())
+            foreach (var elementJson in JsonExtensions.ToDictionaryArray(layoutJson["elements"]))
             {
                 elements.Add(ParseElement(elementJson));
             }
 
             return new LayoutInfo(
-                layoutJson["name"].JsonString(),
-                layoutJson["hash"].JsonUint(),
+                JsonExtensions.ToString(layoutJson["name"]),
+                JsonExtensions.ToUint(layoutJson["hash"]),
                 meta,
-                layoutJson["userdata"].JsonStringDictionary(),
-                layoutJson["root"].JsonUint(),
+                JsonExtensions.ToStringDictionary(layoutJson["userdata"]),
+                JsonExtensions.ToUint(layoutJson["root"]),
                 elements.ToArray()
             );
         }
@@ -82,7 +82,7 @@ namespace AkyuiUnity.Loader
             Debug.Log(string.Join(", ", assetsJson.Keys));
 
             var assets = new List<IAsset>();
-            foreach (var assetJson in assetsJson["assets"].JsonDictionaryArray())
+            foreach (var assetJson in JsonExtensions.ToDictionaryArray(assetsJson["assets"]))
             {
                 assets.Add(ParseAsset(assetJson));
             }
@@ -101,7 +101,7 @@ namespace AkyuiUnity.Loader
 
         private IAsset ParseAsset(Dictionary<string, object> assetJson)
         {
-            var assetType = assetJson["type"].JsonString();
+            var assetType = JsonExtensions.ToString(assetJson["type"]);
 
             if (assetType == SpriteAsset.TypeString)
             {
@@ -109,20 +109,20 @@ namespace AkyuiUnity.Loader
 
                 if (assetJson.ContainsKey("border"))
                 {
-                    var borderDict = assetJson["border"].JsonDictionary();
+                    var borderDict = JsonExtensions.ToDictionary(assetJson["border"]);
                     border = new Border(
-                        borderDict["top"].JsonInt(),
-                        borderDict["right"].JsonInt(),
-                        borderDict["bottom"].JsonInt(),
-                        borderDict["left"].JsonInt()
+                        JsonExtensions.ToInt(borderDict["top"]),
+                        JsonExtensions.ToInt(borderDict["right"]),
+                        JsonExtensions.ToInt(borderDict["bottom"]),
+                        JsonExtensions.ToInt(borderDict["left"])
                     );
                 }
 
                 return new SpriteAsset(
-                    assetJson["file"].JsonString(),
-                    assetJson["hash"].JsonUint(),
-                    assetJson["size"].JsonVector2(),
-                    assetJson.ContainsKey("userdata") ? assetJson["userdata"].JsonString() : null,
+                    JsonExtensions.ToString(assetJson["file"]),
+                    JsonExtensions.ToUint(assetJson["hash"]),
+                    JsonExtensions.ToVector2(assetJson["size"]),
+                    assetJson.ContainsKey("userdata") ? JsonExtensions.ToString(assetJson["userdata"]) : null,
                     border
                 );
             }
@@ -132,31 +132,31 @@ namespace AkyuiUnity.Loader
 
         private IElement ParseElement(Dictionary<string, object> elementJson)
         {
-            var elementType = elementJson["type"].JsonString();
+            var elementType = JsonExtensions.ToString(elementJson["type"]);
 
             if (elementType == ObjectElement.TypeString)
             {
                 var components = new List<IComponent>();
 
-                foreach (var componentJson in elementJson["components"].JsonDictionaryArray())
+                foreach (var componentJson in JsonExtensions.ToDictionaryArray(elementJson["components"]))
                 {
                     components.Add(ParseComponent(componentJson));
                 }
 
-                var anchorX = (AnchorXType) Enum.Parse(typeof(AnchorXType), elementJson["anchor_x"].JsonString(), true);
-                var anchorY = (AnchorYType) Enum.Parse(typeof(AnchorYType), elementJson["anchor_y"].JsonString(), true);
+                var anchorX = (AnchorXType) Enum.Parse(typeof(AnchorXType), JsonExtensions.ToString(elementJson["anchor_x"]), true);
+                var anchorY = (AnchorYType) Enum.Parse(typeof(AnchorYType), JsonExtensions.ToString(elementJson["anchor_y"]), true);
 
                 return new ObjectElement(
-                    elementJson["eid"].JsonUint(),
-                    elementJson["name"].JsonString(),
-                    elementJson["position"].JsonVector2(),
-                    elementJson["size"].JsonVector2(),
+                    JsonExtensions.ToUint(elementJson["eid"]),
+                    JsonExtensions.ToString(elementJson["name"]),
+                    JsonExtensions.ToVector2(elementJson["position"]),
+                    JsonExtensions.ToVector2(elementJson["size"]),
                     anchorX,
                     anchorY,
-                    elementJson["rotation"].JsonFloat(),
-                    elementJson["visible"].JsonBool(),
+                    JsonExtensions.ToFloat(elementJson["rotation"]),
+                    JsonExtensions.ToBool(elementJson["visible"]),
                     components.ToArray(),
-                    elementJson["children"].JsonUintArray()
+                    JsonExtensions.ToUintArray(elementJson["children"])
                 );
             }
 
@@ -165,7 +165,7 @@ namespace AkyuiUnity.Loader
 
         private IComponent ParseComponent(Dictionary<string, object> componentJson)
         {
-            var componentType = componentJson["type"].JsonString();
+            var componentType = JsonExtensions.ToString(componentJson["type"]);
 
             if (componentType == ImageComponent.TypeString) return ParseImage(componentJson);
             if (componentType == MaskComponent.TypeString) return ParseMask(componentJson);
@@ -193,37 +193,37 @@ namespace AkyuiUnity.Loader
         private static GridLayoutComponent ParseGridLayout(Dictionary<string, object> componentJson)
         {
             return new GridLayoutComponent(
-                componentJson.ContainsKey("spacing_x") ? componentJson["spacing_x"].JsonFloat() : (float?) null,
-                componentJson.ContainsKey("spacing_y") ? componentJson["spacing_y"].JsonFloat() : (float?) null
+                componentJson.ContainsKey("spacing_x") ? JsonExtensions.ToFloat(componentJson["spacing_x"]) : (float?) null,
+                componentJson.ContainsKey("spacing_y") ? JsonExtensions.ToFloat(componentJson["spacing_y"]) : (float?) null
             );
         }
 
         private static VerticalLayoutComponent ParseVerticalLayout(Dictionary<string, object> componentJson)
         {
             return new VerticalLayoutComponent(
-                componentJson.ContainsKey("spacing") ? componentJson["spacing"].JsonFloat() : (float?) null
+                componentJson.ContainsKey("spacing") ? JsonExtensions.ToFloat(componentJson["spacing"]) : (float?) null
             );
         }
 
         private static HorizontalLayoutComponent ParseHorizontalLayout(Dictionary<string, object> componentJson)
         {
             return new HorizontalLayoutComponent(
-                componentJson.ContainsKey("spacing") ? componentJson["spacing"].JsonFloat() : (float?) null
+                componentJson.ContainsKey("spacing") ? JsonExtensions.ToFloat(componentJson["spacing"]) : (float?) null
             );
         }
 
         private static VerticalListComponent ParseVerticalList(Dictionary<string, object> componentJson)
         {
             return new VerticalListComponent(
-                componentJson.ContainsKey("spacing") ? componentJson["spacing"].JsonFloat() : (float?) null,
-                componentJson.ContainsKey("padding_top") ? componentJson["padding_top"].JsonFloat() : (float?) null,
-                componentJson.ContainsKey("padding_bottom") ? componentJson["padding_bottom"].JsonFloat() : (float?) null,
+                componentJson.ContainsKey("spacing") ? JsonExtensions.ToFloat(componentJson["spacing"]) : (float?) null,
+                componentJson.ContainsKey("padding_top") ? JsonExtensions.ToFloat(componentJson["padding_top"]) : (float?) null,
+                componentJson.ContainsKey("padding_bottom") ? JsonExtensions.ToFloat(componentJson["padding_bottom"]) : (float?) null,
                 componentJson.ContainsKey("spacial_spacings")
-                    ? componentJson["spacial_spacings"].JsonDictionaryArray().Select(x =>
+                    ? JsonExtensions.ToDictionaryArray(componentJson["spacial_spacings"]).Select(x =>
                         new SpecialSpacing(
-                            x["item1"].JsonString(),
-                            x["item2"].JsonString(),
-                            x["spacing"].JsonFloat()
+                            JsonExtensions.ToString(x["item1"]),
+                            JsonExtensions.ToString(x["item2"]),
+                            JsonExtensions.ToFloat(x["spacing"])
                         )
                     ).ToArray()
                     : null
@@ -233,15 +233,15 @@ namespace AkyuiUnity.Loader
         private static HorizontalListComponent ParseHorizontalList(Dictionary<string, object> componentJson)
         {
             return new HorizontalListComponent(
-                componentJson.ContainsKey("spacing") ? componentJson["spacing"].JsonFloat() : (float?) null,
-                componentJson.ContainsKey("padding_left") ? componentJson["padding_left"].JsonFloat() : (float?) null,
-                componentJson.ContainsKey("padding_right") ? componentJson["padding_right"].JsonFloat() : (float?) null,
+                componentJson.ContainsKey("spacing") ? JsonExtensions.ToFloat(componentJson["spacing"]) : (float?) null,
+                componentJson.ContainsKey("padding_left") ? JsonExtensions.ToFloat(componentJson["padding_left"]) : (float?) null,
+                componentJson.ContainsKey("padding_right") ? JsonExtensions.ToFloat(componentJson["padding_right"]) : (float?) null,
                 componentJson.ContainsKey("spacial_spacings")
-                    ? componentJson["spacial_spacings"].JsonDictionaryArray().Select(x =>
+                    ? JsonExtensions.ToDictionaryArray(componentJson["spacial_spacings"]).Select(x =>
                         new SpecialSpacing(
-                            x["item1"].JsonString(),
-                            x["item2"].JsonString(),
-                            x["spacing"].JsonFloat()
+                            JsonExtensions.ToString(x["item1"]),
+                            JsonExtensions.ToString(x["item2"]),
+                            JsonExtensions.ToFloat(x["spacing"])
                         )
                     ).ToArray()
                     : null
@@ -251,14 +251,14 @@ namespace AkyuiUnity.Loader
         private static VerticalScrollbarComponent ParseVerticalScrollbar(Dictionary<string, object> componentJson)
         {
             return new VerticalScrollbarComponent(
-                componentJson.ContainsKey("image") ? ParseImage(componentJson["image"].JsonDictionary()) : null
+                componentJson.ContainsKey("image") ? ParseImage(JsonExtensions.ToDictionary(componentJson["image"])) : null
             );
         }
 
         private static HorizontalScrollbarComponent ParseHorizontalScrollbar(Dictionary<string, object> componentJson)
         {
             return new HorizontalScrollbarComponent(
-                componentJson.ContainsKey("image") ? ParseImage(componentJson["image"].JsonDictionary()) : null
+                componentJson.ContainsKey("image") ? ParseImage(JsonExtensions.ToDictionary(componentJson["image"])) : null
             );
         }
 
@@ -274,40 +274,40 @@ namespace AkyuiUnity.Loader
             if (componentJson.ContainsKey("align"))
             {
                 align = (TextComponent.TextAlign) Enum.Parse(typeof(TextComponent.TextAlign),
-                    componentJson["align"].JsonString().Replace("_", ""), true);
+                    JsonExtensions.ToString(componentJson["align"]).Replace("_", ""), true);
             }
 
             return new TextComponent(
-                componentJson.ContainsKey("text") ? componentJson["text"].JsonString() : null,
-                componentJson.ContainsKey("size") ? componentJson["size"].JsonFloat() : (float?) null,
-                componentJson.ContainsKey("color") ? componentJson["color"].JsonColor() : (Color?) null,
+                componentJson.ContainsKey("text") ? JsonExtensions.ToString(componentJson["text"]) : null,
+                componentJson.ContainsKey("size") ? JsonExtensions.ToFloat(componentJson["size"]) : (float?) null,
+                componentJson.ContainsKey("color") ? JsonExtensions.ToColor(componentJson["color"]) : (Color?) null,
                 align,
-                componentJson.ContainsKey("font") ? componentJson["font"].JsonString() : null,
-                componentJson.ContainsKey("wrap") ? componentJson["wrap"].JsonBool() : (bool?) null,
-                componentJson.ContainsKey("line_height") ? componentJson["line_height"].JsonFloat() : (float?) null
+                componentJson.ContainsKey("font") ? JsonExtensions.ToString(componentJson["font"]) : null,
+                componentJson.ContainsKey("wrap") ? JsonExtensions.ToBool(componentJson["wrap"]) : (bool?) null,
+                componentJson.ContainsKey("line_height") ? JsonExtensions.ToFloat(componentJson["line_height"]) : (float?) null
             );
         }
 
         private static AlphaComponent ParseAlpha(Dictionary<string, object> componentJson)
         {
             return new AlphaComponent(
-                componentJson.ContainsKey("alpha") ? componentJson["alpha"].JsonFloat() : (float?) null
+                componentJson.ContainsKey("alpha") ? JsonExtensions.ToFloat(componentJson["alpha"]) : (float?) null
             );
         }
 
         private static ImageComponent ParseImage(Dictionary<string, object> componentJson)
         {
             return new ImageComponent(
-                componentJson.ContainsKey("sprite") ? componentJson["sprite"].JsonString() : null,
-                componentJson.ContainsKey("color") ? componentJson["color"].JsonColor() : (Color?) null,
-                componentJson.ContainsKey("direction") ? componentJson["direction"].JsonVector2Int() : (Vector2Int?) null
+                componentJson.ContainsKey("sprite") ? JsonExtensions.ToString(componentJson["sprite"]) : null,
+                componentJson.ContainsKey("color") ? JsonExtensions.ToColor(componentJson["color"]) : (Color?) null,
+                componentJson.ContainsKey("direction") ? JsonExtensions.ToVector2Int(componentJson["direction"]) : (Vector2Int?) null
             );
         }
 
         private static MaskComponent ParseMask(Dictionary<string, object> componentJson)
         {
             return new MaskComponent(
-                componentJson.ContainsKey("sprite") ? componentJson["sprite"].JsonString() : null
+                componentJson.ContainsKey("sprite") ? JsonExtensions.ToString(componentJson["sprite"]) : null
             );
         }
     }

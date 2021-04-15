@@ -378,7 +378,7 @@ namespace AkyuiUnity.Generator.InternalTrigger
             {
                 var meta = assetLoader.LoadMeta(sprite);
                 image.type = Image.Type.Sliced;
-                image.pixelsPerUnitMultiplier = meta["source_width"].JsonFloat() / rectTransform.rect.width;
+                image.pixelsPerUnitMultiplier = JsonExtensions.ToFloat(meta["source_width"]) / rectTransform.rect.width;
             }
         }
 
