@@ -643,6 +643,9 @@ namespace XdParser.Internal
 
         [DataMember(Name = "linkedElementLastModified")]
         public ulong? LinkedElementLastModified { get; set; }
+
+        [DataMember(Name = "linkedElementWasImported")]
+        public bool LinkedElementWasImported { get; set; }
     }
 
     public class XdClipPathResourcesJson

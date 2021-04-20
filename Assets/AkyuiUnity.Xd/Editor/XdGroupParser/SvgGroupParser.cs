@@ -15,7 +15,7 @@ namespace AkyuiUnity.Xd
             var isLinkedElement = new[] { xdObject }.Concat(parents).Any(x =>
             {
                 var hasParameter = x.HasParameter("vector");
-                var isLinkedElementRef = !string.IsNullOrWhiteSpace(x.Meta?.Ux?.LinkedElementRef);
+                var isLinkedElementRef = !string.IsNullOrWhiteSpace(x.Meta?.Ux?.LinkedElementRef) && x.Meta?.Ux?.LinkedElementWasImported == false;
                 return hasParameter || isLinkedElementRef;
             });
 
