@@ -646,6 +646,9 @@ namespace XdParser.Internal
 
         [DataMember(Name = "linkedElementWasImported")]
         public bool LinkedElementWasImported { get; set; }
+
+        [DataMember(Name = "listViewPosition")]
+        public int? ListViewPosition { get; set; }
     }
 
     public class XdClipPathResourcesJson
