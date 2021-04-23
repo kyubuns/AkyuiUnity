@@ -169,6 +169,15 @@ If you put @~ at the end of the object's name, you can get the following effect.
 - disable slice by Auto9Slicer
 
 
+### Artboard Parameters
+
+If you put @~ at the end of the artboard's name, you can get the following effect.
+
+#### `@Expand`
+
+- Make each object in the root a separate Prefab.
+
+
 ---
 ## Unsupported item
 
