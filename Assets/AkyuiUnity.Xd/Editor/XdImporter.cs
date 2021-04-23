@@ -1,12 +1,14 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using AkyuiUnity.Editor;
 using AkyuiUnity.Editor.Extensions;
 using AkyuiUnity.Loader;
 using UnityEditor;
 using UnityEngine;
 using XdParser;
+using XdParser.Internal;
 
 namespace AkyuiUnity.Xd
 {
@@ -85,15 +87,50 @@ namespace AkyuiUnity.Xd
                 }
 
                 progress.SetTotal(targets.Count);
+
+                var akyuiXdObjectParsers = xdSettings.ObjectParsers ?? new AkyuiXdObjectParser[] { };
+                var akyuiXdGroupParsers = xdSettings.GroupParsers ?? new AkyuiXdGroupParser[] { };
+                var triggers = xdSettings.XdTriggers ?? new AkyuiXdImportTrigger[] { };
+
+                var expandTargets = new List<XdArtboard>();
                 foreach (var artwork in targets)
+                {
+                    if (!artwork.HasParameter("expand"))
+                    {
+                        expandTargets.Add(artwork);
+                        continue;
+                    }
+
+                    foreach (var child in artwork.Artboard.Children.SelectMany(x => x.Artboard.Children))
+                    {
+                        var childArtboardJson = new XdArtboardJson
+                        {
+                            Version = artwork.Artboard.Version,
+                            Artboards = artwork.Artboard.Artboards,
+                            Resources = artwork.Artboard.Resources,
+                            Children = new[]
+                            {
+                                new XdArtboardChildJson
+                                {
+                                    Artboard = new XdArtboardChildArtboardJson
+                                    {
+                                        Children = new[] { child }
+                                    }
+                                }
+                            }
+                        };
+
+                        var childArtboard = new XdArtboard($"{artwork.GetSimpleName()}{child.GetSimpleName()}", artwork.Manifest, childArtboardJson, artwork.Resources, artwork.Hash);
+                        expandTargets.Add(childArtboard);
+                    }
+                }
+
+                foreach (var artwork in expandTargets)
                 {
                     using (progress.TaskStart(artwork.Name))
                     {
                         var name = artwork.Name.ToSafeString();
                         var xdHash = artwork.Hash;
-                        var akyuiXdObjectParsers = xdSettings.ObjectParsers ?? new AkyuiXdObjectParser[] { };
-                        var akyuiXdGroupParsers = xdSettings.GroupParsers ?? new AkyuiXdGroupParser[] { };
-                        var triggers = xdSettings.XdTriggers ?? new AkyuiXdImportTrigger[] { };
 
                         var userData = new Dictionary<string, string>
                         {

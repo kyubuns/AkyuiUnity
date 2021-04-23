@@ -8,10 +8,13 @@ namespace AkyuiUnity.Xd
 {
     public static class XdJsonExtensions
     {
-        public static string GetSimpleName(this XdObjectJson xdObjectJson)
+        public static string GetSimpleName(this XdObjectJson xdObjectJson) => GetSimpleName(xdObjectJson.Name);
+        public static string GetSimpleName(this XdArtboard xdObjectJson) => GetSimpleName(xdObjectJson.Name);
+
+        private static string GetSimpleName(string name)
         {
-            if (xdObjectJson.Name == null) return string.Empty;
-            return AkyuiEditorUtil.ValidFileName(xdObjectJson.Name.Split('@')[0]);
+            if (name == null) return string.Empty;
+            return AkyuiEditorUtil.ValidFileName(name.Split('@')[0]);
         }
 
         public static bool NameEndsWith(this XdObjectJson xdObjectJson, string name)
@@ -19,16 +22,19 @@ namespace AkyuiUnity.Xd
             return GetSimpleName(xdObjectJson).ToLowerInvariant().EndsWith(name.ToLowerInvariant());
         }
 
-        public static bool HasParameter(this XdObjectJson xdObjectJson, string name)
+        public static bool HasParameter(this XdObjectJson xdObjectJson, string name) => HasParameter(xdObjectJson.Name, name);
+        public static bool HasParameter(this XdArtboard xdObjectJson, string name) => HasParameter(xdObjectJson.Name, name);
+
+        private static bool HasParameter(string parentName, string name)
         {
-            return xdObjectJson.GetParameters().Contains(name.ToLowerInvariant());
+            return GetParameters(parentName).Contains(name.ToLowerInvariant());
         }
 
-        private static string[] GetParameters(this XdObjectJson xdObjectJson)
+        private static string[] GetParameters(string name)
         {
-            if (xdObjectJson.Name == null) return new string[] { };
+            if (name == null) return new string[] { };
 
-            var e = xdObjectJson.Name.Split('@');
+            var e = name.Split('@');
             if (e.Length <= 1) return new string[] { };
 
             return e[1].Split(',').Select(x => x.ToLowerInvariant().Trim()).ToArray();

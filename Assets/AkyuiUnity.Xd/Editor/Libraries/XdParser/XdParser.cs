@@ -40,7 +40,7 @@ namespace XdParser
                 var resourceJson = (XdResourcesJson) jsonObjectCache[resourceJsonFilePath];
 
                 var xdHash = FastHash.CalculateHash(artworkJsonString + resourcesJsonString);
-                artworks.Add(new XdArtboard(xdManifestArtwork, artworkJson, resourceJson, xdHash));
+                artworks.Add(new XdArtboard(xdManifestArtwork.Name, xdManifestArtwork, artworkJson, resourceJson, xdHash));
             }
             Artworks = artworks.ToArray();
         }
@@ -66,11 +66,12 @@ namespace XdParser
         public XdArtboardJson Artboard { get; }
         public XdResourcesJson Resources { get; }
 
-        public string Name => Manifest.Name;
+        public string Name { get; }
         public uint Hash { get; }
 
-        public XdArtboard(XdManifestChildJson manifest, XdArtboardJson artboard, XdResourcesJson resources, uint hash)
+        public XdArtboard(string name, XdManifestChildJson manifest, XdArtboardJson artboard, XdResourcesJson resources, uint hash)
         {
+            Name = name;
             Manifest = manifest;
             Artboard = artboard;
             Resources = resources;
