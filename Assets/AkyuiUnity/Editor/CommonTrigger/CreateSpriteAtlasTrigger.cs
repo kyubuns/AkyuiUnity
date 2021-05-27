@@ -3,6 +3,7 @@ using AkyuiUnity.Editor;
 using AkyuiUnity.Editor.ScriptableObject;
 using AkyuiUnity.Loader;
 using UnityEditor;
+using UnityEditor.Presets;
 using UnityEditor.U2D;
 using UnityEngine;
 using UnityEngine.U2D;
@@ -13,7 +14,7 @@ namespace AkyuiUnity.CommonTrigger
     public class CreateSpriteAtlasTrigger : AkyuiImportTrigger
     {
         [SerializeField] private string spriteAtlasOutputPath = "Assets/{name}SpriteAtlas";
-        [SerializeField] private SpriteAtlas source = default;
+        [SerializeField] private Preset spriteAtlasPreset = default;
 
         public override void OnPostprocessAllAssets(IAkyuiLoader loader, Object[] importAssets)
         {
@@ -28,9 +29,9 @@ namespace AkyuiUnity.CommonTrigger
                 AssetDatabase.CreateAsset(spriteAtlas, spriteAtlasPath);
             }
 
-            if (source != null)
+            if (spriteAtlasPreset != null)
             {
-                EditorUtility.CopySerialized(source, spriteAtlas);
+                spriteAtlasPreset.ApplyTo(spriteAtlas);
             }
 
             spriteAtlas.name = loader.LayoutInfo.Name;
