@@ -205,21 +205,41 @@ namespace AkyuiUnity.Xd
 
             private XdObjectJson GetRefObject(XdObjectJson xdObject, AkyuiXdImportTrigger[] triggers)
             {
+                IXdJsonElement Copy(Type type, IXdJsonElement instance, IXdJsonElement source)
+                {
+                    if (instance == null) return source;
+
+                    var @new = (IXdJsonElement) Activator.CreateInstance(type);
+
+                    var propertyInfos = type.GetProperties();
+                    foreach (var propertyInfo in propertyInfos)
+                    {
+                        var instanceValue = propertyInfo.GetValue(instance);
+                        var sourceValue =  propertyInfo.GetValue(source);
+                        var t = propertyInfo.PropertyType;
+
+                        if (typeof(IXdJsonElement).IsAssignableFrom(t))
+                        {
+                            var value = Copy(t, (IXdJsonElement) instanceValue, (IXdJsonElement) sourceValue);
+                            propertyInfo.SetValue(@new, value);
+                        }
+                        else
+                        {
+                            var value = instanceValue;
+                            if (value == null) value = sourceValue;
+                            propertyInfo.SetValue(@new, value);
+                        }
+                    }
+
+                    return @new;
+                }
+
                 var newXdObjectJson = xdObject;
 
                 if (xdObject.Type == "syncRef")
                 {
-                    newXdObjectJson = new XdObjectJson();
                     var source = _sourceGuidToObject[xdObject.SyncSourceGuid];
-                    var propertyInfos = typeof(XdObjectJson).GetProperties();
-                    foreach (var propertyInfo in propertyInfos)
-                    {
-                        var value = propertyInfo.GetValue(xdObject);
-                        if (value == null) value = propertyInfo.GetValue(source);
-
-                        propertyInfo.SetValue(newXdObjectJson, value);
-                    }
-
+                    newXdObjectJson = (XdObjectJson) Copy(typeof(XdObjectJson), xdObject, source);
                     newXdObjectJson.Name = source.Name;
                     newXdObjectJson.Type = source.Type;
                     newXdObjectJson.Shape = source.Shape; // compoundのchildrenだけ上書きされるケースがあるが計算出来ないので戻す
@@ -347,14 +367,14 @@ namespace AkyuiUnity.Xd
                 var anchorY = AnchorYType.Middle;
                 var rotation = obb.Rotation;
                 if (Mathf.Abs(rotation) < 0.0001f) rotation = 0f;
-                var constRight = xdObject.Meta.Ux.ConstraintRight;
-                var constLeft = xdObject.Meta.Ux.ConstraintLeft;
+                var constRight = xdObject.Meta.Ux.ConstraintRight ?? false;
+                var constLeft = xdObject.Meta.Ux.ConstraintLeft ?? false;
                 if (constRight && constLeft) anchorX = AnchorXType.Stretch;
                 else if (constRight) anchorX = AnchorXType.Right;
                 else if (constLeft) anchorX = AnchorXType.Left;
 
-                var constTop = xdObject.Meta.Ux.ConstraintTop;
-                var constBottom = xdObject.Meta.Ux.ConstraintBottom;
+                var constTop = xdObject.Meta.Ux.ConstraintTop ?? false;
+                var constBottom = xdObject.Meta.Ux.ConstraintBottom ?? false;
                 if (constTop && constBottom) anchorY = AnchorYType.Stretch;
                 else if (constTop) anchorY = AnchorYType.Top;
                 else if (constBottom) anchorY = AnchorYType.Bottom;
