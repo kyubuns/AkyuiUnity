@@ -11,6 +11,7 @@ using AkyuiUnity.Loader;
 using AkyuiUnity.Loader.Internal;
 using UnityEngine;
 using UnityEditor;
+using UnityEditor.Presets;
 using Utf8Json;
 using Object = UnityEngine.Object;
 
@@ -214,6 +215,7 @@ namespace AkyuiUnity.Editor
         private static void ImportAsset(IAsset asset, string savePath, string saveFullPath, byte[] bytes, Dictionary<string, object> userData, IAkyuiImportSettings importSettings, AkyuiLogger logger)
         {
             PostProcessImportAsset.ProcessingFile = savePath.ToUniversalPath();
+            PostProcessImportAsset.Preset = importSettings.TexturePreset;
             PostProcessImportAsset.Asset = asset;
             PostProcessImportAsset.UserData = userData;
             PostProcessImportAsset.Triggers = importSettings.Triggers;
@@ -221,6 +223,7 @@ namespace AkyuiUnity.Editor
             using (Disposable.Create(() =>
             {
                 PostProcessImportAsset.ProcessingFile = null;
+                PostProcessImportAsset.Preset = null;
                 PostProcessImportAsset.Asset = null;
                 PostProcessImportAsset.UserData = null;
                 PostProcessImportAsset.Triggers = null;
@@ -256,6 +259,7 @@ namespace AkyuiUnity.Editor
     public class PostProcessImportAsset : AssetPostprocessor
     {
         public static string ProcessingFile { get; set; }
+        public static Preset Preset { get; set; }
         public static IAsset Asset { get; set; }
         public static Dictionary<string, object> UserData { get; set; }
         public static IAkyuiImportTrigger[] Triggers { get; set; }
@@ -268,6 +272,11 @@ namespace AkyuiUnity.Editor
 
             if (assetImporter is TextureImporter textureImporter)
             {
+                if (Preset != null)
+                {
+                    Preset.ApplyTo(textureImporter);
+                }
+
                 textureImporter.textureType = TextureImporterType.Sprite;
 
                 if (Asset is SpriteAsset spriteAsset)

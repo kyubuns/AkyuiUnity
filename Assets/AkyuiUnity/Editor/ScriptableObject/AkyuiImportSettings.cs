@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using UnityEditor.Presets;
 using UnityEngine;
 
 namespace AkyuiUnity.Editor.ScriptableObject
@@ -17,6 +18,9 @@ namespace AkyuiUnity.Editor.ScriptableObject
 
         public string FontDirectoryPath => fontDirectoryPath;
         [SerializeField] private string fontDirectoryPath = "Assets/Fonts/";
+
+        public Preset TexturePreset => texturePreset;
+        [SerializeField] private Preset texturePreset = default;
 
         public IAkyuiImportTrigger[] Triggers => triggers?.Cast<IAkyuiImportTrigger>().Where(x => x != null).ToArray() ?? new IAkyuiImportTrigger[] { };
         [SerializeField] private AkyuiImportTrigger[] triggers = default;
@@ -37,6 +41,7 @@ namespace AkyuiUnity.Editor.ScriptableObject
         string AssetOutputDirectoryPath { get; }
         string MetaOutputPath { get; }
         string FontDirectoryPath { get; }
+        Preset TexturePreset { get; }
         IAkyuiImportTrigger[] Triggers { get; }
         float SpriteSaveScale { get; }
         bool ReimportAsset { get; }

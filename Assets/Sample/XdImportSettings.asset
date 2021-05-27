@@ -16,6 +16,8 @@ MonoBehaviour:
   assetOutputDirectoryPath: Assets/Sample/GeneratedAssets/{name}/
   metaOutputPath: Assets/Sample/GeneratedMetas/{name}Meta
   fontDirectoryPath: Assets/Sample/Fonts/
+  texturePreset: {fileID: 2655988077585873504, guid: 8b24daa5405f1449096e61b2049f2abe,
+    type: 2}
   triggers:
   - {fileID: 11400000, guid: 353e7213f5b47417bb1531ee41631e84, type: 2}
   - {fileID: 11400000, guid: 7a40d86aba0244ab98bcb9126ab0b167, type: 2}
