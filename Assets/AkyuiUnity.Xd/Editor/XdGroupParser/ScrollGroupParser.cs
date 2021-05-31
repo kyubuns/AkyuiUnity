@@ -21,13 +21,13 @@ namespace AkyuiUnity.Xd
             {
                 var offsetY = xdObject.Meta?.Ux?.OffsetY ?? 0f;
                 var viewportHeight = xdObject.Meta?.Ux?.ViewportHeight ?? 0f;
-                return new Rect(0f, offsetY, rect.size.x, viewportHeight);
+                return new Rect(rect.x, offsetY, rect.size.x, viewportHeight);
             }
             else
             {
                 var offsetX = xdObject.Meta?.Ux?.OffsetX ?? 0f;
                 var viewportWidth = xdObject.Meta?.Ux?.ViewportWidth ?? 0f;
-                return new Rect(offsetX, 0f, viewportWidth, rect.size.y);
+                return new Rect(offsetX, rect.y, viewportWidth, rect.size.y);
             }
         }
 
