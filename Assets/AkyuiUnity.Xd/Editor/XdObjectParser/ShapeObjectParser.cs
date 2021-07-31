@@ -33,11 +33,7 @@ namespace AkyuiUnity.Xd
             var scaleBehavior = xdObject.Style?.Fill?.Pattern?.Meta?.Ux?.ScaleBehavior ?? "fill";
 
             var shapeType = xdObject.Shape?.Type;
-            if (shapeType == "rect")
-            {
-                size = new Vector2(xdObject.Shape.Width, xdObject.Shape.Height);
-            }
-            else if (SvgUtil.Types.Contains(shapeType))
+            if (SvgUtil.Types.Contains(shapeType))
             {
                 var svg = SvgUtil.CreateSvg(xdObject, null);
                 var bounds = SvgUtil.CalcBounds(svg);
