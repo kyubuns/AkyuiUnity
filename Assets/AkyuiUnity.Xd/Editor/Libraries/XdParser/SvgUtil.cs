@@ -693,35 +693,11 @@ namespace XdParser
                 return $@"<{Name} width=""{Width:0.###}"" height=""{Height:0.###}"" {Parameter.GetString()} />";
             }
 
-            private static PathElement.ID[] WithCornersPath(XdShapeJson shape, float[] corners, float strokeWidth)
-            {
-                var dp = new List<PathElement.ID>();
-                dp.Add(new PathElement.M(corners[0], -strokeWidth));
-                dp.Add(new PathElement.H(shape.Width - corners[1],
-                    new PathElement.a(corners[1] + strokeWidth, corners[1] + strokeWidth, 0, false, true, corners[1] + strokeWidth, corners[1] + strokeWidth)));
-                dp.Add(new PathElement.V(shape.Height - corners[2],
-                    new PathElement.a(corners[2] + strokeWidth, corners[2] + strokeWidth, 0, false, true, -corners[2] - strokeWidth, corners[2] + strokeWidth)));
-                if (Mathf.Approximately(corners[3], 0f))
-                {
-                    dp.Add(new PathElement.H(0,
-                        new PathElement.a(strokeWidth, strokeWidth, 0, false, true, -strokeWidth, -strokeWidth)));
-                }
-                else
-                {
-                    dp.Add(new PathElement.H(corners[3]));
-                    dp.Add(new PathElement.A(corners[3] + strokeWidth, corners[3] + strokeWidth, 0, false, true, -strokeWidth, shape.Height - corners[3] - strokeWidth));
-                }
-                dp.Add(new PathElement.V(corners[0]));
-                dp.Add(new PathElement.A(corners[0] + strokeWidth, corners[0] + strokeWidth, 0, false, true, corners[0], -strokeWidth));
-                dp.Add(new PathElement.Z());
-                return dp.ToArray();
-            }
-
             public static IElement Basic(XdShapeJson shape, ElementParameter parameter, float[] corners)
             {
                 if (corners != null)
                 {
-                    return new PathElement { Parameter = parameter, D = PathElement.GenerateD(WithCornersPath(shape, corners, 0f)) };
+                    return new PathElement { Parameter = parameter, D = PathElement.GenerateD(WithCornersPath(shape, corners, 0f, 0f)) };
                 }
 
                 return new RectElement { Parameter = parameter, Width = shape.Width, Height = shape.Height };
@@ -743,7 +719,7 @@ namespace XdParser
                                 {
                                     EnableStroke = true,
                                 },
-                                D = PathElement.GenerateD(WithCornersPath(shape, corners, 0f))
+                                D = PathElement.GenerateD(WithCornersPath(shape, corners, 0f, 0f))
                             },
                             new PathElement
                             {
@@ -751,7 +727,7 @@ namespace XdParser
                                 {
                                     EnableFill = true,
                                 },
-                                D = PathElement.GenerateD(WithCornersPath(shape, corners, strokeWidth / 2f))
+                                D = PathElement.GenerateD(WithCornersPath(shape, corners, strokeWidth / 2f, 0f))
                             },
                         }
                     };
@@ -792,6 +768,33 @@ namespace XdParser
             public static IElement Inside(XdShapeJson shape, ElementParameter parameter, float[] corners)
             {
                 var strokeWidth = parameter.StrokeWidth ?? 1f;
+
+                if (corners != null)
+                {
+                    return new GroupElement
+                    {
+                        Parameter = parameter, Children = new IElement[]
+                        {
+                            new PathElement
+                            {
+                                Parameter = new ElementParameter
+                                {
+                                    EnableStroke = true,
+                                },
+                                D = PathElement.GenerateD(WithCornersPath(shape, corners, 0f, 0f))
+                            },
+                            new PathElement
+                            {
+                                Parameter = new ElementParameter
+                                {
+                                    EnableFill = true,
+                                },
+                                D = PathElement.GenerateD(WithCornersPath(shape, corners, 0f, strokeWidth / 2f))
+                            },
+                        }
+                    };
+                }
+
                 var rx = parameter.Rx;
                 parameter.Rx = null;
                 return new GroupElement
@@ -822,6 +825,60 @@ namespace XdParser
                         },
                     }
                 };
+            }
+
+            private static PathElement.ID[] WithCornersPath(XdShapeJson shape, float[] corners, float outer, float inner)
+            {
+                var dp = new List<PathElement.ID>();
+                dp.Add(new PathElement.M(Mathf.Max(corners[0], inner * 2), -outer + inner));
+                dp.Add(new PathElement.H(Mathf.Min(shape.Width - corners[1], shape.Width - inner * 2),
+                    new PathElement.a(
+                        Mathf.Max(corners[1] + outer - inner, inner),
+                        Mathf.Max(corners[1] + outer - inner, inner),
+                        0, false, true,
+                        Mathf.Max(corners[1] + outer - inner, inner),
+                        Mathf.Max(corners[1] + outer - inner, inner)
+                    )));
+                dp.Add(new PathElement.V(Mathf.Min(shape.Height - corners[2], shape.Height - inner * 2),
+                    new PathElement.a(
+                        Mathf.Max(corners[2] + outer - inner, inner),
+                        Mathf.Max(corners[2] + outer - inner, inner),
+                        0, false, true,
+                        -Mathf.Max(corners[2] + outer - inner, inner),
+                        Mathf.Max(corners[2] + outer - inner, inner)
+                    )));
+                if (Mathf.Approximately(corners[3], 0f))
+                {
+                    dp.Add(new PathElement.H(inner * 2,
+                        new PathElement.a(
+                            outer + inner,
+                            outer + inner,
+                            0, false, true,
+                            -outer - inner,
+                            -outer - inner
+                        )));
+                }
+                else
+                {
+                    dp.Add(new PathElement.H(corners[3]));
+                    dp.Add(new PathElement.A(
+                        corners[3] + outer - inner,
+                        corners[3] + outer - inner,
+                        0, false, true,
+                        -outer + inner,
+                        shape.Height - corners[3] - outer
+                    ));
+                }
+                dp.Add(new PathElement.V(Mathf.Max(corners[0], inner * 2)));
+                dp.Add(new PathElement.A(
+                    Mathf.Max(corners[0] + outer - inner, inner),
+                    Mathf.Max(corners[0] + outer - inner, inner),
+                    0, false, true,
+                    Mathf.Max(corners[0], inner * 2),
+                    -outer + inner
+                ));
+                dp.Add(new PathElement.Z());
+                return dp.ToArray();
             }
         }
 
