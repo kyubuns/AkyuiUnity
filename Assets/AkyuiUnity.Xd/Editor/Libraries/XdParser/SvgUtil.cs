@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using AkyuiUnity.Xd;
 using JetBrains.Annotations;
 using Unity.VectorGraphics;
@@ -147,11 +148,23 @@ namespace XdParser
             }
 
             float? shapeR = null;
+            float[] corners = null;
             if (shape.R != null)
             {
-                if (shape.R is List<object> list) shapeR = (float) (double) list[0];
-                else if (shape.R is double d) shapeR = (float) d;
-                else throw new NotSupportedException($"Unknown shape.r type {shape.R.GetType()}");
+                if (shape.R is List<object> list)
+                {
+                    var floatArray = list.Select(x => (float) (double) x).ToArray();
+                    if (floatArray.All(x => Mathf.Approximately(floatArray[0], x))) shapeR = floatArray[0];
+                    else corners = floatArray;
+                }
+                else if (shape.R is double d)
+                {
+                    shapeR = (float) d;
+                }
+                else
+                {
+                    throw new NotSupportedException($"Unknown shape.r type {shape.R.GetType()}");
+                }
             }
 
             if (shapeR != null && shape.Type != CircleElement.Name)
@@ -185,6 +198,7 @@ namespace XdParser
                     parameter.StrokeDasharray = stroke.Dash;
                 }
 
+                // ReSharper disable once RedundantAssignment
                 if (stroke.Align == null) strokeAlign = null;
                 else if (stroke.Align == "outside") strokeAlign = "outside";
                 else if (stroke.Align == "inside") strokeAlign = "inside";
@@ -212,9 +226,9 @@ namespace XdParser
 
             if (shape.Type == RectElement.Name)
             {
-                if (strokeAlign == "outside") return RectElement.Outside(shape, parameter);
-                if (strokeAlign == "inside") return RectElement.Inside(shape, parameter);
-                return RectElement.Basic(shape, parameter);
+                if (strokeAlign == "outside") return RectElement.Outside(shape, parameter, corners);
+                if (strokeAlign == "inside") return RectElement.Inside(shape, parameter, corners);
+                return RectElement.Basic(shape, parameter, corners);
             }
 
             if (shape.Type == CircleElement.Name)
@@ -486,6 +500,120 @@ namespace XdParser
             {
                 return $@"<{Name} d=""{D}"" {Parameter.GetString()} />";
             }
+
+            public static string GenerateD(params ID[] ds)
+            {
+                var stringBuilder = new StringBuilder();
+                foreach (var d in ds)
+                {
+                    stringBuilder.Append(d);
+                }
+                return stringBuilder.ToString();
+            }
+
+            public interface ID
+            {
+            }
+
+            public interface IDOption
+            {
+            }
+
+            public readonly struct M : ID
+            {
+                public float X { get; }
+                public float Y { get; }
+
+                public M(float x, float y)
+                {
+                    X = x;
+                    Y = y;
+                }
+
+                public override string ToString() => $"M{X:0.###},{Y:0.###}";
+            }
+
+            public readonly struct H : ID
+            {
+                public float X { get; }
+                public IDOption Option { get; }
+
+                public H(float x, IDOption option = null)
+                {
+                    X = x;
+                    Option = option;
+                }
+
+                public override string ToString() => $"H{X:0.###}{(Option == null ? "" : Option.ToString())}";
+            }
+
+            public readonly struct V : ID
+            {
+                public float Y { get; }
+                public IDOption Option { get; }
+
+                public V(float y, IDOption option = null)
+                {
+                    Y = y;
+                    Option = option;
+                }
+
+                public override string ToString() => $"V{Y:0.###}{(Option == null ? "" : Option.ToString())}";
+            }
+
+            public readonly struct A : ID
+            {
+                public float Rx { get; }
+                public float Ry { get; }
+                public float Angle { get; }
+                public bool LargeArc { get; }
+                public bool Sweep { get; }
+                public float Dx { get; }
+                public float Dy { get; }
+
+                public A(float rx, float ry, float angle, bool largeArc, bool sweep, float dx, float dy)
+                {
+                    Rx = rx;
+                    Ry = ry;
+                    Angle = angle;
+                    LargeArc = largeArc;
+                    Sweep = sweep;
+                    Dx = dx;
+                    Dy = dy;
+                }
+
+                public override string ToString() => $"A{Rx:0.###},{Ry:0.###},{Angle:0.###},{(LargeArc ? 1 : 0)},{(Sweep ? 1 : 0)},{Dx:0.###},{Dy:0.###}";
+            }
+
+            // ReSharper disable once InconsistentNaming
+            public readonly struct a : IDOption
+            {
+                public float Rx { get; }
+                public float Ry { get; }
+                public float Angle { get; }
+                public bool LargeArc { get; }
+                public bool Sweep { get; }
+                public float Dx { get; }
+                public float Dy { get; }
+
+                public a(float rx, float ry, float angle, bool largeArc, bool sweep, float dx, float dy)
+                {
+                    Rx = rx;
+                    Ry = ry;
+                    Angle = angle;
+                    LargeArc = largeArc;
+                    Sweep = sweep;
+                    Dx = dx;
+                    Dy = dy;
+                }
+
+                public override string ToString() => $"a{Rx:0.###},{Ry:0.###},{Angle:0.###},{(LargeArc ? 1 : 0)},{(Sweep ? 1 : 0)},{Dx:0.###},{Dy:0.###}";
+            }
+
+            public struct Z : ID
+            {
+                public override string ToString() => "Z";
+            }
         }
 
         private class CompoundElement : IElement
@@ -565,12 +693,37 @@ namespace XdParser
                 return $@"<{Name} width=""{Width:0.###}"" height=""{Height:0.###}"" {Parameter.GetString()} />";
             }
 
-            public static IElement Basic(XdShapeJson shape, ElementParameter parameter)
+            public static IElement Basic(XdShapeJson shape, ElementParameter parameter, float[] corners)
             {
+                if (corners != null)
+                {
+                    var dp = new List<PathElement.ID>();
+                    dp.Add(new PathElement.M(corners[0], 0));
+                    dp.Add(new PathElement.H(shape.Width - corners[1],
+                        new PathElement.a(corners[1], corners[1], 0, false, true, corners[1], corners[1])));
+                    dp.Add(new PathElement.V(shape.Height - corners[2],
+                        new PathElement.a(corners[2], corners[2], 0, false, true, -corners[2], corners[2])));
+                    if (Mathf.Approximately(corners[3], 0f))
+                    {
+                        dp.Add(new PathElement.H(0,
+                            new PathElement.a(0, 0, 0, false, true, 0, 0)));
+                    }
+                    else
+                    {
+                        dp.Add(new PathElement.H(corners[3]));
+                        dp.Add(new PathElement.A(corners[3], corners[3], 0, false, true, 0, shape.Height - corners[3]));
+                    }
+                    dp.Add(new PathElement.V(corners[0]));
+                    dp.Add(new PathElement.A(corners[0], corners[0], 0, false, true, corners[0], 0));
+                    dp.Add(new PathElement.Z());
+                    var d = PathElement.GenerateD(dp.ToArray());
+                    return new PathElement { Parameter = parameter, D = d };
+                }
+
                 return new RectElement { Parameter = parameter, Width = shape.Width, Height = shape.Height };
             }
 
-            public static IElement Outside(XdShapeJson shape, ElementParameter parameter)
+            public static IElement Outside(XdShapeJson shape, ElementParameter parameter, float[] corners)
             {
                 var strokeWidth = parameter.StrokeWidth ?? 1f;
                 var rx = parameter.Rx;
@@ -605,7 +758,7 @@ namespace XdParser
                 };
             }
 
-            public static IElement Inside(XdShapeJson shape, ElementParameter parameter)
+            public static IElement Inside(XdShapeJson shape, ElementParameter parameter, float[] corners)
             {
                 var strokeWidth = parameter.StrokeWidth ?? 1f;
                 var rx = parameter.Rx;
