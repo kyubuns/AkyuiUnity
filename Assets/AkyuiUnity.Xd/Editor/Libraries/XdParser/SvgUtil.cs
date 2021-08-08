@@ -207,28 +207,28 @@ namespace XdParser
             {
                 if (strokeAlign == "outside") return PolygonElement.Outside(shape, parameter);
                 if (strokeAlign == "inside") return PolygonElement.Inside(shape, parameter);
-                return new PolygonElement { Parameter = parameter, Points = shape.Points };
+                return PolygonElement.Basic(shape, parameter);
             }
 
             if (shape.Type == RectElement.Name)
             {
                 if (strokeAlign == "outside") return RectElement.Outside(shape, parameter);
                 if (strokeAlign == "inside") return RectElement.Inside(shape, parameter);
-                return new RectElement { Parameter = parameter, Width = shape.Width, Height = shape.Height };
+                return RectElement.Basic(shape, parameter);
             }
 
             if (shape.Type == CircleElement.Name)
             {
-                if (strokeAlign == "outside") return CircleElement.Outside(shape, parameter, shapeR);
-                if (strokeAlign == "inside") return CircleElement.Inside(shape, parameter, shapeR);
-                return new CircleElement { Parameter = parameter, Cx = shape.Cx, Cy = shape.Cy, R = shapeR.Value };
+                if (strokeAlign == "outside") return CircleElement.Outside(shape, parameter, shapeR.Value);
+                if (strokeAlign == "inside") return CircleElement.Inside(shape, parameter, shapeR.Value);
+                return CircleElement.Basic(shape, parameter, shapeR.Value);
             }
 
             if (shape.Type == EllipseElement.Name)
             {
                 if (strokeAlign == "outside") return EllipseElement.Outside(shape, parameter);
                 if (strokeAlign == "inside") return EllipseElement.Inside(shape, parameter);
-                return new EllipseElement { Parameter = parameter, Cx = shape.Cx, Cy = shape.Cy, Rx = shape.Rx, Ry = shape.Ry };
+                return EllipseElement.Basic(shape, parameter);
             }
 
             throw new NotSupportedException($"Unknown type {shape.Type}");
@@ -514,6 +514,11 @@ namespace XdParser
                 return $@"<path d=""M{string.Join(",", d)}Z"" {Parameter.GetString()} />";
             }
 
+            public static IElement Basic(XdShapeJson shape, ElementParameter parameter)
+            {
+                return new PolygonElement { Parameter = parameter, Points = shape.Points };
+            }
+
             public static IElement Outside(XdShapeJson shape, ElementParameter parameter)
             {
                 parameter.Rx = null;
@@ -558,6 +563,11 @@ namespace XdParser
             public string ToSvg()
             {
                 return $@"<{Name} width=""{Width:0.###}"" height=""{Height:0.###}"" {Parameter.GetString()} />";
+            }
+
+            public static IElement Basic(XdShapeJson shape, ElementParameter parameter)
+            {
+                return new RectElement { Parameter = parameter, Width = shape.Width, Height = shape.Height };
             }
 
             public static IElement Outside(XdShapeJson shape, ElementParameter parameter)
@@ -645,7 +655,12 @@ namespace XdParser
                 return $@"<{Name} cx=""{Cx:0.###}"" cy=""{Cy:0.###}"" r=""{R:0.###}"" {Parameter.GetString()} />";
             }
 
-            public static IElement Outside(XdShapeJson shape, ElementParameter parameter, float? shapeR)
+            public static IElement Basic(XdShapeJson shape, ElementParameter parameter, float shapeR)
+            {
+                return new CircleElement { Parameter = parameter, Cx = shape.Cx, Cy = shape.Cy, R = shapeR };
+            }
+
+            public static IElement Outside(XdShapeJson shape, ElementParameter parameter, float shapeR)
             {
                 var strokeWidth = parameter.StrokeWidth ?? 1f;
                 return new GroupElement
@@ -660,7 +675,7 @@ namespace XdParser
                             },
                             Cx = shape.Cx,
                             Cy = shape.Cy,
-                            R = shapeR ?? 1f,
+                            R = shapeR,
                         },
                         new CircleElement
                         {
@@ -670,13 +685,13 @@ namespace XdParser
                             },
                             Cx = shape.Cx,
                             Cy = shape.Cy,
-                            R = (shapeR ?? 1f) + strokeWidth / 2f,
+                            R = shapeR + strokeWidth / 2f,
                         },
                     }
                 };
             }
 
-            public static IElement Inside(XdShapeJson shape, ElementParameter parameter, float? shapeR)
+            public static IElement Inside(XdShapeJson shape, ElementParameter parameter, float shapeR)
             {
                 var strokeWidth = parameter.StrokeWidth ?? 1f;
                 return new GroupElement
@@ -691,7 +706,7 @@ namespace XdParser
                             },
                             Cx = shape.Cx,
                             Cy = shape.Cy,
-                            R = shapeR ?? 1f,
+                            R = shapeR,
                         },
                         new CircleElement
                         {
@@ -701,7 +716,7 @@ namespace XdParser
                             },
                             Cx = shape.Cx,
                             Cy = shape.Cy,
-                            R = (shapeR ?? 1f) - strokeWidth / 2f,
+                            R = shapeR - strokeWidth / 2f,
                         },
                     }
                 };
@@ -721,6 +736,11 @@ namespace XdParser
             public string ToSvg()
             {
                 return $@"<{Name} cx=""{Cx:0.###}"" cy=""{Cy:0.###}"" rx=""{Rx:0.###}"" ry=""{Ry:0.###}"" {Parameter.GetString()} />";
+            }
+
+            public static IElement Basic(XdShapeJson shape, ElementParameter parameter)
+            {
+                return new EllipseElement { Parameter = parameter, Cx = shape.Cx, Cy = shape.Cy, Rx = shape.Rx, Ry = shape.Ry };
             }
 
             public static IElement Outside(XdShapeJson shape, ElementParameter parameter)
