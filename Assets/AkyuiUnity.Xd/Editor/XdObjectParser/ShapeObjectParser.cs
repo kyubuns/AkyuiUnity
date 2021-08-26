@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using AkyuiUnity.Loader;
 using Unity.VectorGraphics;
@@ -103,37 +102,45 @@ namespace AkyuiUnity.Xd
             var direction = new Vector2Int(flipX ? -1 : 1, flipY ? -1 : 1);
             var shapeType = xdObject.Shape?.Type;
             var border = xdObject.HasParameter("NoSlice") ? new Border(0, 0, 0, 0) : null;
+            var isPlaceholder = xdObject.HasParameter("placeholder");
 
             if (!string.IsNullOrWhiteSpace(ux?.Uid))
             {
-                var spriteUid = $"{xdObject.GetSimpleName()}_{ux?.Uid.Substring(0, 8)}.png";
-                asset = new SpriteAsset(spriteUid, xdObject.Style.Fill.Pattern.Meta.Ux.HrefLastModifiedDate, obb.Size, null, border);
+                string spriteUid = null;
+                if (!isPlaceholder)
+                {
+                    spriteUid = $"{xdObject.GetSimpleName()}_{ux?.Uid.Substring(0, 8)}.png";
+                    asset = new SpriteAsset(spriteUid, xdObject.Style.Fill.Pattern.Meta.Ux.HrefLastModifiedDate, obb.Size, null, border);
+                    assetHolder.Save(spriteUid, xdObject.Style.Fill.Pattern.Meta);
+                }
                 imageComponent = new ImageComponent(
                     spriteUid,
                     color,
                     direction
                 );
-                assetHolder.Save(spriteUid, xdObject.Style.Fill.Pattern.Meta);
             }
             else if (SvgUtil.Types.Contains(shapeType))
             {
-                var spriteUid = $"{xdObject.GetSimpleName()}_{xdObject.Id.Substring(0, 8)}.png";
-                var svg = SvgUtil.CreateSvg(xdObject, null);
-                var svgHash = FastHash.CalculateHash(svg);
-
-                var cachedSvg = assetHolder.GetCachedSvg(svgHash);
-                if (cachedSvg != null)
+                string spriteUid = null;
+                if (!isPlaceholder)
                 {
-                    spriteUid = cachedSvg.SpriteUid;
-                }
-                else
-                {
-                    asset = new SpriteAsset(spriteUid, svgHash, obb.Size, null, border);
-                    var xdImportSettings = XdImporter.Settings;
-                    assetHolder.Save(spriteUid, () => SvgToPng.Convert(svg, obb.Size, ViewportOptions.DontPreserve, xdImportSettings));
-                    assetHolder.SaveCacheSvg(spriteUid, svgHash);
-                }
+                    spriteUid = $"{xdObject.GetSimpleName()}_{xdObject.Id.Substring(0, 8)}.png";
+                    var svg = SvgUtil.CreateSvg(xdObject, null);
+                    var svgHash = FastHash.CalculateHash(svg);
 
+                    var cachedSvg = assetHolder.GetCachedSvg(svgHash);
+                    if (cachedSvg != null)
+                    {
+                        spriteUid = cachedSvg.SpriteUid;
+                    }
+                    else
+                    {
+                        asset = new SpriteAsset(spriteUid, svgHash, obb.Size, null, border);
+                        var xdImportSettings = XdImporter.Settings;
+                        assetHolder.Save(spriteUid, () => SvgToPng.Convert(svg, obb.Size, ViewportOptions.DontPreserve, xdImportSettings));
+                        assetHolder.SaveCacheSvg(spriteUid, svgHash);
+                    }
+                }
                 imageComponent = new ImageComponent(
                     spriteUid,
                     new Color(1f, 1f, 1f, xdObject.Style?.Opacity ?? 1f),
@@ -146,7 +153,7 @@ namespace AkyuiUnity.Xd
             }
 
             var assets = new List<IAsset>();
-            if (!xdObject.HasParameter("placeholder") && asset != null) assets.Add(asset);
+            if (!isPlaceholder && asset != null) assets.Add(asset);
             return (imageComponent, assets.ToArray());
         }
     }
