@@ -93,7 +93,7 @@ namespace AkyuiUnity.Xd
 
         private class XdRenderer
         {
-            public Meta Meta => new Meta(Const.AkyuiVersion, "AkyuiUnity.Xd", "1.1.13");
+            public Meta Meta => new Meta(Const.AkyuiVersion, "AkyuiUnity.Xd", "1.1.14");
             public uint Root => 0;
             public List<IElement> Elements { get; }
             public List<IAsset> Assets { get; }
