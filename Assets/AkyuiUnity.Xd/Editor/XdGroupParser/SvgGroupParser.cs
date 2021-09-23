@@ -30,7 +30,7 @@ namespace AkyuiUnity.Xd
 
         public Rect CalcSize(XdObjectJson xdObject, Rect rect)
         {
-            var svg = SvgUtil.CreateSvg(xdObject, null);
+            var svg = SvgUtil.CreateSvg(xdObject, null, true);
             var bounds = SvgUtil.CalcBounds(svg);
             return bounds;
         }
@@ -42,7 +42,7 @@ namespace AkyuiUnity.Xd
 
             var obb = obbGetter.Get(xdObject);
             var size = obb.Size;
-            var svg = SvgUtil.CreateSvg(xdObject, obb);
+            var svg = SvgUtil.CreateSvg(xdObject, obb, false);
             xdObject.Group.Children = new XdObjectJson[] { };
 
             var spriteUid = $"{xdObject.GetSimpleName()}_{xdObject.Id.Substring(0, 8)}.png";

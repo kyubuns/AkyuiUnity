@@ -40,10 +40,20 @@ namespace XdParser
             return true;
         }
 
-        public static string CreateSvg(XdObjectJson xdObject, [CanBeNull] Obb obb)
+        public static string CreateSvg(XdObjectJson xdObject, [CanBeNull] Obb obb, bool allowEmpty)
         {
             var defs = new List<IDefElement>();
             var body = CreateSvgLine(xdObject, defs);
+
+            if (!allowEmpty)
+            {
+                if (!(body is GroupElement)
+                    && ((body.Parameter.EnableFill == false || body.Parameter.Fill == null) &&
+                        (body.Parameter.EnableStroke == false || body.Parameter.Stroke == null)))
+                {
+                    return string.Empty;
+                }
+            }
 
             body.Parameter.Transform = new Transform();
             if (obb != null)

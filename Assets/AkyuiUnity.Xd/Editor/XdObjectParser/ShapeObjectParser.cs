@@ -34,7 +34,7 @@ namespace AkyuiUnity.Xd
             var shapeType = xdObject.Shape?.Type;
             if (SvgUtil.Types.Contains(shapeType))
             {
-                var svg = SvgUtil.CreateSvg(xdObject, null);
+                var svg = SvgUtil.CreateSvg(xdObject, null, true);
                 var bounds = SvgUtil.CalcBounds(svg);
                 if (bounds.width > 0.0001f && bounds.height > 0.0001f)
                 {
@@ -125,7 +125,7 @@ namespace AkyuiUnity.Xd
                 if (!isPlaceholder)
                 {
                     spriteUid = $"{xdObject.GetSimpleName()}_{xdObject.Id.Substring(0, 8)}.png";
-                    var svg = SvgUtil.CreateSvg(xdObject, null);
+                    var svg = SvgUtil.CreateSvg(xdObject, null, false);
                     var svgHash = FastHash.CalculateHash(svg);
 
                     var cachedSvg = assetHolder.GetCachedSvg(svgHash);

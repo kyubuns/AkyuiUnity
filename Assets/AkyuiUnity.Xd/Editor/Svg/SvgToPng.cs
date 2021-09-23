@@ -1,4 +1,5 @@
 using System.IO;
+using System.Linq;
 using AkyuiUnity.Editor;
 using AkyuiUnity.Editor.Extensions;
 using Unity.VectorGraphics;
@@ -20,12 +21,22 @@ namespace AkyuiUnity.Xd
 
         public static byte[] Convert(string svg, Vector2 size, ViewportOptions viewportOptions, XdImportSettings xdImportSettings)
         {
+            var sizeX = Mathf.RoundToInt(size.x * xdImportSettings.SpriteSaveScale);
+            var sizeY = Mathf.RoundToInt(size.y * xdImportSettings.SpriteSaveScale);
+
+            if (string.IsNullOrWhiteSpace(svg))
+            {
+                var texture = new Texture2D(sizeX, sizeY);
+                texture.SetPixels(Enumerable.Repeat(Color.clear, texture.width * texture.height).ToArray());
+                return texture.EncodeToPNG();
+            }
+
             var unityAssetsParentPath = Path.GetDirectoryName(Application.dataPath) ?? "";
             var savePath = Path.Combine("Assets", "Temp.svg");
             var saveFullPath = Path.Combine(unityAssetsParentPath, savePath);
 
             SvgImportTrigger.ProcessingFile = savePath.ToUniversalPath();
-            SvgImportTrigger.Size = new Vector2Int(Mathf.RoundToInt(size.x * xdImportSettings.SpriteSaveScale), Mathf.RoundToInt(size.y * xdImportSettings.SpriteSaveScale));
+            SvgImportTrigger.Size = new Vector2Int(sizeX, sizeY);
             SvgImportTrigger.ViewportOptions = viewportOptions;
 
             using (Disposable.Create(() =>
