@@ -207,7 +207,7 @@ namespace AkyuiUnity.Xd
             {
                 IXdJsonElement Copy(Type type, IXdJsonElement instance, IXdJsonElement source)
                 {
-                    if (instance == null) return source;
+                    if (instance == null || source == null) return source;
 
                     var @new = (IXdJsonElement) Activator.CreateInstance(type);
 
