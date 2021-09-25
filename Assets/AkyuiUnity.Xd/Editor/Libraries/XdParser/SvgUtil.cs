@@ -136,10 +136,35 @@ namespace XdParser
                 var color = xdObject.Style.Fill.ToUnityColor();
                 parameter.Fill = color;
 
-                if (fill.Type == "solid" || fill.Type == "gradient")
+                if (fill.Type == "solid")
                 {
                     // nothing to do
-                    // gradientはサポートしていないが、知らないタイプというわけではないのでスルー
+                }
+                else if (fill.Type == "gradient")
+                {
+                    if (fill.Gradient.Meta.Ux.GradientResources.Type == "linear")
+                    {
+                        var fillId = $"linear-gradient{defs.Count}";
+                        defs.Add(new LinearGradientDefElement
+                        {
+                            Id = fillId,
+                            X1 = fill.Gradient.X1,
+                            X2 = fill.Gradient.X2,
+                            Y1 = fill.Gradient.Y1,
+                            Y2 = fill.Gradient.Y2,
+                            Units = fill.Gradient.Units,
+                            Stops = fill.Gradient.Meta.Ux.GradientResources.Stops.Select(x => new LinearGradientDefStop
+                            {
+                                Offset = x.Offset,
+                                StopColor = x.Color.ToUnityColor(),
+                            }).ToArray(),
+                        });
+                        parameter.FillUrl = fillId;
+                    }
+                    else
+                    {
+                        Debug.LogWarning($"Unknown fill gradient type {fill.Gradient.Meta.Ux.GradientResources.Type} in {xdObject.Name}");
+                    }
                 }
                 else if (fill.Type == "pattern")
                 {
@@ -274,6 +299,7 @@ namespace XdParser
             public Transform Transform { get; set; } = new Transform();
             public bool EnableFill { get; set; }
             public Color? Fill { get; set; }
+            public string FillUrl { get; set; } // ColorのFillより優先される
             public string FillRule { get; set; }
             public bool EnableStroke { get; set; }
             public Color? Stroke { get; set; }
@@ -341,6 +367,7 @@ namespace XdParser
 
             private string FillToSvg()
             {
+                if (FillUrl != null) return $@"fill=""url(#{FillUrl})""";
                 if (!EnableFill) return null;
                 if (Fill == null) return @"fill=""none""";
                 return $@"fill=""{Fill.Value.ToSvgColorString()}""";
@@ -348,6 +375,7 @@ namespace XdParser
 
             private string FillRuleToSvg()
             {
+                if (FillUrl != null) return null;
                 if (!EnableFill) return null;
                 if (string.IsNullOrWhiteSpace(FillRule)) return null;
                 return $@"fill-rule=""{FillRule}""";
@@ -457,6 +485,34 @@ namespace XdParser
             }
         }
 
+        private class LinearGradientDefElement : IDefElement
+        {
+            public string Id { get; set; }
+            public float X1 { get; set; }
+            public float Y1 { get; set; }
+            public float X2 { get; set; }
+            public float Y2 { get; set; }
+            public string Units { get; set; }
+            public LinearGradientDefStop[] Stops { get; set; }
+
+            public string ToSvg()
+            {
+                var stops = string.Join("", Stops.Select(x => x.ToSvg()));
+                return $@"<linearGradient id=""{Id}"" x1=""{X1:0.###}"" x2=""{X2:0.###}"" y1=""{Y1:0.###}"" y2=""{Y2:0.###}"" gradientUnits=""{Units}"">{stops}</linearGradient>";
+            }
+        }
+
+        private class LinearGradientDefStop
+        {
+            public float Offset { get; set; }
+            public Color StopColor { get; set; }
+
+            public string ToSvg()
+            {
+                return $@"<stop offset=""{Offset:0.###}"" stop-color=""{StopColor.ToSvgColorString()}"" stop-opacity=""{StopColor.a:0.###}""/>";
+            }
+        }
+
         private class RootElement : IElement
         {
             public ElementParameter Parameter { get; set; } = new ElementParameter();
@@ -471,7 +527,7 @@ namespace XdParser
                 if (Defs.Length > 0) defsString = $@"<defs>{string.Join("", Defs.Select(x => x.ToSvg()))}</defs>";
 
                 var sizeString = "";
-                if (Size != null) sizeString = $@"width=""{Size.Value.x}"" height=""{Size.Value.y}"" viewBox=""0 0 {Size.Value.x} {Size.Value.y}""";
+                if (Size != null) sizeString = $@"width=""{Size.Value.x:0.###}"" height=""{Size.Value.y:0.###}"" viewBox=""0 0 {Size.Value.x:0.###} {Size.Value.y:0.###}""";
 
                 var svg = $@"<svg xmlns=""http://www.w3.org/2000/svg"" xmlns:xlink=""http://www.w3.org/1999/xlink"" {sizeString}>{defsString}{Body.ToSvg()}</svg>";
                 return svg;

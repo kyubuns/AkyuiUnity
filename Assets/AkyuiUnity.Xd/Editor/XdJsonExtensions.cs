@@ -73,6 +73,18 @@ namespace AkyuiUnity.Xd
             return $"rgba({color32.r},{color32.g},{color32.b},{color.a:0.###})";
         }
 
+        public static Color ToUnityColor(this XdColorJson xdColorJson)
+        {
+            var color = new Color32 { r = 255, g = 255, b = 255, a = 255 };
+
+            color.r = (byte) xdColorJson.Value.R;
+            color.g = (byte) xdColorJson.Value.G;
+            color.b = (byte) xdColorJson.Value.B;
+            color.a = xdColorJson.Alpha == null ? (byte) 255 : (byte) (255 * xdColorJson.Alpha);
+
+            return color;
+        }
+
         public static Color ToUnityColor(this XdStyleFillJson xdStyleFillJson)
         {
             var color = new Color32 { r = 255, g = 255, b = 255, a = 255 };
@@ -81,12 +93,7 @@ namespace AkyuiUnity.Xd
             var xdColorJson = xdStyleFillJson.Color;
             if (xdColorJson?.Value == null) return color;
 
-            color.r = (byte) xdColorJson.Value.R;
-            color.g = (byte) xdColorJson.Value.G;
-            color.b = (byte) xdColorJson.Value.B;
-            color.a = xdColorJson.Alpha == null ? (byte) 255 : (byte) (255 * xdColorJson.Alpha);
-
-            return color;
+            return xdColorJson.ToUnityColor();
         }
 
         public static Color ToUnityColor(this XdStyleStrokeJson xdStyleStrokeJson)
@@ -97,12 +104,7 @@ namespace AkyuiUnity.Xd
             var xdColorJson = xdStyleStrokeJson.Color;
             if (xdColorJson?.Value == null) return color;
 
-            color.r = (byte) xdColorJson.Value.R;
-            color.g = (byte) xdColorJson.Value.G;
-            color.b = (byte) xdColorJson.Value.B;
-            color.a = xdColorJson.Alpha == null ? (byte) 255 : (byte) (255 * xdColorJson.Alpha);
-
-            return color;
+            return xdColorJson.ToUnityColor();
         }
 
         public static Color GetFillUnityColor(this XdObjectJson xdObjectJson)
