@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: SetupAuto9SlicerTrigger
   m_EditorClassIdentifier: 
   options:
-    Tolerate: 8
+    Tolerate: 0
     CenterSize: 2
     Margin: 2
