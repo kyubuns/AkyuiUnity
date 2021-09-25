@@ -10,6 +10,11 @@ using XdParser.Internal;
 
 namespace AkyuiUnity.Xd
 {
+    public static class XdConst
+    {
+        public const string FormatVersion = "12";
+    }
+
     public class XdAkyuiLoader : IAkyuiLoader
     {
         private XdFile _xdFile;
@@ -93,7 +98,7 @@ namespace AkyuiUnity.Xd
 
         private class XdRenderer
         {
-            public Meta Meta => new Meta(Const.AkyuiVersion, "AkyuiUnity.Xd", "1.1.16");
+            public Meta Meta => new Meta(Const.FormatVersion, "AkyuiUnity.Xd", XdConst.FormatVersion);
             public uint Root => 0;
             public List<IElement> Elements { get; }
             public List<IAsset> Assets { get; }

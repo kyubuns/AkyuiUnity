@@ -60,15 +60,9 @@ namespace AkyuiUnity.Editor
 
         private static void CheckVersion(IAkyuiLoader loader)
         {
-            var loaderVersionFull = loader.LayoutInfo.Meta.AkyuiVersion;
-            var e1 = loaderVersionFull.Split('.');
-            var loaderVersion = $"{e1[0]}.{e1[1]}";
-
-            var e2 = Const.AkyuiVersion.Split('.');
-            var importerVersion = $"{e2[0]}.{e2[1]}";
-
-            if (loaderVersion == importerVersion) return;
-            throw new Exception($"Cannot load version {loaderVersionFull} file. (Importer version is {Const.AkyuiVersion})");
+            var loaderVersion = loader.LayoutInfo.Meta.AkyuiVersion;
+            if (loaderVersion == Const.FormatVersion) return;
+            throw new Exception($"Cannot load version {loaderVersion} file. (Importer version is {Const.FormatVersion})");
         }
 
         private static void Import(IAkyuiImportSettings settings, IAkyuiLoader akyuiLoader, AkyuiLogger logger, IAkyuiProgress progress)

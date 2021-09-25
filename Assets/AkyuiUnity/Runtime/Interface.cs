@@ -6,17 +6,17 @@ namespace AkyuiUnity
 {
     public static class Const
     {
-        public const string AkyuiVersion = "1.1.10";
+        public const string FormatVersion = "12";
     }
 
     public class LayoutInfo
     {
-        [NotNull] public string Name;
-        public readonly uint Hash;
-        [NotNull] public readonly Meta Meta;
-        [NotNull] public readonly Dictionary<string, string> UserData;
-        public readonly uint Root;
-        [NotNull] public readonly IElement[] Elements;
+        [NotNull] public string Name { get; }
+        public uint Hash { get; }
+        [NotNull] public Meta Meta { get; }
+        [NotNull] public Dictionary<string, string> UserData { get; }
+        public uint Root { get; }
+        [NotNull] public IElement[] Elements { get; }
 
         public LayoutInfo([NotNull] string name, uint hash, [NotNull] Meta meta, Dictionary<string, string> userData, uint root, [NotNull] IElement[] elements)
         {
@@ -31,9 +31,9 @@ namespace AkyuiUnity
 
     public class Meta
     {
-        [NotNull] public readonly string AkyuiVersion;
-        [NotNull] public readonly string App;
-        [NotNull] public readonly string AppVersion;
+        [NotNull] public string AkyuiVersion { get; }
+        [NotNull] public string App { get; }
+        [NotNull] public string AppVersion { get; }
 
         public Meta([NotNull] string akyuiVersion, [NotNull] string app, [NotNull] string appVersion)
         {
