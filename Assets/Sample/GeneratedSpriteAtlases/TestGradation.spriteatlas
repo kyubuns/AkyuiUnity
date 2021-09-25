@@ -30,21 +30,39 @@ SpriteAtlas:
       enableTightPacking: 0
     variantMultiplier: 1
     packables:
-    - {fileID: 2800000, guid: 131f32d9b511f4173967b6185eaaa640, type: 3}
-    - {fileID: 2800000, guid: 468aff74cfa9d46038242b17f6c91174, type: 3}
-    - {fileID: 2800000, guid: 35013b083bfdf44baa3087785ed049b6, type: 3}
+    - {fileID: 2800000, guid: 7a578ec7d6054479f8f7ef285b1e865a, type: 3}
+    - {fileID: 2800000, guid: d64a66931a0c64062aa4609b73bd8624, type: 3}
+    - {fileID: 2800000, guid: 9d8077c6eb4034bc9ae2f67f1386a29d, type: 3}
+    - {fileID: 2800000, guid: 34e23c8af75304c2587c44703af3e649, type: 3}
+    - {fileID: 2800000, guid: 07be567a1197b48c19bcee2f725193c6, type: 3}
+    - {fileID: 2800000, guid: cf358086c3158488bb9e4be02bab1bd0, type: 3}
+    - {fileID: 2800000, guid: 65c1f194095ad409abece6f88e93234d, type: 3}
+    - {fileID: 2800000, guid: dbce6043cf4fa4a71a4c6f7a8f7627d5, type: 3}
+    - {fileID: 2800000, guid: 4d8c196b180a048a198cd14868abae9f, type: 3}
     - {fileID: 2800000, guid: 4a76c385d51634f7c9d6e17b043a3f3f, type: 3}
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
-  - {fileID: 21300000, guid: 468aff74cfa9d46038242b17f6c91174, type: 3}
+  - {fileID: 21300000, guid: dbce6043cf4fa4a71a4c6f7a8f7627d5, type: 3}
+  - {fileID: 21300000, guid: d64a66931a0c64062aa4609b73bd8624, type: 3}
+  - {fileID: 21300000, guid: 65c1f194095ad409abece6f88e93234d, type: 3}
   - {fileID: 21300000, guid: 4a76c385d51634f7c9d6e17b043a3f3f, type: 3}
-  - {fileID: 21300000, guid: 35013b083bfdf44baa3087785ed049b6, type: 3}
-  - {fileID: 21300000, guid: 131f32d9b511f4173967b6185eaaa640, type: 3}
+  - {fileID: 21300000, guid: cf358086c3158488bb9e4be02bab1bd0, type: 3}
+  - {fileID: 21300000, guid: 9d8077c6eb4034bc9ae2f67f1386a29d, type: 3}
+  - {fileID: 21300000, guid: 7a578ec7d6054479f8f7ef285b1e865a, type: 3}
+  - {fileID: 21300000, guid: 07be567a1197b48c19bcee2f725193c6, type: 3}
+  - {fileID: 21300000, guid: 34e23c8af75304c2587c44703af3e649, type: 3}
+  - {fileID: 21300000, guid: 4d8c196b180a048a198cd14868abae9f, type: 3}
   m_PackedSpriteNamesToIndex:
-  - Rectangle 3_7b7b5fc0
+  - Linear Rectangle 2_5cd43fde
+  - Angular Rectangle 2_7b7b5fc0
+  - Linear Rectangle 3_b340decf
   - Rectangle 1_caae8375
-  - Rectangle 2_33069914
-  - Rectangle 4_55f9a35c
+  - Radial Rectangle 1_69dddd49
+  - Angular Rectangle 1_33069914
+  - Angular Rectangle 3_55f9a35c
+  - Radial Rectangle 2_e125bd3f
+  - Radial Rectangle 3_7c8318bf
+  - Linear Rectangle 1_16eeb705
   m_Tag: TestGradation
   m_IsVariant: 0
