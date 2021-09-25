@@ -153,7 +153,28 @@ namespace XdParser
                             Y1 = fill.Gradient.Y1,
                             Y2 = fill.Gradient.Y2,
                             Units = fill.Gradient.Units,
-                            Stops = fill.Gradient.Meta.Ux.GradientResources.Stops.Select(x => new LinearGradientDefStop
+                            Stops = fill.Gradient.Meta.Ux.GradientResources.Stops.Select(x => new GradientStop
+                            {
+                                Offset = x.Offset,
+                                StopColor = x.Color.ToUnityColor(),
+                            }).ToArray(),
+                        });
+                        parameter.FillUrl = fillId;
+                    }
+                    else if (fill.Gradient.Meta.Ux.GradientResources.Type == "radial")
+                    {
+                        var fillId = $"radial-gradient{defs.Count}";
+                        defs.Add(new RadialGradientDefElement
+                        {
+                            Id = fillId,
+                            Cx = fill.Gradient.Cx ?? 0.5f,
+                            Cy = fill.Gradient.Cy ?? 0.5f,
+                            Fx = fill.Gradient.Fx ?? 0.5f,
+                            Fy = fill.Gradient.Fy ?? 0.5f,
+                            R = fill.Gradient.R ?? 0.5f,
+                            Units = fill.Gradient.Units,
+                            GradientTransform = fill.Gradient.Transform,
+                            Stops = fill.Gradient.Meta.Ux.GradientResources.Stops.Select(x => new GradientStop
                             {
                                 Offset = x.Offset,
                                 StopColor = x.Color.ToUnityColor(),
@@ -452,19 +473,32 @@ namespace XdParser
             public string ToSvg()
             {
                 if (Value == null) return null;
+                return $@"transform=""{ToSvg(Value)}""";
+            }
 
+            public static string ToSvg(XdTransformJson value)
+            {
                 if (
-                    Mathf.Abs(Value.A - 1f) < 0.0001f
-                    && Mathf.Abs(Value.B) < 0.0001f
-                    && Mathf.Abs(Value.C) < 0.0001f
-                    && Mathf.Abs(Value.D - 1f) < 0.0001f
+                    Mathf.Abs(value.A - 1f) < 0.0001f
+                    && Mathf.Abs(value.B) < 0.0001f
+                    && Mathf.Abs(value.C) < 0.0001f
+                    && Mathf.Abs(value.D - 1f) < 0.0001f
                 )
                 {
-                    if (Math.Abs(Value.Tx) < 0.0001f && Math.Abs(Value.Ty) < 0.0001f) return null;
-                    return $@"transform=""translate({Value.Tx:0.###} {Value.Ty:0.###})""";
+                    if (Math.Abs(value.Tx) < 0.0001f && Math.Abs(value.Ty) < 0.0001f) return null;
+                    return $@"translate({value.Tx:0.###} {value.Ty:0.###})";
                 }
 
-                return $@"transform=""matrix({Value.A:0.###}, {Value.B:0.###}, {Value.C:0.###}, {Value.D:0.###}, {Value.Tx:0.###}, {Value.Ty:0.###})""";
+                if (
+                    Mathf.Abs(value.B) < 0.0001f
+                    && Mathf.Abs(value.C) < 0.0001f
+                )
+                {
+                    if (Math.Abs(value.Tx) < 0.0001f && Math.Abs(value.Ty) < 0.0001f) return null;
+                    return $@"translate({value.Tx:0.###} {value.Ty:0.###}) scale({value.A:0.###} {value.D:0.###})";
+                }
+
+                return $@"matrix({value.A:0.###}, {value.B:0.###}, {value.C:0.###}, {value.D:0.###}, {value.Tx:0.###}, {value.Ty:0.###})";
             }
         }
 
@@ -493,7 +527,7 @@ namespace XdParser
             public float X2 { get; set; }
             public float Y2 { get; set; }
             public string Units { get; set; }
-            public LinearGradientDefStop[] Stops { get; set; }
+            public GradientStop[] Stops { get; set; }
 
             public string ToSvg()
             {
@@ -502,14 +536,38 @@ namespace XdParser
             }
         }
 
-        private class LinearGradientDefStop
+        private class RadialGradientDefElement : IDefElement
+        {
+            public string Id { get; set; }
+            public float Cx { get; set; }
+            public float Cy { get; set; }
+            public float Fx { get; set; }
+            public float Fy { get; set; }
+            public float R { get; set; }
+            public string Units { get; set; }
+            public XdTransformJson GradientTransform { get; set; }
+            public GradientStop[] Stops { get; set; }
+
+            public string ToSvg()
+            {
+                var stops = string.Join("", Stops.Select(x => x.ToSvg()));
+                var transformJson = "";
+                if (GradientTransform != null)
+                {
+                    transformJson = $@"gradientTransform=""{Transform.ToSvg(GradientTransform)}""";
+                }
+                return $@"<radialGradient id=""{Id}"" cx=""{Cx:0.###}"" cy=""{Cy:0.###}"" fx=""{Fx:0.###}"" fy=""{Fy:0.###}"" r=""{R:0.###}"" {transformJson} gradientUnits=""{Units}"">{stops}</radialGradient>";
+            }
+        }
+
+        private class GradientStop
         {
             public float Offset { get; set; }
             public Color StopColor { get; set; }
 
             public string ToSvg()
             {
-                return $@"<stop offset=""{Offset:0.###}"" stop-color=""{StopColor.ToSvgColorString()}"" stop-opacity=""{StopColor.a:0.###}""/>";
+                return $@"<stop offset=""{Offset:0.###}"" stop-color=""{StopColor.ToSvgColorStringRgb()}"" stop-opacity=""{StopColor.a:0.###}""/>";
             }
         }
 

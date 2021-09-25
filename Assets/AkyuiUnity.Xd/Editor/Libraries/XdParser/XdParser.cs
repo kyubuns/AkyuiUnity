@@ -304,8 +304,26 @@ namespace XdParser.Internal
         [DataMember(Name = "y2")]
         public float Y2 { get; set; }
 
+        [DataMember(Name = "cx")]
+        public float? Cx { get; set; }
+
+        [DataMember(Name = "cy")]
+        public float? Cy { get; set; }
+
+        [DataMember(Name = "fx")]
+        public float? Fx { get; set; }
+
+        [DataMember(Name = "fy")]
+        public float? Fy { get; set; }
+
+        [DataMember(Name = "r")]
+        public float? R { get; set; }
+
         [DataMember(Name = "units")]
         public string Units { get; set; }
+
+        [DataMember(Name = "transform")]
+        public XdTransformJson Transform { get; set; }
     }
 
     public class XdStyleFillGradientMetaJson : IXdJsonElement
