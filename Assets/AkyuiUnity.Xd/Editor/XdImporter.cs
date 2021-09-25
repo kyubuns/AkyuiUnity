@@ -144,7 +144,7 @@ namespace AkyuiUnity.Xd
 
                         if (!xdSettings.ReimportLayout && !xdSettings.ReimportAsset && prevMetaUserData != null && prevMetaUserData.value == xdHash.ToString())
                         {
-                            logger.Log("Skip", ("Hash", xdHash));
+                            logger.Log("Skip", ("Name", artwork.Name), ("Hash", xdHash));
                             skipped++;
                             continue;
                         }

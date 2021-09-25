@@ -86,7 +86,7 @@ namespace AkyuiUnity.Editor
 
                 if (!settings.ReimportLayout && prevMeta != null && prevMeta.hash == akyuiLoader.LayoutInfo.Hash)
                 {
-                    logger.Log("Skip", ("Hash", akyuiLoader.LayoutInfo.Hash));
+                    logger.Log("Skip", ("Name", akyuiLoader.LayoutInfo.Name), ("Hash", akyuiLoader.LayoutInfo.Hash));
                     return;
                 }
 
