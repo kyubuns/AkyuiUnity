@@ -183,6 +183,9 @@ namespace XdParser.Internal
 
         [DataMember(Name = "pattern")]
         public XdStyleFillPatternJson Pattern { get; set; }
+
+        [DataMember(Name = "gradient")]
+        public XdStyleFillGradientJson Gradient { get; set; }
     }
 
     public class XdStyleStrokeJson : IXdJsonElement
@@ -282,6 +285,57 @@ namespace XdParser.Internal
 
         [DataMember(Name = "scale")]
         public float? Scale { get; set; }
+    }
+
+    public class XdStyleFillGradientJson : IXdJsonElement
+    {
+        [DataMember(Name = "meta")]
+        public XdStyleFillGradientMetaJson Meta { get; set; }
+
+        [DataMember(Name = "x1")]
+        public float X1 { get; set; }
+
+        [DataMember(Name = "y1")]
+        public float Y1 { get; set; }
+
+        [DataMember(Name = "x2")]
+        public float X2 { get; set; }
+
+        [DataMember(Name = "y2")]
+        public float Y2 { get; set; }
+
+        [DataMember(Name = "units")]
+        public string Units { get; set; }
+    }
+
+    public class XdStyleFillGradientMetaJson : IXdJsonElement
+    {
+        [DataMember(Name = "ux")]
+        public XdStyleFillGradientMetaUxJson Ux { get; set; }
+    }
+
+    public class XdStyleFillGradientMetaUxJson : IXdJsonElement
+    {
+        [DataMember(Name = "gradientResources")]
+        public XdGradientResourcesJson GradientResources { get; set; }
+    }
+
+    public class XdGradientResourcesJson : IXdJsonElement
+    {
+        [DataMember(Name = "type")]
+        public string Type { get; set; }
+
+        [DataMember(Name = "stops")]
+        public XdGradientResourcesStopJson Stops { get; set; }
+    }
+
+    public class XdGradientResourcesStopJson : IXdJsonElement
+    {
+        [DataMember(Name = "offset")]
+        public float Offset { get; set; }
+
+        [DataMember(Name = "color")]
+        public XdColorJson Color { get; set; }
     }
 
     public class XdShapeJson : IXdJsonElement
