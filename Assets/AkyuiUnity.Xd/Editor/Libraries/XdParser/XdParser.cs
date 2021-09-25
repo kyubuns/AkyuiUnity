@@ -326,7 +326,7 @@ namespace XdParser.Internal
         public string Type { get; set; }
 
         [DataMember(Name = "stops")]
-        public XdGradientResourcesStopJson Stops { get; set; }
+        public XdGradientResourcesStopJson[] Stops { get; set; }
     }
 
     public class XdGradientResourcesStopJson : IXdJsonElement
