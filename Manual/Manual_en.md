@@ -181,7 +181,7 @@ If you put @~ at the end of the artboard's name, you can get the following effec
 ---
 ## Unsupported item
 
-## Want to do
+### Want to do
 
 #### Horizontal & Vertical Scroll
 
@@ -191,22 +191,13 @@ If you put @~ at the end of the artboard's name, you can get the following effec
 
 - How far and what to reproduce.
 
-#### different radius for each corner
-
-- Survey required
-
 #### Polygon
-
-
-### Don't do it.
 
 #### Shadow
 
-- Don't do it.
-
 #### Blur
 
-- Don't do it.
+### No plan
 
 #### 3D Transforms
 

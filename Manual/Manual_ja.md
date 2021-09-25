@@ -192,22 +192,13 @@ https://www.youtube.com/watch?v=bJC9ueWZp28
 
 - どこまで何を再現するか。
 
-#### different radius for each corner
-
-- 要調査
-
 #### Polygon
-
-
-### やらない
 
 #### Shadow
 
-- やらない。
-
 #### Blur
 
-- やらない。
+### 計画無し
 
 #### 3D Transforms
 
