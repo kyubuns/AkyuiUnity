@@ -98,10 +98,20 @@ namespace AkyuiUnity.Xd
 
         private static (XdObjectJson[], float Spacing) ExpandRepeatGridGroup(XdObjectJson xdObject, XdObjectJson repeatGrid, string scrollingType, IObbGetter obbGetter, ref List<SpecialSpacing> specialSpacings)
         {
-            var spacing = repeatGrid.GetRepeatGridSpacing(scrollingType);
-
             var listElement = repeatGrid.Group.Children[0].Group.Children[0];
             var listItems = new[] { listElement };
+            var childSize = obbGetter.Get(listElement).Size;
+
+            float spacing;
+            if (scrollingType == "vertical")
+            {
+                spacing = (repeatGrid.Meta?.Ux?.RepeatGrid?.PaddingY ?? 0f) + (repeatGrid.Meta?.Ux?.RepeatGrid?.CellHeight ?? 0f) - childSize.y;
+            }
+            else
+            {
+                spacing = (repeatGrid.Meta?.Ux?.RepeatGrid?.PaddingX ?? 0f) + (repeatGrid.Meta?.Ux?.RepeatGrid?.CellWidth ?? 0f) - childSize.x;
+            }
+
             if (xdObject.HasParameter("multiitems"))
             {
                 listItems = ExpandMultiItemsList(listElement, scrollingType, obbGetter, ref specialSpacings);
