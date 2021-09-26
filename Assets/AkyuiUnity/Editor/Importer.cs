@@ -275,7 +275,7 @@ namespace AkyuiUnity.Editor
 
                 if (Asset is SpriteAsset spriteAsset)
                 {
-                    if (spriteAsset.Border != null) textureImporter.spriteBorder = spriteAsset.Border.ToVector4();
+                    textureImporter.spriteBorder = spriteAsset.Border?.ToVector4() ?? Vector4.zero;
                     textureImporter.maxTextureSize = Mathf.RoundToInt(Mathf.Max(spriteAsset.Size.x, spriteAsset.Size.y) * Importer.Settings.SpriteSaveScale);
                 }
             }
