@@ -182,23 +182,21 @@ https://www.youtube.com/watch?v=bJC9ueWZp28
 ---
 ## 未対応項目
 
-### やりたい
-
-#### Horizontal & Vertical Scroll
-
 ### 保留
 
 #### State
 
 - どこまで何を再現するか。
 
-#### Polygon
-
 #### Shadow
 
 #### Blur
 
 ### 計画無し
+
+#### Angular Gradient
+
+- XDからSVGの出力がサポートされていないため、やらない。
 
 #### 3D Transforms
 

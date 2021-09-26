@@ -181,17 +181,11 @@ If you put @~ at the end of the artboard's name, you can get the following effec
 ---
 ## Unsupported item
 
-### Want to do
-
-#### Horizontal & Vertical Scroll
-
 ### Pending
 
 #### State
 
 - How far and what to reproduce.
-
-#### Polygon
 
 #### Shadow
 
@@ -199,13 +193,17 @@ If you put @~ at the end of the artboard's name, you can get the following effec
 
 ### No plan
 
+#### Angular Gradient
+
+- I don't do SVG output from XD because it's not supported.
+
 #### 3D Transforms
 
-- Unity can reproduce them, but I don't want to put them in Akyui, so I don't do them.
+- Unity can reproduce this, but I don't want to put it in Akyui, so I won't do it.
 
 #### Blend Mode
 
-- I don't want to put it in Akyui.
+- I can't think of a generic way to reproduce this in Unity, so I won't do it.
 
 
 ---
