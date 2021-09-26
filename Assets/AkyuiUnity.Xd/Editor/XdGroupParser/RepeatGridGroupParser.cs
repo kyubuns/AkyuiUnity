@@ -39,6 +39,9 @@ namespace AkyuiUnity.Xd
             var item = xdObject.Group.Children[0].Group.Children[0];
             xdObject.Group.Children = new[] { item };
 
+            // Visible設定によりSpacingが変わってくるので計算しなおす
+            var childSize = obbGetter.Get(item).Size;
+
             if (repeatGrid.Columns > 1 && repeatGrid.Rows > 1)
             {
                 return (new IComponent[]
@@ -48,20 +51,20 @@ namespace AkyuiUnity.Xd
             }
             else if (repeatGrid.Columns > 1)
             {
+                var spacing = repeatGrid.PaddingX + repeatGrid.CellWidth - childSize.x;
                 return (new IComponent[]
                 {
-                    new HorizontalLayoutComponent(repeatGrid.PaddingX)
+                    new HorizontalLayoutComponent(spacing)
                 }, new IAsset[] { });
             }
             else
             {
+                var spacing = repeatGrid.PaddingY + repeatGrid.CellHeight - childSize.y;
                 return (new IComponent[]
                 {
-                    new VerticalLayoutComponent(repeatGrid.PaddingY)
+                    new VerticalLayoutComponent(spacing)
                 }, new IAsset[] { });
             }
-
-            throw new Exception();
         }
     }
 }
