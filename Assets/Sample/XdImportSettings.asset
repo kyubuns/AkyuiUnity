@@ -26,7 +26,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 57b9b4a12807f427985d6a9d1db87f81, type: 2}
   spriteSaveScale: 2
   reimportLayout: 1
-  reimportAsset: 1
+  reimportAsset: 0
   objectParsers:
   - {fileID: 11400000, guid: d62fb04b11a7b412b834e0b33fda755a, type: 2}
   groupParsers: []

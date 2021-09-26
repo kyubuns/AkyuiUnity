@@ -110,7 +110,7 @@
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "a9f24a764a1550e6e2dd4921e8e243c22314a006"
+      "hash": "371ebf63027a59ca169b958df775b404dee8ad96"
     },
     "dev.kyubuns.auto9slicer": {
       "version": "https://github.com/kyubuns/Auto9Slicer.git?path=Assets/Auto9Slicer",

@@ -1,5 +1,6 @@
-﻿using AnKuchen.KuchenList;
-using AnKuchen.Layout;
+﻿using AnKuchen.KuchenLayout;
+using AnKuchen.KuchenLayout.Layouter;
+using AnKuchen.KuchenList;
 using AnKuchen.Map;
 using UnityEngine;
 using UnityEngine.UI;
@@ -26,7 +27,7 @@ namespace AkyuiUnity.Sample
                     {
                         editor.Contents.Add(new UIFactory<Items, Title>(x =>
                         {
-                            using (var e = Layouter.LeftToRight(x.Item))
+                            using (var e = x.Row.Edit())
                             {
                                 e.Create();
                                 e.Create();
@@ -91,7 +92,7 @@ namespace AkyuiUnity.Sample
     {
         public IMapper Mapper { get; private set; }
         public GameObject Root { get; private set; }
-        public Item Item { get; private set; }
+        public Layout<Item> Row { get; private set; }
 
         public Items()
         {
@@ -106,7 +107,10 @@ namespace AkyuiUnity.Sample
         {
             Mapper = mapper;
             Root = mapper.Get();
-            Item = mapper.GetChild<Item>("Item");
+            Row = new Layout<Item>(
+                mapper.GetChild<Item>("Item"),
+                new LeftToRightLayouter(mapper.Get<HorizontalLayoutGroup>())
+            );
         }
     }
 
