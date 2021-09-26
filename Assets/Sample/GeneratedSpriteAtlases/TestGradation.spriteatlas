@@ -30,6 +30,7 @@ SpriteAtlas:
       enableTightPacking: 0
     variantMultiplier: 1
     packables:
+    - {fileID: 2800000, guid: b7778902203934b02a7b666e3b2e2fcc, type: 3}
     - {fileID: 2800000, guid: 7a578ec7d6054479f8f7ef285b1e865a, type: 3}
     - {fileID: 2800000, guid: d64a66931a0c64062aa4609b73bd8624, type: 3}
     - {fileID: 2800000, guid: 9d8077c6eb4034bc9ae2f67f1386a29d, type: 3}
@@ -43,6 +44,7 @@ SpriteAtlas:
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
+  - {fileID: 21300000, guid: b7778902203934b02a7b666e3b2e2fcc, type: 3}
   - {fileID: 21300000, guid: dbce6043cf4fa4a71a4c6f7a8f7627d5, type: 3}
   - {fileID: 21300000, guid: d64a66931a0c64062aa4609b73bd8624, type: 3}
   - {fileID: 21300000, guid: 65c1f194095ad409abece6f88e93234d, type: 3}
@@ -54,6 +56,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 34e23c8af75304c2587c44703af3e649, type: 3}
   - {fileID: 21300000, guid: 4d8c196b180a048a198cd14868abae9f, type: 3}
   m_PackedSpriteNamesToIndex:
+  - Group_411ef789
   - Linear Rectangle 2_5cd43fde
   - Angular Rectangle 2_7b7b5fc0
   - Linear Rectangle 3_b340decf

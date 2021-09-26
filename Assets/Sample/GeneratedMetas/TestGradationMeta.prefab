@@ -44,9 +44,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e9b41a0cf8b347838cc3df031dda1163, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hash: 830060785
+  hash: 661021288
   root: {fileID: 3819695498148958452}
   assets:
+  - {fileID: 2800000, guid: b7778902203934b02a7b666e3b2e2fcc, type: 3}
   - {fileID: 2800000, guid: 7a578ec7d6054479f8f7ef285b1e865a, type: 3}
   - {fileID: 2800000, guid: d64a66931a0c64062aa4609b73bd8624, type: 3}
   - {fileID: 2800000, guid: 9d8077c6eb4034bc9ae2f67f1386a29d, type: 3}
@@ -59,10 +60,12 @@ MonoBehaviour:
   - {fileID: 2800000, guid: 4a76c385d51634f7c9d6e17b043a3f3f, type: 3}
   userData:
   - key: xd_hash
-    value: 3485635829
+    value: 3230680877
   eidToObjects:
   - eid: 0
     gameObject: {fileID: 3819695498148958452}
+  - eid: 2140760486
+    gameObject: {fileID: 280959988851404393}
   - eid: 4149477280
     gameObject: {fileID: 6120268337791890955}
   - eid: 482148967
@@ -217,6 +220,12 @@ GameObject:
 --- !u!224 &185357898803596095 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 409691748218475289, guid: bb5d87cd0627c495a90ab48110b9215c,
+    type: 3}
+  m_PrefabInstance: {fileID: 521575878702454822}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &280959988851404393 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 349919440364451407, guid: bb5d87cd0627c495a90ab48110b9215c,
     type: 3}
   m_PrefabInstance: {fileID: 521575878702454822}
   m_PrefabAsset: {fileID: 0}
