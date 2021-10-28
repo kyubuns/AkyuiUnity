@@ -128,7 +128,6 @@ namespace XdParser
                 return new GroupElement { Parameter = parameter, Children = children, BlendMode = blendMode, Isolation = isolation };
             }
 
-            XdStyleFillPatternJson image = null;
             var fill = xdObject.Style?.Fill;
             parameter.EnableFill = true;
             if (fill != null && fill.Type != "none")
@@ -189,8 +188,7 @@ namespace XdParser
                 }
                 else if (fill.Type == "pattern")
                 {
-                    image = fill.Pattern;
-                    parameter.Fill = null;
+                    parameter.Fill = Color.black;
                 }
                 else
                 {
@@ -259,12 +257,6 @@ namespace XdParser
                 else if (stroke.Align == "outside") strokeAlign = "outside";
                 else if (stroke.Align == "inside") strokeAlign = "inside";
                 else throw new NotSupportedException($"{xdObject} has unknown align type {stroke.Align}");
-            }
-
-            if (image != null)
-            {
-                var imageBytes = XdImporter.XdFile.GetResource(fill.Pattern.Meta);
-                return new ImageElement { Parameter = parameter, ImageBytes = imageBytes, Width = shape.Width, Height = shape.Height };
             }
 
             if (shape.Type == PathElement.Name) return new PathElement { Parameter = parameter, D = shape.Path };
@@ -1188,21 +1180,6 @@ namespace XdParser
             public string ToSvg()
             {
                 return $@"<{Name} x1=""{X1:0.###}"" y1=""{Y1:0.###}"" x2=""{X2:0.###}"" y2=""{Y2:0.###}"" {Parameter.GetString()} />";
-            }
-        }
-
-        private class ImageElement : IElement
-        {
-            public const string Name = "image";
-            public ElementParameter Parameter { get; set; } = new ElementParameter();
-
-            public float Width { get; set; }
-            public float Height { get; set; }
-            public byte[] ImageBytes { get; set; }
-
-            public string ToSvg()
-            {
-                return $@"<{Name} width=""{Width}"" height=""{Height}"" xlink:href=""data:image/png;base64,{Convert.ToBase64String(ImageBytes)}"" {Parameter.GetString()} />";
             }
         }
     }
