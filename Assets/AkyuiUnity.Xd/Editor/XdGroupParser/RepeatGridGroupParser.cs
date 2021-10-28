@@ -32,7 +32,7 @@ namespace AkyuiUnity.Xd
             return rect;
         }
 
-        public (IComponent[], IAsset[]) Render(XdObjectJson xdObject, XdAssetHolder assetHolder, IObbGetter obbGetter)
+        public (IComponent[], IAsset[], IElement[]) Render(XdObjectJson xdObject, XdAssetHolder assetHolder, IObbGetter obbGetter)
         {
             var repeatGrid = xdObject.Meta?.Ux?.RepeatGrid ?? new XdRepeatGridJson();
 
@@ -47,7 +47,7 @@ namespace AkyuiUnity.Xd
                 return (new IComponent[]
                 {
                     new GridLayoutComponent(repeatGrid.PaddingX, repeatGrid.PaddingY)
-                }, new IAsset[] { });
+                }, new IAsset[] { }, new IElement[] { });
             }
             else if (repeatGrid.Columns > 1)
             {
@@ -55,7 +55,7 @@ namespace AkyuiUnity.Xd
                 return (new IComponent[]
                 {
                     new HorizontalLayoutComponent(spacing)
-                }, new IAsset[] { });
+                }, new IAsset[] { }, new IElement[] { });
             }
             else
             {
@@ -63,7 +63,7 @@ namespace AkyuiUnity.Xd
                 return (new IComponent[]
                 {
                     new VerticalLayoutComponent(spacing)
-                }, new IAsset[] { });
+                }, new IAsset[] { }, new IElement[] { });
             }
         }
     }

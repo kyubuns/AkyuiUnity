@@ -31,7 +31,7 @@ namespace AkyuiUnity.Xd
             }
         }
 
-        public (IComponent[], IAsset[]) Render(XdObjectJson xdObject, XdAssetHolder assetHolder, IObbGetter obbGetter)
+        public (IComponent[], IAsset[], IElement[]) Render(XdObjectJson xdObject, XdAssetHolder assetHolder, IObbGetter obbGetter)
         {
             var spacing = 0f;
             var scrollingType = xdObject.Meta?.Ux?.ScrollingType;
@@ -58,7 +58,7 @@ namespace AkyuiUnity.Xd
                 return (new IComponent[]
                 {
                     new VerticalListComponent(spacing, paddingTop, paddingBottom, specialSpacings.ToArray()),
-                }, new IAsset[] { });
+                }, new IAsset[] { }, new IElement[] { });
             }
             else
             {
@@ -80,7 +80,7 @@ namespace AkyuiUnity.Xd
                 return (new IComponent[]
                 {
                     new HorizontalListComponent(spacing, paddingLeft, paddingRight, specialSpacings.ToArray()),
-                }, new IAsset[] { });
+                }, new IAsset[] { }, new IElement[] { });
             }
         }
 

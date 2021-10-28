@@ -15,12 +15,12 @@ namespace AkyuiUnity.Xd
             return rect;
         }
 
-        public (IComponent[], IAsset[]) Render(XdObjectJson xdObject, XdAssetHolder assetHolder, IObbGetter obbGetter)
+        public (IComponent[], IAsset[], IElement[]) Render(XdObjectJson xdObject, XdAssetHolder assetHolder, IObbGetter obbGetter)
         {
             return (new IComponent[]
             {
                 new ButtonComponent()
-            }, new IAsset[] { });
+            }, new IAsset[] { }, new IElement[] { });
         }
     }
 }

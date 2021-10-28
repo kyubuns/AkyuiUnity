@@ -387,7 +387,8 @@ namespace AkyuiUnity.Xd
                 foreach (var parser in _objectParsers)
                 {
                     if (!parser.Is(xdObject)) continue;
-                    var (components, assets) = parser.Render(xdObject, obb, _xdAssetHolder);
+                    var (components, assets, elements) = parser.Render(xdObject, obb, _xdAssetHolder);
+                    Elements.AddRange(elements);
 
                     var children = new IElement[] { };
                     if (xdObject.Group != null) children = Render(xdObject.Group.Children, originalObb, parents.Concat(new[] { xdObject }).ToArray());
@@ -402,7 +403,7 @@ namespace AkyuiUnity.Xd
                         rotation,
                         xdObject.Visible ?? true,
                         components,
-                        children.Select(x => x.Eid).ToArray()
+                        elements.Select(x => x.Eid).Concat(children.Select(x => x.Eid)).ToArray()
                     );
 
                     foreach (var asset in assets)
@@ -418,11 +419,14 @@ namespace AkyuiUnity.Xd
                 if (xdObject.Type == "group")
                 {
                     var components = new List<IComponent>();
+                    var inElements = new List<IElement>();
                     foreach (var parser in _groupParsers)
                     {
                         if (!parser.Is(xdObject, parents)) continue;
-                        var (c, assets) = parser.Render(xdObject, _xdAssetHolder, _obbHolder);
+                        var (c, assets, elements) = parser.Render(xdObject, _xdAssetHolder, _obbHolder);
                         components.AddRange(c);
+                        inElements.AddRange(elements);
+                        Elements.AddRange(elements);
 
                         foreach (var asset in assets)
                         {
@@ -449,7 +453,7 @@ namespace AkyuiUnity.Xd
                         rotation,
                         xdObject.Visible ?? true,
                         components.ToArray(),
-                        generatedChildren.Select(x => x.Eid).ToArray()
+                        inElements.Select(x => x.Eid).Concat(generatedChildren.Select(x => x.Eid)).ToArray()
                     );
 
                     Elements.Add(group);
