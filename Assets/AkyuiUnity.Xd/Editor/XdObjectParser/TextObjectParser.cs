@@ -116,7 +116,7 @@ namespace AkyuiUnity.Xd
             return new Rect(position, size);
         }
 
-        public (IComponent[], IAsset[], IElement[]) Render(XdObjectJson xdObject, Obb obb, XdAssetHolder assetHolder)
+        public (IComponent[], IAsset[]) Render(XdObjectJson xdObject, Obb obb, XdAssetHolder assetHolder)
         {
             var components = new List<IComponent>();
 
@@ -149,7 +149,7 @@ namespace AkyuiUnity.Xd
 
             components.Add(new TextComponent(rawText, fontSize, color, textAlign, font.PostscriptName, wrap, lineHeight));
 
-            return (components.ToArray(), new IAsset[] { }, new IElement[] { });
+            return (components.ToArray(), new IAsset[] { });
         }
     }
 }

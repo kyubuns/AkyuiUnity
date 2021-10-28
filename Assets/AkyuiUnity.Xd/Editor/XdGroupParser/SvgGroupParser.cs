@@ -35,7 +35,7 @@ namespace AkyuiUnity.Xd
             return bounds;
         }
 
-        public (IComponent[], IAsset[], IElement[]) Render(XdObjectJson xdObject, XdAssetHolder assetHolder, IObbGetter obbGetter)
+        public (IComponent[], IAsset[]) Render(XdObjectJson xdObject, XdAssetHolder assetHolder, IObbGetter obbGetter)
         {
             var components = new List<IComponent>();
             var assets = new List<IAsset>();
@@ -66,7 +66,7 @@ namespace AkyuiUnity.Xd
                 Vector2Int.one
             ));
 
-            return (components.ToArray(), assets.ToArray(), new IElement[] { });
+            return (components.ToArray(), assets.ToArray());
         }
     }
 }

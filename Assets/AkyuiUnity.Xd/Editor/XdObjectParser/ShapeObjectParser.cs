@@ -70,13 +70,13 @@ namespace AkyuiUnity.Xd
             return new Rect(position, size);
         }
 
-        public (IComponent[], IAsset[], IElement[]) Render(XdObjectJson xdObject, Obb obb, XdAssetHolder assetHolder)
+        public (IComponent[], IAsset[]) Render(XdObjectJson xdObject, Obb obb, XdAssetHolder assetHolder)
         {
-            var (imageComponent, assets, elements) = RenderImage(xdObject, obb, assetHolder);
-            return (new IComponent[] { imageComponent }, assets, elements);
+            var (imageComponent, assets) = RenderImage(xdObject, obb, assetHolder);
+            return (new IComponent[] { imageComponent }, assets);
         }
 
-        public static (ImageComponent, IAsset[], IElement[]) RenderImage(XdObjectJson xdObject, Obb obb, XdAssetHolder assetHolder)
+        public static (ImageComponent, IAsset[]) RenderImage(XdObjectJson xdObject, Obb obb, XdAssetHolder assetHolder)
         {
             ImageComponent imageComponent = null;
             SpriteAsset asset = null;
@@ -140,7 +140,7 @@ namespace AkyuiUnity.Xd
 
             var assets = new List<IAsset>();
             if (!isPlaceholder && asset != null) assets.Add(asset);
-            return (imageComponent, assets.ToArray(), new IElement[] { });
+            return (imageComponent, assets.ToArray());
         }
     }
 }

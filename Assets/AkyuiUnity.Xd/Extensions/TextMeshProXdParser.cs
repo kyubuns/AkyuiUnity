@@ -91,7 +91,7 @@ namespace AkyuiUnity.Xd.Extensions
             return new Rect(position, size);
         }
 
-        public override (IComponent[], IAsset[], IElement[]) Render(XdObjectJson xdObject, Obb obb, XdAssetHolder assetHolder)
+        public override (IComponent[], IAsset[]) Render(XdObjectJson xdObject, Obb obb, XdAssetHolder assetHolder)
         {
             var textParser = new TextObjectParser();
             return textParser.Render(xdObject, obb, assetHolder);

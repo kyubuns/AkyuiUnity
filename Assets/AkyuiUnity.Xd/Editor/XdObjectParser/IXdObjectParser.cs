@@ -7,13 +7,13 @@ namespace AkyuiUnity.Xd
     {
         bool Is(XdObjectJson xdObject);
         Rect CalcSize(XdObjectJson xdObject);
-        (IComponent[], IAsset[], IElement[]) Render(XdObjectJson xdObject, Obb obb, XdAssetHolder assetHolder);
+        (IComponent[], IAsset[]) Render(XdObjectJson xdObject, Obb obb, XdAssetHolder assetHolder);
     }
 
     public abstract class AkyuiXdObjectParser : ScriptableObject, IXdObjectParser
     {
         public abstract bool Is(XdObjectJson xdObject);
         public abstract Rect CalcSize(XdObjectJson xdObject);
-        public abstract (IComponent[], IAsset[], IElement[]) Render(XdObjectJson xdObject, Obb obb, XdAssetHolder assetHolder);
+        public abstract (IComponent[], IAsset[]) Render(XdObjectJson xdObject, Obb obb, XdAssetHolder assetHolder);
     }
 }

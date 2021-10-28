@@ -17,13 +17,13 @@ namespace AkyuiUnity.Xd
             return rect;
         }
 
-        public (IComponent[], IAsset[], IElement[]) Render(XdObjectJson xdObject, XdAssetHolder assetHolder, IObbGetter obbGetter)
+        public (IComponent[], IAsset[]) Render(XdObjectJson xdObject, XdAssetHolder assetHolder, IObbGetter obbGetter)
         {
             var opacity = xdObject.Style?.Opacity ?? 1.0f;
             return (new IComponent[]
             {
                 new AlphaComponent(opacity)
-            }, new IAsset[] { }, new IElement[] { });
+            }, new IAsset[] { });
         }
     }
 }

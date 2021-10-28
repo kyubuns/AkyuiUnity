@@ -24,14 +24,14 @@ namespace AkyuiUnity.Xd
             return shapeRect;
         }
 
-        public (IComponent[], IAsset[], IElement[]) Render(XdObjectJson xdObject, XdAssetHolder assetHolder, IObbGetter obbGetter)
+        public (IComponent[], IAsset[]) Render(XdObjectJson xdObject, XdAssetHolder assetHolder, IObbGetter obbGetter)
         {
             var obb = obbGetter.Get(xdObject);
             var clipPath = xdObject.Meta.Ux.ClipPathResources.Children[0];
-            if (SvgUtil.IsAlphaOnly(clipPath)) return (new IComponent[] { }, new IAsset[] { }, new IElement[] { });
+            if (SvgUtil.IsAlphaOnly(clipPath)) return (new IComponent[] { }, new IAsset[] { });
 
-            var (imageComponent, assets, elements) = ShapeObjectParser.RenderImage(clipPath, obb, assetHolder);
-            return (new IComponent[] { new MaskComponent(imageComponent.Sprite) }, assets, elements);
+            var (imageComponent, assets) = ShapeObjectParser.RenderImage(clipPath, obb, assetHolder);
+            return (new IComponent[] { new MaskComponent(imageComponent.Sprite) }, assets);
         }
     }
 }
