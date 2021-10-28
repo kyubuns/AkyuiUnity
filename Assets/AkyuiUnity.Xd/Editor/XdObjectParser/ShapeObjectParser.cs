@@ -29,7 +29,6 @@ namespace AkyuiUnity.Xd
         {
             var position = Vector2.zero;
             var size = Vector2.zero;
-            var scaleBehavior = xdObject.Style?.Fill?.Pattern?.Meta?.Ux?.ScaleBehavior ?? "fill";
 
             var xdObjectShape = xdObject.Shape;
             var shapeType = xdObjectShape.Type;
@@ -44,8 +43,15 @@ namespace AkyuiUnity.Xd
                 }
             }
 
-            if (scaleBehavior == "cover" && size.x > 0.0001f && size.y > 0.0001f)
+            return new Rect(position, size);
+        }
+
+        public (IComponent[], IAsset[], IElement[]) Render(XdObjectJson xdObject, Obb obb, XdAssetHolder assetHolder)
+        {
+            var scaleBehavior = xdObject.Style?.Fill?.Pattern?.Meta?.Ux?.ScaleBehavior ?? "fill";
+            if (scaleBehavior == "cover" && obb.Size.x > 0.0001f && obb.Size.y > 0.0001f)
             {
+                var originalSize = obb.Size;
                 var imageWidth = xdObject.Style?.Fill?.Pattern?.Width ?? 1f;
                 var imageHeight = xdObject.Style?.Fill?.Pattern?.Height ?? 1f;
                 var imageSize = new Vector2(imageWidth, imageHeight);
@@ -54,29 +60,40 @@ namespace AkyuiUnity.Xd
                 var offsetY = xdObject.Style?.Fill?.Pattern?.Meta?.Ux?.OffsetY ?? 0f;
                 var scale = xdObject.Style?.Fill?.Pattern?.Meta?.Ux?.Scale ?? 1.0f; // Widthに対するスケール
 
-                var originalSize = size;
-                var originalPosition = position;
-
-                size = new Vector2(
+                var innerImageSize = new Vector2(
                     originalSize.x * scale,
                     originalSize.x * scale / imageAspect
                 );
-                position = new Vector2(
-                    originalPosition.x + (originalSize.x / 2f - size.x / 2f) + originalSize.x * offsetX,
-                    originalPosition.y + (originalSize.y / 2f - size.y / 2f) + originalSize.x / imageAspect * offsetY
+                var innerImagePosition = new Vector2(
+                    originalSize.x * offsetX,
+                    originalSize.x / imageAspect * offsetY
                 );
+
+                var (innerImage, innerAssets) = RenderImage(xdObject, obb, assetHolder, false);
+                var (maskImage, maskAssets) = RenderImage(xdObject, obb, assetHolder, true);
+                var eid = FastHash.CalculateHash((xdObject.Guid ?? xdObject.Id) + "Image");
+                return (new IComponent[] { new MaskComponent(maskImage.Sprite) }, maskAssets.Concat(innerAssets).ToArray(), new IElement[]
+                {
+                    new ObjectElement(
+                        eid,
+                        "Inner Image",
+                        innerImagePosition,
+                        innerImageSize,
+                        AnchorXType.Center,
+                        AnchorYType.Middle,
+                        0f,
+                        true,
+                        new IComponent[] { innerImage },
+                        new uint[] { }
+                    )
+                });
             }
 
-            return new Rect(position, size);
+            var (imageComponent, assets) = RenderImage(xdObject, obb, assetHolder, false);
+            return (new IComponent[] { imageComponent }, assets, new IElement[] { });
         }
 
-        public (IComponent[], IAsset[], IElement[]) Render(XdObjectJson xdObject, Obb obb, XdAssetHolder assetHolder)
-        {
-            var (imageComponent, assets, elements) = RenderImage(xdObject, obb, assetHolder);
-            return (new IComponent[] { imageComponent }, assets, elements);
-        }
-
-        public static (ImageComponent, IAsset[], IElement[]) RenderImage(XdObjectJson xdObject, Obb obb, XdAssetHolder assetHolder)
+        public static (ImageComponent, IAsset[]) RenderImage(XdObjectJson xdObject, Obb obb, XdAssetHolder assetHolder, bool ignoreUid)
         {
             ImageComponent imageComponent = null;
             SpriteAsset asset = null;
@@ -89,13 +106,14 @@ namespace AkyuiUnity.Xd
             var shapeType = xdObject.Shape?.Type;
             var border = xdObject.HasParameter("NoSlice") ? new Border(0, 0, 0, 0) : null;
             var isPlaceholder = xdObject.HasParameter("placeholder");
+            var uxUid = ignoreUid ? null : ux?.Uid ?? "";
 
-            if (!string.IsNullOrWhiteSpace(ux?.Uid))
+            if (!string.IsNullOrWhiteSpace(uxUid))
             {
                 string spriteUid = null;
                 if (!isPlaceholder)
                 {
-                    spriteUid = $"{xdObject.GetSimpleName()}_{ux?.Uid.Substring(0, 8)}.png";
+                    spriteUid = $"{xdObject.GetSimpleName()}_{uxUid.Substring(0, 8)}.png";
                     asset = new SpriteAsset(spriteUid, xdObject.Style.Fill.Pattern.Meta.Ux.HrefLastModifiedDate, obb.Size, null, border);
                     assetHolder.Save(spriteUid, xdObject.Style.Fill.Pattern.Meta);
                 }
@@ -140,7 +158,7 @@ namespace AkyuiUnity.Xd
 
             var assets = new List<IAsset>();
             if (!isPlaceholder && asset != null) assets.Add(asset);
-            return (imageComponent, assets.ToArray(), new IElement[] { });
+            return (imageComponent, assets.ToArray());
         }
     }
 }

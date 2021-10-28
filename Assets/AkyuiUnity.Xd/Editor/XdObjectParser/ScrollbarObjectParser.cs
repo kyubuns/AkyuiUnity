@@ -17,14 +17,15 @@ namespace AkyuiUnity.Xd
 
         public (IComponent[], IAsset[], IElement[]) Render(XdObjectJson xdObject, Obb obb, XdAssetHolder assetHolder)
         {
-            var (imageComponent, assets, elements) = ShapeObjectParser.RenderImage(xdObject, obb, assetHolder);
+            var (imageComponent, assets) = ShapeObjectParser.RenderImage(xdObject, obb, assetHolder, false);
 
             IComponent scrollbar = new VerticalScrollbarComponent(imageComponent);
             if (xdObject.HasParameter("horizontal"))
             {
                 scrollbar = new HorizontalScrollbarComponent(imageComponent);
             }
-            return (new[] { scrollbar }, assets, elements);
+
+            return (new[] { scrollbar }, assets, new IElement[] { });
         }
     }
 }
