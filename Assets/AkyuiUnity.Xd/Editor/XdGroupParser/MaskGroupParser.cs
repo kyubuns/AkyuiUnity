@@ -30,8 +30,8 @@ namespace AkyuiUnity.Xd
             var clipPath = xdObject.Meta.Ux.ClipPathResources.Children[0];
             if (SvgUtil.IsAlphaOnly(clipPath)) return (new IComponent[] { }, new IAsset[] { }, new IElement[] { });
 
-            var (imageComponent, assets) = ShapeObjectParser.RenderImage(clipPath, obb, assetHolder, false);
-            return (new IComponent[] { new MaskComponent(imageComponent.Sprite) }, assets, new IElement[] { });
+            var (imageComponent, assets, elements) = ShapeObjectParser.RenderImage(clipPath, obb, assetHolder);
+            return (new IComponent[] { new MaskComponent(imageComponent.Sprite) }, assets, elements);
         }
     }
 }
