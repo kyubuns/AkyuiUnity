@@ -39,6 +39,10 @@ namespace AkyuiUnity.CommonTrigger
             spriteAtlas.Add(importAssets);
 
             SpriteAtlasUtility.PackAtlases(new[] { spriteAtlas }, EditorUserBuildSettings.activeBuildTarget);
+
+            // なにかのバグだと思うんだけど、ここでSaveしないとPresetが反映されないことがある Unity 2020.3.18
+            EditorUtility.SetDirty(spriteAtlas);
+            AssetDatabase.SaveAssets();
         }
     }
 }
