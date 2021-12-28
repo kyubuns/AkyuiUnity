@@ -16,6 +16,10 @@ MonoBehaviour:
   assetOutputDirectoryPath: Assets/Sample/GeneratedAssets/{name}/
   metaOutputPath: Assets/Sample/GeneratedMetas/{name}Meta
   fontDirectoryPath: Assets/Sample/Fonts/
-  checkAssetHash: 1
+  texturePreset: {fileID: 0}
   triggers:
   - {fileID: 11400000, guid: 7a40d86aba0244ab98bcb9126ab0b167, type: 2}
+  - {fileID: 11400000, guid: c6db8c7e9e89f49ee9016fa8f1cd3f18, type: 2}
+  spriteSaveScale: 1
+  reimportLayout: 0
+  reimportAsset: 0
