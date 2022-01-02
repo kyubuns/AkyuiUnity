@@ -15,8 +15,7 @@ namespace AkyuiUnity.Xd
             var isLinkedElement = new[] { xdObject }.Concat(parents).Any(x =>
             {
                 var hasParameter = x.HasParameter("vector");
-                var isLinkedElementRef = !string.IsNullOrWhiteSpace(x.Meta?.Ux?.LinkedElementRef) && x.Meta?.Ux?.ListViewPosition == null;
-                return hasParameter || isLinkedElementRef;
+                return hasParameter;
             });
 
             bool IsShapeOnly(XdObjectJson x)
