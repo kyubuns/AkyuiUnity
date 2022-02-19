@@ -439,7 +439,10 @@ namespace XdParser
             private string RxToSvg()
             {
                 if (Rx == null) return null;
-                return $@"rx=""{Rx:0.###}""";
+
+                // R関連は他より1桁多めに取る
+                // width=10, r=4.999 とかになったときに変な線が出るため
+                return $@"rx=""{Rx:0.####}""";
             }
 
             private string OpacityToSvg()
@@ -1092,7 +1095,9 @@ namespace XdParser
 
             public string ToSvg()
             {
-                return $@"<{Name} cx=""{Cx:0.###}"" cy=""{Cy:0.###}"" rx=""{Rx:0.###}"" ry=""{Ry:0.###}"" {Parameter.GetString()} />";
+                // R関連は他より1桁多めに取る
+                // width=10, r=4.999 とかになったときに変な線が出るため
+                return $@"<{Name} cx=""{Cx:0.###}"" cy=""{Cy:0.###}"" rx=""{Rx:0.####}"" ry=""{Ry:0.####}"" {Parameter.GetString()} />";
             }
 
             public static IElement Basic(XdShapeJson shape, ElementParameter parameter)
