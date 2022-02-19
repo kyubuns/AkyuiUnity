@@ -296,6 +296,12 @@ namespace XdParser
             throw new NotSupportedException($"Unknown type {shape.Type}");
         }
 
+        private static double ToCeilingString(float f)
+        {
+            // R関連はwidth=10, r=4.999とかになったときに変な線が出るため切り上げる
+            return Math.Ceiling(f * 1000.0) / 1000.0;
+        }
+
         private interface IElement
         {
             ElementParameter Parameter { get; set; }
@@ -439,10 +445,7 @@ namespace XdParser
             private string RxToSvg()
             {
                 if (Rx == null) return null;
-
-                // R関連は他より1桁多めに取る
-                // width=10, r=4.999 とかになったときに変な線が出るため
-                return $@"rx=""{Rx:0.####}""";
+                return $@"rx=""{ToCeilingString(Rx.Value):0.###}""";
             }
 
             private string OpacityToSvg()
@@ -551,7 +554,7 @@ namespace XdParser
                 {
                     transformJson = $@"gradientTransform=""{Transform.ToSvg(GradientTransform)}""";
                 }
-                return $@"<radialGradient id=""{Id}"" cx=""{Cx:0.###}"" cy=""{Cy:0.###}"" fx=""{Fx:0.###}"" fy=""{Fy:0.###}"" r=""{R:0.###}"" {transformJson} gradientUnits=""{Units}"">{stops}</radialGradient>";
+                return $@"<radialGradient id=""{Id}"" cx=""{Cx:0.###}"" cy=""{Cy:0.###}"" fx=""{Fx:0.###}"" fy=""{Fy:0.###}"" r=""{ToCeilingString(R):0.###}"" {transformJson} gradientUnits=""{Units}"">{stops}</radialGradient>";
             }
         }
 
@@ -1012,7 +1015,7 @@ namespace XdParser
 
             public string ToSvg()
             {
-                return $@"<{Name} cx=""{Cx:0.###}"" cy=""{Cy:0.###}"" r=""{R:0.###}"" {Parameter.GetString()} />";
+                return $@"<{Name} cx=""{Cx:0.###}"" cy=""{Cy:0.###}"" r=""{ToCeilingString(R):0.###}"" {Parameter.GetString()} />";
             }
 
             public static IElement Basic(XdShapeJson shape, ElementParameter parameter, float shapeR)
@@ -1095,9 +1098,7 @@ namespace XdParser
 
             public string ToSvg()
             {
-                // R関連は他より1桁多めに取る
-                // width=10, r=4.999 とかになったときに変な線が出るため
-                return $@"<{Name} cx=""{Cx:0.###}"" cy=""{Cy:0.###}"" rx=""{Rx:0.####}"" ry=""{Ry:0.####}"" {Parameter.GetString()} />";
+                return $@"<{Name} cx=""{Cx:0.###}"" cy=""{Cy:0.###}"" rx=""{ToCeilingString(Rx):0.###}"" ry=""{ToCeilingString(Ry):0.###}"" {Parameter.GetString()} />";
             }
 
             public static IElement Basic(XdShapeJson shape, ElementParameter parameter)
