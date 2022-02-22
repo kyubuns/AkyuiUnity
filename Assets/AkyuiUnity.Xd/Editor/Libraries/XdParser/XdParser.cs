@@ -411,6 +411,15 @@ namespace XdParser.Internal
 
         [DataMember(Name = "points")]
         public XdPositionJson[] Points { get; set; }
+
+        [DataMember(Name = "uxdesign#width")]
+        public float? UxdesignWidth { get; set; }
+
+        [DataMember(Name = "uxdesign#height")]
+        public float? UxdesignHeight { get; set; }
+
+        [DataMember(Name = "uxdesign#cornerRadius")]
+        public float? UxdesignCornerRadius { get; set; }
     }
 
     public class XdTextJson : IXdJsonElement

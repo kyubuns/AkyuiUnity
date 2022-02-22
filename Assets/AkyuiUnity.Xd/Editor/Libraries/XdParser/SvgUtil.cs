@@ -267,9 +267,9 @@ namespace XdParser
 
             if (shape.Type == PolygonElement.Name)
             {
-                if (strokeAlign == "outside") return PolygonElement.Outside(shape, parameter);
-                if (strokeAlign == "inside") return PolygonElement.Inside(shape, parameter);
-                return PolygonElement.Basic(shape, parameter);
+                if (strokeAlign == "outside") return PolygonElement.Outside(dataName, shape, parameter);
+                if (strokeAlign == "inside") return PolygonElement.Inside(dataName, shape, parameter);
+                return PolygonElement.Basic(dataName, shape, parameter);
             }
 
             if (shape.Type == RectElement.Name)
@@ -764,13 +764,23 @@ namespace XdParser
                 return $@"<path d=""M{string.Join(",", d)}Z"" {Parameter.GetString()} />";
             }
 
-            public static IElement Basic(XdShapeJson shape, ElementParameter parameter)
+            private static void Validate(string name, XdShapeJson shape)
             {
+                if (shape.UxdesignCornerRadius != null && !Mathf.Approximately(shape.UxdesignCornerRadius.Value, 0f))
+                {
+                    Debug.LogWarning($"CornerRadius of Polygon Object is not supported in {name}");
+                }
+            }
+
+            public static IElement Basic(string name, XdShapeJson shape, ElementParameter parameter)
+            {
+                Validate(name, shape);
                 return new PolygonElement { Parameter = parameter, Points = shape.Points };
             }
 
-            public static IElement Outside(XdShapeJson shape, ElementParameter parameter)
+            public static IElement Outside(string name, XdShapeJson shape, ElementParameter parameter)
             {
+                Validate(name, shape);
                 parameter.Rx = null;
                 return new GroupElement
                 {
@@ -785,8 +795,9 @@ namespace XdParser
                 };
             }
 
-            public static IElement Inside(XdShapeJson shape, ElementParameter parameter)
+            public static IElement Inside(string name, XdShapeJson shape, ElementParameter parameter)
             {
+                Validate(name, shape);
                 parameter.Rx = null;
                 return new GroupElement
                 {
