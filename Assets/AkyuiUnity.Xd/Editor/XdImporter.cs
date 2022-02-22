@@ -16,11 +16,12 @@ namespace AkyuiUnity.Xd
     {
         public static XdImportSettings Settings { get; private set; }
         public static XdFile XdFile { get; private set; }
+        public static AkyuiLogger Logger { get; private set; }
 
         public static void Import(XdImportSettings xdSettings, string[] xdFilePaths)
         {
             var stopWatch = Stopwatch.StartNew();
-            var logger = new AkyuiLogger("Akyui.Xd");
+            Logger = new AkyuiLogger("Akyui.Xd", xdSettings.LogType);
             var loaders = new List<IAkyuiLoader>();
             Settings = xdSettings;
             using (Disposable.Create(() => Settings = null))
@@ -30,22 +31,23 @@ namespace AkyuiUnity.Xd
                 foreach (var xdFilePath in xdFilePaths)
                 {
                     using (var progress = progressBar.TaskStart(Path.GetFileName(xdFilePath)))
-                    using (logger.SetCategory(Path.GetFileName(xdFilePath)))
+                    using (Logger.SetCategory(Path.GetFileName(xdFilePath)))
                     {
-                        var (imported, skipped) = ImportedArtboards(xdSettings, logger, xdFilePath, progress, loaders);
+                        var (imported, skipped) = ImportedArtboards(xdSettings, Logger, xdFilePath, progress, loaders);
                         if (imported == 0 && skipped == 0)
                         {
-                            logger.Warning($"The artboard to be imported was not found. Please set Mark for Export.");
+                            Logger.Warning($"The artboard to be imported was not found. Please set Mark for Export.");
                         }
                     }
                 }
             }
 
             Importer.Import(xdSettings, loaders.ToArray());
-            ExportAkyui(xdSettings, loaders, logger);
+            ExportAkyui(xdSettings, loaders, Logger);
             foreach (var loader in loaders) loader.Dispose();
 
-            logger.Log($"Xd Import Finish", ("Time", $"{stopWatch.Elapsed.TotalSeconds:0.00}s"));
+            Logger.Log($"Xd Import Finish", ("Time", $"{stopWatch.Elapsed.TotalSeconds:0.00}s"));
+            Logger = null;
         }
 
         private static void ExportAkyui(XdImportSettings xdSettings, List<IAkyuiLoader> loaders, AkyuiLogger logger)
@@ -129,6 +131,8 @@ namespace AkyuiUnity.Xd
                 {
                     using (progress.TaskStart(artwork.Name))
                     {
+                        using var _ = logger.SetCategory(artwork.Name);
+
                         var name = artwork.Name.ToSafeString();
                         var xdHash = artwork.Hash;
 

@@ -183,7 +183,7 @@ namespace XdParser
                     }
                     else
                     {
-                        Debug.LogWarning($"Unknown fill gradient type {fill.Gradient.Meta.Ux.GradientResources.Type} in {xdObject.Name}");
+                        XdImporter.Logger.Warning($"Unknown fill gradient type {fill.Gradient.Meta.Ux.GradientResources.Type} in {xdObject.Name}");
                     }
                 }
                 else if (fill.Type == "pattern")
@@ -192,7 +192,7 @@ namespace XdParser
                 }
                 else
                 {
-                    Debug.LogWarning($"Unknown fill type {fill.Type} in {xdObject.Name}");
+                    XdImporter.Logger.Warning($"Unknown fill type {fill.Type} in {xdObject.Name}");
                 }
 
                 if (!string.IsNullOrWhiteSpace(shape.Winding))
@@ -768,7 +768,7 @@ namespace XdParser
             {
                 if (shape.UxdesignCornerRadius != null && !Mathf.Approximately(shape.UxdesignCornerRadius.Value, 0f))
                 {
-                    Debug.LogWarning($"CornerRadius of Polygon Object is not supported in {name}");
+                    XdImporter.Logger.Warning($"CornerRadius of Polygon Object is not supported in {name}");
                 }
             }
 

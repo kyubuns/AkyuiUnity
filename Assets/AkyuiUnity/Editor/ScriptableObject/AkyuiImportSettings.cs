@@ -33,6 +33,9 @@ namespace AkyuiUnity.Editor.ScriptableObject
 
         public bool ReimportAsset => reimportAsset;
         [SerializeField] private bool reimportAsset = false;
+
+        public AkyuiLogType LogType => logType;
+        [SerializeField] private AkyuiLogType logType = AkyuiLogType.Default;
     }
 
     public interface IAkyuiImportSettings
@@ -46,5 +49,6 @@ namespace AkyuiUnity.Editor.ScriptableObject
         float SpriteSaveScale { get; }
         bool ReimportAsset { get; }
         bool ReimportLayout { get; }
+        AkyuiLogType LogType { get; }
     }
 }

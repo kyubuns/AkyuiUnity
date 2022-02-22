@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using AkyuiUnity.Editor;
 using AkyuiUnity.Loader;
 using JetBrains.Annotations;
 using UnityEngine;
@@ -269,8 +270,9 @@ namespace AkyuiUnity.Xd
                     {
                         obbList.Add(CalcPosition(xdObject, parentObb, parents));
                     }
-                    catch (Exception)
+                    catch (Exception e)
                     {
+                        if (e is AkyuiImportException) throw;
                         Debug.LogError($"Cause exception in CalcPosition {xdObject.Name}(id: {xdObject.Id}, guid: {xdObject.Guid})");
                         throw;
                     }
@@ -350,8 +352,9 @@ namespace AkyuiUnity.Xd
                     {
                         children.AddRange(Render(xdObject, parentObb, parents));
                     }
-                    catch (Exception)
+                    catch (Exception e)
                     {
+                        if (e is AkyuiImportException) throw;
                         Debug.LogError($"Cause exception in Render {xdObject.Name}(id: {xdObject.Id}, guid: {xdObject.Guid})");
                         throw;
                     }

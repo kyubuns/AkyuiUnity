@@ -34,7 +34,7 @@ namespace AkyuiUnity.Editor
 
         public static void Import(IAkyuiImportSettings settings, IAkyuiLoader[] loaders)
         {
-            var logger = new AkyuiLogger("Akyui");
+            var logger = new AkyuiLogger("Akyui", settings.LogType);
             using (var progressBar = new AkyuiProgressBar("Akyui"))
             {
                 progressBar.SetTotal(loaders.Length);

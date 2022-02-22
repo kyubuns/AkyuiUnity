@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using AkyuiUnity.Editor;
 using UnityEditor;
 using UnityEngine;
 using XdParser.Internal;
@@ -66,7 +67,7 @@ namespace AkyuiUnity.Xd
             var fontAsset = findFont.FirstOrDefault();
             if (fontAsset == null)
             {
-                Debug.LogWarning($"{font.PostscriptName} is not found in project / name: {xdObject.Name}, text: {rawText}");
+                XdImporter.Logger.Warning($"{font.PostscriptName} is not found in project / name: {xdObject.Name}, text: {rawText}");
                 fontAsset = Resources.GetBuiltinResource<Font>("Arial.ttf");
             }
             var settings = new TextGenerationSettings
