@@ -763,14 +763,18 @@ namespace XdParser
 
             public static IElement Basic(string name, XdShapeJson shape, ElementParameter parameter)
             {
-                if (shape.UxdesignCornerRadius != null && !Mathf.Approximately(shape.UxdesignCornerRadius.Value, 0f))
+                var points = shape.Points;
+                var cornerRadius = shape.UxdesignCornerRadius ?? 0f;
+                var enableCornerRadius = !Mathf.Approximately(cornerRadius, 0f);
+
+                if (enableCornerRadius)
                 {
                     XdImporter.Logger.Warning($"CornerRadius of Polygon Object is not supported in {name} (CornerCount = {shape.UxdesignCornerCount}, CornerRadius = {shape.UxdesignCornerRadius})");
                 }
 
                 var dp = new List<PathElement.ID>();
-                dp.Add(new PathElement.M(shape.Points[0].X, shape.Points[0].Y));
-                foreach (var a in shape.Points.Skip(1))
+                dp.Add(new PathElement.M(points[0].X, points[0].Y));
+                foreach (var a in points.Skip(1))
                 {
                     dp.Add(new PathElement.L(a.X, a.Y));
                 }
