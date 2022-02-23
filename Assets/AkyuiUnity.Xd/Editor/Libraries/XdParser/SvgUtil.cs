@@ -637,10 +637,6 @@ namespace XdParser
             {
             }
 
-            public interface IDOption
-            {
-            }
-
             public readonly struct M : ID
             {
                 public float X { get; }
@@ -672,29 +668,25 @@ namespace XdParser
             public readonly struct H : ID
             {
                 public float X { get; }
-                public IDOption Option { get; }
 
-                public H(float x, IDOption option = null)
+                public H(float x)
                 {
                     X = x;
-                    Option = option;
                 }
 
-                public override string ToString() => $"H{X:0.###}{(Option == null ? "" : Option.ToString())}";
+                public override string ToString() => $"H{X:0.###}";
             }
 
             public readonly struct V : ID
             {
                 public float Y { get; }
-                public IDOption Option { get; }
 
-                public V(float y, IDOption option = null)
+                public V(float y)
                 {
                     Y = y;
-                    Option = option;
                 }
 
-                public override string ToString() => $"V{Y:0.###}{(Option == null ? "" : Option.ToString())}";
+                public override string ToString() => $"V{Y:0.###}";
             }
 
             public readonly struct A : ID
@@ -722,7 +714,7 @@ namespace XdParser
             }
 
             // ReSharper disable once InconsistentNaming
-            public readonly struct a : IDOption
+            public readonly struct a : ID
             {
                 public float Rx { get; }
                 public float Ry { get; }
@@ -957,32 +949,32 @@ namespace XdParser
             {
                 var dp = new List<PathElement.ID>();
                 dp.Add(new PathElement.M(Mathf.Max(corners[0], inner * 2), -outer + inner));
-                dp.Add(new PathElement.H(Mathf.Min(shape.Width - corners[1], shape.Width - inner * 2),
-                    new PathElement.a(
-                        Mathf.Max(corners[1] + outer - inner, inner),
-                        Mathf.Max(corners[1] + outer - inner, inner),
-                        0, false, true,
-                        Mathf.Max(corners[1] + outer - inner, inner),
-                        Mathf.Max(corners[1] + outer - inner, inner)
-                    )));
-                dp.Add(new PathElement.V(Mathf.Min(shape.Height - corners[2], shape.Height - inner * 2),
-                    new PathElement.a(
-                        Mathf.Max(corners[2] + outer - inner, inner),
-                        Mathf.Max(corners[2] + outer - inner, inner),
-                        0, false, true,
-                        -Mathf.Max(corners[2] + outer - inner, inner),
-                        Mathf.Max(corners[2] + outer - inner, inner)
-                    )));
+                dp.Add(new PathElement.H(Mathf.Min(shape.Width - corners[1], shape.Width - inner * 2)));
+                dp.Add(new PathElement.a(
+                    Mathf.Max(corners[1] + outer - inner, inner),
+                    Mathf.Max(corners[1] + outer - inner, inner),
+                    0, false, true,
+                    Mathf.Max(corners[1] + outer - inner, inner),
+                    Mathf.Max(corners[1] + outer - inner, inner)
+                ));
+                dp.Add(new PathElement.V(Mathf.Min(shape.Height - corners[2], shape.Height - inner * 2)));
+                dp.Add(new PathElement.a(
+                    Mathf.Max(corners[2] + outer - inner, inner),
+                    Mathf.Max(corners[2] + outer - inner, inner),
+                    0, false, true,
+                    -Mathf.Max(corners[2] + outer - inner, inner),
+                    Mathf.Max(corners[2] + outer - inner, inner)
+                ));
                 if (Mathf.Approximately(corners[3], 0f))
                 {
-                    dp.Add(new PathElement.H(inner * 2,
-                        new PathElement.a(
-                            outer + inner,
-                            outer + inner,
-                            0, false, true,
-                            -outer - inner,
-                            -outer - inner
-                        )));
+                    dp.Add(new PathElement.H(inner * 2));
+                    dp.Add(new PathElement.a(
+                        outer + inner,
+                        outer + inner,
+                        0, false, true,
+                        -outer - inner,
+                        -outer - inner
+                    ));
                 }
                 else
                 {
