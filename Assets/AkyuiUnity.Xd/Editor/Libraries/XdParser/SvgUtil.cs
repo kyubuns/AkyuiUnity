@@ -655,6 +655,20 @@ namespace XdParser
                 public override string ToString() => $"M{X:0.###},{Y:0.###}";
             }
 
+            public readonly struct L : ID
+            {
+                public float X { get; }
+                public float Y { get; }
+
+                public L(float x, float y)
+                {
+                    X = x;
+                    Y = y;
+                }
+
+                public override string ToString() => $"L{X:0.###},{Y:0.###}";
+            }
+
             public readonly struct H : ID
             {
                 public float X { get; }
@@ -751,65 +765,44 @@ namespace XdParser
             }
         }
 
-        private class PolygonElement : IElement
+        private static class PolygonElement
         {
             public const string Name = "polygon";
-            public ElementParameter Parameter { get; set; } = new ElementParameter();
 
-            public XdPositionJson[] Points { get; set; } = {};
-
-            public string ToSvg()
-            {
-                var d = Points.Select(point => $"{point.X:0.###},{point.Y:0.###}");
-                return $@"<path d=""M{string.Join(",", d)}Z"" {Parameter.GetString()} />";
-            }
-
-            private static void Validate(string name, XdShapeJson shape)
+            public static IElement Basic(string name, XdShapeJson shape, ElementParameter parameter)
             {
                 if (shape.UxdesignCornerRadius != null && !Mathf.Approximately(shape.UxdesignCornerRadius.Value, 0f))
                 {
                     XdImporter.Logger.Warning($"CornerRadius of Polygon Object is not supported in {name} (CornerCount = {shape.UxdesignCornerCount}, CornerRadius = {shape.UxdesignCornerRadius})");
                 }
-            }
 
-            public static IElement Basic(string name, XdShapeJson shape, ElementParameter parameter)
-            {
-                Validate(name, shape);
-                return new PolygonElement { Parameter = parameter, Points = shape.Points };
+                var dp = new List<PathElement.ID>();
+                dp.Add(new PathElement.M(shape.Points[0].X, shape.Points[0].Y));
+                foreach (var a in shape.Points.Skip(1))
+                {
+                    dp.Add(new PathElement.L(a.X, a.Y));
+                }
+                dp.Add(new PathElement.Z());
+
+                return new PathElement
+                {
+                    D = PathElement.GenerateD(dp.ToArray()),
+                    Parameter = parameter,
+                };
             }
 
             public static IElement Outside(string name, XdShapeJson shape, ElementParameter parameter)
             {
-                Validate(name, shape);
+                XdImporter.Logger.Warning($"Outside boarder of Polygon Object is not supported in {name}");
                 parameter.Rx = null;
-                return new GroupElement
-                {
-                    Parameter = parameter, Children = new IElement[]
-                    {
-                        new PolygonElement
-                        {
-                            Parameter = new ElementParameter(),
-                            Points = shape.Points,
-                        },
-                    }
-                };
+                return Basic(name, shape, parameter);
             }
 
             public static IElement Inside(string name, XdShapeJson shape, ElementParameter parameter)
             {
-                Validate(name, shape);
+                XdImporter.Logger.Warning($"Inside boarder of Polygon Object is not supported in {name}");
                 parameter.Rx = null;
-                return new GroupElement
-                {
-                    Parameter = parameter, Children = new IElement[]
-                    {
-                        new PolygonElement
-                        {
-                            Parameter = new ElementParameter(),
-                            Points = shape.Points,
-                        },
-                    }
-                };
+                return Basic(name, shape, parameter);
             }
         }
 
