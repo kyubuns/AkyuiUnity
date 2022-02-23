@@ -768,7 +768,7 @@ namespace XdParser
             {
                 if (shape.UxdesignCornerRadius != null && !Mathf.Approximately(shape.UxdesignCornerRadius.Value, 0f))
                 {
-                    XdImporter.Logger.Warning($"CornerRadius of Polygon Object is not supported in {name}");
+                    XdImporter.Logger.Warning($"CornerRadius of Polygon Object is not supported in {name} (CornerCount = {shape.UxdesignCornerCount}, CornerRadius = {shape.UxdesignCornerRadius})");
                 }
             }
 

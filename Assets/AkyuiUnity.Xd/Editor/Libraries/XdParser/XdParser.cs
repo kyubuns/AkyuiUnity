@@ -420,6 +420,9 @@ namespace XdParser.Internal
 
         [DataMember(Name = "uxdesign#cornerRadius")]
         public float? UxdesignCornerRadius { get; set; }
+
+        [DataMember(Name = "uxdesign#cornerCount")]
+        public int? UxdesignCornerCount { get; set; }
     }
 
     public class XdTextJson : IXdJsonElement
