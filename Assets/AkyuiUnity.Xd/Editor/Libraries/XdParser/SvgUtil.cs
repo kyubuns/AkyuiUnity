@@ -665,6 +665,21 @@ namespace XdParser
                 public override string ToString() => $"L{X:0.###},{Y:0.###}";
             }
 
+            // ReSharper disable once InconsistentNaming
+            public readonly struct l : ID
+            {
+                public float Dx { get; }
+                public float Dy { get; }
+
+                public l(float dx, float dy)
+                {
+                    Dx = dx;
+                    Dy = dy;
+                }
+
+                public override string ToString() => $"l{Dx:0.###},{Dy:0.###}";
+            }
+
             public readonly struct H : ID
             {
                 public float X { get; }
@@ -738,6 +753,51 @@ namespace XdParser
                 public override string ToString() => $"a{Rx:0.###},{Ry:0.###},{Angle:0.###},{(LargeArc ? 1 : 0)},{(Sweep ? 1 : 0)},{Dx:0.###},{Dy:0.###}";
             }
 
+            public readonly struct C : ID
+            {
+                public float X1 { get; }
+                public float Y1 { get; }
+                public float X2 { get; }
+                public float Y2 { get; }
+                public float X { get; }
+                public float Y { get; }
+
+                public C(float x1, float y1, float x2, float y2, float x, float y)
+                {
+                    X1 = x1;
+                    Y1 = y1;
+                    X2 = x2;
+                    Y2 = y2;
+                    X = x;
+                    Y = y;
+                }
+
+                public override string ToString() => $"C{X1:0.###},{Y1:0.###},{X2:0.###},{Y2:0.###},{X:0.###},{Y:0.###}";
+            }
+
+            // ReSharper disable once InconsistentNaming
+            public readonly struct c : ID
+            {
+                public float Dx1 { get; }
+                public float Dy1 { get; }
+                public float Dx2 { get; }
+                public float Dy2 { get; }
+                public float Dx { get; }
+                public float Dy { get; }
+
+                public c(float dx1, float dy1, float dx2, float dy2, float dx, float dy)
+                {
+                    Dx1 = dx1;
+                    Dy1 = dy1;
+                    Dx2 = dx2;
+                    Dy2 = dy2;
+                    Dx = dx;
+                    Dy = dy;
+                }
+
+                public override string ToString() => $"c{Dx1:0.###},{Dy1:0.###},{Dx2:0.###},{Dy2:0.###},{Dx:0.###},{Dy:0.###}";
+            }
+
             public struct Z : ID
             {
                 public override string ToString() => "Z";
@@ -763,22 +823,48 @@ namespace XdParser
 
             public static IElement Basic(string name, XdShapeJson shape, ElementParameter parameter)
             {
-                var points = shape.Points;
+                var points = shape.Points.Select(x => new Vector2(x.X, x.Y)).ToArray();
                 var cornerRadius = shape.UxdesignCornerRadius ?? 0f;
                 var enableCornerRadius = !Mathf.Approximately(cornerRadius, 0f);
+                var dp = new List<PathElement.ID>();
 
                 if (enableCornerRadius)
                 {
-                    XdImporter.Logger.Warning($"CornerRadius of Polygon Object is not supported in {name} (CornerCount = {shape.UxdesignCornerCount}, CornerRadius = {shape.UxdesignCornerRadius})");
-                }
+                    for (var i = 0; i < points.Length; ++i)
+                    {
+                        var currentPoint = i;
+                        var prevPoint = i - 1;
+                        var nextPoint = i + 1;
+                        var sweep = points.Length == shape.UxdesignCornerCount || i % 2 == 0;
 
-                var dp = new List<PathElement.ID>();
-                dp.Add(new PathElement.M(points[0].X, points[0].Y));
-                foreach (var a in points.Skip(1))
-                {
-                    dp.Add(new PathElement.L(a.X, a.Y));
+                        if (prevPoint < 0) prevPoint += points.Length;
+                        if (nextPoint >= points.Length) nextPoint -= points.Length;
+
+                        var vec1 = (points[prevPoint] - points[currentPoint]).normalized;
+                        var vec2 = (points[nextPoint] - points[currentPoint]).normalized;
+                        var angle = Vector2.Angle(
+                            vec1,
+                            vec2
+                        ) / 2f * Mathf.Deg2Rad;
+                        var s = cornerRadius / Mathf.Tan(angle);
+
+                        var startPoint = points[currentPoint] + vec1 * s;
+                        var endPoint = points[currentPoint] + vec2 * s;
+                        if (i == 0) dp.Add(new PathElement.M(startPoint.x, startPoint.y));
+                        else dp.Add(new PathElement.L(startPoint.x, startPoint.y));
+                        dp.Add(new PathElement.A(cornerRadius, cornerRadius, 0f, false, sweep, endPoint.x, endPoint.y));
+                    }
+                    dp.Add(new PathElement.Z());
                 }
-                dp.Add(new PathElement.Z());
+                else
+                {
+                    dp.Add(new PathElement.M(points[0].x, points[0].y));
+                    foreach (var a in points.Skip(1))
+                    {
+                        dp.Add(new PathElement.L(a.x, a.y));
+                    }
+                    dp.Add(new PathElement.Z());
+                }
 
                 return new PathElement
                 {
