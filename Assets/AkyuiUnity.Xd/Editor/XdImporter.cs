@@ -130,9 +130,8 @@ namespace AkyuiUnity.Xd
                 foreach (var artwork in expandTargets)
                 {
                     using (progress.TaskStart(artwork.Name))
+                    using (var _ = logger.SetCategory(artwork.Name))
                     {
-                        using var _ = logger.SetCategory(artwork.Name);
-
                         var name = artwork.Name.ToSafeString();
                         var xdHash = artwork.Hash;
 
