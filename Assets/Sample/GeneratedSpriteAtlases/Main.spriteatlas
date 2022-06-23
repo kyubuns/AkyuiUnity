@@ -39,6 +39,7 @@ SpriteAtlas:
     - {fileID: 2800000, guid: 570ada53dc2ab44339af333d6496ae15, type: 3}
     - {fileID: 2800000, guid: c515246f03a6a4ed5ae6ffa5a98b1aa1, type: 3}
     - {fileID: 2800000, guid: ca306b632b11d4c2e9062ebab143b3c5, type: 3}
+    - {fileID: 2800000, guid: b57498e541fbc4ad0b19f9dc5cb242d7, type: 3}
     - {fileID: 2800000, guid: a9ff09a925ccf4020a078c557114f574, type: 3}
     - {fileID: 2800000, guid: 1fe9236e1fc2b4cba9ab0d4b6dd709d5, type: 3}
     - {fileID: 2800000, guid: f21191cb6eedf425cb2f353c2b5fc4d7, type: 3}
@@ -55,7 +56,7 @@ SpriteAtlas:
     - {fileID: 2800000, guid: 39af888b7ddd34d84b76a8999b8517e8, type: 3}
     - {fileID: 2800000, guid: d038a6a94f89d4e55ac6739334ebdabb, type: 3}
     - {fileID: 2800000, guid: d572953c58dd544ab96fba21dd47a60d, type: 3}
-    totalSpriteSurfaceArea: 0
+    totalSpriteSurfaceArea: 3540346
     bindAsDefault: 1
     isAtlasV2: 0
     cachedData: {fileID: 0}
@@ -70,6 +71,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: bf19d134b09084571bd39399d4a45dcd, type: 3}
   - {fileID: 21300000, guid: b7b595e4d7fdf4b468859e889f87f382, type: 3}
   - {fileID: 21300000, guid: 0d5dc4851d2fc46358418e478d3bac0f, type: 3}
+  - {fileID: 21300000, guid: b57498e541fbc4ad0b19f9dc5cb242d7, type: 3}
   - {fileID: 21300000, guid: 4623a036bc7f4438ebcafe43a3e1dc69, type: 3}
   - {fileID: 21300000, guid: 9c3befd7b1f524b6195183c6c3f15a66, type: 3}
   - {fileID: 21300000, guid: d0fa85f7e9ed34960b6436f2ea2b8170, type: 3}
@@ -95,6 +97,7 @@ SpriteAtlas:
   - Background_09298be1
   - Notification_10aaf491
   - Base Free_b1369f24
+  - TestScrollbar_939ff445
   - Player EXP Gauge Fill_009b66d7
   - Resource Base_cac51823
   - Player Level Base_17c51f48

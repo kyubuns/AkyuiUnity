@@ -59,6 +59,7 @@ namespace AkyuiUnity.Sample
         {
             Mapper = mapper;
             Root = mapper.Get();
+            mapper.Get<ScrollRect>("Scroll").verticalScrollbar = mapper.Get<Scrollbar>("TestScrollbar");
             List = new VerticalList<Items, Title>(
                 mapper.Get<ScrollRect>("Scroll"),
                 mapper.GetChild<Items>("Row"),
