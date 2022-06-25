@@ -131,6 +131,10 @@ If you put the following at the end of the object's name, the component will be 
 
 - Button
 
+#### `*Toggle`
+
+- Toggle
+
 #### `*Scrollbar`
 
 - Scrollbar

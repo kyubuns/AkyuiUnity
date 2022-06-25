@@ -131,6 +131,10 @@ https://www.youtube.com/watch?v=bJC9ueWZp28
 
 - Button
 
+#### `*Toggle`
+
+- Toggle
+
 #### `*Scrollbar`
 
 - Scrollbar
