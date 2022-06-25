@@ -16,6 +16,7 @@ namespace AkyuiUnity.Generator.InternalTrigger
             if (component is TextComponent textComponent) return CreateText(gameObject, assetLoader, textComponent);
             if (component is AlphaComponent alphaComponent) return CreateAlpha(gameObject, assetLoader, alphaComponent);
             if (component is ButtonComponent) return CreateButton(gameObject, assetLoader);
+            if (component is ToggleComponent) return CreateToggle(gameObject, assetLoader);
             if (component is VerticalScrollbarComponent verticalScrollbarComponent) return CreateVerticalScrollbar(gameObject, assetLoader, verticalScrollbarComponent);
             if (component is HorizontalScrollbarComponent horizontalScrollbarComponent) return CreateHorizontalScrollbar(gameObject, assetLoader, horizontalScrollbarComponent);
             if (component is VerticalListComponent verticalListComponent) return CreateVerticalList(gameObject, assetLoader, verticalListComponent);
@@ -200,6 +201,29 @@ namespace AkyuiUnity.Generator.InternalTrigger
             }
 
             return button;
+        }
+
+        private static Component CreateToggle(GameObject gameObject, IAssetLoader assetLoader)
+        {
+            var toggle = gameObject.AddComponent<Toggle>();
+            toggle.isOn = true;
+
+            toggle.targetGraphic = gameObject
+                .GetComponentsInChildren<Image>()
+                .FirstOrDefault(x => x.color != Color.clear);
+
+            toggle.graphic = gameObject
+                .GetComponentsInChildren<Image>()
+                .LastOrDefault(x => x.color != Color.clear);
+
+            if (toggle.targetGraphic == null)
+            {
+                var image = gameObject.AddComponent<Image>();
+                image.color = Color.clear;
+                toggle.targetGraphic = image;
+            }
+
+            return toggle;
         }
 
         private static Component CreateVerticalScrollbar(GameObject gameObject, IAssetLoader assetLoader, VerticalScrollbarComponent verticalScrollbarComponent)

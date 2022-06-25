@@ -163,6 +163,10 @@ namespace AkyuiUnity.Loader
             {
                 dict["type"] = ButtonComponent.TypeString;
             }
+            else if (source is ToggleComponent)
+            {
+                dict["type"] = ToggleComponent.TypeString;
+            }
             else if (source is VerticalScrollbarComponent verticalScrollbarComponent)
             {
                 dict["type"] = VerticalScrollbarComponent.TypeString;

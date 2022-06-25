@@ -34,6 +34,7 @@ namespace AkyuiUnity.Xd
         private static readonly IXdGroupParser[] DefaultGroupParsers =
         {
             new ButtonGroupParser(),
+            new ToggleGroupParser(),
             new RepeatGridGroupParser(),
             new ScrollGroupParser(),
             new InputFieldGroupParser(),

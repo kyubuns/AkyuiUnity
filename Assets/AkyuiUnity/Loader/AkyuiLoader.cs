@@ -172,6 +172,7 @@ namespace AkyuiUnity.Loader
             if (componentType == AlphaComponent.TypeString) return ParseAlpha(componentJson);
             if (componentType == TextComponent.TypeString) return ParseText(componentJson);
             if (componentType == ButtonComponent.TypeString) return ParseButton(componentJson);
+            if (componentType == ToggleComponent.TypeString) return ParseToggle(componentJson);
             if (componentType == VerticalScrollbarComponent.TypeString) return ParseVerticalScrollbar(componentJson);
             if (componentType == HorizontalScrollbarComponent.TypeString) return ParseHorizontalScrollbar(componentJson);
             if (componentType == VerticalListComponent.TypeString) return ParseVerticalList(componentJson);
@@ -265,6 +266,12 @@ namespace AkyuiUnity.Loader
         private static ButtonComponent ParseButton(Dictionary<string, object> componentJson)
         {
             return new ButtonComponent(
+            );
+        }
+
+        private static ToggleComponent ParseToggle(Dictionary<string, object> componentJson)
+        {
+            return new ToggleComponent(
             );
         }
 

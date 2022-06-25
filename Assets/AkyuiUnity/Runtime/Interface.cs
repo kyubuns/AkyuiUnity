@@ -222,6 +222,15 @@ namespace AkyuiUnity
         }
     }
 
+    public class ToggleComponent : IComponent
+    {
+        public const string TypeString = "toggle";
+
+        public ToggleComponent()
+        {
+        }
+    }
+
     public interface IScrollbarComponent : IComponent
     {
         [CanBeNull] ImageComponent Image { get; }
