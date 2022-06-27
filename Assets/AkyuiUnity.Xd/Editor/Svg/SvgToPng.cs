@@ -26,6 +26,8 @@ namespace AkyuiUnity.Xd
 
             if (string.IsNullOrWhiteSpace(svg))
             {
+                sizeX = Mathf.Max(1, sizeX);
+                sizeY = Mathf.Max(1, sizeY);
                 var texture = new Texture2D(sizeX, sizeY);
                 texture.SetPixels(Enumerable.Repeat(Color.clear, texture.width * texture.height).ToArray());
                 return texture.EncodeToPNG();
