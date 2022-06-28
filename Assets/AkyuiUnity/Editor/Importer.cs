@@ -168,8 +168,19 @@ namespace AkyuiUnity.Editor
                     if (!settings.ReimportAsset && File.Exists(saveFullPath))
                     {
                         var import = AssetImporter.GetAtPath(savePath);
-                        var prevUserData = JsonSerializer.Deserialize<Dictionary<string, object>>(import.userData);
-                        if (JsonExtensions.ToUint(prevUserData["hash"]) == asset.Hash)
+                        Dictionary<string, object> prevUserData;
+
+                        try
+                        {
+                            prevUserData = JsonSerializer.Deserialize<Dictionary<string, object>>(import.userData);
+                        }
+                        catch (Exception e)
+                        {
+                            logger.Error($"JsonDeserialize Error\nimport.userData: {import.userData}\n---\n{e}");
+                            prevUserData = new Dictionary<string, object>();
+                        }
+
+                        if (prevUserData.ContainsKey("hash") && JsonExtensions.ToUint(prevUserData["hash"]) == asset.Hash)
                         {
                             skipAssetNames.Add(asset.FileName);
                             assets.Add(AssetDatabase.LoadAssetAtPath<Object>(import.assetPath));
