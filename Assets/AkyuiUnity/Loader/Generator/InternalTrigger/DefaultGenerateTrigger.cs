@@ -349,7 +349,11 @@ namespace AkyuiUnity.Generator.InternalTrigger
                 text.font = assetLoader.LoadFont(textComponent.Font);
                 if (text.font == null)
                 {
+#if UNITY_2022_2_OR_NEWER
+                    text.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+#else
                     text.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
+#endif
                 }
             }
 
