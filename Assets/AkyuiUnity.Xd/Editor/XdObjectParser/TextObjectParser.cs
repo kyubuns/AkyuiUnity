@@ -68,7 +68,11 @@ namespace AkyuiUnity.Xd
             if (fontAsset == null)
             {
                 XdImporter.Logger.Warning($"{font.PostscriptName} is not found in project / name: {xdObject.Name}, text: {rawText}");
+#if UNITY_2022_2_OR_NEWER
+                fontAsset = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+#else
                 fontAsset = Resources.GetBuiltinResource<Font>("Arial.ttf");
+#endif
             }
             var settings = new TextGenerationSettings
             {
