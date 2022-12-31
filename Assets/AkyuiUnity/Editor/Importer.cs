@@ -219,27 +219,41 @@ namespace AkyuiUnity.Editor
 
         private static void ImportAsset(IAsset asset, string savePath, string saveFullPath, byte[] bytes, Dictionary<string, object> userData, IAkyuiImportSettings importSettings, AkyuiLogger logger)
         {
-            PostProcessImportAsset.ProcessingFile = savePath.ToUniversalPath();
-            PostProcessImportAsset.Preset = importSettings.TexturePreset;
-            PostProcessImportAsset.Asset = asset;
-            PostProcessImportAsset.UserData = userData;
-            PostProcessImportAsset.Triggers = importSettings.Triggers;
+            var preset = importSettings.TexturePreset;
+            var triggers = importSettings.Triggers;
 
-            using (Disposable.Create(() =>
+            if (asset is SpriteAsset)
             {
-                PostProcessImportAsset.ProcessingFile = null;
-                PostProcessImportAsset.Preset = null;
-                PostProcessImportAsset.Asset = null;
-                PostProcessImportAsset.UserData = null;
-                PostProcessImportAsset.Triggers = null;
-            }))
-            {
-                if (asset is SpriteAsset)
+                File.WriteAllBytes(saveFullPath, bytes);
+
+                var assetImporter = AssetImporter.GetAtPath(savePath);
+                if (assetImporter == null)
                 {
-                    File.WriteAllBytes(saveFullPath, bytes);
                     AssetDatabase.ImportAsset(savePath);
-                    return;
+                    assetImporter = AssetImporter.GetAtPath(savePath);
                 }
+
+                if (assetImporter == null) throw new Exception($"assetImporter({assetImporter}) == null");
+                var textureImporter = (TextureImporter) assetImporter;
+
+                if (preset != null)
+                {
+                    preset.ApplyTo(textureImporter);
+                }
+
+                textureImporter.textureType = TextureImporterType.Sprite;
+
+                if (asset is SpriteAsset spriteAsset)
+                {
+                    textureImporter.spriteBorder = spriteAsset.Border?.ToVector4() ?? Vector4.zero;
+                    textureImporter.maxTextureSize = Mathf.RoundToInt(Mathf.Max(spriteAsset.Size.x, spriteAsset.Size.y) * Settings.SpriteSaveScale);
+                }
+
+                foreach (var trigger in triggers) trigger.OnUnityPreprocessAsset(assetImporter, asset, ref userData);
+                assetImporter.userData = JsonSerializer.ToJsonString(userData);
+
+                AssetDatabase.ImportAsset(savePath);
+                return;
             }
 
             logger.Error($"Unknown asset type {asset}");
@@ -258,41 +272,6 @@ namespace AkyuiUnity.Editor
             var (gameObject, hash, eidMap) = AkyuiGenerator.GenerateGameObject(new EditorAssetLoader(pathGetter, logger, settings.Triggers), layoutInfo, triggers);
             foreach (var trigger in settings.Triggers) trigger.OnPostprocessPrefab(akyuiLoader, ref gameObject);
             return (gameObject, hash, eidMap, new ImportLayoutLog { Time = stopWatch.Elapsed.TotalSeconds });
-        }
-    }
-
-    public class PostProcessImportAsset : AssetPostprocessor
-    {
-        public static string ProcessingFile { get; set; }
-        public static Preset Preset { get; set; }
-        public static IAsset Asset { get; set; }
-        public static Dictionary<string, object> UserData { get; set; }
-        public static IAkyuiImportTrigger[] Triggers { get; set; }
-
-        public void OnPreprocessAsset()
-        {
-            if (ProcessingFile != assetPath) return;
-
-            var userData = UserData;
-
-            if (assetImporter is TextureImporter textureImporter)
-            {
-                if (Preset != null)
-                {
-                    Preset.ApplyTo(textureImporter);
-                }
-
-                textureImporter.textureType = TextureImporterType.Sprite;
-
-                if (Asset is SpriteAsset spriteAsset)
-                {
-                    textureImporter.spriteBorder = spriteAsset.Border?.ToVector4() ?? Vector4.zero;
-                    textureImporter.maxTextureSize = Mathf.RoundToInt(Mathf.Max(spriteAsset.Size.x, spriteAsset.Size.y) * Importer.Settings.SpriteSaveScale);
-                }
-            }
-
-            foreach (var trigger in Triggers) trigger.OnUnityPreprocessAsset(assetImporter, Asset, ref userData);
-            assetImporter.userData = JsonSerializer.ToJsonString(userData);
         }
     }
 
