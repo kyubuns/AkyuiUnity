@@ -21,19 +21,19 @@ https://www.youtube.com/watch?v=bJC9ueWZp28
   - AkyuiUnity.Xd `https://github.com/kyubuns/AkyuiUnity.git?path=Assets/AkyuiUnity.Xd`
 - Select Assets > Create > AkyuiXd > XdImportSettings and create a configuration file.
   - By tweaking these settings, you can decide how to import the XD for each project.
-  - It has a powerful customization feature called "triggers". We'll talk about it later.
+  - It has a powerful customization feature called "triggers;" we'll talk about it later.
 
 
 ### How to create an XD file
 
 - The Mark for Export flag in Artboard itself determines which Artboard will be exported.
 - Special rules are summarized in [here](https://github.com/kyubuns/AkyuiUnity/blob/main/Manual/Manual_en.md#xd-conversion-rules).
-- See [here](https://github.com/kyubuns/AkyuiUnity/blob/main/Manual/Manual_en.md#unsupported-item) for functions that cannot be used. for features that are not available.
+- For features that are not available, see [this section](https://github.com/kyubuns/AkyuiUnity/blob/main/Manual/Manual_en.md#unsupported-item) for functions that cannot be used.
 
 
 ### How to import
 
-- In the Inspector of the XdImportSettings created in "First Time Setup", drag and drop the XD file to the place where it says "Drop xd".
+- In the Inspector of the XdImportSettings created in "First Time Setup," drag and drop the XD file to the place where it says "Drop xd,"
 - After the second time, you can import the file from the history with one button.
 
 
@@ -41,7 +41,7 @@ https://www.youtube.com/watch?v=bJC9ueWZp28
 
 - This function allows you to customize how XD files are dropped into Prefab.
 - For example, you can set whether to use uGUI's Text or TextMeshPro for text, whether to create a SpriteAtlas, and if so, where to create it.
-- The list of triggers is [here](https://github.com/kyubuns/AkyuiUnity/blob/main/Manual/Manual_en.md#trigger-list) for a list of triggers.
+- The list of triggers is [here](https://github.com/kyubuns/AkyuiUnity/blob/main/Manual/Manual_en.md#trigger-list).
 
 
 ### How to update
