@@ -34,7 +34,7 @@ namespace AkyuiUnity.CommonTrigger
                 spriteAtlasPreset.ApplyTo(spriteAtlas);
             }
 
-            spriteAtlas.name = $"{loader.LayoutInfo.Name}SpriteAtlas";
+            spriteAtlas.name = Path.GetFileNameWithoutExtension(spriteAtlasPath);
             spriteAtlas.Remove(spriteAtlas.GetPackables());
             spriteAtlas.Add(importAssets);
 
