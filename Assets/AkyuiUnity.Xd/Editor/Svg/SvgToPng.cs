@@ -49,6 +49,7 @@ namespace AkyuiUnity.Xd
             }))
             {
                 File.WriteAllBytes(saveFullPath, System.Text.Encoding.UTF8.GetBytes(svg));
+                Debug.Log(svg);
                 AssetDatabase.ImportAsset(savePath);
                 // SvgImportTrigger.OnPreprocessAssetが呼ばれる
                 var texture = AssetDatabase.LoadAssetAtPath<Texture2D>(savePath);
