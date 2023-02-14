@@ -21,7 +21,7 @@ https://www.youtube.com/watch?v=bJC9ueWZp28
   - AkyuiUnity.Xd `https://github.com/kyubuns/AkyuiUnity.git?path=Assets/AkyuiUnity.Xd`
 - Select Assets > Create > AkyuiXd > XdImportSettings and create a configuration file.
   - By tweaking these settings, you can decide how to import the XD for each project.
-  - It has a powerful customization feature called "triggers". We'll talk about it later.
+  - It has a powerful customization feature called "triggers;" we'll talk about it later.
 
 
 ### How to create an XD file
@@ -33,7 +33,7 @@ https://www.youtube.com/watch?v=bJC9ueWZp28
 
 ### How to import
 
-- In the Inspector of the XdImportSettings created in "First Time Setup", drag and drop the XD file to the place where it says "Drop xd".
+- In the Inspector of the XdImportSettings created in "First Time Setup," drag and drop the XD file to the place where it says "Drop xd,"
 - After the second time, you can import the file from the history with one button.
 
 
