@@ -42,6 +42,22 @@ namespace AkyuiUnity.Xd
                     size = new Vector2(bounds.width, bounds.height);
                     position = new Vector2(bounds.x, bounds.y);
                 }
+                else
+                {
+                    // 完全に透明なオブジェクトの場合、背景を無理やり塗りつぶして使う
+                    var temp = xdObject.Style;
+                    xdObject.Style = new XdStyleJson { Fill = new XdStyleFillJson { Type = "solid" } };
+
+                    var filledSvg = SvgUtil.CreateSvg(xdObject, null, true);
+                    var filledBounds = SvgUtil.CalcBounds(filledSvg);
+                    if (filledBounds.width > 0.0001f && filledBounds.height > 0.0001f)
+                    {
+                        size = new Vector2(filledBounds.width, filledBounds.height);
+                        position = new Vector2(filledBounds.x, filledBounds.y);
+                    }
+
+                    xdObject.Style = temp;
+                }
             }
 
             if (scaleBehavior == "cover" && size.x > 0.0001f && size.y > 0.0001f)
