@@ -24,7 +24,7 @@ namespace AkyuiUnity.Xd
             var sizeX = Mathf.RoundToInt(size.x * xdImportSettings.SpriteSaveScale);
             var sizeY = Mathf.RoundToInt(size.y * xdImportSettings.SpriteSaveScale);
 
-            if (string.IsNullOrWhiteSpace(svg))
+            if (string.IsNullOrWhiteSpace(svg) || sizeX == 0 || sizeY == 0)
             {
                 sizeX = Mathf.Max(1, sizeX);
                 sizeY = Mathf.Max(1, sizeY);
