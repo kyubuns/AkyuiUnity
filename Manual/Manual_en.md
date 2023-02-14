@@ -28,7 +28,7 @@ https://www.youtube.com/watch?v=bJC9ueWZp28
 
 - The Mark for Export flag in Artboard itself determines which Artboard will be exported.
 - Special rules are summarized in [here](https://github.com/kyubuns/AkyuiUnity/blob/main/Manual/Manual_en.md#xd-conversion-rules).
-- See [here](https://github.com/kyubuns/AkyuiUnity/blob/main/Manual/Manual_en.md#unsupported-item) for functions that cannot be used. for features that are not available.
+- For features that are not available, see [this section](https://github.com/kyubuns/AkyuiUnity/blob/main/Manual/Manual_en.md#unsupported-item) for functions that cannot be used.
 
 
 ### How to import
@@ -41,7 +41,7 @@ https://www.youtube.com/watch?v=bJC9ueWZp28
 
 - This function allows you to customize how XD files are dropped into Prefab.
 - For example, you can set whether to use uGUI's Text or TextMeshPro for text, whether to create a SpriteAtlas, and if so, where to create it.
-- The list of triggers is [here](https://github.com/kyubuns/AkyuiUnity/blob/main/Manual/Manual_en.md#trigger-list) for a list of triggers.
+- The list of triggers is [here](https://github.com/kyubuns/AkyuiUnity/blob/main/Manual/Manual_en.md#trigger-list).
 
 
 ### How to update
