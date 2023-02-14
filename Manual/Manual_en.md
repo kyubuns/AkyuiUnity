@@ -33,7 +33,7 @@ https://www.youtube.com/watch?v=bJC9ueWZp28
 
 ### How to import
 
-- In the Inspector of the XdImportSettings created in "First Time Setup," drag and drop the XD file to the place where it says "Drop xd,"
+- In the Inspector of the XdImportSettings created in "First Time Setup," drag and drop the XD file to the place where it says "Drop xd."
 - After the second time, you can import the file from the history with one button.
 
 
@@ -41,7 +41,7 @@ https://www.youtube.com/watch?v=bJC9ueWZp28
 
 - This function allows you to customize how XD files are dropped into Prefab.
 - For example, you can set whether to use uGUI's Text or TextMeshPro for text, whether to create a SpriteAtlas, and if so, where to create it.
-- The list of triggers is [here](https://github.com/kyubuns/AkyuiUnity/blob/main/Manual/Manual_en.md#trigger-list).
+- [Here](https://github.com/kyubuns/AkyuiUnity/blob/main/Manual/Manual_en.md#trigger-list) is a list of built-in triggers.
 
 
 ### How to update
