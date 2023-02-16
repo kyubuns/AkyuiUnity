@@ -36,7 +36,13 @@ namespace AkyuiUnity.Xd
                 return CalcSizeFromText(xdObject);
             }
 
-            throw new NotSupportedException($"Unknown Text Type {xdObject.Text?.Frame?.Type}");
+            // 謎のテキストが発生するバグ対応
+            if (string.IsNullOrEmpty(xdObject.Text?.Frame?.Type) && string.IsNullOrEmpty(xdObject.Text?.RawText))
+            {
+                return new Rect(0, 0, 0, 0);
+            }
+
+            throw new NotSupportedException($"Unknown Text Type {xdObject.Text?.Frame?.Type} / {xdObject.Text?.RawText}");
         }
 
         public static Rect CalcSizeFromFrame(XdObjectJson xdObject)
@@ -128,7 +134,7 @@ namespace AkyuiUnity.Xd
             var font = xdObject.Style.Font;
             var fontSize = font.Size;
             var color = xdObject.GetFillUnityColor();
-            var rawText = xdObject.Text.RawText;
+            var rawText = xdObject.Text?.RawText ?? string.Empty;
 
             var textAlign = TextComponent.TextAlign.MiddleLeft;
             var wrap = false;
