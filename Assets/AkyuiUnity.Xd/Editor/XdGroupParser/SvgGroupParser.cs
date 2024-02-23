@@ -62,7 +62,8 @@ namespace AkyuiUnity.Xd
             components.Add(new ImageComponent(
                 spriteUid,
                 new Color(1f, 1f, 1f, xdObject.Style?.Opacity ?? 1f),
-                Vector2Int.one
+                Vector2Int.one,
+                svgHash
             ));
 
             return (components.ToArray(), assets.ToArray());

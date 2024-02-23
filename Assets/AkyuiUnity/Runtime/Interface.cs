@@ -143,12 +143,14 @@ namespace AkyuiUnity
         [CanBeNull] public readonly string Sprite;
         [CanBeNull] public readonly Color? Color;
         [CanBeNull] public readonly Vector2Int? Direction;
+        [CanBeNull] public readonly uint? SpriteHash;
 
-        public ImageComponent([CanBeNull] string sprite, [CanBeNull] Color? color, [CanBeNull] Vector2Int? direction)
+        public ImageComponent([CanBeNull] string sprite, [CanBeNull] Color? color, [CanBeNull] Vector2Int? direction, [CanBeNull] uint? spriteHash)
         {
             Sprite = sprite;
             Color = color;
             Direction = direction;
+            SpriteHash = spriteHash;
         }
     }
 

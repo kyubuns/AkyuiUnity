@@ -109,26 +109,31 @@ namespace AkyuiUnity.Xd
             if (!string.IsNullOrWhiteSpace(ux?.Uid))
             {
                 string spriteUid = null;
+                uint? hash = null;
                 if (!isPlaceholder)
                 {
                     spriteUid = $"{xdObject.GetSimpleName()}_{ux?.Uid.Substring(0, 8)}.png";
                     asset = new SpriteAsset(spriteUid, xdObject.Style.Fill.Pattern.Meta.Ux.HrefLastModifiedDate, obb.Size, null, border);
                     assetHolder.Save(spriteUid, xdObject.Style.Fill.Pattern.Meta);
+                    hash = xdObject.Style.Fill.Pattern.Meta.Ux.HrefLastModifiedDate;
                 }
                 imageComponent = new ImageComponent(
                     spriteUid,
                     color,
-                    direction
+                    direction,
+                    hash
                 );
             }
             else if (SvgUtil.Types.Contains(shapeType))
             {
                 string spriteUid = null;
+                uint? hash = null;
                 if (!isPlaceholder)
                 {
                     spriteUid = $"{xdObject.GetSimpleName()}_{xdObject.Id.Substring(0, 8)}.png";
                     var svg = SvgUtil.CreateSvg(xdObject, null, false);
                     var svgHash = FastHash.CalculateHash(svg);
+                    hash = svgHash;
 
                     var cachedSvg = assetHolder.GetCachedSvg(svgHash);
                     if (cachedSvg != null)
@@ -146,7 +151,8 @@ namespace AkyuiUnity.Xd
                 imageComponent = new ImageComponent(
                     spriteUid,
                     new Color(1f, 1f, 1f, xdObject.Style?.Opacity ?? 1f),
-                    direction
+                    direction,
+                    hash
                 );
             }
             else

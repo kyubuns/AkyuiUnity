@@ -307,7 +307,8 @@ namespace AkyuiUnity.Loader
             return new ImageComponent(
                 componentJson.ContainsKey("sprite") ? JsonExtensions.ToString(componentJson["sprite"]) : null,
                 componentJson.ContainsKey("color") ? JsonExtensions.ToColor(componentJson["color"]) : (Color?) null,
-                componentJson.ContainsKey("direction") ? JsonExtensions.ToVector2Int(componentJson["direction"]) : (Vector2Int?) null
+                componentJson.ContainsKey("direction") ? JsonExtensions.ToVector2Int(componentJson["direction"]) : (Vector2Int?) null,
+                componentJson.ContainsKey("hash") ? JsonExtensions.ToUint(componentJson["hash"]) : (uint?) null
             );
         }
 

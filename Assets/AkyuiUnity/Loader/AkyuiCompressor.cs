@@ -137,6 +137,7 @@ namespace AkyuiUnity.Loader
                 if (imageComponent.Sprite != null) dict["sprite"] = ToSerializable(imageComponent.Sprite);
                 if (imageComponent.Color != null) dict["color"] = ToSerializable(imageComponent.Color.Value);
                 if (imageComponent.Direction != null) dict["direction"] = ToSerializable(imageComponent.Direction.Value);
+                if (imageComponent.SpriteHash != null) dict["hash"] = ToSerializable(imageComponent.SpriteHash.Value);
             }
             else if (source is MaskComponent maskComponent)
             {
