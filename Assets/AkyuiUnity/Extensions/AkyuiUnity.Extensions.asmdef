@@ -1,5 +1,6 @@
 {
     "name": "AkyuiUnity.Extensions",
+    "rootNamespace": "",
     "references": [
         "GUID:a439073e6c93d4a5bbdeebbe28645a3f",
         "GUID:451eedbbaf53848bab9ac1df6b41e4cb",
@@ -32,6 +33,11 @@
             "name": "dev.kyubuns.auto9slicer",
             "expression": "",
             "define": "AKYUIUNITY_AUTO9SLICER_SUPPORT"
+        },
+        {
+            "name": "Unity",
+            "expression": "2023.2",
+            "define": "AKYUIUNITY_TEXTMESHPRO_SUPPORT"
         }
     ],
     "noEngineReferences": false
