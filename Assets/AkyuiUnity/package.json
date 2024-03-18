@@ -2,8 +2,8 @@
   "name": "dev.kyubuns.akyuiunity",
   "displayName": "AkyuiUnity",
   "version": "1.5.0",
-  "unity": "2019.4",
   "description": "Akyui for Unity",
+  "unity": "2019.4",
   "documentationUrl": "https://github.com/kyubuns/AkyuiUnity",
   "dependencies": {
   },
@@ -11,6 +11,5 @@
     "name": "kyubuns",
     "email": "kyubuns@gmail.com",
     "url": "https://kyubuns.dev/"
-  },
-  "type": "library"
+  }
 }
