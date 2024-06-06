@@ -274,7 +274,7 @@ namespace AkyuiUnity.Xd
                     catch (Exception e)
                     {
                         if (e is AkyuiImportException) throw;
-                        Debug.LogError($"Cause exception in CalcPosition {xdObject.Name}(id: {xdObject.Id}, guid: {xdObject.Guid})");
+                        Debug.LogError($"Cause exception in CalcPosition {xdObject.Name} {e}(id: {xdObject.Id}, guid: {xdObject.Guid})");
                         throw;
                     }
                 }

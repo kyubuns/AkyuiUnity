@@ -103,7 +103,7 @@ namespace XdParser
 
             var parameter = new ElementParameter
             {
-                Id = id
+                Id = id.Replace("&", "")
             };
 
             parameter.Transform = new Transform { Value = xdObject.Transform };
