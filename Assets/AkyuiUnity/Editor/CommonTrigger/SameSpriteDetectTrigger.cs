@@ -22,7 +22,11 @@ namespace AkyuiUnity.CommonTrigger
             {
                 if (!(asset is SpriteAsset spriteAsset)) continue;
 
-                var hash = FastHash.CalculateHash(akyuiLoader.LoadAsset(spriteAsset.FileName).Select(x => (uint) x).ToArray());
+                var loadAsset = akyuiLoader.LoadAsset(spriteAsset.FileName);
+                var hash = FastHash.CalculateHash(loadAsset.Select(x => (uint) x).ToArray())
+                           + (spriteAsset.Border == null ? FastHash.CalculateHash("NoBorder") : FastHash.CalculateHash($"Border{spriteAsset.Border.ToVector4()}"))
+                    ;
+
                 if (!cache.ContainsKey(hash))
                 {
                     cache.Add(hash, asset);
