@@ -70,11 +70,6 @@ MIT License (see [LICENSE](LICENSE))
 - サンプルに使っているXDファイル
   - https://github.com/beinteractive/Public-Game-UI-XD
 
-## Buy me a coffee
-
-もしこのプロジェクトが気に入ったなら、ぜひコーヒーを奢ってください！  
-https://www.buymeacoffee.com/kyubuns
-
 ## 「ゲームに使ったよ！」
 
 「このゲームにこのライブラリ使ったよ！」という報告を貰えるとめっちゃ喜びます！  
