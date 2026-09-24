@@ -77,7 +77,14 @@ namespace AkyuiUnity.Xd.Extensions
             textMeshPro.font = fontAsset;
             textMeshPro.fontSize = fontSize;
             textMeshPro.text = rawText;
-            if (width != null) textMeshPro.enableWordWrapping = true;
+            if (width != null)
+            {
+#if UNITY_6000_7_OR_NEWER
+                textMeshPro.textWrappingMode = TextWrappingModes.Normal;
+#else
+                textMeshPro.enableWordWrapping = true;
+#endif
+            }
 
             var size = new Vector2(LayoutUtility.GetPreferredSize(dummyRectTransform, 0), LayoutUtility.GetPreferredSize(dummyRectTransform, 1));
             DestroyImmediate(dummyObject);

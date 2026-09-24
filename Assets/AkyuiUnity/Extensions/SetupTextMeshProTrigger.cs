@@ -28,7 +28,11 @@ namespace AkyuiUnity.Extensions
         private Component CreateText(GameObject gameObject, TextComponent textComponent)
         {
             var text = gameObject.AddComponent<TextMeshProUGUI>();
+#if UNITY_6000_7_OR_NEWER
+            text.textWrappingMode = TextWrappingModes.NoWrap;
+#else
             text.enableWordWrapping = false;
+#endif
             text.overflowMode = TextOverflowModes.Overflow;
             text.richText = false;
             text.raycastTarget = false;
@@ -89,7 +93,11 @@ namespace AkyuiUnity.Extensions
 
             if (textComponent.Wrap != null)
             {
+#if UNITY_6000_7_OR_NEWER
+                text.textWrappingMode = textComponent.Wrap.Value ? TextWrappingModes.Normal : TextWrappingModes.NoWrap;
+#else
                 text.enableWordWrapping = textComponent.Wrap.Value;
+#endif
             }
 
             if (textComponent.LineHeight != null && fontAsset != null)
